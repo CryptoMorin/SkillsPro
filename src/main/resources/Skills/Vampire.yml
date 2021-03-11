@@ -1,0 +1,80 @@
+name: "Vampire"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-level: 100
+max-health: 20 * 6
+max-energy: lvl + 20
+required-level: 20
+cost: 5000
+# blood lost
+energy-regen: "%skills_max_energy% / (20 + bloodwell)"
+stats: [ STR, DEX ]
+energy: blood
+abilities:
+  vampire-passive:
+    scaling: str/5+1
+    blood: 2
+    light-level:
+      # Set to 0 to ignore.
+      burn-activation: 50
+      burn: 10
+      effects: [ ]
+      prevents: [ DIAMOND_HELMET, GOLDEN_HELMET, CARVED_PUMPKIN ]
+  blood-lust:
+    required-level: 5
+    # percent
+    energy: 100 - (lvl * 10)
+    # Heal chance
+    chance: lvl * 10
+    heal: 2
+    regain: 5
+    scaling: str/7+lvl*2
+    cost: 100 * (lvl + 1)
+  blood-well:
+    required-level: 5
+    # Chance
+    scaling: (int + (lvl * 10)) / 4
+    cost: 100 * (lvl + 1)
+  blood-circuit:
+    required-level: 30
+    # Initial damage and healing amount.
+    scaling: int/4+lvl*2
+    # Duration of the whole event in seconds.
+    # This is not affected by the inferno interval.
+    duration: lvl * 10
+    # Damage and healing amount modifier after each inferno activation.
+    # It'll be: scaling + damage-modifier
+    damage-modifier: 1
+    # If this ability should use guardian beam instead of particles.
+    # You might want to use this if you're using BungeeCord since it's a BungeeCord
+    # bug and I can't control it.
+    use-laser: true
+    # The interval in ticks for the inferno to activate.
+    inferno: 20
+    # Maximum allowed block distances from inferno to target for inferno to activate.
+    distance: 20
+    cost: 100 * (lvl + 1)
+    activation:
+      idle: 5
+      key: LR
+      energy: 20
+      cooldown: 10
+      items: [ ]
+  bleed:
+    required-level: 10
+    chance: lvl * 5
+    scaling: (str/10) + lvl
+    # x times in 10 ticks.
+    duration: 10
+    cost: 100 * (lvl + 1)
+  eternal-darkness:
+    required-level: 1
+    activation:
+      idle: 5
+      key: R
+      energy: 10
+      cooldown: 15
+      items: [ ]
+    scaling: 1+lvl+int/20
+    cost: 100 * (lvl + 1)

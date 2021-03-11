@@ -1,0 +1,179 @@
+title: "&8&l-=( &2&lMaestrias &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  harvesting:
+    name: "&3Colheita"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Quando estiver colhendo,"
+      - "tem uma chance de"
+      - "colher o dobro da quantidade."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Madeireiro"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Quando estiver quebrando troncos de arvores,"
+      - "tem uma chance de dropar madeiras e XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Mineiro"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Quando estiver quebrando minérios"
+      - "tem uma chance de dropar o dobro e XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Pacifista"
+    material: WHITE_WOOL
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Ganhe XP de habilidades"
+      - "quebrando blocos, que podem"
+      - "dar xp ou dropar itens."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Regeneração"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2Eficiencia"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem chance de se regenerar"
+      - "quando sua vida estiver abaixo de 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Poder"
+    material: BLAZE_POWDER
+    lore:
+      - "&cBrutalidade"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem a chance de inflingir mais dano"
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Gloria Suprema"
+    material: DIAMOND_SWORD
+    lore:
+      - "&cBrutalidade"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem a chance de aumentar"
+      - "XP ganho ao matar mobs."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Pele Grossa"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&cBrutalidade"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem a chance de diminuir o dano recebido"
+      - "quando acertado por um mob ou player."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Precisão"
+    material: ENDER_EYE
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem a chance de acertar danos criticos"
+      - "quando usar arcos"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Ceifero"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Chance de ganhar uma"
+      - "alma extra quando matar um mob ou player"
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Acrobata"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Sutileza"
+      - ""
+      - "&3Custa&8: &e%cost% almas"
+      - "&3Nível&8: &e%level%"
+      - ""
+      - "&2Tem a chance de receber"
+      - "menos danos quando estiver caindo."
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 4, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

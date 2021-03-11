@@ -1,0 +1,238 @@
+title: "&8&l-=( &4&lSkills &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&bSwordsman"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3Swordsmen are the prime of all melee
+      battles, with superior damage
+      and close-range capabilities.
+
+      &e&lStrength
+      &2Swordsmen are strong in
+      one on one battles,
+      and can win most other
+      skills if fought well.
+
+      &e&lWeakness
+      &cSwordsmen don't have powerful ranged
+      capabilities, and can be outmatched
+      by ranged attacks.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7Juggernaut"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3The most durable warriors,
+      juggernauts are powerful behemoths
+      that can soak up a lot of damage.
+
+      &e&lStrength
+      &2Very strong against non-healing skills,
+      as you can out last your opponent.
+
+      &e&lWeakness
+      &cVery low damage output.
+      Although you are durable, if you fail
+      to dish out enough damage to take out
+      your enemy before he takes you out,
+      you would be doomed.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&dMage"
+    material: GOLDEN_HOE
+    lore: |-
+      &3Mages are masters of offensive
+      and defensive magic,
+      and battle with Staffs to cast
+      spells and curses on their enemies.
+      &e&lStrength
+      &2Mages can counter many skill
+      types as their attacks with
+      Staffs can cause different
+      attacks to occur.
+      &e&lWeakness
+      &cMages rely on Mana,
+      and are severely weakened without it.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&cFire Mage"
+    material: BLAZE_POWDER
+    lore: |-
+      &3FireMages, unlike Mages,
+      are fully focused on
+      fire-based offensive spells,
+      and don't use staffs.
+      They cast spells by
+      expending their own health.
+
+      &e&lStrength
+      &2While health is spent on spells,
+      the spells can deliver devastating
+      blows to your foes.
+
+      &e&lWeakness
+      &cFireMages are weak against
+      fire-resistance potions.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5Arbalist"
+    material: BOW
+    lore: |-
+      &3Arbalists are adaptive,
+      with different playstyles,
+      up front battle, and sniping from afar.
+      Arbalists utilize Crossbows to fight.
+
+      &e&lStrength
+      &2Arbalists can deal a lot of damage,
+      if the target fails to reach the
+      arbalist in time, and also have
+      a lot of knockback capabilities.
+
+      &e&lWeakness
+      &cArbalists are weak in
+      short range combat,
+      and only rely on knockback to
+      keep their enemies at bay.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4Vampire"
+    material: REDSTONE
+    lore: |-
+      &3Vampires are majestic
+      yet horrible demons,
+      with the uncanny abilities
+      of regeneration and stealth.
+
+      &e&lStrength
+      &2Attacks can deplete your opponent of Mana,
+      and you also have many healing
+      abilities of your own.
+
+      &e&lWeakness
+      &cVampires are all rounded,
+      but can be outpaced by
+      targets with high mobility.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ENTITY_BAT_AMBIENT
+    posx: 3
+    posy: 4
+  priest:
+    name: "&2Priest"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3Priests are mainly supporters
+      that can play a huge role in a team.
+      They also have a few extra
+      abilities for survival.
+
+      &e&lStrength
+      &2Priests are mostly defensive.
+      Both for them and their team.
+
+      &e&lWeakness
+      &cPriests are vulnerable to unholiness.
+      Such as nether and the end
+      and creatures like Wither.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9Devourer"
+    material: SPIDER_EYE
+    lore: |-
+      &3Devourers are fast, agile, and
+      their strikes are very corrosive.
+      Hit-and-run specialists.
+
+      &e&lStrength
+      &2Nothing can outrun a devourer,
+      as they have powerful techniques to
+      get away from danger,
+      and an equally corrosive strike.
+
+      &e&lWeakness
+      &cDevourers have weak defensive capability.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 6
+    posy: 4
+  eidolon:
+    name: "&3Eidolon"
+    material: END_CRYSTAL
+    lore: |-
+      &3Eidolons are spirits, that periodically
+      change form, switching
+      between Dark and Light.
+
+      &e&lStrength
+      &2Eidolon has both defensive and offensive
+      abilities, and if used wisely,
+      can be a very effective melee fighter.
+
+      &e&lWeakness
+      &cOffensive abilites are mostly in
+      Eidolon's Dark form, and vice versa.
+      Complex to master.
+
+      &3Required Level&8: &e%required-level%
+      &3Cost&8: &e%cost%
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 7
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

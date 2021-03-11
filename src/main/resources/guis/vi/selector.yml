@@ -1,0 +1,285 @@
+# GUIs have a lot of custom options you can use.
+# All the options that support strings also support placeholders.
+# First the settings for GUI itself are:
+# title: The title of the GUI.
+# rows: The rows of a chest GUI.
+# type: If no rows is specified, then a GUI type is used.
+# sound: The sound played when the GUI is opened.
+# commands: [string] A list of commands executed when the GUI is opened.
+# interactableSlots: [integers] A list of slot positions that can be interacted with. Interactable slots are slots that any
+# items placed in that slot can be taken or a new item can be put:
+
+# Options for each GUI item (option):
+# The name of the option is optional, but in special cases these names are used to execute a code.
+# For example all the options named with the skill name should be kept like that. Only the option name of the few glass options at the end can be changed.
+# name: The name of the item.
+# material: The material of the item. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# lore: [] A list of strings for item lore. Lores support line breaks \n and they'll even keep their previous color from the last line!
+# unbreakable: true/false if the item should be unbreakable.
+# commands: [string] A list of commands executed when item is clicked.
+# sound: The sound to play when item is clicked.
+# can-take: true/false if this item can be taken. But no item can be placed after that. To do that set the slot as an interactable slot in the GUI option.
+# posx, posy, slot, slots: Set the position of the item in the GUI. posx and posy should be used together or use the raw slot number with "slot" and place the item in multiple
+# slots using "slots: [numbers]"
+# click: Click type. If none is specified default is left-click. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html
+# flags: [] A list of item flags. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+
+# Other than the normal options for items such as name, material and lore, there are a lot of other options.
+# amount, damage, enchants, model-data, attributes and etc...
+# A popular one is "skull" You need to set the material as PLAYER_HEAD for this to work.
+# The skull property allows one of the following values: Player Name, Minecraft Textures URL, Base64 (value signature)
+# Using the base64 value is always better since it doesn't need caching or connecting to Mojang for the texture.
+# You can find custom heads in websites like https://minecraft-heads.com
+
+title: "&8&l-=( &4&lSkills &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&bKiếm Sĩ"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3Kiếm sĩ là 1 Ông Trùm của mọi cuộc hỗn chiến
+      trận chiến, với Sát thương vượt trội
+      và khả năng tầm gần.
+      Vũ Khí Chính: &8Kiếm
+
+      &e&lƯu Điểm
+      &2Kiếm sĩ rất mạnh trong
+      khoảng đấu tay đôi,
+      và có thể thắng hầu hết
+      kỹ năng nếu chiến đấu tốt.
+
+      &e&lNhược Điểm
+      &cKiếm sĩ không có tầm bắn mạnh mẽ
+      dễ bị thả diều, mặc dù có phong thủ tốt
+      nhưng vẫn mất rất nhiều máu nếu gặp phải cao thủ.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7Đấu Sĩ"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3Những chiến binh bền bỉ nhất,
+      Đấu Sĩ là những người khổng lồ mạnh mẽ
+      có thể gây ra rất nhiều Sát thương.
+      Vũ Khí Chính: &8Rìu
+
+      &e&lƯu Điểm
+      &2Rất mạnh mẽ chống lại các kỹ năng kháng hồi phục,
+      vì bạn có thể vượt qua đối thủ của mình.
+
+      &e&lNhược Điểm
+      &cSát thương chủ lực rất yếu.
+      Mặc dù bạn rất Trâu, nếu bạn yếu
+      Bạn ko đủ sát thương để gây ra cho
+      kẻ thù của bạn trước khi anh ta đưa bạn lên trời,
+      bạn sẽ phải chịu số phận
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&dPháp Sư"
+    material: GOLDEN_HOE
+    lore: |-
+      &3Pháp sư là bậc thầy của tấn công
+      và ma thuật phòng thủ,
+      và chiến đấu với Đồng loại để phân vai
+      phép thuật và nguyền rủa kẻ thù của họ.
+      Vũ Khí Chính: &8cuốc
+
+      &e&lƯu Điểm
+      &2Pháp sư có thể chống lại nhiều kỹ năng
+      loại như các cuộc tấn công của họ với
+      Nhân viên có thể gây ra khác nhau
+      các cuộc tấn công xảy ra.
+
+      &e&lNhược Điểm
+      &cCác pháp sư dựa vào Mana,,
+      và bị suy yếu nghiêm trọng mà không có nó.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&cPháp Sư Lửa"
+    material: BLAZE_POWDER
+    lore: |-
+      &3Các Pháp sư Lửa, không giống như các Pháp sư,
+      hoàn toàn tập trung vào các phép thuật
+      tấn công dựa trên lửa và,
+      không sử dụng Đồng loại.
+      Họ dùng phép thuật bằng cách mở rộng
+      Máu của chính họ.
+      Vũ khí Chính: &8cuốc
+
+      &e&lƯu Điểm
+      &2Pháp Sư Lửa cực mạnh khi đối đầu với đối thủ,
+      Đang bị cháy hay dính dung nham, họ sẽ phải nhận
+      thêm hàng tấn sát thương của bạn.
+
+      &e&lNhược Điểm
+      &cPháp sư lửa Rất yếu khi
+      đối mặt với các bình thuốc chống cháy.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5Xạ Thủ"
+    material: BOW
+    lore: |-
+      &3Xạ Thủ thích nghi,
+      với các kiểu chơi khác nhau,
+      trong trận chiến, và bắn tỉa từ xa.
+      Xạ Thủ sử dụng Nỏ/Cung để chiến đấu.
+      Vũ Khí Chính: &8Cung
+
+      &e&lƯu Điểm
+      &2Xạ Thủ có thể gây ra nhiều sát thương
+      nếu mục tiêu ở Xa,
+      Xạ Thủ trong thời gian ngắn cũng có
+      rất nhiều khả năng loại bỏ.
+
+      &e&lNhược Điểm
+      &cXạ thủ yếu trong
+      chiến đấu tầm ngắn,
+      và chỉ dựa vào chỗ núp để
+      tấn công kẻ thù của họ ở xa
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4Ma Cà Rồng"
+    material: REDSTONE
+    lore: |-
+      &3Ma cà rồng thật hùng vĩ và là
+      quỷ kinh khủng,
+      với khả năng kỳ lạ
+      tái sinh và bất tử.
+      Vũ Khí Chính: &8Không có
+
+      &e&lƯu Điểm
+      &2Tấn công có thể làm cạn kiệt mana của đối thủ,
+      và bạn cũng có nhiều khả năng chữa lành
+      Riêng của mình.
+
+      &e&lNhược Điểm
+      &cMa cà rồng đều Rất mạnh,
+      nhưng không có thể vượt qua
+      mục tiêu có tính cơ động cao.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ENTITY_BAT_AMBIENT
+    posx: 3
+    posy: 4
+  priest:
+    name: "&2Phù Thủy"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3Các Phù thủy chủ yếu là những người Bảo Vệ
+      Điều đó có thể đóng một vai trò rất lớn trong một đội.
+      Họ cũng có thêm một vài
+      khả năng sinh tồn.
+      Vũ Khí Chính: &8Cuốc
+
+      &e&lƯu Điểm
+      &2Các linh mục chủ yếu là phòng thủ
+      Cả cho họ và đội của họ.
+      Có thể Hồi máu cho đồng đội
+
+      &e&lNhược Điểm
+      &cCác Phù thủy dễ bị Tổn Thương.
+      Chẳng hạn như mất rất nhiều máu
+      và sợ những hiệu ứng như Wither.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9Hư Không"
+    material: SPIDER_EYE
+    lore: |-
+      &3Hư Không rất nhanh, nhanh nhẹn và
+      cuộc tấn công của nó ra dã man.
+      Chuyên gia hit-and-run.
+      Vũ Khí Chính: &8Cúp
+
+      &e&lƯu Điểm
+      &2Không có gì có thể vượt qua một kẻ Hư Không,
+      vì họ có những kỹ thuật mạnh mẽ để
+      tránh xa nguy hiểm
+      và một cuộc tấn công ăn mòn không kém.
+
+      &e&lNhược Điểm
+      &cHư Không có khả năng phòng thủ yếu.
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 6
+    posy: 4
+  eidolon:
+    name: "&3Hắc Ám"
+    material: END_CRYSTAL
+    lore: |-
+      &3Hắc ám là linh hồn, theo định kỳ
+      thay đổi hình thức, chuyển đổi
+      giữa bóng tối và ánh sáng.
+      Vũ Khí Chính: &8Không có
+
+      &e&lƯu Điểm
+      &2Hắc ám có cả phòng thủ và tấn công
+      khả năng, và nếu được sử dụng một cách khôn ngoan,
+      có thể là một chiến binh cận chiến rất hiệu quả.
+      Càng Về đêm Hắc ám càng mạnh
+
+      &e&lNhược Điểm
+      &cKhả năng tấn công chủ yếu
+      ở dạng Dark của Hắc ám và ngược lại.
+      Phức tạp để làm chủ.
+      ban đêm mới mạnh , lúc sáng thì yếu
+
+      &3Yêu Cầu Level&8: &e%required-level%
+      &3Giá&8: &e%cost%
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 7
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

@@ -1,0 +1,145 @@
+name: "Priest"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-level: 100
+max-health: 20 * 6
+max-energy: lvl + 20
+energy-regen: 1 + 0.04 * lvl
+required-level: 20
+cost: 3000
+stats: [ DEX, DEF, INT ]
+energy: mana
+abilities:
+  priest-passive:
+    # Unused
+    scaling: int/10
+    # Interval in sconds for applying effects.
+    # Doesn't support formulas.
+    interval: 300
+    # Allow jesus water walking.
+    jesus: true
+    effects:
+      nether:
+        - "CONFUSION, 15, 1, max(100 - %skills_level%; 0)"
+      end:
+        - "BLINDNESS, 15, 1, max(100 - %skills_level%; 0)"
+  asclepius:
+    required-level: 20
+    range: '(lvl * 2) + 4'
+    # Set to 0 to disable.
+    spread-flower-chance: 100
+    damage: 0
+    heal: lvl * 5
+    effects:
+      - "NIGHT_VISION, lvl * 30, 1"
+      - "DAMAGE_RESISTANCE, lvl * 30, 1"
+      - "REGENERATION, lvl * 20, lvl, (lvl - 1) * 100"
+      - "ABSORPTION, lvl * 30, 1, (lvl - 1) * 100"
+    activation:
+      key: LR
+      energy: 20
+      cooldown: 30
+      items: [ "CONTAINS:HOE" ]
+    # Currently not used for anything.
+    scaling: lvl
+    cost: 100 * (lvl + 1)
+  kindling-of-life:
+    required-level: 1
+    effects: [ ]
+    debuffs: [ ]
+    activation:
+      key: R
+      energy: 10
+      cooldown: 5
+      items: [ ]
+    # Healing amount
+    scaling: (lvl + 1) * 2
+    cost: 100 * (lvl + 1)
+  mind-possession:
+    required-level: 5
+    # Used for the chance to use.
+    # Chance from 100
+    scaling: lvl * 10
+    cost: 100 * (lvl + 1)
+  seal-of-life:
+    required-level: 5
+    # Used for the cooldown between each use.
+    # The scaling defines the amount of seconds for cooldown.
+    scaling: 60 * (10 - lvl)
+    health: 10
+    effects:
+      - "REGENERATION, 5 * lvl, 1"
+      - "SPEED, 10 * lvl, 1"
+    cost: 100 * (lvl + 1)
+  purification:
+    required-level: 5
+    cost: 100 * (lvl + 1)
+
+    # The block radius of crops to be. This radius only works for xz axis.
+    # Note high radiuses can lag the server.
+    scaling: min(5 + (dex / 2), 20)
+
+    # Purification lvl 3:
+    # Note that this level only works for 1.13+
+
+    # Rate of growth is universal. It means you cannot change it per player.
+    # So no placeholders will work for this. You need to use a constant number.
+    # In ticks. 20 ticks = 1 sec
+    # You need to restart the server for this to change.
+    rate: 20
+  natures-force:
+    required-level: 50
+    activation:
+      idle: 5
+      key: LLR
+      energy: 1
+      cooldown: 17
+      items: [ ]
+    # The damage that bees apply.
+    scaling: lvl * 2
+    interval: 10 - (lvl * 2)
+    duration: lvl * 10
+    cost: 100 * (lvl + 1)
+  natures-call:
+    required-level: 20
+    scaling: 20
+    cost: 100 * (lvl + 1)
+    # Time in seconds the minions are allowed to fight.
+    time: lvl * 30
+    # Amount of foxes.
+    amount: lvl + 1
+    effects:
+      - "SPEED, 30 * 20, lvl"
+      - "STRENGTH, 30 * 20, 1, 50"
+    activation:
+      idle: 5
+      key: LSR
+      energy: 20
+      cooldown: 20
+      items: [ "CONTAINS:HOE" ]
+  barrier:
+    required-level: 20
+    cost: 100 * (lvl + 1)
+
+    # The duration of the barrier in seconds.
+    duration: lvl * 30
+    # The frequency of barrier entity checks (potions, damages, pushes and etc) in ticks.
+    # Very low frequencies (under 10) might lag the server.
+    frequency: 10
+
+    radius: 3 + lvl
+    knockback: lvl * 2
+    damage: str / lvl
+    effects:
+      - "POISON, 30 * 20, lvl"
+      - "WEAKNESS, 30 * 20, 1, 50"
+    friendly-effects:
+      - "SPEED, 30 * 20, lvl"
+      - "STRENGTH, 30 * 20, 1, 50"
+    activation:
+      idle: 5
+      key: LSS
+      energy: 20
+      cooldown: 20
+      items: [ "GOLDEN_HOE" ]

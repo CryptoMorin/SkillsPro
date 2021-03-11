@@ -1,0 +1,245 @@
+# GUIs have a lot of custom options you can use.
+# All the options that support strings also support placeholders.
+# First the settings for GUI itself are:
+# title: The title of the GUI.
+# rows: The rows of a chest GUI.
+# type: If no rows is specified, then a GUI type is used.
+# sound: The sound played when the GUI is opened.
+# commands: [string] A list of commands executed when the GUI is opened.
+# interactableSlots: [integers] A list of slot positions that can be interacted with. Interactable slots are slots that any
+# items placed in that slot can be taken or a new item can be put:
+
+# Options for each GUI item (option):
+# The name of the option is optional, but in special cases these names are used to execute a code.
+# For example all the options named with the skill name should be kept like that. Only the option name of the few glass options at the end can be changed.
+# name: The name of the item.
+# material: The material of the item. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# lore: [] A list of strings for item lore. Lores support line breaks \n and they'll even keep their previous color from the last line!
+# unbreakable: true/false if the item should be unbreakable.
+# commands: [string] A list of commands executed when item is clicked.
+# sound: The sound to play when item is clicked.
+# can-take: true/false if this item can be taken. But no item can be placed after that. To do that set the slot as an interactable slot in the GUI option.
+# posx, posy, slot, slots: Set the position of the item in the GUI. posx and posy should be used together or use the raw slot number with "slot" and place the item in multiple
+# slots using "slots: [numbers]"
+# click: Click type. If none is specified default is left-click. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html
+# flags: [] A list of item flags. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+
+# Other than the normal options for items such as name, material and lore, there are a lot of other options.
+# amount, damage, enchants, model-data, attributes and etc...
+# A popular one is "skull" You need to set the material as PLAYER_HEAD for this to work.
+# The skull property allows one of the following values: Player Name, Minecraft Textures URL, Base64 (value signature)
+# Using the base64 value is always better since it doesn't need caching or connecting to Mojang for the texture.
+# You can find custom heads in websites like https://minecraft-heads.com
+
+title: "&8&l-=( &4&l职业 &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&b剑士"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3剑士是近战的专家
+      可以造成高额的伤害
+      并且有着强大的近战能力
+
+      &e&l优点
+      &2剑士擅长一对一作战,
+      他们能运用自己娴熟的技巧,
+      将单个敌人玩弄于股掌之间
+
+      &e&l弱点
+      &c剑士没有强大的远程攻击能力,
+      这导致他们难以应付远程攻击
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7黑骑士"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3坚如磐石的战士,
+      黑骑士拥有强大的防御力,
+      可以承受很多伤害.
+
+      &e&l优点
+      &2可以使用强大的防御技能,
+      苟到最后才能赢.
+
+      &e&l弱点
+      &c没有有效的输出能力.
+      虽然坚如磐石,
+      但如果无法对敌人造成足够的伤害
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&d法师"
+    material: GOLDEN_HOE
+    lore: |-
+      &3法师擅长使用攻防魔法
+      运用手中的法杖来向敌人施展法术
+
+      &e&l优点
+      &2法师有多种不同类型的技能
+      能根据战场状况进行实时切换
+
+      &e&l弱点
+      &c法师非常依靠法力,
+      法力消耗完毕后与常人无异
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&c爆裂法师"
+    material: BLAZE_POWDER
+    lore: |-
+      &3爆裂法师不同于法师,
+      他们专精于火系法术并无惧火焰,
+      虽然无法使用法杖,
+      但是可以消耗自身的生命值为法术充能.
+
+      &e&l优点
+      &2可以以消耗自身的生命值为代价,
+      给予敌人毁灭性的打击
+
+      &e&l弱点
+      &c爆裂法师对防火的目标束手无策
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5弩手"
+    material: BOW
+    lore: |-
+      &3弩手主要使用弩进行战斗，
+      并能依据战场状况切换作战风格.
+
+      &e&l优点
+      &2在有效距离内,
+      弩手可以在牵制住敌人的同时造成大量的伤害
+
+      &e&l弱点
+      &c弩手在近战中无法发挥优势,
+      只依靠击退来保持距离.
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4吸血鬼"
+    material: REDSTONE
+    lore: |-
+      &3吸血鬼既庄严又危险
+      身为恶魔的他有着能隐藏身形和自我恢复的能力
+
+      &e&l优点
+      &2有着丰富的自我恢复能力,
+      并且攻击可以消耗掉对手的法力.
+
+      &e&l弱点
+      &c尽管吸血鬼的能力丰富,
+      但对高机动性的敌人难施拳脚
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ENTITY_BAT_AMBIENT
+    posx: 3
+    posy: 4
+  priest:
+    name: "&2牧师"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3牧师是团队中的重要角色
+      他们能给队友们提供帮助
+      并且有着独特的生存技能
+
+      &e&l优点
+      &2牧师可以给自身
+      以及队友提供额外的防御辅助
+
+      &e&l弱点
+      &c牧师容易受到环境的影响
+      在末地时,会受到使你致盲的末地诅咒.
+      在地狱时,你会因为水土不服而导致反胃
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9猎杀者"
+    material: SPIDER_EYE
+    lore: |-
+      &3猎杀者移动迅速,动作敏捷,攻击力强,
+      是游击战专家
+
+      &e&l优点
+      &2没有什么能追上猎杀者,
+      他们有丰富的经验可以闪避各种危机,
+      还有着可以对敌人造成腐蚀伤害的能力
+
+      &e&l弱点
+      &c猎杀者的防御能力低下.
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 6
+    posy: 4
+  eidolon:
+    name: "&3元素精灵"
+    material: END_CRYSTAL
+    lore: |-
+      &3元素精灵是以灵体状态显现的,
+      它能有规律的在黑暗与光明中切换
+
+      &e&l优点
+      &2元素精灵有着可以在进攻与防御模式下切换的能力,
+      熟练的掌握后能让敌人无法招架
+
+      &e&l弱点
+      &c黑暗形态的进攻模式和光明形态的防御模式
+      难以熟练掌握并且容易被人看破
+
+      &3所需等级&8: &e%required-level%
+      &3花费&8: &e%cost%
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 7
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

@@ -1,0 +1,826 @@
+# Use plugin's prefix on every message.
+# When this option is enabled, you can use "NOPREFIX:" prefix in every message
+# to exclude that message from using the prefix.
+prefix: false
+
+# The language file name.
+# Place your translated file in the plugin's folder.
+# The file's name should be the same as the option below without the .yml file extension.
+# Some of these language files are outdated.
+# Standard way of naming this is to follow IETF language tags.
+# from IETF (https://en.wikipedia.org/wiki/IETF_language_tag) use ISO-639-1 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+# If you translated the plugin you can contact me and I'll add it to the plugin.
+# Available Languages:
+# en (English), vi (Vietnamese), ru (Russian), zh (Chinese), pt (Portuguese), th (Thai), fr (French)
+lang: en
+
+# For bug tracking purposes.
+debug: false
+
+# Check for updates on Spigot.
+# You can also check using /skills update
+check-updates: true
+
+# Currently the only method available is JSON.
+database: JSON
+load-all-data-on-startup: true
+# The interval in seconds that the auto-save should
+# save data to the database. It's recommneded to keep
+# it what it is, but if you have a larger server it'd be
+# better to use a higher amount.
+# Supports time suffixes.
+autosave-interval: 30mins
+
+# Announce auto saves.
+announce-autosaves: true
+
+# If players should pay for switching classes that they have
+# bought once before.
+buy-class-once: true
+
+# What data should be reset when the player changes their skill?
+# Also refer to skills-shared-data
+skill-change-reset:
+  # Level and XP
+  level: false
+  souls: false
+  # Ability levels and disabled abilities.
+  abilities: false
+  stats: false
+  masteries: false
+
+# Player's default data when they join.
+starter:
+  enabled: false
+  level: 50
+  souls: 0
+  # 0-3
+  abilities-level: 3
+  masteries: 0
+  stats:
+    str: 0
+    def: 0
+    dex: 0
+    int: 0
+
+skills-shared-data:
+  souls: true
+  levels: false
+  stats: false
+
+# Backups are taken every day, after server starts or the plugin is reloaded.
+backups:
+  enabled: true
+  # If this is enabled then every time the server is restarted
+  # it'll take a backup without considering if there's already
+  # a backup taken for today (without overwriting the previous one.)
+  ignore-todays-backup: false
+  # Deletes backups automatically that are older than this amount of days.
+  # Set to 0 to disable.
+  delete-backups-older-than: 30
+
+disabled-worlds:
+  # Worlds that this plugin is completely disabled in them
+  # other than normal functioning stuff, like commands.
+  plugin: [ ]
+  soul-loss: [ ]
+  soul-gain: [ ]
+  xp-gain: [ ]
+  xp-loss: [ ]
+
+# The particle displayed when player goes to "ready" state for
+# non-instant active abilities.
+ready-particle:
+  particle: SPELL_WITCH
+  amount: lvl * 10
+  offset: 0.1
+
+# The decimal precision for doubles (numbers).
+# Redundant precisions such as 20.00 will be shown as 20.0
+precisions:
+  # %skills_health% and %skills_max_health% placeholders.
+  healths: 2
+  # %skills_energy% and %skills_max_energy% for the precise value use
+  # %skills_precise_energy% and %skills_max_precise_energy% which is useful for scalings.
+  energy: 1
+
+# The plugin will give the kill rewards to the player who did
+# the most damage.
+# Requires a restart to work.
+smart-damage: true
+
+# Health scalings are players fake healths.
+# Set to 0 to not change.
+# Players can still change their HP scaling using /skill hpscaling
+default-health-scaling: 0
+
+# Mobs and players will bleed (fake blood) when you hit them.
+blood:
+  enabled: true
+  disabled-mobs: [ ]
+  # Format: Effect, Material, Count
+  # Effects: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html
+  # Materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  # Entities: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+  default: STEP_SOUND, REDSTONE_BLOCK, 10
+  shield: STEP_SOUND, OAK_WOOD, 10
+  custom-mobs:
+    WITHER_SKELETON: STEP_SOUND, BLACK_SHULKER_BOX, 10
+    VINDICATOR: STEP_SOUND, CLAY, 10
+    VEX: STEP_SOUND, BEDROCK, 10
+    STRAY: STEP_SOUND, BONE_BLOCK, 10
+    SKELETON_HORSE: STEP_SOUND, BONE_BLOCK, 10
+    SKELETON: STEP_SOUND, BONE_BLOCK, 10
+    SHULKER: STEP_SOUND, CHORUS_FLOWER, 10
+    HUSK: STEP_SOUND, SAND, 10
+    MAGMA_CUBE: STEP_SOUND, MAGMA, 10
+    MUSHROOM_COW: STEP_SOUND, RED_MUSHROOM, 10
+    ENDER_DRAGON: STEP_SOUND, CHORUS_PLANT, 10
+    ENDERMITE: STEP_SOUND, CHORUS_PLANT, 10
+    ENDERMAN: STEP_SOUND, CHORUS_PLANT, 10
+    EVOKER: STEP_SOUND, CLAY, 10
+    GHAST: STEP_SOUND, QUARTZ_BLOCK, 10
+    CREEPER: STEP_SOUND, GREEN_GLAZED_TERRACOTTA, 10
+    ELDER_GUARDIAN: STEP_SOUND, PRISMARINE, 10
+    GUARDIAN: STEP_SOUND, PRISMARINE, 10
+    BLAZE: STEP_SOUND, GOLD_BLOCK, 10
+    SLIME: STEP_SOUND, SLIME_BLOCK, 10
+    ZOMBIE_HORSE: STEP_SOUND, SLIME_BLOCK, 10
+
+# Only works for 1.13+
+# NOTE: THIS IS AN EXPERIMENTAL FEATURE.
+last-breath:
+  # Only takes effect after a restart.
+  enabled: false
+
+  # The amount of damage the player can handle before
+  # going into Last Breath mode.
+  # If the last applied damage (from any source)
+  # is higher than this, the player will die instantly.
+  intensity-resistance: 10
+
+  # In seconds after the player is about to die.
+  invulnerability: 15
+
+  # In seconds
+  bleed-out: 60
+
+  # The damage that the player can do while in
+  # their Last Breath mode.
+  damage: 0.001
+
+  revive:
+    # The amount of time in seconds that the reviving
+    # process must be applied.
+    time: 10
+
+    # In blocks
+    distance: 2.5
+
+# Call of Duty red screen.
+red-screen:
+  enabled: true
+
+  # In seconds.
+  # The duration until the screen is clear again.
+  duration: 10
+
+  # Health percent to start showing the red screen.
+  health: 50
+
+# Heart beat pulse when on low health.
+pulse:
+  enabled: true
+  # In ticks.
+  # While the pulse sound and delay might change,
+  # this will count every single tick ignoring other checks.
+  duration: 200
+
+  # Health percent to start the heartbeat.
+  # The delay between each heartbeat increases as the
+  # the health stabilizes (doesn't get hit)
+  health: 20
+
+  # There are two heart sounds for each heartbeat called "lub" and "dub"
+  # The delay between lub and dub doesn't usually change.
+  # It's the delay between each heartbeat that changes.
+  # https://en.wikipedia.org/wiki/Heart_sounds
+  lub: BLOCK_NOTE_BLOCK_BASEDRUM
+  dub: BLOCK_NOTE_BLOCK_BASEDRUM
+
+# The action bar is used to display levels, souls health status and energy
+# above players hotbar.
+# This does NOT require ActionBarAPI plugin.
+actionbar:
+  # Server needs to be restarted if this option is changed.
+  enabled: true
+
+  # If this should be enabled by default for new players.
+  # They can change it later with /k actionbar regardless of this option.
+  default: true
+
+  # The update frequency of ActionBar in ticks.
+  # Flicker Mode: If set to 0, the actionbar will only show once when you
+  # kill a mob or use active abilities.
+  # Server needs to be restarted if this option is changed.
+  frequency: 10
+
+  normal: '&8-=( %skills_status% &9∫ %skills_energy_string%&l%skills_energy_symbol%
+    &9∫ &3Lvl. &e%skills_short_level% &9∫ &3%skills_short_xp%&8/&3%skills_short_maxxp%
+    &9∫ &3%skills_short_soul% &9∫ &3%skills_active_cooldown% &8)=-'
+  activated-skill: '&4-=<=[ %skills_status% &c︴ %skills_energy_string%&l%skills_energy_symbol%
+    &c︴ &6ℒνℓ. &e%skills_short_level% &c︴ &6%skills_short_xp%&8/&6%skills_short_maxxp%
+    &c︴ &6%skills_short_soul% &4]=>=-'
+  status:
+    ok: '&2❤'
+    poisoned: '&5☣'
+    lowhealth: '&4♥'
+    activated: '&0&o❦'
+  cooldown:
+    ready: '&200 ⌛'
+    not-ready: '&c%time% ⌛'
+  energy:
+    charged: '%skills_energy_color%❘'
+    empty: '&8❘'
+    full: '%skills_energy_color%&o❘'
+    full-second: '&0&o┃'
+
+# Set if bossbar should be used for any of the following events.
+# Only works for 1.9+
+# A weird bug is that some server builds don't support title colors.
+# There is also a weird workaround to fix it by just installing PlaceholderAPI.
+# Colors: PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE
+# Styles: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+# Properties: DARKEN_SKY, PLAY_BOSS_MUSIC, CREATE_FOG
+bossbar:
+  levels:
+    enabled: true
+    # If the bossbar should be frequently updated like the ActionBar.
+    # Set to 0 to disable. When disabled, it only updates when you gain XP.
+    # When set to a negative value, this bossbar will only show when XP is gained and will stay the amount of seconds specified below.
+    frequency: 0
+    title: "&3Lvl. &e%skills_fancy_level%  &7|  &6%skills_fancy_xp%&8/&6%skills_fancy_maxxp%"
+    color: GREEN
+    style: SEGMENTED_12
+    flags: [ ]
+  # For skill XP/Soul events
+  events:
+    enabled: true
+    title: "&3x%multiplier% %type% Event &7- &e%time%"
+    color: RED
+    style: SEGMENTED_20
+    flags: [ DARKEN_SKY, PLAY_BOSS_MUSIC, CREATE_FOG ]
+  # For skill XP/Soul bonuses
+  bonuses:
+    enabled: true
+    title: "&3x%multiplier% %type% Bonus &7- &e%time%"
+    color: RED
+    style: SEGMENTED_20
+    flags: [ DARKEN_SKY, PLAY_BOSS_MUSIC, CREATE_FOG ]
+
+# Uses the player's experience bar to sync Skill levels.
+vanilla-exp-bar:
+  enabled: true
+  # If both xp number and the level bar should be actually replaced by skills XP and levels.
+  # You cannot use vanilla EXP and levels if you use this.
+  real-sync: false
+  # The shown number on the EXP bar.
+  # level: Skills Level.
+  # xp: Skills XP.
+  # souls: Skills souls.
+  shown-number: level
+
+sync-enchantment-tables:
+  enabled: false
+
+  # If the enchantment table level should be based on the player level
+  # instead of the bookshelves around it. You can use "lvl" placeholder for the current
+  # unmodified table level.
+  # Set to -1 to disable.
+  requirement-level-equation: '%skills_level%'
+
+  # What should be used for enchantment costs?
+  # vanilla: Use the vanilla levels.
+  # xp: Use skills XP.
+  # souls: Use skills souls.
+  # levels: Use skills levels.
+  cost-type: souls
+
+# Disabled commands.
+disabled-commands: [ ]
+
+# Each command to show on the help pages /skills help <number>
+commands-each-page: 5
+
+# Allowed delay in milliseconds between each key press when
+# activating an ability with combo activation keys.
+# You can read more about activation keys in skills.yml
+skill-activation-time: 500
+
+# Disable fire animation when players are in creative mode.
+# This is useful specially for builders so it doesn't block their screen.
+disable-creative-fire: true
+
+# The time format used for events, bonuses and skill change cooldown.
+# yyyy = year
+# wwww = weeeks, wwwwa = absolute weeks
+# dd = 00 days, dda = absolute days.
+# hh = 00 hours, hhf = hours, hha = absolute 00 hours, hhaf = absolute hours.
+# mm = 00 mins, mmf = mins, mma = absolute 00 mins, mmaf = absolute mins.
+# ss = 00 seconds, ssf = seconds, ssa = aboslute 00 seconds, ssaf = aboslute seconds.
+# mss = milliseconds.
+time-format: "hha:mm:ss"
+
+# Economy settings for soul and money conversion.
+# /skills souls command.
+economy:
+  # Allow depositing souls for money.
+  deposit:
+    enabled: true
+    soul-worth: 50.0
+  # Allow withdrawing money for souls.
+  withdraw:
+    enabled: true
+    soul-worth: 50.0
+
+# If the message (kill-message) from the language file should be sent.
+kill-message: false
+
+# Disable skill abilities in WorldGuard regions that have PvP flag off.
+disable-abilities-in-regions: true
+
+# The Discord channel used to log party messages.
+# Set to "$console" to use the console channel or "$main" to use the main chat channel.
+# You can use either the channel name, or ID.
+# This option is not compatible with DiscordSRV settings due keeping the party chat format. This is an issue DiscordSRV needs to take care of.
+discordsrv-party-channel: '$main'
+
+# Show a hologram when you kill a mob or a player.
+hologram:
+  enabled: true
+  # By default if the hologram is near an entity,
+  # you won't be able to hit that entity if the hologram is in the way.
+  # The only way to fix this is to set the armorstand static.
+  # Static armorstands cannot have any animation. They cannot have the levitation effect either.
+  static: false
+
+  # Vector offsets are random locations generated for holograms to
+  # do a coin pop animation like RPG games.
+  # It has maximum and minimum values.
+  # If static is set to true this will be used
+  # as the random location the hologram will spawn.
+  offset:
+    x: -0.7, 0.7
+    y: 0.3, 0.5
+    z: -0.7, 0.7
+  # The number of ticks for the hologram to stay.
+  # 20 ticks = 1 second
+  stay: 40
+  # Potion effect, duration (in seconds), level (potency).
+  # Potion effect should be always levitation. Anything else is useless.
+  # The duration should be same as the "stay" ticks.
+  # The level changes the speed. You can read about it here: https://minecraft.gamepedia.com/Levitation
+  # If you don't want it, just set the whole thing to "none"
+  effect: LEVITATION, 2, 1
+  lines:
+    - "&3Souls&8: &2+%souls%"
+    - "&3XP&8: &2+%xp%"
+
+  # Mobs that shouldn't show the hologram when killed.
+  # You can find a list of mob types here (case-sensitive): https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+  disabled-mobs: [ ]
+
+  # %damage% and %direct_damage%
+  damage-indicator: [ "&4%damage%" ]
+  damage-indicator-precision: 2
+
+# Custom XP for each mob.
+# For all the types use TYPE: prefix
+# or just write the custom name of that mob.
+# Custom mob plugin (MythicMobs, EliteMobs and etc...) internal names are supported add "CUSTOM:<internal name>"
+# Supports names too. For example if you have a mob from
+# MythicMobs named "SkeletonKing" you can put it in the list.
+# "CUSTOM:SkeletonKing": 10
+# Using mob type:
+# "TYPE:ZOMBIE": 10
+# Checking if a mob's name (not their type, their invisible name if they have one) contains something.
+# "CONTAINS:ION": 10
+# Note for color codes you need to use quotes.
+# If the entity type is not specified below, the default is the dropped vanilla EXP.
+# Equations are also supported as well as placeholders. One special placeholder is "lvl" which is used
+# if your custom mob plugin supports mob levels.
+# Important: The order of this list matters! For example:
+# "TYPE:WITHER_SKELETON": 30
+# "CUSTOM:SkeletonKing": 40
+# This will not work because the first entry is prioritized over the second one. And since SkeletonKing
+# is a wither skeleton (MythicMobs default), you'll get 30 instead of 40.
+xp:
+  "TYPE:PLAYER": 20
+  "TYPE:SKELETON": 30
+
+# Custom souls for each mob.
+# It uses the same system as custom XP.
+# Please read how the XP list works above. All the rules apply here as well.
+souls:
+  "TYPE:PLAYER": 2
+  "TYPE:WITHER": 100
+  "TYPE:ENDER_DRAGON": 500
+  "CONTAINS:TON": 10
+
+# How should XP and souls be handled for spawners?
+spawners:
+  # Both of these support placeholders and their own special gained %xp% and %souls% placeholders.
+  xp: "%xp% / 3"
+  souls: 0
+
+# Prevent activating skills.
+# Supports "CONTAINS" and "REGEX" prefixes
+# CONTAINS: Used to check any item that contains this name.
+#   e.g. "CONTAINS:BOW" -> BOW, CROSSBOW
+# REGEX: Used to matfch Regular Expression item names.
+# Want to learn RegEx? Check out https://regexr.com/
+# It's recommended not to use RegEx for performance.
+prevent-activation:
+  # When clicking with an item.
+  items:
+    - FLINT_AND_STEEL
+    - CONTAINS:BUCKET
+    - CONTAINS:EGG
+    - CONTAINS:POTION
+    - POTION
+    - CONTAINS:SEED
+    - BROWN_MUSHROOM
+    - RED_MUSHROOM
+    - NETHER_WART
+    - NETHER_STALK
+  # When right-clicking a block.
+  blocks:
+    - BARREL
+    - BEACON
+    - BREWING_STAND
+    - CAMPFIRE
+    - CHEST
+    - COMPOSTER
+    - DISPENSER
+    - DROPPER
+    - ENCHANTING_TABLE
+    - ENDER_CHEST
+    - FARMLAND
+    - GRINDSTONE
+    - HOPPER
+    - LECTERN
+    - LEVER
+    - LOOM
+    - SMOKER
+    - STONECUTTER
+    - TRAPPED_CHEST
+    - CONTAINS:ANVIL
+    - CONTAINS:BOAT
+    - CONTAINS:DOOR
+    - CONTAINS:FURNACE
+    - CONTAINS:GATE
+    - CONTAINS:SIGN
+    - CRAFTING_TABLE
+
+# If the player was killed by a natural element.
+# Supports formulas.
+souls-loss-upon-death: 5
+
+# The amount if souls you lose will be the amount of the souls
+# as if you killed the killer.
+# If the player was not killed by someone, the option above will be used.
+# So technically by default, if you suicide, you lose 2 souls because that's
+# the amount you get for killing a player.
+lose-same-souls-as-killer-souls-gain: true
+
+# If the player was killed by a natural element.
+# Supports formulas.
+xp-loss-upon-death: 100
+
+# The amount if souls you lose will be the amount of the souls
+# as if you killed the killer.
+# If the player was not killed by someone, the option above will be used.
+lose-same-xp-as-killer-xp-gain: true
+
+# Minimum level to activate the XP and soul loss option for a player.
+loss-min-level: 0
+
+# The default skill selected when players join the server.
+default-skill: none
+
+# Maximum allowed level for players with no skill.
+default-max-level: 100
+
+# Open skill selection GUI for new players automatically.
+auto-select-on-join: true
+
+close-gui-on-damage: false
+
+# Use a GUI for /skill info
+use-info-gui: true
+
+# Set to 0 for no cooldown.
+# If you want players to not change their skill simply just remove
+# skills.change permission.
+# Any format can be used.
+# 10d = 10day = 10days
+# 100m = 100min = 10minute = 10minutes
+# etc...
+skill-change-cooldown: 7 days
+
+# If fireworks and particles should be displayed when a player levels up.
+level-celebration: true
+
+# If a level is not specified the properties from the last level will be used.
+# When adding a new level entry, only the properties for that entry will be used for that level or higher.
+# E.g. level 10 and 20 have custom properties. If a player levels up to 12 then
+# the properties from level 10 will be used.
+# Use the "lvl" or "%lvl%" (for messages) for the new level.
+# Since %skills_level% will return the current level before leveling up.
+levels:
+  # Level 0 is necessary. It's the default level property.
+  0:
+    message: "&8[&6%skills_maxxp%XP &7-> &6%next_maxxp%XP&8] &3You've leveled up to &e%lvl%&3! Gained &e%gained_souls% &3souls and &e%gained_stats% &3statpoints."
+    title:
+      title: "&3Level Up!"
+      subtitle: "&8[&6%skills_maxxp%XP &7-> &6%next_maxxp%XP&8] &3Level %lvl%"
+      fade-in: 20
+      stay: 50
+      fade-out: 20
+    souls: "lvl"
+    xp: "((lvl + 1) ^ 2) * 50"
+    statpoints: "lvl / 2"
+    commands: [ ]
+
+# With armor weights you can change the speed of the players when they
+# wear a specific armor. The speed is not changed by the slowness potion effect.
+# Use skills.armorweight.bypass permission to disable for certain players.
+# You can use negative weights for more speed.
+# The weight is not measured in kg or pounds, it's simply just a number for player speed.
+# Normal player speed is 0.2, by putting each armor piece you decrease/increase this value.
+# Total player speed must be between -1 and 1
+# This is not compatible with plugins that change your speed.
+armor-weights:
+  # WARNING: If you disable armor weights after players left with armor on
+  # the speed will remain.
+  enabled: false
+
+  # In case you fucked up and enabled the option or
+  # just decided to disable it cus why not...
+  # This option will reset all the players speed on startup.
+  # You should disable it after it ran once.
+  reset-speeds:
+    enabled: false
+    amount: 0.2
+
+  # Weights for normal armors with specific types.
+  # The list here is measured by comparing the real life compounds.
+  weights:
+    GOLD_HELMET: 0.01
+    GOLD_CHESTPLATE: 0.03
+    GOLD_LEGGINGS: 0.02
+    GOLD_BOOTS: 0.008
+
+    IRON_HELMET: 0.008
+    IRON_CHESTPLATE: 0.015
+    IRON_LEGGINGS: 0.01
+    IRON_BOOTS: 0.005
+
+    DIAMOND_HELMET: 0.001
+    DIAMOND_CHESTPLATE: 0.09
+    DIAMOND_LEGGINGS: 0.005
+    DIAMOND_BOOTS: 0.002
+  # Custom armor weights. These weights override the weights
+  # from the above list if the properties match.
+  # Custom armors are identified by their name, lore and type.
+  # These are optional, you can use one of them or all of them.
+  custom:
+    # Any name is acceptable.
+    warrior:
+      # Name and lore strings will check if the armor
+      # contains this string in its name or lore.
+      name: "&cWarrior Chestplate"
+      # For lore it checks every line to see if the string contains this.
+      lore: "Contains this string in the lore..."
+      type: DIAMOND_CHESTPLATE
+      weight: 0.05
+
+# Stats types also known as player attributes. Can be accessed from /skills stats
+# The placeholder for the levels are %skills_stat_<node>%
+# Each stat has its own node. The node is the nickname and the data
+# string used to save stats in players data case-insensitive.
+# So if you change the node all the players will lose their previous data.
+# The node for the POINTS stat is defined with "pts" and should always be defined.
+stats:
+  # Allow resetting stats from the Stat GUI
+  allow-reset: true
+  # Cost to reset stats.
+  reset-cost: 0
+
+  types:
+    str:
+      name: Strength
+      color: '&6'
+      max-level: 100
+    int:
+      name: Intelligence
+      color: '&9'
+      max-level: 100
+    dex:
+      name: Dexterity
+      color: '&d'
+      max-level: 100
+    def:
+      name: Defense
+      color: '&c'
+      max-level: 100
+    # Points is always named PTS
+    pts:
+      name: Points
+      color: '&2'
+
+# The items used in /k shop command.
+# Item costs are souls.
+skills-items:
+  xp:
+    name: "&2Skills XP&8: &910"
+    skills-item-type: 'XP: 10'
+    material: EXPERIENCE_BOTTLE
+    cost: 5
+  energy-booster:
+    name: "&2Energy Booster&8: &95 &7- &9One minute"
+    cost: 10
+    material: POTION
+    skills-item-type: 'ENERGY_BOOSTER: 5, 60'
+    # RGB Potion Color
+    color: 255, 0, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+  energy-potion:
+    name: "&2Energy Potion&8: &950"
+    cost: 10
+    material: POTION
+    skills-item-type: 'ENERGY_POTION: 50'
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 0, 255, 0
+
+# The energy types that skills can use.
+# The charging is the type of charging method the energy uses.
+# AUTO - Automatically charge the energy.
+# AUTO_REVERSE - Automatically decharge the energy.
+# HIT - Hit entities to charge.
+# KILL - Kill entities to charge.
+
+# The elements is a list of types for the charging type.
+# For example if charging method is AUTO_REVERSE this element is
+# a list of mob names that you can hit to regenerate.
+# Same for HIT and KILL
+# However the element list doesn't do anything for the AUTO method.
+# Requires server restarts for some changes to apply.
+energy:
+  mana:
+    name: Mana
+    # ✦✩✪✫✭✮✯⁂✾✤❅✸❃❇✳✵
+    symbol: '✭'
+    color: '&e'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: BLOCK_BEACON_POWER_SELECT
+    charging: AUTO
+    elements: [ ]
+  health:
+    name: Health
+    symbol: '❤'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: ENTITY_GENERIC_DRINK
+    color: '&c'
+    charging: HIT
+    elements: [ ]
+  arrows:
+    name: Arrows
+    symbol: '➶'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: ENTITY_ARROW_HIT
+    color: '&6'
+    charging: AUTO
+    elements: [ ]
+  imbalance:
+    name: Imbalance
+    symbol: '۞'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: BLOCK_CONDUIT_ACTIVATE
+    color: '&9'
+    charging: AUTO
+    elements: [ ]
+  blood:
+    name: Blood
+    symbol: 'ծ'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: ENTITY_BAT_AMBIENT
+    color: '&4'
+    charging: AUTO_REVERSE
+    elements: [ ]
+
+friends:
+  # Should friends be able to attack each other?
+  friendly-fire: false
+  # Currently doesn't support placeholders.
+  max-friends: 50
+  # Teleporting to a friend /skills friendtp
+  teleport:
+    enabled: true
+    should-not-move: true
+    delay-before-move-check: 3
+    timer: 5
+    request-time: 60
+
+party:
+  # Party chat format that can be toggled with /skills party chat
+  chat-format: "&7[&5%skills_party_name%&7]&8|&7[&5%skills_party_rank%&7] %displayname% &8≫ &d"
+  spy-format: "&7[&5SPY&7] &7[&5%skills_party_name%&7]&8|&7[&5%skills_party_rank%&7] %displayname% &8≫ &d"
+  # Should party members be able to attack each other?
+  friendly-fire: false
+
+  max-members: 50
+
+  # If distribute is false, these numbers will be added to the collected souls/xp,
+  # otherwise if true, this is the number of souls/xp that will be given to party members.
+  # Placeholder that can be used for both souls and XP: members-in-range
+  # This placeholder is all the ONLINE members if members-max-distance is set to 0, otherwise all the ONLINE members in RANGE.
+  distribute: true
+  # Placeholder: souls
+  souls-per-member: 'souls'
+  # Placeholder: xp
+  xp-per-member: 'xp / 2'
+
+  # The max distance to increase the gained souls and XP.
+  # Set to 0 for none.
+  # Note that high values will lag the server.
+  # If distribute is true, the xp and souls will only be distributed between the
+  # party members that are in this range.
+  # It's also used to parse members-in-range placeholder for the options above.
+  members-max-distance: 0
+
+# Placeholder Format: %skills_cosmetic_<name>%
+# E.g. %skills_cosmetic_race%
+# GUI Path: guis/<lang>/<name>
+# E.g. guis/en/race
+# Note that changing the internal names can cause players to lose their cosmetic data.
+# Changing the displayname and the color is safe.
+cosmetics:
+  race:
+    command:
+      # /skills race
+      # Subcommands are not supported.
+      name: race
+      description: "&3Choose your race"
+    # %skills_cosmetic_race%
+    elements:
+      # None element should always be in all cosmetics which indicates
+      # that the player is not in the group yet (or chose it manually if in the GUI)
+      # The internal name should not be renamed and must be "none"
+      none:
+        displayname: "None"
+        color: "&e"
+      Angel:
+        # %skills_cosmetic_race_displayname%
+        displayname: "Angel"
+        # %skills_cosmetic_race_color%
+        color: "&a"
+      Demon:
+        displayname: "Demon"
+        color: "&4"
+      Fallen-Angel:
+        displayname: "Fallen Angel"
+        color: "&0"
+      #religion:
+      # etc etc
+
+mythicmobs:
+  # Level margin compares the level of the MythicMob to the player.
+  # The worlds enabled here will go thro this check.
+  worlds-with-level-margin: [ ]
+  # The conditions below are evaluated from JavaScript.
+  # The final result must be a boolean, so only player placeholders
+  # that can return a number to compare with are supported.
+  # Special placeholder: %level% - the level of the MythicMob.
+  # If only one of these conditions are met, the gained amount will be set to 0
+
+  # Simple stuff: "||" means "or" | "&&" means "and" | "==" means "is equal to?" | "<=" means "is less or equal" | ">=" means "is greater or equal"
+  # In this list each line is basically || for the next line, they could be all put in one line, but it's a list for readability.
+  # You can use parentheses. To use math functions you need to
+  # use "Math." before using it. So for example to use abs(-2) write Math.abs(-2)
+  # You can see a list here: https://www.w3schools.com/js/js_math.asp
+
+  # The example below denies any soul/xp gain when the level difference
+  # between the MythicMob and the player is greater than 10
+  xp-conditions:
+    - '%skills_level% > %level% && %skills_level% - %level% > 10'
+    - '%skills_level% < %level% && %level% - %skills_level% > 10'
+  soul-conditions:
+    - '%skills_level% > %level% && %skills_level% - %level% > 10'
+    - '%skills_level% < %level% && %level% - %skills_level% > 10'

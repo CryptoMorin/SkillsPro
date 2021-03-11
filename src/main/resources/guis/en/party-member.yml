@@ -1,0 +1,19 @@
+title: "&8-=( &3&lParty &8)=-"
+type: HOPPER
+sound: BLOCK_CHEST_LOCKED
+
+options:
+  kick:
+    name: "&4Kick &2%player%"
+    material: BARRIER
+    slot: 0
+  mod:
+    isMod:
+      condition: "%mod%"
+      name: "&4Demote &2%player%"
+      material: GREEN_WOOL
+    else:
+      condition: true
+      name: "&2Promote &2%player%"
+      material: RED_WOOL
+    slot: 3

@@ -1,0 +1,112 @@
+title: "&8-=( &6&lСТАТЫ &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+# Use the lowercase name of your stat node followed by "-add" or "-add-all" suffix.
+options:
+  str-add:
+    name: "&6STR&8: &e%skills_stat_str%"
+    material: IRON_SWORD
+    lore: [ "&3Добавить одно очко в стат &6STR" ]
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  str-add-all:
+    name: "&6STR&8: &c%skills_stat_str%"
+    lore: [ "&3Добавить все очки в стат &6STR" ]
+    material: DIAMOND_SWORD
+    sound: ENTITY_ENDERMITE_DEATH
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 4
+  int-add:
+    name: "&9INT&8: &1%skills_stat_int%"
+    material: BOOK
+    lore: [ "&3Добавить одно очко в стат &9INT" ]
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    posx: 4
+    posy: 3
+  int-add-all:
+    name: "&9INT&8: &1%skills_stat_int%"
+    lore: [ "&3Добавить все очки в стат &9INT" ]
+    material: WRITABLE_BOOK
+    sound: ENTITY_ENDERMITE_DEATH
+    posx: 4
+    posy: 4
+  dex-add:
+    name: "&dDEX&8: &5%skills_stat_dex%"
+    material: QUARTZ
+    lore: [ "&3Добавить одно очко в стат &dDEX" ]
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    posx: 6
+    posy: 3
+  dex-add-all:
+    name: "&dDEX&8: &5%skills_stat_dex%"
+    material: QUARTZ_BLOCK
+    lore: [ "&3Добавить все очки в стат &dDEX" ]
+    sound: ENTITY_ENDERMITE_DEATH
+    posx: 6
+    posy: 4
+  def-add:
+    name: "&cDEF&8: &4%skills_stat_def%"
+    material: IRON_CHESTPLATE
+    lore: [ "&3Добавить одно очко в стат &cDEF" ]
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  def-add-all:
+    name: "&cDEF&8: &4%skills_stat_def%"
+    material: DIAMOND_CHESTPLATE
+    lore: [ "&3Добавить все очки в стат &cDEF" ]
+    sound: ENTITY_ENDERMITE_DEATH
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 4
+  stat-points:
+    name: "&3Стат-Очки&8: &e%skills_stat_pts%"
+    material: NETHER_STAR
+    posx: 5
+    posy: 2
+  reset:
+    name: "&4Сбросить"
+    material: RED_STAINED_GLASS_PANE
+    lore:
+      - "&3Сбросить все очки"
+      - "чтобы распределить их снова."
+    posx: 5
+    posy: 3
+  distribute:
+    name: "&6АвтоРасстановка"
+    material: ORANGE_STAINED_GLASS_PANE
+    sound: ENTITY_CHICKEN_EGG
+    lore:
+      - "&3Распределить все очки\n"
+      - "поровну на все статы."
+    posx: 5
+    posy: 4
+  about:
+    name: "&eСправка"
+    material: YELLOW_STAINED_GLASS_PANE
+    lore:
+      - "&3Ваши статические баллы определяют"
+      - "эффективность некоторых ваших навыков."
+      - "Тип стата, который влияет на"
+      - "улучшение ваших навыков, "
+      - "можно увидеть в нижней части"
+      - "описания его в &e/Skills improve"
+    posx: 5
+    posy: 5
+  purple-glass:
+    name: ''
+    material: PURPLE_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  magenta-glass:
+    name: ''
+    material: MAGENTA_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 14, 15, 19, 25, 28, 34, 38, 39, 41, 42, 48, 49, 50 ]

@@ -1,0 +1,97 @@
+name: "Eidolon"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-level: 100
+max-health: 20 * 6
+max-energy: lvl + 20
+energy-regen: 1 + 0.05 * lvl
+required-level: 30
+cost: 8000
+stats: [ DEX, DEF ]
+energy: imbalance
+abilities:
+  eidolon-passive:
+    scaling: int/10+1
+    sounds:
+      imbalance:
+        light: BLOCK_BEACON_ACTIVATE, 5, 2
+        dark: BLOCK_BEACON_DEACTIVATE, 5, 2
+  purify:
+    required-level: 3
+    scaling: (str/15+lvl/2)
+    hp: hp / 5
+    max: int/6+lvl*4
+    energy-per-damage: 2
+    cost: 100 * (lvl + 1)
+  spirit-fire:
+    required-level: 5
+    # light scaling
+    scaling: str/7+lvl*3
+    cost: 100 * (lvl + 1)
+    dark-scaling: 6-lvl
+  spectre:
+    required-level: 5
+    scaling: 45-(lvl*5)
+    cost: 100 * (lvl + 1)
+    dark-scaling: 45+(lvl*5)
+    speed: def/30
+  shape-shifter:
+    required-level: 10
+    # Special Variables:
+    # light = The light level of the block that the player is standing on. 0-15
+    scaling: light + 2
+    cost: 100 * (lvl + 1)
+    reversed: false
+  defile:
+    required-level: 1
+    activation:
+      idle: 5
+      key: R
+      energy: 1
+      cooldown: 17
+      items: [ ]
+    scaling: lvl*8+(int/2)+5
+    damage: 1 + imbalance / 100
+    cost: 100 * (lvl + 1)
+    time: lvl*3
+  blackhole:
+    required-level: 50
+    activation:
+      idle: 5
+      key: LR
+      energy: 1
+      cooldown: 17
+      items: [ ]
+    # Note the damage is done every quality ticks.
+    scaling: 0.3
+    # Pull the player every x tick.
+    quality: 5
+    # Duration of the blackhole in ticks.
+    duration: (lvl * 5) * 20
+    # The range of the blackhole gravity.
+    range: 3 + lvl
+    # Explosion power when the blackhole ends.
+    yield: 2
+    # Blacklisted entity types to not get sucked in by the blackhole.
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+    blacklisted: [ ]
+    # The strength of the blackhole gravity.
+    gravity: (0.1 * lvl)
+    # The distance to start damaging the player.
+    distance: 2
+    # Format: Type, Duration (in seconds), Amplifier (Level)
+    effects:
+      - CONFUSION, 8, 2
+    cost: 100 * (lvl + 1)
+  fangs:
+    required-level: 30
+    activation:
+      key: LLR
+      energy: 5
+      cooldown: 3
+      items: [ ]
+    scaling: lvl*8+(int/2)+5
+    # Fangs count for a straight line attack.
+    fangs: lvl * 3
+    cost: 100 * (lvl + 1)

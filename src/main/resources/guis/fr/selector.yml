@@ -1,0 +1,255 @@
+title: "&8&l-=( &4&lCompétences &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&bÉpéiste"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3Les épéistes sont le meilleur pour toute 
+      bataille de mêlée, avec des dégâts supérieurs 
+      et des capacités à courte portée.
+
+      &e&lForce
+      &2L'épéistes est fort en 1 contre 1, et 
+      peut gagner contre d'autres types de compétences 
+      si il se bat bien.
+
+      &e&lFaiblesse
+      &cLes épéistes n'ont pas une grande portée
+      pour leurs capacité, et peuvent facilement
+      être battu si il se fait attaquer à grande distance.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7Mastodonte"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3Un guerrier le plus durable.
+      Les mastodontes sont de puissants démons.
+      Ils peuvent absorber beaucoup de dégats.
+
+      &e&lForce
+      &2Très fort contre les personnages offensifs,
+      comme vous pouvez vaincre votre adversaire.
+
+      &e&lFaiblesse
+      &cDégâts très faibles.
+      Bien que vous soyez durable, si vous ne 
+      parvenez pas à infliger suffisamment de 
+      dégâts pour éliminer votre ennemi avant 
+      qu'il ne vous élimine, vous serez condamné.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&dMage"
+    material: GOLDEN_HOE
+    lore: |-
+      &3Les mages sont maîtres de l'offensive
+      et la magie défensive.
+      Ils se battent avec des bâtons pour lancer
+      sorts et malédictions sur leurs ennemis.
+
+      &e&lForce
+      &2Les mages peuvent contrer de nombreux 
+      types de compétences car leurs attaques 
+      avec les bâtons peuvent provoquer différentes 
+      attaques possibles. Ils sont très efficace en
+      équipe.
+
+      &e&lFaiblesse
+      &cLes mages dépendent de la mana 
+      et sont gravement affaiblis sans.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&cMage du feu"
+    material: BLAZE_POWDER
+    lore: |-
+      &3Les mages du feu, contrairement aux mages,
+      sont complètement centrés sur
+      des sorts offensifs basés sur le feu,
+      et peuvent combattre seuls.
+      Ils jettent des sorts en
+      dépensant leur propre santé.
+
+      &e&lForce
+      &2Pendant que la santé est dépensée 
+      en sorts, les sorts peuvent porter des 
+      coups dévastateur à vos ennemis.
+
+      &e&lFaiblesse
+      &cLes mages du feu sont faibles face
+      à des potions de protection contre le feu
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5Arbaliste"
+    material: BOW
+    lore: |-
+      &3Les arbalistes sont adaptatifs, 
+      avec des styles de jeu différents, 
+      des combats au front et des tireurs 
+      d'élite de loin. Les arbalistes utilisent 
+      des arbalètes pour se battre.
+
+      &e&lForce
+      &2Les arbalistes peuvent infliger beaucoup 
+      de dégâts, si la cible n'atteint pas 
+      l'arbaliste à temps, et ont également 
+      de nombreuses capacités de repoussage.
+
+      &e&lFaiblesse
+      &cLes arbalistes sont faibles dans les 
+      combats à courte portée et ne 
+      comptent que sur le recul pour garder 
+      leurs ennemis à distance.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4Vampire"
+    material: REDSTONE
+    lore: |-
+      &3Les vampires sont des démons 
+      majestueux mais horribles, avec 
+      les capacités étranges de 
+      régénération et de furtivité.
+
+      &e&lForce
+      &2Les attaques peuvent épuiser 
+      votre adversaire de mana, et vous 
+      avez également de nombreuses 
+      capacités de guérison.
+
+      &e&lFaiblesse
+      &cLes vampires sont tous arrondis, 
+      mais peuvent être dépassés par des 
+      cibles à haute mobilité.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ENTITY_BAT_AMBIENT
+    posx: 3
+    posy: 4
+  priest:
+    name: "&2Prêtre"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3Les prêtres sont principalement des 
+      supports qui peuvent jouer un rôle 
+      énorme dans une équipe. Ils ont également 
+      quelques capacités supplémentaires 
+      pour survivre.
+
+      &e&lForce
+      &2Les prêtres sont pour la plupart 
+      défensifs. Tant pour eux que 
+      pour leur équipe.
+
+      &e&lFaiblesse
+      &cLes prêtres sont vulnérables à la malédiciton. 
+      Tels que le Nether et L'end et des créatures 
+      comme Wither.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9Dévoreur"
+    material: SPIDER_EYE
+    lore: |-
+      &3Les dévoreurs sont rapides, agiles 
+      et leurs frappes sont très corrosives. 
+      Spécialistes du hit-and-run.
+
+      &e&lForce
+      &2Rien ne peut distancer un dévoreur, 
+      car ils ont des techniques puissantes 
+      pour échapper au danger et une frappe 
+      tout aussi corrosive.
+
+      &e&lFaiblesse
+      &cLes dévoreurs ont une faible 
+      capacité défensive.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 6
+    posy: 4
+  eidolon:
+    name: "&3Eidolon"
+    material: END_CRYSTAL
+    lore: |-
+      &3Les eidolons sont des esprits, qui 
+      changent périodiquement de forme, 
+      basculant entre l'obscurité et la lumière.
+
+      &e&lForce
+      &2Le eidolon a des capacités défensives et 
+      offensives, et s'il est utilisé à bon escient, 
+      il peut être un combattant de mêlée très efficace.
+
+      &e&lFaiblesse
+      &cLes capacités offensives sont 
+      principalement sous la forme sombre 
+      d'Eidolon, et vice versa. Il est 
+      complexe à maîtriser.
+
+      &3Niveau requis&8: &e%required-level%
+      &3Niveau&8: &e%level%
+      &3Coût&8: &e%cost%
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 7
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

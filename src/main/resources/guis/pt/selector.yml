@@ -1,0 +1,260 @@
+# GUIs have a lot of custom options you can use.
+# All the options that support strings also support placeholders.
+# First the settings for GUI itself are:
+# title: The title of the GUI.
+# rows: The rows of a chest GUI.
+# type: If no rows is specified, then a GUI type is used.
+# sound: The sound played when the GUI is opened.
+# commands: [string] A list of commands executed when the GUI is opened.
+# interactableSlots: [integers] A list of slot positions that can be interacted with. Interactable slots are slots that any
+# items placed in that slot can be taken or a new item can be put:
+
+# Options for each GUI item (option):
+# The name of the option is optional, but in special cases these names are used to execute a code.
+# For example all the options named with the skill name should be kept like that. Only the option name of the few glass options at the end can be changed.
+# name: The name of the item.
+# material: The material of the item. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# lore: [] A list of strings for item lore. Lores support line breaks \n and they'll even keep their previous color from the last line!
+# unbreakable: true/false if the item should be unbreakable.
+# commands: [string] A list of commands executed when item is clicked.
+# sound: The sound to play when item is clicked.
+# can-take: true/false if this item can be taken. But no item can be placed after that. To do that set the slot as an interactable slot in the GUI option.
+# posx, posy, slot, slots: Set the position of the item in the GUI. posx and posy should be used together or use the raw slot number with "slot" and place the item in multiple
+# slots using "slots: [numbers]"
+# click: Click type. If none is specified default is left-click. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html
+# flags: [] A list of item flags. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+
+# Other than the normal options for items such as name, material and lore, there are a lot of other options.
+# amount, damage, enchants, model-data, attributes and etc...
+# A popular one is "skull" You need to set the material as PLAYER_HEAD for this to work.
+# The skull property allows one of the following values: Player Name, Minecraft Textures URL, Base64 (value signature)
+# Using the base64 value is always better since it doesn't need caching or connecting to Mojang for the texture.
+# You can find custom heads in websites like https://minecraft-heads.com
+
+title: "&8&l-=( &4&lClasses &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&bEspadachim"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3Espadachim e o melhor em combate corpo a corpo
+      com um dano estrondoso eles podem
+      dizimar seus inimigos que estao pertos.
+
+      &e&lPontos Fortes
+      &2Espadachims sao fortes em batalhas 1x1
+      e podem ganhar facilmente de todos
+      se lutar bem.
+
+      &e&lPontos Fracos
+      &cEspadachims nao tem muitos recurosos
+      para ataques a distancia
+      podendo ser superado por um combatente a distancia.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custo de Almas&8: &e%cost%
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7Templario"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3Os soldados de elites e  
+      mais resistentes do mundo, 
+      os Templários são gigantes poderosos 
+      que podem absorver muito dano.
+
+      &e&lPontos Fortes
+      &2Muito forte contra classes que curam, 
+      pois quase não precisam se curar 
+      porque absorve o dano recebido..
+
+      &e&lPontos Fracos
+      &cDano muito baixo. 
+      Embora você seja resiste, se você não conseguir dar dano 
+      para matar seu inimigo rapidamente, 
+      você estara condenado
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&dMago"
+    material: GOLDEN_HOE
+    lore: |-
+      &3Os magos são mestres na magia ofensiva e defensiva, 
+      e lutam com cajados para conjurar feitiços 
+      e maldições em seus inimigos
+      &e&lPontos Fortes
+      &2Os magos podem usar muitas magias diferentes, 
+      uma vez que seus ataques com cajados podem causar 
+      diferentes efeitos.
+      &e&lPontos Fracos
+      &cOs magos confiam em Mana e 
+      são severamente enfraquecidos sem isso.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&cMago de Fogo"
+    material: BLAZE_POWDER
+    lore: |-
+      &3Magos de Fogo, ao contrário dos Magos, 
+      são totalmente focados em magias ofensivas baseadas em fogo. 
+      Eles lançam feitiços gastando sua própria saúde
+
+      &e&lPontos Fortes
+      &2Enquanto a saúde é gasta em magias, 
+      os feitiços podem causar golpes devastadores 
+      aos seus inimigos
+
+      &e&lPontos Fracos
+      &cOs Feiticeiros são fracos contra poções de resistência ao fogo.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5Franco Atirador"
+    material: BOW
+    lore: |-
+      &3Os Arqueiros são adaptativos, 
+      com diferentes estilos de jogo, 
+      batalha frontal e Sniping. 
+      De longe Arqueiros utilizam bestas e Arcos para lutar
+
+      &e&lPontos Fortes
+      &2Arqueiros podem causar muito dano. 
+      e possuem muitas habilidades de knockback  
+      (jogar o inimigo par trás).
+
+      &e&lPontos Fracos
+      &cArqueiros são fracos em combates de curto alcance, 
+      e dependem de knockback para manter seus inimigos longe.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4Vampiro"
+    material: REDSTONE
+    lore: |-
+      &3Vampiros são demônios majestosos, 
+      ainda sim horríveis, 
+      com as incríveis habilidades de regeneração 
+      e ataques furtivos devastadores.
+
+      &e&lPontos Fortes
+      &2Os ataques podem esgotar a Mana de seu oponente, 
+      e você também tem muitas habilidades de cura.
+
+      &e&lPontos Fracos
+      &cOs vampiros são muito fortes, 
+      mas podem ser ultrapassados por alvos 
+      com alta mobilidade.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ENTITY_BAT_AMBIENT
+    posx: 1
+    posy: 1
+  priest:
+    name: "&2Druida"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3Os Druida são principalmente suportes
+       que podem desempenhar um papel importante em uma equipe.
+       Eles também têm alguns extras
+       habilidades para a sobrevivência.
+
+      &e&lPontos Fortes
+      &2Os Druida são na maior parte defensivos.
+       Tanto para eles quanto para sua equipe.
+
+      &e&lPontos Fracos
+      &cOs padres são vulneráveis à falta de santidade.
+       Como nether e o fim
+       e criaturas como Wither.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9Devorador"
+    material: SPIDER_EYE
+    lore: |-
+      &3Os Devoradores são rápidos, 
+      ágeis e seus ataques são muito corrosivos.
+      Especialistas em "Hit and Run"
+
+      &e&lPontos Fortes
+      &2Nada corer mais que um devorador
+      Eles conseguem ser rapidos e altamente venenosos
+      possui ligações com os animais e são vistos como iguais
+      por eles.
+
+      &e&lPontos Fracos
+      &cDevoradores não possuem uma defesa boa.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 1
+    posy: 1
+  eidolon:
+    name: "&3Fantasma"
+    material: ENDER_PEARL
+    lore: |-
+      &3Fantasmas são espíritos, 
+      que periodicamente mudam de forma, 
+      alternando entre Luz e Trevas.
+
+      &e&lPontos Fortes
+      &2Fantasmas tem habilidades defensivas e ofensivas,
+       e se usado sabiamente, 
+       pode ser um lutador corpo a corpo muito eficaz
+
+      &e&lPontos Fracos
+      &cAs habilidades ofensivas são mais fortes na forma das Trevas,
+       e as habilidades defensivas são mais fortes na forma da Luz.
+
+      &3Nivel Requerido&8: &e%required-level%
+      &3Custa&8: &e%cost%
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 6
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

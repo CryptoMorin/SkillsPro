@@ -1,0 +1,20 @@
+title: "&8-=( &4&l确认重置 &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4确认"
+    material: RED_WOOL
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+    lore:
+      - "&e一旦重置"
+      - "所有属性点将重置于0"
+      - "之前所消耗的属性点数会归还"
+  cancel:
+    name: "&2取消"
+    material: BARRIER
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

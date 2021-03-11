@@ -1,0 +1,275 @@
+# GUIs have a lot of custom options you can use.
+# All the options that support strings also support placeholders.
+# First the settings for GUI itself are:
+# title: The title of the GUI.
+# rows: The rows of a chest GUI.
+# type: If no rows is specified, then a GUI type is used.
+# sound: The sound played when the GUI is opened.
+# commands: [string] A list of commands executed when the GUI is opened.
+# interactableSlots: [integers] A list of slot positions that can be interacted with. Interactable slots are slots that any
+# items placed in that slot can be taken or a new item can be put:
+
+# Options for each GUI item (option):
+# The name of the option is optional, but in special cases these names are used to execute a code.
+# For example all the options named with the skill name should be kept like that. Only the option name of the few glass options at the end can be changed.
+# name: The name of the item.
+# material: The material of the item. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# lore: [] A list of strings for item lore. Lores support line breaks \n and they'll even keep their previous color from the last line!
+# unbreakable: true/false if the item should be unbreakable.
+# commands: [string] A list of commands executed when item is clicked.
+# sound: The sound to play when item is clicked.
+# can-take: true/false if this item can be taken. But no item can be placed after that. To do that set the slot as an interactable slot in the GUI option.
+# posx, posy, slot, slots: Set the position of the item in the GUI. posx and posy should be used together or use the raw slot number with "slot" and place the item in multiple
+# slots using "slots: [numbers]"
+# click: Click type. If none is specified default is left-click. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html
+# flags: [] A list of item flags. You can get a list here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+
+# Other than the normal options for items such as name, material and lore, there are a lot of other options.
+# amount, damage, enchants, model-data, attributes and etc...
+# A popular one is "skull" You need to set the material as PLAYER_HEAD for this to work.
+# The skull property allows one of the following values: Player Name, Minecraft Textures URL, Base64 (value signature)
+# Using the base64 value is always better since it doesn't need caching or connecting to Mojang for the texture.
+# You can find custom heads in websites like https://minecraft-heads.com
+
+title: "&8&l-=( &4&lВЫБОР ПРОФЕССИИ &8&l)=-"
+rows: 6
+sound: BLOCK_ENDER_CHEST_OPEN
+
+options:
+  swordsman:
+    name: "&bМечник"
+    material: DIAMOND_SWORD
+    materials:
+      # Ignore this, it doesn't do anything.
+      DIAMOND_SWORD: "%skills_level% > 5"
+      IRON_SWORD: "%skills_level% <= 5"
+    lore: |-
+      &3Мечник - воин ближнего боя,
+      выдает большой урон
+      на ближней дистанции.
+
+      &e&lСила
+      &2Мечник силен в битве
+      один на один если руки
+      растут из нужного места.
+
+      &e&lСлабость
+      &cМечник сражается только
+      на ближней дистанции и
+      ничего не может сделать издали.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ENTITY_PLAYER_ATTACK_CRIT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 7
+    posy: 3
+  juggernaut:
+    name: "&7Джаггернаут"
+    material: DIAMOND_CHESTPLATE
+    lore: |-
+      &3Джаггернаут - самый мощный
+      воин, который может
+      выдержать огромное 
+      количество урона.
+      Этот парень настоящий танк!
+
+      &e&lСила
+      &2Вы переживете кого угодно.
+
+      &e&lСлабость
+      &cОчень слабый урон.
+      Если вы не успеете нанести
+      достаточно урона, что бы
+      убить соперника пока тот 
+      пытается вас 
+      пробить - вам кранты.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: BLOCK_ANVIL_PLACE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 6
+    posy: 3
+  mage:
+    name: "&dМаг"
+    material: GOLDEN_HOE
+    lore: |-
+      &3Маги - мастера атакующих
+      и защитных заклинаний.
+      Используют посох для каста.
+
+      &e&lСила
+      &2Маги могут кастовать
+      много разных заклинаний
+      используя посох.
+
+      &e&lСлабость
+      &cМаги зависят от маны.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ITEM_FLINTANDSTEEL_USE
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 5
+    posy: 3
+  firemage:
+    name: "&cОгненный Маг"
+    material: BLAZE_POWDER
+    lore: |-
+      &3Огненные маги полностью
+      сосредоточены на атакующих
+      огнем закленаниях.Они не 
+      используют посох и кастуют
+      за счет собственного здоровья
+
+      &e&lСила
+      &2Пока здоровье расходуется
+      на заклинания,они наносят
+      большой урон цели.
+
+      &e&lСлабость
+      &cОгненные Маги слабы против
+      зелий устойчивости к огню.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ITEM_FIRECHARGE_USE
+    posx: 4
+    posy: 3
+  arbalist:
+    name: "&5Арбалетчик"
+    material: BOW
+    lore: |-
+      &3Арбалетчики адаптируются
+      к любому стилю битвы.
+      Они могут сражаться как 
+      вблизи, так и с растояния.
+      Ну вы уже поняли, 
+      они используют арбалет.
+
+      &e&lСила
+      &2Арбалетчик может нанести
+      много урона если цель
+      не успела вовремя до него
+      добраться. Так же умеет
+      опракидывать цель.
+
+      &e&lСлабость
+      &cАрбалетчики уязвимы в
+      ближнем бою,полагаясь на 
+      умение опрокидывать цель,
+      держа ее в страхе.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ENTITY_ARROW_SHOOT
+    flags: [ HIDE_ATTRIBUTES ]
+    posx: 3
+    posy: 3
+  vampire:
+    name: "&4Вампир"
+    material: REDSTONE
+    lore: |-
+      &3Вампиры - магические и
+      стремные демоны cо
+      сверхъестественными
+      способностями к
+      регенерации и скрытности.
+
+      &e&lСила
+      &2Атаки могу высосать 
+      ману соперника,так же Вампир
+      обладает большим кол-вом
+      регенерирующих способностей.
+
+      &e&lСлабость
+      &cВампиры сильны, но уступают
+      некоторым целям в мобильности.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ENTITY_BAT_AMBIENT
+    posx: 3
+    posy: 4
+  priest:
+    name: "&2Жрец"
+    material: KNOWLEDGE_BOOK
+    lore: |-
+      &3Жрецы - класс поддержки,
+      который может быть очень 
+      важен для командной игры.
+      Так же, они имеют несколько
+      способностей, помогающих выжить.
+
+      &e&lСила
+      &2Жрецы сконцентированы
+      на защите, как для
+      себя, так и для команды.
+
+      &e&lСлабость
+      &cЖрецы уязвимы для темных чар.
+      Слабы против демонов и Визеров.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: BLOCK_ENCHANTMENT_TABLE_USE
+    posx: 4
+    posy: 4
+  devourer:
+    name: "&9Пожиратель"
+    material: SPIDER_EYE
+    lore: |-
+      &3Пожиратели быстры, проворны
+      и их удары очень болезненные.
+      Мастера ударить и убежать.
+
+      &e&lСила
+      &2Ни что не может обогнать
+      Пожирателя, они легко уходят
+      от опасности, а их удары так же
+      сильны как и скорость.
+
+      &e&lСлабость
+      &cПожиратели имеют слабую защиту.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ENTITY_ENDERMITE_AMBIENT
+    posx: 6
+    posy: 4
+  eidolon:
+    name: "&3Фантом"
+    material: END_CRYSTAL
+    lore: |-
+      &3Фантомы - духи, они 
+      постоянно меняют форму,
+      переходя от света к тьме.
+
+      &e&lСила
+      &2Фантомы имеют как атакующие,
+      так и защитные умения. Применяя
+      их разумно вы можете стать
+      эфективным бойцом ближнего боя.
+
+      &e&lСлабость
+      &cАтакующие способности фантомов
+      в основном доступны в темной форме.
+
+      &3Требуемый Уровень&8: &e%required-level%
+      &3Цена&8: &e%cost%&a⁂
+    sound: ENTITY_ENDERMAN_SCREAM
+    posx: 7
+    posy: 4
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 6, 8, 10, 16, 18, 26, 36, 44, 46, 52 ]
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43, 45, 47, 51, 53 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 3, 4, 5, 11, 12, 13, 14, 15, 19, 25, 28, 31, 34, 38, 39, 40, 41, 42, 48, 49, 50 ]

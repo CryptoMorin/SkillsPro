@@ -1,0 +1,768 @@
+prefix: '&8[&3Skills&8] &3'
+command:
+  help:
+    description: '&6Displays all commands'
+    usage: /Skills help <page>
+    grouped-header: '&8&m---------------=( &c&l%group% &8)=---------------'
+    grouped-commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2k %cmd%,|/skills
+      %cmd%}
+    footer: COMPLEX:hover:{&6←,&6Previous Page,/skills help %previous_page%} %pages%hover:{&6→,&6Next
+      Page,/skills help %next_page%}
+    footer-page: COMPLEX:hover:{&8[&2%number%&8],&6Go to page &2%number%,/skills help
+      %number%}
+    footer-current-page: COMPLEX:hover:{&8[&2&l%number%&8],&2Current Page}
+    header: '&8&m---------------=(&c&l Skills &6%page%&7/&6%max_pages% &8&m)=---------------'
+    commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2skills %cmd%,|/skills
+      %cmd%}
+  usage: '&cUsage&7: &e/Skills '
+  unknown: '&cUnknown command!'
+  not:
+    number: '&e%arg% &cนั่นไม่ใช่ตัวเลขนะ! &e%needed% &cตรงนี้ต้องใส่ตัวเลข'
+  select:
+    description: '&eใช้เพื่อเลือกอาชีพ'
+    already-chosen: '&cคุณเป็น &e%skill% &cอยู่แล้ว'
+  refresh:
+    description: '&eฟื้นฟู พลังงาน/เลือด/ความแปรผัน/มานา'
+    success: '&3ฟื้นฟูสำเร็จ'
+  improve:
+    description: '&eหน้าต่างพัฒนาทักษะ'
+  stats:
+    description: '&eจัดสรรแต้มค่าสถานะ'
+    others-permission: '&4You don''t have the permission to see others stats.'
+  mastery:
+    description: '&eจัดการความชำนาญ'
+  updates:
+    description: '&eChecks for updates on Spigot.'
+  statistics:
+    description: '&eGet skill usage statistics for all the server.'
+  sound:
+    description: '&eTest a sound in-game before using it in config.'
+  reload:
+    description: '&eReloads the plugin.'
+    done: '&3Reloaded.'
+  top:
+    description: '&eUse to see the players with the highest levels'
+    header: '&8&l&m-----------(&6&l Top 10 Players &8&l&m)-----------'
+    entry: '&6%number%. &8(&9%skills_skill_displayname%&8) &3%player% &8- &eLvl %skills_level%'
+    loading: '&eCalculating...'
+  user:
+    description: '&eModify player''s skill data.'
+    souls:
+      description: '&eUse to manipulate player soul count'
+      success: '&3%amount% has been added to the soul count'
+    level:
+      description: '&eUse to manipulate level of a player'
+      success: '&3%amount% has been added to the player''s level'
+      not-number: '&clevel must be a number!'
+    xp:
+      description: '&eUse to manipulate xp of a player. Player must be online'
+      success: '&e%amount% &3XP has been added to &e%player%''s &3XP. New XP&8: &e%new%'
+    skill:
+      description: '&eUse to manipulate player skill'
+      success: '&3%player% &eis now a &3%skill%'
+      not-skill: '&e%skill% &cis not an existing skill&7: &enone&8, &eswordsman&8,
+        &edevourer&8, &emage&8, &efiremage&8, &ejuggernaut&8, &earbalist&8, &evampire&8,
+        &eeidolon&8, &ePriest'
+    stats:
+      description: '&eUse to add stats points to a player'
+    reset:
+      description: '&eUse to wipe the specified player''s data'
+      success: '&3%player%''s stats, level, skill, masteries and improvements reset'
+    statpoints:
+      success: '&3%amount% statpoints have been added to the player'
+    invalid-setter: '&cInvalid setter&8: &e%setter% &cUse one of the following keywords&8:
+      &eadd/decrease/set'
+    mastery:
+      description: '&eUse to modify a player''s mastery levels.'
+      set-success: '&e%amount% &3levels has been added to the player''s &e%mastery%
+        &3mastery, new level&8: &e%new%'
+    improve:
+      description: '&eUse to modify a player''s skill''s improvements.'
+    improvement:
+      success: '&e%amount% &3levels has been added to the player''s &e%ability% &3ability,
+        new level&8: &e%new%'
+  bonus:
+    description: '&3Manage players XP/Souls bonuses.'
+    give:
+      description: '&3Gives a player a bonus.'
+      success: '&3You have been given a bonus for &e%time%'
+      confirmation: '&3Given &e%player% &3a bonus for &e%time%'
+      multiplier-error: '&cThe multiplier must contain the keyword XP or soul! E.g.
+        &e5 * soul'
+      multiplier-invalid: '&cInvalid multiplier. Multipliers are: E.g. &e5 * soul,
+        xp + 20, etc.'
+    take:
+      success: '&3Removed all the boosts from the player.'
+      description: '&3Takes an active bonus from a player.'
+    not-found: '&cCould not find &e%bonus% &cbonus.'
+  boost:
+    already-started: '&cThe specified event is already in progress! Remaining time&8:
+      &e%time%'
+    broadcast: '&e%type% &3boost activated for &e%time%&3! Get &ex%multiplier% &3%type%
+      per kill!'
+  showactivemessages:
+    description: '&eUse to toggle active skill messages'
+    'on': '&3Active messages will now be shown.'
+    'off': '&cActive messages will not be shown.'
+  about:
+    description: '&6About the plugin.'
+  debug:
+    description: '&6Enable debug mode.'
+    'on': '&6Debug mode is&8: &3ON'
+    'off': '&6Debug mode is&8: &cOFF'
+    message: '&8[&4DEBUG&7-&5%priority%&8] &e%damager% &7(&e%custom_damager%&7) &6attacked
+      &c%entity% &7(&c%custom_entity%&7)&8: &9Damage&8: &2%damage% &7| &9Final Damage&8:
+      &2%final_damage%'
+  scaling:
+    description: '&6Sets your fake health scaling.'
+    not-in-range: '&cHealth scaling must be between 0 and 80 or 0 to disable'
+    set: '&6Your new fake scaling has been set to &e%scale%'
+  event:
+    not-found: '&cCould not find &e%event% &cevent.'
+    start:
+      description: '&3Starts an event.'
+    stop:
+      description: '&3Stops an event.'
+      success: '&e%player% &3has stopped the &e%event% &3event.'
+    time:
+      description: '&3Changes an event''s time.'
+      set: '&3Changed &e%event% &3event time. New time&8: &e%time%'
+    events:
+      description: '&3Get the current running events.'
+      xp: '&3Active XP Event&8: &eDuration&8: &e%xp_duration% &8- &eMultiplier&8:
+        &e%xp_multiplier%'
+      soul: '&3Active Soul Event&8: &eDuration&8: &e%soul_duration% &8- &eMultiplier&8:
+        &e%soul_multiplier%'
+      nothing: '&cThere are no events running.'
+  info:
+    description: '&eใช้เพื่อดูรายระเอียดของตัวเรา'
+    xp-bonus: '&3XP Bonus&8: &eDuration&8: &e%skills_xp_bonus_duration% &8-
+      &eMultiplier&8: &e%skills_xp_bonus_multiplier%'
+    soul-bonus: '&3Soul Bonus&8: &eDuration&8: &e%skills_soul_bonus_duration%
+      &8- &eMultiplier&8: &e%skills_soul_bonus_multiplier%'
+    message: |
+      NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Souls&7: &e%skills_fancy_soul%
+      &3Level&7: &e%skills_fancy_level%
+      &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
+      &3Total XP&7: &e%skills_fancy_rawxp%
+
+      &6STR &7| &dDEX &7| &9INT &7| &4DEF
+         &6%skills_stat_str% &7| &d%skills_stat_dex% &7| &9%skills_stat_int% &7| &4%skills_stat_def%
+    others: |+
+      NOPREFIX:&8&l&m--------------(&6&l %player% &8&l&m)--------------
+      &3Level&7: &e%skills_fancy_level%
+      &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
+      &3Total XP&7: &e%skills_fancy_rawxp%
+
+  friend:
+    description: '&eเพิ่มเพื่อนเข้าสู่รายชื่อ'
+    request: '&3คำขอเพิ่มเพื่อนถูกส่งไปให้ &e%invited% &3แล้ว'
+    self: '&cจะเพิ่มเพื่อนกับตัวเองจริงๆเหรอ?'
+    already-friends: '&cพวกคุณกับ &e%invited% &cเป็นเพื่อนกันอยู่แล้วนะ '
+    max: '&cเพื่อนเยอะเกินไปแล้ว'
+    already-sent: '&cเคยส่งคำขอเพิ่มเพื่อนไปให้ &e%invited% &cแล้ว'
+    notification: COMPLEX:&e%inviter% &3อย่กจะเป็นเพื่อนกับคุณ Do hover:{&e/skill
+      friend %inviter%,&2Accept,/skill friend %inviter%} &3เพื่อนตกลง.
+    friended: '&3ตอนนี้คุณกับ &e%friend% &3ได้เป็นเพื่อนกันแล้ว'
+  shop:
+    description: '&eBuy skills special items.'
+    give:
+      permission: '&cคุณไม่ได้รับอณุญาติให้ทำแบบนั้น'
+      usage: '&cUsage&8: &e/skills shop give <type> [player] [amount]'
+      invalid-type: |-
+        &cInvalid Skills item type&8: &e%type%
+        &cAvailable Types&8: &eXP, Energy_Booster, Energy_Potion
+  souls:
+    description: '&eฝาก ถอน Souls ของคุณ.'
+    service-unavailable: '&cธนาคารปิดปรับปรุง.'
+    unknown-transaction: '&cUnknown transaction &e%transaction%'
+    not-enough-souls: '&cคุณมี Souls ไม่เพียงพอ ต้องการ &e%amount% &csouls.'
+    not-enough-money: '&cคุณมีเงินไม่เพียงพอ ต้องการ &e%amount% &cG.'
+    deposit-success: |-
+      &3You've successfully deposited &e%amount% &3souls into your bank for &e%translated%
+      &3Your new balance&8: &e%balance%
+    deposit-disabled: '&cคุณฝาก souls ไม่ได้.'
+    withdraw-disabled: '&cคุณถอน souls ไม่ได้.'
+    withdraw-success: |-
+      &3You've successfully withdrawn &e%amount% &3souls from your bank for &e%translated%
+      &3Your new balance&8: &e%balance%
+  tpaccept:
+    description: '&eตอบรับการอัญเชิญ!!.'
+    teleporing: '&3กำลังเคลื่อนย้ายไปหา &e%friend% &3ในอีก &e%delay% &5วินาที. อย่าขยับล่ะ.'
+    pre-notify: '&3&e%friend% &3กำลังมาหาคุณ.'
+    canceled: '&cยกเลิกการเคลื่อนย้าย!'
+    canceled-notify: '&c&e%friend% &cไม่มาหาคุณแล้ว'
+    teleporting: '&3กำลังเคลื่อนย้ายในอีก &e%countdown% seconds&3วินนาที อย่าขยับนะ'
+    teleport-start: '&3เคลื่อนย้ายจะเริ่มในอีก &e%delay% วินนาที อย่าขยับนะ!'
+    disconnected: '&cการเชื่อมต่อถูกตัดขาด ยกเลิกการเคลื่อนย้าย'
+    no-request: '&e%name% &cไม่ได้ขอมาสักหน่อย'
+    no-requests: '&cไม่มีใครขอมาสักคนเลยนะ'
+    more-than-one: '&cมีคำขอเคลื่อนย้ายหลายอัน พิมชื่อคนที่จะรับด้วยนะ'
+    offline: '&cเหมือนว่าคนที่ขอมาจะออกไปแล้วนะ.'
+    teleported: '&3เคลื่อนย้ายไปหา &e%friend%'
+    notify: '&3&e%friend% &3เคลื่อนย้ายมาหาคุณ.'
+  friendtp:
+    description: '&eเคลื่อนย้ายไปหาเพื่อนของคุณ'
+    not-friends: '&cไม่ได้มีเพื่อนชื่อ &e%name% นะ?'
+    disabled: '&cการเคลื่อนย้ายโดนขัดขวางโดยระบบ'
+    teleported: '&3เคลื่อนย้ายไปหา&e%friend%'
+    notify: '&3&e%friend% &3เคลื่อนย้ายมาหา'
+    requested: '&3ส่งคำขอการเคลื่อนย้ายไปหา &e%friend%'
+    already-requested: '&cคุณส่งคำขอการเคลื่อนย้ายไปหา &e%friend% แล้ว'
+    expired: '&cคำขอการเคลื่อนย้ายไปหา &e%friend% &cหมดอายุแล้ว'
+    expired-notify: '&cคำขอการเคลื่อนย้ายของ &e%friend% &cหมดอายุแล้ว.'
+    notify-request: |-
+      COMPLEX:&e%friend% &3อยากจะมาหาคุณ.
+         &3พิม hover:{&e/skill tpaccept %friend%,&2Accept,/skill tpaccept %friend%} &3เพื่อยอมรับ.
+         &3หรือเมินไปเพื่อ &cปฎิเสท
+  unfriend:
+    description: '&eลบเพื่อนออกจากรายชื่อ'
+    removed: '&cคุณเลิกเป็นเพื่อนกับ &e%removed% แล้ว'
+    self: '&cต้องเป็นคนที่น่าผิดหวังขนาดไหนถึงอยากเลิกเป็นเพื่อนกับตัวเองเนี่ย'
+    invalid: '&cไม่ได้เป็นเพื่อนกับ &e%removed% อยู่แล้วนะ'
+    notification: 'คุณโดน &e%remover% เลิกเป็นเพื่อน'
+  friends:
+    description: '&eรายชื่อเพื่อของคุณทั้งหมด'
+    teleport-not-online: '&e%name% &cไม่ได้อยู่ในเกม เคลื่อนย้ายไปหาไม่ได้'
+    teleport-permission: '&cคุณไม่ได้รับอณุญาติให้เคลื่อนย้ายไปหาเพื่อน'
+  party:
+    description: '&eระบบปาร์ตี้'
+    create:
+      description: '&3ก่อตั้งปาร์ตี้ใหม่'
+      name: '&cกรุณาตั้งชื่อปาร์ตี้'
+      created: '&3คุณสร้างปาร์ตี้ใหม่เรียบร้อยแล้ว'
+      already-partying: '&cคุณมีปาร์ตี้อยู่แล้ว'
+    rename:
+      description: '&eตั้งชื่อปาร์ตี้ใหม่'
+      name: '&cกรุณาตั้งชื่อปาร์ตี้'
+      renamed: '&3ชื่อปาร์ตี้ถูกเปลี่ยนเป็น &e%name%'
+    leave:
+      description: '&eออกจากปาร์ตี้'
+      left: '&e%player% &cออกจากปาร์ตี้ไปแล้ว'
+      disband-confirm: '&cคุณเป็นหัวหน้าปาร์ตี้นี้ ถ้าคุณออกปาร์ตี้จะถูกยุบพิมคำสั่งอีกครั้งเพื่อยืนยัน'
+      disbanded: '&e%party% &cถูกยุบแล้ว '
+    invite:
+      description: '&eเชิญคนอื่นเข้าร่วมปาร์ตี้'
+      self: '&cนายจะเชิญตัวเองไม่ได้นะ...'
+      invited: '&3เชิญ &e%invited% &3เข้าร่วมปาร์ตี้แล้ว'
+      max: '&cคุณเชิญคนมากกว่านี้ไม่ได้แล้ว'
+      permission: '&cมีแค่ผู้ดูแลเท่านั้นที่สามารถส่งคำเชิญได้'
+      already-invited: '&e%invited% &3เคยได้รับคำเชิญแล้ว'
+      arleady-partying: '&e%invited% &cกำลังร่วมงานกับปาร์ตี้อื่นอยู่'
+      notification: |-
+        COMPLEX:&e%inviter% &3ได้เชิญคุณเข้าร่วมปาร์ตี้
+        พิม hover:{&2/skill party accept %party%,&2Accept,/skill party accept %party%} &3เพื่อเข้าร่วม
+        หรือเมินไปเพื่อปฎิเสท
+      expired: '&cคำเชิญเข้าสู่ &e%inviter% &cของคุณหมดอายุแล้ว!'
+    kick:
+      description: '&eไล่สมาชิกปาร์ตี้ออก'
+      kicked: '&e%kicked% &cถูกไล่ออกจากปาร์ตี้โดย &e%kicker%'
+      self: COMPLEX:&cถ้าจะไล่ตัวเองออกให้ใช้คำสั่ง hover:{&e/skill party
+        leave,&eLeave,/skill party leave}
+      not-in-party: '&e%kicked% &cไม่ได้อยู่ในปาร์ตี้'
+      permission: '&cมีแค่ผู้ดูแลเท่านั้นที่สามารถไล่สมาชิกออกได้'
+    mod:
+      description: '&eเลื่อนขั้นหรือลดขั้นสมาชิก'
+      promoted: '&e%mod% &3hได้รับการแต่ตั้งให้เป็นผู้ดูแล'
+      demoted: '&e%mod% &cถูกลดขั้น'
+      permission: '&cมีแค่หัวหน้าปาร์ตี้เท่านั้นที่สามารถเลื่อนหรือลดขั้นสมาชิกในปาร์ตี้ได้'
+      self: '&cคุณลดขั้นตัวเองไม่ได้...'
+      not-in-party: '&e%mod% &cไม่ได้อยู่ในปาร์ตี้'
+    leader:
+      description: '&eแต่งตั้งหัวหน้าปาร์ตี้คนใหม่'
+      set: '&e%leader% &3ได้รับการแต่งตั้งให้เป็นหัวหน้าปาร์ตี้คนใหม่แล้ว!'
+      permission: '&cมีแค่หัวหน้าปาร์ตี้เท่านั้นที่สามารถแต่งตั้งหัวหน้าคนใหม่ได้'
+      self: '&cคุณเป็นหัวหน้าอยู่แล้ว...'
+      not-in-party: '&e%leader% &cไม่ได้อยู่ในปาร์ตี้'
+    chat:
+      description: '&3เปิดโหมด party chat.'
+      enabled: '&2Party chat กำลังเปิดการใช้งาน'
+      disabled: '&cParty chat กำลังปิดการใช้งาน'
+    accept:
+      description: '&eตอบรับคำเชิญเข้าปาร์ตี้'
+      joined: '&9%player% &2ได้เข้าร่วมปาร์ตี้!'
+      not-invited: '&cคุณไม่ได้ถูเชิญเข้าปาร์ตี้'
+      not-invited-specific: '&cคุณไม่ได้ถูเชิญเข้า &e%party%'
+      name: '&cคุณได้รับคำเชิญจากหลายปาร์ตี้ กรุณาระบุชื่ปาร์ตี้ที่ต้องการเข้าร่วม'
+      in-party: '&cคุณอยู่ในปาร์ตี้อยู่แล้ว'
+    list-description: '&eรายชื่อสมาชิกในปาร์ตี้'
+command-help-negative-pages: '&cThere are no hidden pages.'
+events-name:
+  souls: Souls
+  xp: XP
+guis:
+  statmenu:
+    statpoints:
+      needed: '&cต้องมีอย่าน้อย 2 stat points เพื่อจัดสรรแต้มอัตโนมัติ.'
+      distribution: '&e%amount% &3แต้ม ถูกใช้ไปกับ &e%stat%'
+      spent: '&3ใช้งานไป &e%amount% &3stat points.'
+    reset:
+      message: '&cStat points ของคุณถูกปรับเป็นค่าเริ่มต้นแล้ว'
+command-info-others-permission: '&4You don''t have the permission to see others info.'
+not-enough:
+  souls: '&cคุณมี souls ไม่เพียงพอ!'
+  statpoints: '&cคุณมี stat points ไม่เพียงพอ.'
+kill-message: '&3ได้รับ &e%xp% XP &3และ &e%souls% souls &3จากการฆ่า &e%name%'
+player-not-found: '&cCไม่พบผู้เล่นที่ชื่อ &e%name%.'
+invalid-time: '&cInvalid time.'
+players-only: '&cOnly players can use this command.'
+party-members-too-far: '&cสมาชิคปาร์ตี้อยู่ไกลเกินไป ไม่ได้รับโบนัสจากปาร์ตี้'
+no-skill: '&cคุณไม่มีสกิลนี้!'
+no-party: '&cคุณไม่ได้อยู่ในปาร์ตี้!'
+no-skill-displayname: None
+permission: '&4คุณไม่ได้รับอณุญาติให้ทำแบบนั้น'
+death: '&cคุณเสีย &e%souls% &csoul(s) &cและ &e%xp% &cXP จากการตายในครั้งนี้.'
+event-not-running: '&e%event% &cevent is not running!'
+bonus-inactive: '&โบนัสไม่ได้ถูกใช้งาน'
+max-level: '&cคุณถึงขีดจำกัดเลเวลในปัจจุปันแล้ว ไม่สามารถ Level up ได้มากกว่านี้'
+ability:
+  upgraded: '&3Skill ability ถูกยกระดับแล้ว!'
+  maxxed: '&cSkill ability อยู่ในระดับสูงสุดแล้ว'
+  not-found: '&cไม่รูจัก &e%ability%'
+  invalid-level: '&cAbility level must be a value between 0-3'
+  required-level: '&cคุณต้องมีเลเวลอย่างน่อย &e%level% &cเพื่อใช้งาน ability นี้.'
+  upgrade-notification: '&3คุณมี &e%skills_soul% &3souls ใช้มันเพื่ออัพเกรด &8:
+    %abilities% &3ได้นะ'
+  upgrade-notification-list: '&6%ability% &7➛ &3%ability_level% '
+  title: '&6&lPassive'
+  swordsman-passive:
+    title: '&6Passive'
+    description: |-
+      &3สามารถโจมตีด้วยมืออีกข้างได้แล้ว!
+      พลังโจมตีเพิ่มขึ้น &e%amount% หน่วย
+      ดาเมจเพิ่มขึ้นได้ด้วยการเพิ่ม STR    
+  arbalist-passive:
+    title: '&6Passive'
+    description: |-
+      &3เมื่ออยู่ห่างจากเป้าหมาย
+      จะสร้างความเสียหาได้รุนแรงขึ้น
+
+      มีโอกาสที่จะเรียกกลุ่มเมฆมาเพื่อช่วยโจมตี
+      ยิ่งเลเวลสูงยิ่งมีโอกาสมาก
+  eidolon-passive:
+    title: '&6Passive'
+    description: |-
+      &3Eidolon จะมี รูปแบบอำไพ และ รูปแบบอนธการ 
+      "ความแปรผัน" ถึง &6100&3 คุณจะทำการเปลี่ยนรูปแบบ
+      "ความแปรผัน" จะเพิ่มขึ้นตลอดเวลา.
+      เมื่อเปลี่ยนรูปแบบจะฟื้นฟูเลือด &e%amount% &3หน่วย.
+  devourer-passive:
+    title: '&6Passive'
+    description: |-
+      &3การโจมตีของคุณจะสร้างการกัดกร่อนให้แก่ศัตรู
+      ซึ่งสร้างความเสียหาย &e%amount% &3หน่วย
+      ให้แก่ศัตรูทุกครั้งที่มันทำงาน.
+  mage-passive:
+    title: '&6Passive'
+    description: |-
+      &3เมื่อโจมตีด้วยคทา (จอบ),
+      จะได้รับ mana &e%amount% &3ต่อการโจมตี 1 ครั้ง.
+      การโจมตีด้วยจอบจะได้รับโบนัสความเสียหาย,
+      ระหว่าง 4(จอบไม้) ถึง 9(จอบNetherite)
+  firemage-passive:
+    title: '&6Passive'
+    description: |-
+      &3เมื่อติดไฟจะได้รับเลือด
+      จากการฟื้นฟูเพิ่มขึ้น &e%amount% &3แต้ม
+      และไม่ได้รับความเสียหายจากไฟ
+  priest-passive:
+    title: '&6Passive'
+    description: |-
+      &3สามารถเดินบนน้ำได้และไม่รับผลจากลาวา
+      &cแต่จะอ่อนแอมากเมื่ออยู่ใน
+      nether และ the end!
+  vampire-passive:
+    title: '&6Passive'
+    description: |-
+      &3เสีย "เลือด" ตลอดเวลา
+      ทุกการโจมตีของคุณจะทำให้ได้รับ "เลือด"
+      ทุก %blood% "เลือด" ที่คุณมีจะสร้างความเสียหายเพิ่มเติม
+      &e%amount% &3หน่วย(กายภาพ) ใส่เป้าหมาย
+  juggernaut-passive:
+    title: '&6Passive'
+    description: '&3ลดความเสียหายจากศัตรู &e%amount% หน่วย'
+  natures-force:
+    title: '&2Nature''s Force'
+    description: |-
+      &3เรียก "ผึ้ง"ออกจากรังมาสู้ทุกๆ %interval% วินาที
+      &3เป็นเวลา %duration% วินาที &3
+      พวกมันมีพลังโจมตี %amount% &3หน่วย.
+      ถ้ารังถูกทำลาย "ผึ้ง" จะไม่ออกมา
+  natures-call:
+    title: '&2Nature''s Call'
+    description: |-
+      &3เรียกจิ้งจอก %minions% &3ตัวออกมาสู้ 
+      พวกมันมีดาเมจ %amount% หน่วย
+  dodge:
+    title: '&6Dodge'
+    description: |-
+      &3คุณมีโอกาส &e%amount%% &3ที่จะหลบการโจมตี
+      ของศัตรู สูงสุด &640%
+  parry:
+    title: '&6Parry'
+    description: |-
+      &3ถ้าคุณถือดาบและคู่ต่อสู้มี
+      &3stat points &3ที่น้อยกว่าคุณ
+      สร้างความเสียหาย &e%amount%%
+      &3หน่วย คืนใส่คู่ต่อสู้
+  pierce:
+    title: '&6Pierce'
+    description: |-
+      &3ถ้า &6STR &3ของคุณสูงกว่า &4DEF&3,
+      ของคู่ต่อสู้ การโจมตีของคุณสร้างความเสียหายเพิ่มเติม &e%amount%% &3หน่วย
+  thousand-cuts:
+    title: '&6Thousand Cuts'
+    description: |-
+      &3คลิกขวาเมื่อถือดาบเพื่อใช้งาน
+      &3สร้างความเสียหาย &e%amount% &3หน่วย ต่อครั้ง 
+      ใส่เป้าหมายตัวถัดไปที่คุณโจมตี
+      และมอบสถานะสับสนเป็นเวลา 2 วินาที
+  gliders:
+    title: '&6Gliders'
+    description: |-
+      &3Level 1&8: &eเมื่อวิ่งจะได้รับ Speed &e5 วินาที
+      &3Level 2&8: &eNo fall damage.
+      &3Level 3&8: &eDouble jump!
+  cloak:
+    title: '&6Cloak'
+    description: |-
+      &3Level 1&8: &eได้รับความสามารถหายตัวที่จะหายไปเมื่อโจมตี 
+      ความสามารถหายตัวจะคงอยู่เป็นเวลา 30 วินาที
+      &3Level 2: &eมอนสเตอร์จะเป็นมิตรกับคุณ
+      แต่เมื่อคุณโจมตีความเป็นมิตรนี้จะหายไป
+      ยกเว้นกับมอนสเตอร์ต่อไปนี้ Enderman, endermite,
+      wither, guardians and the ender dragon
+      ที่จะสามารถมองเห็นคุณอยู่
+      &3Level 3&8: &eการโจมตีครั้งแรกขณะหายตัวอยู่
+      จะสร้างความเสียหายเพิ่มเติม &6%amount% &eหน่วย
+  blink:
+    title: '&6Blink'
+    description: |-
+      &3เคลื่อนย้ายแบบสุ่มไปรอบๆเป้าหมาย
+      จำนวนครั้งขึ้นอยู่กับระดับทักษะ
+  hook:
+    title: '&6Hook'
+    description: |-
+      &3คลิกขวาเพื่อรับ grappling hook.
+      ระยะของเชือกขึ้นอยู่กับระดับทักษะ
+      &3Level 2: &eจะไม่ได้รับความเสียหายเมื่อใช้ grappling hook
+  reflect:
+    title: '&6Reflect'
+    description: |-
+      &3เมื่อถูกโจมตีขณะถือคทา(จอบ) มีโอกาส
+      (ขึ้นอยู่กับวัสดุของอาวุธ)
+      ที่จะสร้างความเสียหาย &e%amount% &3หน่วย คืนใส่ผู้โจมตี
+  explosion-spell:
+    title: '&6Explosion Spell'
+    description: |-
+      &3เมื่อโจมตีขณะถือคทา(จอบ) มีโอกาส
+      (ขึ้นอยู่กับวัสดุของอาวุธ)
+      ที้่จะสร้างความเสียหายเพิ่มเติม &e%amount%% &3หน่วย ใส่เป้าหมาย.
+  heal-spell:
+    title: '&6Heal Spell'
+    description: |-
+      &3ทุกๆ 10 mana ที่คุณมีฟื้นฟูพลังชีวิตเพิ่มเติม &e%amount%&3 หน่วย
+      ถ้าคุณมีเลือดต่ำกว่า 20%.
+  energy-flux:
+    title: '&6Energy Flux'
+    description: |-
+      &3เมื่อคลิกขวาด้วยจอบจะทำการยิงกระสุนพลังงานต่อเนื่อง
+      ซึ่งสร้างความเสียหาย &e%amount% &3หน่วย ในแนวยิง
+      เมื่อโดนเป้าหมายเดิมในเวลา &6%cooldown%s &3วินาที
+      จะสร้างความเสียหายน้อยลง &650%
+      &3ระยะทางเพิ่มขึ้นตามระดับทักษะ
+  absorb-energy:
+    title: '&6Absorb Energy'
+    description: |-
+      &3เมื่อโจมตี การโจมตีครั้งถัดไปจะทำให้เป้าหมายติดไฟ
+      เป็นเวลา &e%amount% &3วินาที
+  phoenix-essence:
+    title: '&6Phoenix Essence'
+    description: |-
+      &3สร้างความเสียหายเพิ่มเติม &e%amount% &3หน่วย
+      ทุกๆ &61 วินาที &3ที่เป้าหมายติดไฟ
+  black-fire:
+    title: '&6Black Fire'
+    description: |-
+      &3เมื่อเป้าหมายอยู่ในระยะ &65 blocks &3จากตัวคุณ
+      เพิ่มดาเมจจากไฟ &e%amount% หน่วย
+  inferno:
+    title: '&6Inferno'
+    description: |-
+      &3คลิกขวาและโจมตีศัตรูด้วยคทา(จอบ)เพื่อใช้งาน
+      สร้างความเสียหาย &e%amount% &3หน่วย
+      บวกด้วย 1 หน่วย ต่อ 20 fireticks
+  heavy-strikes:
+    title: '&6Heavy Strikes'
+    description: |-
+      &3ถ้าคุณใช้ขวานในการโจมตีสร้าง
+      ความเสียหายเพิ่มเติม &e%amount% &3หน่วย ให้กับเกราะของเป้าหมาย
+  stone-skin:
+    title: '&6Stone Skin'
+    description: |-
+      &3Level 1&8: &eลดความเสียหายจากการตก &6%fall% หน่วย
+      &3Level 2&8: &eลดความเสียหายจากไฟ/ลาวาลง &6%fire%/%lava% หน่วย
+      &3Level 3&8: &eลดความเสียหายจากหนามลง %thorns% หน่วย
+  aegis-protection:
+    title: '&6Aegis Protection'
+    description: |-
+      &eLevel 1&8: &3ทุกๆ &e%amount%&3 วินาที ฟื้นฟูโล่ และป้องกันความเสียหายครั้งถัดไฟ
+      &eLevel 2&8: &3สะท้อนความเสียหาย %damage% หน่วย.
+      &eLevel 3&8: &3ผลักเป้าหมายออกไปเมื่อเหลือเลือดต่ำกว่า 5
+  throw:
+    title: '&6Throw'
+    description: |-
+      &3คลิกขวาและโจมตีศัตรูเพื่อใช้งาน.
+      ยกเป้าหมายเป็นเวลา 3 วินาที
+      ในระหว่างนั้นคุณและเป้าหมายไม่สามารถโจมตีได้
+      จากนั้นโยนเป้าหมายไปยังทิศทางที่คุณมอง
+      เมื่อเป้าหมายกระทบพื้นสร้างความเสียหาย &e%amount% &3หน่วย
+      ให้กับเป้าหมาย
+      ขณะยกเป้าหมาย ความเสียหายที่ได้รับลดลง 50%
+  execute:
+    title: '&6Execute'
+    description: |-
+      &3เมื่อยิงธนูใส่เป้าหมายเดียวกัน 2 ครั้งซ้อน 
+      มีโอกาสที่จะเกิน 1 ในผลลัพธ์ต่อไปนี้
+
+      &eLevel 1&8: &3มีโอกาสทำให้เป้าหมายติดไฟ 5 วินาที
+      &eLevel 2&8: &3มีโอกาสทำให้เป้าหมายติดพิษ
+      &eLevel 3&8: &3มีโอกาสที่จะมีฟ้าผ่าใส่เป้าหมาย
+
+      โอกาสจะเพิ่มขึ้นเมื่อยิงศัตรูตัวเดิม
+      คอมโบจะเริ่มใหม่หากคุณยิงพลาดหรือโดนเป้าหมายอื่น
+  dual-arrows:
+    title: '&6Dual Arrows'
+    description: |-
+      &3ธนูของคุณมีโอกาส %chance%% ที่จะยิงธนู 2 นัดในครั้งเดียว
+
+      &3Level 1&8: &eลูกธนูดอกที่ 2 เพิ่มความเสียหายเพิ่มขึ้น &3%amount% &eหน่วย
+      &3Level 2&8: &eลูกธนูดอกที่ 2 มีความเร็วเพิ่มขึ้น
+      &3Level 3&8: &eลูกธนูดอกที่ 2 จะติดไฟ
+  minions:
+    title: '&6Minions Arrow'
+    description: |-
+      &3คลิกขวาและโจมตีศัตรูด้วยธนูเพื่อใช้งาน 
+      เรียก skeletons มาช่วยในการต่อสู้
+
+      &eLevel 1&8: &3Skeleton 1 ตัว
+      &eLevel 2&8: &3Skeleton 2 ตัว ด้วยธนูที่ดีขึ้นและความสามารถหายตัว
+      &eLevel 3&8: &3Pillager 3 ตัว ด้วยธนูที่ไฟและความสามารถหายตัว.
+  fire-crossbow:
+    title: '&6Fire Crossbow'
+    description: |-
+      &3ยิงธนูด้วยการต่อย ไม่ใช้ลูกธนูแต่ใช้พลังงานแทน
+      อัพเกรดเพื่อลด Cooldown
+  blood-lust:
+    title: '&6Blood Lust'
+    description: |-
+      &3Level 1: ถ้าคุณมี"เลือด"มากกว่า 70% การโจมตีสร้างความเสียหายเพิ่มเติม &e%amount%% &3หน่วย
+      Level 2: การฟื้นฟูพลังชีวิตตามธรรมชาติเพิ่มขึ้น %regain% หน่วย ในระหว่างนี้.
+      Level 3: การโจมตีในระหว่างนี้มีโอกาส (เพิ่มขึ้นตาม"เลือด"ที่คุุณมี) ที่จะฟื้นฟูพลังชีวิต 2 หน่วย"
+  blood-well:
+    title: '&6Blood Well'
+    description: |-
+      &3เพิ่มขีดจำกัดการเก็บ "เลือด" 
+      ทุกๆ 4 วินาที มีโอกาส &e%amount%% &3ที่จะไม่เสีย "เลือด" 
+  bleed:
+    title: '&6Bleed'
+    description: |-
+      &3มีโอกาสที่เป้าหมายติดสถานะเลือดออกเป็นเวลา 5 วินาที 
+      ทุกวินาทีเป้าหมายได้รับความเสียหาย %amount%
+      และคุณได้รับพลังชีวิต %amount% หน่วย.
+  eternal-darkness:
+    title: '&6Eternal Darkness'
+    description: |-
+      &3คลิกขวาและโจมตีศัตรูเพื่อใช้งาน
+      ได้รับความอมตะเป็นเวลา &e%amount% &3วินาที.
+      ในระหว่างนั้นในทุกๆการโจมตีเป้าหมายจะติดสถานะตาบอดเป็นเวลา 1 วินาที
+  purify:
+    title: '&6Purify'
+    description: |-
+      &3สร้างความเสียหาย &e%amount% &3หน่วย ต่อพลังชีวิตทุกๆ 5 หน่วย ที่เป้าหมายมี
+      ความเสียหายสูงสุดไม่เกิน &e%max%&3 หน่วย
+      ได้รับ "ความแปรผัน" &6%amount% &3 หน่วย เมื่อโจมตี
+  spirit-fire:
+    title: '&6Spirit Fire'
+    description: |-
+      &3ในรูปแบบอำไพ ดูดซับความเสียหายเมื่อโจมตี &e%amount%% &3สูงสุด &650% &3และเก็บสะสมไว้
+      &3ในรูปแบบอนธการ ปลดปล่อยความเสียหายที่สะสมไว้ในการโจมตีครั้งแรก
+      สร้างความเสียหาย 1 หน่วย ต่อพลังงาน &e%dark% &3หน่วย ที่เก็บสะสมไว้"
+  spectre:
+    title: '&6Spectre'
+    description: |-
+      &3In Light form, gain a shield, that will give speed &c%speed%&3
+      for 3 seconds when broken by another mob. Shield refreshes every &e%amount%
+      &3seconds. In Dark form, your attack will be charged every &e%amount% &3seconds.
+      Charged attacks deal &6%dark%% &3additional damage."
+  shape-shifter:
+    title: '&6Shape Shifter'
+    description: |-
+      &3เมื่ออยู่ในความมืดจะทำความเสียหายได้มากขึ้น
+      เมื่ออยู่ในแสงสว่างจะได้รับความเสียหายน้อยลง
+  chronoprohiberis:
+    title: '&8Chronoprohiberis'
+    description: |-
+      &3หยุดเวลาศัตรูในระยะ &2%range% &3blocks
+      จากตัวคุณเป็นเวลา &2%duration% &3วินาที
+      และสร้างความเสียหาย &2%damage% &3หน่วย
+  defile:
+    title: '&6Defile'
+    description: |-
+      &3คลิกขวาและโจมตีเพื่อใช้งาน
+      เป้าหมายได้รับความเสียหายเพิ่มขึ้นและสร้างความเสียหายได้น้อยลง
+      &6%amount%% &3เป็นเวลา &e%time% &3วินาที.
+  consume:
+    title: '&6Consume'
+    description: |-
+      &3มีโอกาส %chance%% ที่จะขโมย Souls %amount% &3หน่วย จากเป้าหมาย
+      สร้างสร้างความเสียหายอย่างมากหากเป้าหมายไม่มี Souls
+  disarm:
+    title: '&6Disarm'
+    description: |-
+      &3Level 1&8: &eนำอาวุธของเป้าหมายไปไว้ที่ช่องว่าในกระเป๋าหากทำได้.
+      &3Level 2&8: &eสลับอาวุธของฝ่ายตรงข้านกับไอเทมในกระเป๋า
+      &3Level 3&8: &eเปลี่ยน hotbar slot ที่ใช้
+  dash:
+    title: '&7Dash'
+    description: |-
+      &3Level 1&8: &eเมื่อ Dash ขณะถือดาบจะ Dash ได้ดีขึ้นตามระดับทักษะ
+      [พลังในการDash&8: &2%amount%]
+      &3Level 2&8: &eผลักเป้าออกไป
+      &3Level 3&8: &eสร้างดาเมจให้เป้าหมาย
+
+      &6Range&8: &2%range%
+      &6Damage&8: &2%damage%
+      &6Knockback Power&8: &2%knockback%
+  annihilation:
+    title: '&4&lAnnihilation'
+    description: |-
+      &3เรียกดาบหลายเล่มมาต่อสู้
+
+      คลิกซ้ายเพื่อยิง
+  neptune:
+    title: '&9Neptune'
+    description: |-
+      &3Level 1&8: &eสร้างความเสียหายเพิ่มเติมด้วย Trident %amount% หน่วย
+      &eมีโอกาส %chances_lightning% &eที่จะโจมตีเป้าหมายด้วยสายฟ้า
+      &3Level 2&8: &eมีโอกาส %chances_multiply% &eที่จะเรียกTridents %multiply% &eอันเพิ่มเติม
+      ซึ่งมีเป้าหมายเดียวกันกับคุณหลังโจมตีด้วย Tridents สำเร็จ
+      &3Level 3&8: &eคุณสามารถพุ่งไปกับ Tridents ได้ด้วยการถือมันไว้ในมือรอง ย่องและคลิกขวา
+      หลังจากป่อยทั้ง2ปุ่มแล้วคุณจะพุ่งไปพร้อมๆกับ Trident
+  blood-circuit:
+    title: '&4Blood Circuit'
+    description: |-
+      &3Level 1&8: &eเรียก Ender Crystal ที่เปรียบเหมือน "วงจรเลือด" 
+      ระหว่างคุณและเป้าหมายเป็นเวลา %duration% วินาที
+      ทุกๆ %inferno% ticks มันจะทำงานและสร้างความเสียหาย %amount% หน่วย
+      จากนั้นความเสียหายนี้จะเพิ่มขึ้น %damage-modifier%
+      ทักษะนี้จะหยุดทำงานหากเป้าหมายอยู่ห่างจาก Ender Crystal เกินกว่า %distance% blocks
+      &3Level 2&8: &eคุุณจะได้รับการฟื้นฟูพลังชีวิตเท่ากับความเสียหายที่ทักษะนี้สร้าง
+      &3Level 3&8: &eเรียก Vex ออกมาช่วยต่อสู้ทุกๆครั้งที่ทักษะนี้ทำงาน
+  purification:
+    title: '&6Purification'
+    description: |-
+      &eLevel 1&8: &3Guardians, endermen and
+      slimes จะไม่โจมตีคุณ
+      &eLevel 2&8: &3Elder guardians, spiders and
+      phantoms จะไม่โจมตีคุณถ้าคุณไม่โจมตีพวกมันก่อน
+      &eLevel 3&8: &3พืชผลทางการเกษตรใกล้ๆคุณจะโตเร็วขึ้น
+  seal-of-life:
+    title: '&6Seal of Life'
+    description: |-
+      &3เมื่อได้รับบาดเจ็บสาหัสมีโอกาสที่จะได้รับความอมตะและเพิ่มอัตราการฟื้นฟูพลังงานชีวิต
+  fangs:
+    title: '&6Fangs'
+    description: |-
+      &3สามารถใช้งานความสามารถของ Invoker ได้
+
+      เมื่อใช้งานจะเรียกเขี้ยวมาโจมตีเป็นเส้นตรง
+      กดย่อเมื่อใช้งานจะเรียก"เขี้ยว"มาโจมตีรอบๆเป้าหมาย
+  blackhole:
+    title: '&6Blackhole'
+    description: |-
+      &3สร้างหลุมดำซึ่งดูดศัตรูรอบๆเข้าไป
+      ซึ่งมันจะสร้างความเสียหายอย่างมากให้สิ่งมีชีวิตที่อยู่ใกล้
+  meteorite:
+    title: '&6Meteorite'
+    description: |-
+      &3ยิงลูกไฟจำนวนมากใส่ศัตรู การระเบิดจะรุนแรงขึ้นตามระดับทักษะ
+  chain:
+    smash-title: '&6Chain Smash'
+    smash-description: |-
+      &3กระโดดและโจมตีพื้อย่างรุนแรง ผลัก
+  mind-possession:
+    title: '&6Mind Possession'
+    description: |-
+      &3มีโอกาสทำให้ศัตรูติดสถานะ paralyze(slowness and blindness)
+      โอกาสและระยะเวลาเพิ่มขึ้นตามระดับทักษะ.
+  kindling-of-life:
+    title: '&6Kindling of Life'
+    description: |-
+      &3ฟื้นฟูพลังชีวิตให้กับพันธมิตร
+      ความเร็วและความสามารถในการฟื้นฟูเพิ่มตามขึ้นตามระดับทักษะ
+  asclepius:
+    title: '&6Asclepius'
+    description: |-
+      &3ขณะถือจอบมอบสถานะบางอย่างให้กับพันธมิตร
+skills-item:
+  energy-booster: '&3Energy Booster &e%booster% &3ได้เปิดใช้งานเป็นเวลา &e%time%'
+  cost: '&cต้องใช้ Souls &e%cost% &cหน่วย ในการซื้อ'
+  no-free-slot: '&cช่องว่างในกระเป๋าไม่เพียงพอ'
+skill:
+  no-permission: '&cคุณไม่ได้รับอณุญาติให้ใช้ &e%skill%'
+  owned-error: '&4คุณมีทักษะนี้อยู่แล้ว!'
+  required-level: '&cคุณต้องมีเลเวลอย่างน้อย &e%level% &cเพื่อใช้ทักษะนี้'
+  change-cooldown-error: '&cคุณต้องรออีก &e%cooldown% &cวินาทีเพื่อใช้ทักษะนี้'
+  select-cost: '&cคุณต้องมี Souls อย่างน้อย &e%cost% &cหน่วยเพื่อใช้ทักษะนี้'
+  affected-by: |-
+    &3ทักษะนี้จะได้รับโบนัสจากค่าสถานะ &e%stat%
+  maximum-level: '&cทักษะนี้อยู่ในระดับสูงสุดแล้ว'
+  swordsman:
+    dodge-opponent-message: '&cถูกหลบการโจมตี!'
+    dodge-message: '&3หลบหลีก!'
+    active-activation-message: '&3&lเปิดการใช้งาน Thousand Cuts! กระหน่ำโจมตีด้วยทุกสิ่งที่คุณมี!'
+    active-finished-message: '&c&lThousand Cuts จบลงแล้ว'
+    ready-activation-message: '&3*ออกอาวุธ* โจมตีเป้าหมายเพื่อใช้งาน Thousand Cuts'
+    notready-activation-message: '&7*คุณลดอาวุธลงแล้ว*'
+  devourer:
+    invis-disabled: '&cหมดสภาวะหายตัวแล้ว!'
+    invis-enabled: '&1เร้นกายสู่อนธการ...'
+    neutrality-disabled: '&cหมดสภาวะเป็นมิตรแล้ว!'
+    neutrality-enabled: '&1อยู่ในสภาวะเป็นมิตร'
+  mage:
+    activation-message: '&3&l*ชะแว๊บ!*'
+  firemage:
+    ready-activation-message: '&3*กำมือของคุณลุกโชนด้วยเปลวเพลิงนรก* โจมตีเป้าหมายเพื่อใช้งาน Inferno'
+    notready-activation-message: '&7*พลังกำลังเหือดแห้ง*'
+    activation-message: '&3&lศัตรูจงมอดไหม้ด้วยเปลวเพลิงแห่งนรก!'
+  juggernaut:
+    active-ready-message: '&3*เตรียมตัวให้พร้อม* โจมตีเป้าหมายเพื่อยกและขว้างมัน'
+    active-notready-message: '&7*คุณผ่อนท่าร่างแล้ว*'
+    active-activated-message: '&3&lยกเป้าหมายขึ้นมา...!'
+    active-throw-message-countdown: '&c&lเตรียมตัว! จะขว้างไปทางนั้นในอีก %countdown%'
+    active-throw-success: '&3&lลอยไปซะ!'
+    aegis-success: '&3ป้องกันการโจมตีไว้ได้!'
+  arbalist:
+    minions-msg: '&cจงฟัง เหล่าสมุนทั้งหลาย.'
+  eidolon:
+    active-ready: '&3*ความแปรผันกพลังล้นทะลักออกมา* โจมตีเป้าหมายเพื่อ defile'
+    active-not-ready: '&c*ความแปรผันสงบลงแล้ว*'
+    active-activation-message: '&3&lคุณรบกวนสมดุลของเป้าหมาย!เป้าหมายกำลังเกิดความแปรผัน'
+    turn-light: '&eแสงสว่างกำลังปกคลุมความมืด!'
+    turn-dark: '&4ความมืดมิดกำลังกลืนกินแสงสว่าง!'
+    spirit-expell: '&3คุณระเบิดเป้าหมายด้วยความเสียหายที่มากขึ้น %damage% หน่วย!'
+    shield-refresh: '&3คุณรู้สึกเปี่ยมไปด้วยพลัง'
+    shield-speed: '&3คุณสูญเสียโล่แลกกับความคล่องตัว!'
+    attack-boost: '&3ปลดปล่อยพลัง สร้างความเสียหายมากขึ้น %damage%%!'
+skill-selected: |-
+  COMPLEX:&3ทักษะปัจจุบันของคุณคือ &e%skills_skill_displayname%
+  &3พัฒนาทักษะของคุณได้ด้วยการ:{&e/skill improve,&eคลิกเพื่อเปิด,/skill improve}
+mastery:
+  maximum-level: '&cความชำนาญอยู่ในระดับสูงสุดแล้ว'
+  not-found: '&3ไม่พบความชำนาญ &e%mastery%'
+  upgraded: '&3ยกระดับความชำนาญ &e%mastery% &3ใช้ &e%cost% &3souls.'
+  downgraded: '&3ลดระดับความชำนาญ &e%mastery% &3ได้รับ &e%cost% &3souls'
+  required-level: '&cคุณต้องมีเลเวลอย่างน้อย &3%level% &cเพื่อใช้ความชำนาญนี้'
+  cant-downgrade: '&cลดระดับความชำนาญ &e%mastery% &cมากไปกว่านี้ไม่ได้แล้ว'

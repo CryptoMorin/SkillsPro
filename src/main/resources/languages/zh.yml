@@ -1,0 +1,792 @@
+prefix: '&8[&3Skills&8] &3'
+command:
+  help:
+    description: '&6显示所有命令'
+    usage: /Skills help <page>
+    grouped-header: '&8&m---------------=( &c&l%group% &8)=---------------'
+    grouped-commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2k %cmd%,|/skills
+      %cmd%}
+    footer: COMPLEX:hover:{&6←,&6上一页,/skills help %previous_page%} %pages%hover:{&6→,&6下一页,/skills
+      help %next_page%}
+    footer-page: COMPLEX:hover:{&8[&2%number%&8],&6翻到第 &2%number% &6页,/skills help
+      %number%}
+    footer-current-page: COMPLEX:hover:{&8[&2&l%number%&8],&2当前页}
+    header: '&8&m---------------=(&c&l Skills &6%page%&7/&6%max_pages% &8&m)=---------------'
+    commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2skills %cmd%,|/skills
+      %cmd%}
+  usage: '&c用法&7: &e/Skills '
+  unknown: '&c未知命令!'
+  not:
+    number: '&e%arg% &c不是有效的数字! &e%needed% &c必须是个数字。'
+  select:
+    description: '&e选择职业'
+    already-chosen: '&c你已经是 &e%skill%'
+  refresh:
+    description: '&e恢复你的 能量/血量/失衡之力/魔法'
+    success: '&3你的所有能量已恢复'
+  improve:
+    description: '&e打开技能树菜单'
+  stats:
+    description: '&e管理属性点'
+    others-permission: '&4你没有权限看其他人的属性'
+  mastery:
+    description: '&e打开技巧树菜单'
+    others-permission: '&c你没有权限查看其他人的技能'
+    usage: '&c用法&8: &e/skill mastery <player>'
+  updates:
+    description: '&e从Spigot检查更新'
+  statistics:
+    description: '&e查看服务器职业使用统计'
+  sound:
+    description: '&e测试音效(适用于更改config里的音效前用)'
+  reload:
+    description: '&e重载插件'
+    done: '&3重载完毕。'
+  top:
+    description: '&e查看玩家排行榜'
+    header: '&8&l&m-----------(&6&l Top 10 Players &8&l&m)-----------'
+    entry: '&6%number%. &8(&9%skills_skill_displayname%&8) &3%player% &8- &e等级 %skills_level%'
+    loading: '&e加载中...'
+  user:
+    description: '&e更改玩家数据.'
+    souls:
+      description: '&e更改玩家的灵魂点数'
+      success: '&3%amount% 点灵魂已增加/更改!'
+    level:
+      description: '&e更改玩家的的等级'
+      success: '&3%amount% 级已更改/增加到玩家的等级'
+      not-number: '&c等级必须是数字!'
+    xp:
+      description: '&e更改玩家的经验(对方必须在线)'
+      success: '&e%amount% &3点经验已增加/更改到 &e%player% &3上! &3 当前经验&8: &e%new%'
+    skill:
+      description: '&e更改玩家职业'
+      success: '&3成功更改职业! %player% &e现在是一名 &3%skill%'
+      not-skill: '&e%skill% &c不是有效的职业,可用职业有&7: &e无业游民(None)&8, &e剑士(Swordsman)&8,
+        &e猎杀者(Devourer)&8, &e法师(Mage)&8, &e爆裂法师(Firemage)&8, &e黑骑士(Juggernaut)&8,
+        &e弓手(Arbalist)&8, &e吸血鬼(Vampire)&8, &e元素精灵(Eidolon)&8, &e牧师(Priest)'
+    stats:
+      description: '&e更改玩家属性点'
+    reset:
+      description: '&e重置玩家数据'
+      success: '&3已重置 &e%player% &3的数据。'
+    statpoints:
+      success: '&3%amount% 点属性点已增加/更改到玩家上'
+    invalid-setter: '&c无效的设置&8: &e%setter% &c请输入以下关键词&8: &eadd/decrease/set'
+    mastery:
+      description: '&e更改玩家技巧等级'
+      set-success: '&e%amount% &3级已增加/更改到 &e%mastery% &3技巧上,当前等级&8: &e%new%'
+    improve:
+      description: '&e更改玩家的进阶能力'
+    improvement:
+      success: '&e%amount% &3已增加/更改到 &e%ability% &3能力上,当前等级&8: &e%new%'
+  bonus:
+    description: '&3管理玩家的 经验/灵魂 加成'
+    give:
+      description: '&3给一名玩家加成'
+      success: '&3你得到了 &e%time% &3的加成!'
+      confirmation: '&e%player% &3获得了 &e%time% &3的加成!'
+      multiplier-error: '&c倍数必须包含关键词 XP(经验) 或者 soul(灵魂)! 例子: &e5 * soul'
+      multiplier-invalid: '&c无效的倍数。请输入数值'
+    take:
+      success: '&3成功移除所有加成.'
+      description: '&3移除玩家身上所有加成'
+    not-found: '&c无效的加成: &e%bonus%'
+  boost:
+    already-started: '&c指定的加成运行中! 剩余时间&8: &e%time%'
+    broadcast: '&e%type% &3加成已启动!加成时长 &e%time% &3。 每一次击杀可得 &e%multiplier% &3倍 &e%type%!'
+  showactivemessages:
+    description: '&e开启或关闭触发技能消息显示'
+    'on': '&3触发消息显示已开启'
+    'off': '&c触发消息显示已关闭'
+  about:
+    description: '&6关于插件'
+  debug:
+    description: '&6启用Debug模式'
+    'on': '&6Debug模式已&8: &3开启'
+    'off': '&6Debug模式已&8: &c关闭'
+    message: '&8[&4DEBUG&7-&5%priority%&8] &e%damager% &7(&e%custom_damager%&7) &6attacked
+      &c%entity% &7(&c%custom_entity%&7)&8: &9伤害&8: &2%damage% &7| &9上一次伤害&8: &2%final_damage%'
+  scaling:
+    description: '&6设置虚假生命最大值(不会影响真实血量)'
+    not-in-range: '&c生命最大值必须为0-80区间或者输入0禁用'
+    set: '&6你的虚假生命最大值已设置为&e%scale%'
+  event:
+    not-found: '&c无效的加成: &e%event% '
+    start:
+      description: '&3运行一个加成.'
+    stop:
+      description: '&3停止一个加成.'
+      success: '&e%player% &3停止了 &e%event% &3加成.'
+    time:
+      description: '&3更改加成的持续时间'
+      set: '&3已更改 &e%event% &3加成的持续时间. 当前持续时间e&8: &e%time%'
+    events:
+      description: '&3获取当前运行的加成.'
+      xp: '&3运行中的经验加成&8: &e持续时间&8: &e%xp_duration% &8- &e倍数&8: &e%xp_multiplier%'
+      soul: '&3运行中的灵魂加成&8: &e持续时间&8: &e%soul_duration% &8- &e倍数&8: &e%soul_multiplier%'
+      nothing: '&c没有任何加成在运行'
+  info:
+    description: '&e查看你的技能等级、属性等信息'
+    xp-bonus: '&3运行中的经验加成&8: &e持续时间&8: &e%skills_xp_bonus_duration% &8- &e倍数&8: &e%skills_xp_bonus_multiplier%'
+    soul-bonus: '&3运行中的灵魂加成&8: &e持续时间&8: &e%skills_soul_bonus_duration% &8- &e倍数&8:
+      &e%skills_soul_bonus_multiplier%'
+    message: |
+      &8&l&m--------------(&6&l %skills_skill% &8&l&m)--------------
+      &3灵魂&7: &e%skills_soul%
+      &3等级&7: &e%skills_level%
+      &3经验&7: &e%skills_xp%&8/&e%skills_maxxp%
+      &3总经验&7: &e%skills_rawxp%
+
+      &6力量(STR) &7| &d灵敏(DEX) &7| &9智慧(INT) &7| &4防御(DEF)
+         &6%skills_stat_str% &7| &d%skills_stat_dex% &7| &9%skills_stat_int% &7| &4%skills_stat_def%
+    others: |+
+      &8&l&m--------------(&6&l %player% &8&l&m)--------------
+      &3等级&7: &e%skills_level%
+      &3经验&7: &e%skills_xp%&8/&e%skills_maxxp%
+      &3总经验&7: &e%skills_rawxp%
+
+  friend:
+    description: '&e添加一名好友'
+    request: '&3好友申请已发送至 &e%invited%'
+    self: '&c你想和自己做朋友?'
+    invalid: '&c你已经是 &e%invited% &c的好友了!'
+    max: '&c好友列表已达到上限，无法再添加好友。'
+    already-sent: '&c你已经向 &e%invited% &c发送过好友申请了!'
+    notification: COMPLEX:&e%inviter% &3申请添加为好友，点这里同意申请 hover:{&e/skill friend %inviter%,&2同意,/skill
+      friend %inviter%} &3.
+    friended: '&e%friend% &3成为了你的好友'
+    already-friends: '&c你已经是 &e%invited% 的好友了'
+  shop:
+    description: '&e购买特殊物品'
+    give:
+      permission: '&c你没有权限'
+      usage: '&c用法&8: &e/skills shop give <类型> [玩家] [数量]'
+      invalid-type: |-
+        &c无效的物品类型&8: &e%type%
+        &c可用类型&8: &eXP（经验）, Energy_Booster（能量提升）, Energy_Potion（能量药水）
+  souls:
+    description: '&e灵魂交易'
+    service-unavailable: '&c暂停服务'
+    unknown-transaction: '&c未知交易 &e%transaction%'
+    not-enough-souls: '&c灵魂不足，请收割 &e%amount% &c个灵魂回来.'
+    not-enough-money: '&c余额不足，你还需要 &e%amount% &c元'
+    deposit-success: |-
+      &3成功卖掉 &e%amount% &3点灵魂， 得到 &e%translated%
+      &3余额&8: &e%balance%
+    deposit-disabled: '&c无法卖出灵魂'
+    withdraw-disabled: '&c无法购买灵魂'
+    withdraw-success: |-
+      &3成功购入 &e%amount% &3点灵魂， 扣除 &e%translated%
+      &3余额&8: &e%balance%
+  tpaccept:
+    description: '&e接受好友传送请求'
+    teleporing: '&3将在 &e%delay% &5秒 后传送至 &e%friend% &3不要移动.'
+    pre-notify: '&3你的好友 &e%friend% &3即将传送到你身边'
+    canceled: '&c传送取消'
+    canceled-notify: '&c你的好友 &e%friend% &c已取消传送'
+    teleporting: '&2将在 &6%countdown% 秒后开始传送&2... 不要移动.'
+    teleport-start: '&3传送将在&e%delay% 秒后开始. &3不要移动!'
+    disconnected: '&c你的好友 &e%friend% &c掉线了,传送取消'
+    no-request: '&e%name% &c没有给你发过任何传送请求'
+    no-requests: '&c没有任何传送请求待处理'
+    more-than-one: '&c你有多个传送请求，输入其中一个玩家的名字接受传送'
+    offline: '&c给你发传送请求的好友掉线了'
+    teleported: '&3已传送到 &e%friend%'
+    notify: '&3你的好友 &e%friend% &3已传送到你身边'
+  friendtp:
+    description: '&e传送到好友身边'
+    not-friends: '&c你和 &e%name% &c还不是好友'
+    disabled: '&c好友传送功能已被关闭'
+    teleported: '&3已传送到 &e%friend%'
+    notify: '&3你的好友 &e%friend% &3已传送到了你身边'
+    requested: '&3已将传送请求发送至 &e%friend%'
+    already-requested: '&c你已经发送过传送请求给 &e%friend% &c了'
+    expired: '&c传送至 &e%friend% &c的请求已取消'
+    expired-notify: '&c你的好友 &e%friend% &c的传送请求已过期'
+    notify-request: |-
+      COMPLEX:&3你的好友 &e%friend% &3请求传送到你这里
+         &3点击或输入命令 hover:{&e/skill tpaccept %friend%,&2接受,/skill tpaccept %friend%} &3接受
+         &3若拒绝，请 &c忽略 &3本消息
+  unfriend:
+    description: '&e删除好友'
+    removed: '&c你把好友 &e%removed% &c删除了'
+    self: '&c和自己交朋友一定很失望吧?'
+    invalid: '&c你不是 &e%removed% &c的好友!'
+    notification: '&e%remover% &c删掉了你的好友'
+  friends:
+    description: '&e好友列表'
+    teleport-not-online: '&e%name% &c不在线!'
+    teleport-permission: '&c你没有权限'
+  party:
+    description: '&e队伍系统'
+    create:
+      description: '&3创建队伍'
+      name: '&c你必须为队伍起个名字'
+      created: '&3你成功创建了一个新队伍!'
+      already-partying: '&c你已经在队伍里了。'
+    rename:
+      description: '&e重命名队伍名称'
+      name: '&c你需要给队伍起个名。'
+      renamed: '&3队伍名称更改为 &e%name%'
+    leave:
+      description: '&e离开当前的队伍'
+      left: '&e%player% &c离开了队伍'
+      disband-confirm: |-
+        COMPLEX:&c你现在是队伍的队长。
+        若离开队伍，队伍将会解散。
+        请点击或输入命令 hover:{&2/skill party leave ,&c确认解散队伍,/skill party leave} &c确认
+      disbanded: '&e%party% &c解散了'
+    invite:
+      description: '&e邀请玩家到队伍'
+      self: '&c你不能邀请你自己'
+      invited: '&3已发送队伍邀请给 &e%invited%'
+      max: '&c成员已到达上限，无法再邀请玩家。'
+      permission: '&c只有队伍管理员才能邀请玩家。'
+      already-invited: '&3已经邀请过 &e%invited% &3了!'
+      arleady-partying: '&e%invited% &c已经在队伍(或别的队伍)里了!'
+      notification: |-
+        COMPLEX:&e%inviter% &3邀请你加入他的队伍 &b%party%.
+        点击或输入命令 hover:{&2/skill party accept %party%,&2同意加入,/skill party accept %party%} &3确认加入队伍.
+        &3若拒绝，请 &c忽略 &3本条消息
+      expired: '&c加入 &e%inviter% &c的队伍的邀请已过期!'
+    kick:
+      description: '&e从队伍里踢掉一个人'
+      kicked: '&e%kicked% &c 被 &e%kicker% &c踢出了队伍'
+      self: COMPLEX:&c如果你想踹掉自己，可以点这或者输入命令 hover:{&e/skill party
+        leave,&e离开,/skill party leave}
+      not-in-party: '&e%kicked% &c不在你的队伍里'
+      permission: '&c只有队伍管理员才可以踢人'
+    mod:
+      description: '&e设置或撤销一个队伍管理'
+      promoted: '&e%mod% &3成为了队伍管理员。'
+      demoted: '&e%mod% &c被撤职了。'
+      permission: '&c只有队长才能设置或撤销管理员!'
+      self: '&c你不能撤掉你自己'
+      not-in-party: '&e%mod% &c不在队伍里'
+    leader:
+      description: '&e转让队长'
+      set: '&e%leader% &3成为了新的队长!'
+      permission: '&c只有队长才能转让队长'
+      self: '&c你自己就是队长了!'
+      not-in-party: '&e%leader% &c不在队伍里。'
+    chat:
+      description: '&3开启或关闭队伍聊天'
+      enabled: '&2队伍聊天已开启'
+      disabled: '&c队伍聊天已关闭'
+    spy:
+      description: '&3Toggle social spy for parties chat.'
+      'on': '&2Party Spy 模式&8: &a开启'
+      'off': '&2Party Spy 模式&8: &c关闭'
+    accept:
+      description: '&e确认加入一个队伍'
+      joined: '&9%player% &2加入了队伍'
+      not-invited: '&c你没有待处理的邀请'
+      not-invited-specific: '&c你没有被邀请到 &e%party% 队伍'
+      name: '&c你有多个邀请，请加入其中一个队伍。'
+      in-party: '&c你已经在其他(或自己)队伍里了!'
+    list-description: '&e队员列表.'
+  show-action-bar:
+    description: '&e开或关闭Actionbar职业信息显示'
+    'on': '&3ActionBar&8: &2开启'
+    'off': '&3ActionBar&8: &4关闭'
+command-help-negative-pages: '&c没有隐藏的页面.'
+not-found:
+  player: '&c找不到指定的玩家'
+events-name:
+  souls: 灵魂
+  xp: 经验
+guis:
+  statmenu:
+    statpoints:
+      needed: '&c你至少要有2个属性点数才能进行自动分配'
+      distribution: '&e%amount% &3点数增加到 &e%stat%'
+      spent: '&3花费 &e%amount% &3点属性点数'
+    reset:
+      message: '&c你的属性点已重置。'
+command-info-others-permission: '&4你没有权限看其他的信息'
+not-enough:
+  souls: '&c灵魂不足!'
+  energy: '&c你需要 %amount% 点能量才能使用!'
+  statpoints: '&c属性点不足'
+kill-message: '&3你击杀了&e%name%，&3得到了 &e%xp% &3点经验和 &e%souls% &3灵魂 '
+player-not-found: '&e%name% &c不在线或不存在'
+invalid-time: '&c无效的时间'
+players-only: '&c只有玩家才能使用 &e/%cmd%'
+party-members-too-far: '&c你距离队友太远，无法互相受益。'
+no-skill: '&c你没有职业!'
+no-party: '&c你不在队伍里(或没有队伍)'
+no-skill-displayname: 无业游民
+permission: '&4你没有权限!'
+death: '&c你失去了 &e%souls% &c点灵魂 &c和 &e%xp% &c点经验.'
+event-not-running: '&e%event% &c加成没有运行!'
+bonus-inactive: '&c加成无效'
+max-level: '&c你已经满级了，无法再次升级'
+ability:
+  upgraded: '&3职业能力已升级!'
+  maxxed: '&c职业能力已满级'
+  not-found: '&e%ability% &3能力无效'
+  invalid-level: '&c能力等级必须在0-3级之间'
+  required-level: '&c你至少需要 &e%level% &c级才能用这个能力'
+  upgrade-notification: '&3你有 &e%skills_soul% &3点灵魂. 你现在可以升级&8: %abilities%'
+  upgrade-notification-list: '&6%ability% &7➛ &3%ability_level% '
+  title: '&6&l被动技能'
+  swordsman-passive:
+    title: '&6被动技能'
+    description: |-
+      &3你可以用副手来攻击了!
+      &3你的伤害增加了 &e%amount%
+      所增加的伤害
+      取决于STR(力量)的多少.
+  arbalist-passive:
+    title: '&6被动技能'
+    description: |-
+      &3你和目标之间的距离越远,
+      伤害就越大.
+  eidolon-passive:
+    title: '&6被动技能'
+    description: |-
+      &3元素精灵有光明和黑暗的形态.
+      失衡之力会随着时间的推移而增加,
+      每当你的失衡之力达到&6100&3时,
+      就会进行一次形态转换
+      并可以恢复 &e%amount% &3点生命值.
+  devourer-passive:
+    title: '&6被动技能'
+    description: |-
+      &3你的攻击会对敌人造成腐蚀伤害,
+      使他们每秒损失 &e%amount% &3生命值,
+      持续5秒.
+  mage-passive:
+    title: '&6被动技能'
+    description: |-
+      &3当你使用法杖(锄头)进行攻击时,
+      越高等级的法杖可以造成越高的伤害
+      并且每次攻击可以恢复&e%amount%&3点魔法值
+  firemage-passive:
+    title: '&6被动技能'
+    description: |-
+      &3着火时,会获得 &e%amount% &3点额外回复
+      你不会受到火焰伤害
+  priest-passive:
+    title: '&6被动技能'
+    description: |-
+      &3像耶稣一样在水上行走,
+      你的身体会自动抗拒熔岩.
+      &c你的记忆会在地狱和末地
+      涌上心头
+  vampire-passive:
+    title: '&6被动技能'
+    description: |-
+      &3每次攻击恢复3点血怒值.
+      每次攻击可以消耗 &e%blood% &3点血怒值
+      对目标额外造成 &e%amount%% &3点近战伤害.
+      血怒值会每秒下降.
+  juggernaut-passive:
+    title: '&6被动技能'
+    description: '&3减免 &e%amount%% &3的实体攻击伤害'
+  dodge:
+    title: '&6闪避'
+    description: |-
+      &3你有 &e%amount%% &3的几率闪避
+      对手的攻击.最大闪避几率是&640%
+  parry:
+    title: '&6弹反'
+    description: |-
+      &3当你手持剑,
+      并且 &6STR(力量) &3高于对手 &4DEF(防御) &3时,
+      你可以向对手反弹 &e%amount% &3点伤害
+  pierce:
+    title: '&6刺穿'
+    description: |-
+      &3如果你的 &6STR(力量) &3比你对手的 &4DEF(防御) &3高,
+      你的攻击将造成 &e%amount%% &3的额外伤害
+  thousand-cuts:
+    title: '&6千刀斩'
+    description: |-
+      &3持剑时,右键激活
+      &3每次攻击目标造成 &e%amount% &3伤害
+      同时在接下来的2秒内赋予他们混乱效果.
+  gliders:
+    title: '&6迅步'
+    description: |-
+      &3等级1&8: &e冲刺时，
+      会获得5秒速度加成
+      &3等级2&8: &e没有掉落伤害
+      &3等级3&8: &e可以二段跳
+  cloak:
+    title: '&6斗篷'
+    description: |-
+      &3等级1&8: &e获得永久隐身.
+      当你攻击时候, 隐身将被禁用30秒.
+      &3等级2: &e敌对的生物自然会对你保持中立.
+      如果你攻击其他生物,能力将禁用30秒.
+      一些生物,如末影人,末影螨,凋零,
+      守护者和末影龙仍然可以看到你.
+      &3等级3&8: &e你在隐身后发动的第一次攻击将
+      造成 &6%amount% &e点的伤害加深.
+  blink:
+    title: '&6闪烁'
+    description: |-
+      &3传送到目标身边的随机位置,
+      升级可以提升传送使用的次数.
+  hook:
+    title: '&6钩锁'
+    description: |-
+      &3右键扔出一个钩子.
+      用来逃离敌人的攻击范围,
+      升级技能会提升钩子可抓取的距离.
+      &3等级2: &e不会再被钩子钩到自己
+  reflect:
+    title: '&6反射'
+    description: |-
+      &3当你手持法杖并受到攻击时,
+      会有一定几率把伤害反弹给攻击者
+      对攻击者造成 &e%amount% &3伤害
+  explosion-spell:
+    title: '&6爆炸符文'
+    description: |-
+      &3当你手持法杖进行攻击时
+      有几率对敌人造成 &e%amount%% &3点的伤害加深.
+  heal-spell:
+    title: '&6恢复符文'
+    description: |-
+      &3每10点法力值,
+      回复额外 &e%amount% &3点生命
+  energy-flux:
+    title: '&6能量喷射'
+    description: |-
+      &3手持法杖右键时,
+      发射出的能量射线可以
+      对一条直线上的敌人造成 &e%amount% &3伤害.
+      如果在 &6%cooldown% &3秒 多次击中敌人,
+      则对敌人造成的伤害就会降低&650%&3.
+      等级越高,攻击范围就越大.
+  absorb-energy:
+    title: '&6能量吸收'
+    description: |-
+      &3当被攻击时,你的下一次攻击将
+      点燃你的目标 &e%amount% &3秒.
+  phoenix-essence:
+    title: '&6凤凰精华'
+    description: |-
+      &3你的目标着火时,每 &61 &3秒
+      将造成 &e%amount%% &3额外伤害.
+  black-fire:
+    title: '&6黑炎'
+    description: |-
+      &3当目标在半径 &65格 &3内时,
+      他们受到的火焰伤害会增加 &e%amount%
+  inferno:
+    title: '&6地狱之火'
+    description: |-
+      &3右击,然后击中目标来激活
+      立刻造成 &e%amount% &3伤害,
+      每 &e20 &3次火焰伤害将额外造成 &e1 &3点伤害.
+  heavy-strikes:
+    title: '&6重击'
+    description: |-
+      &3如果你使用斧头攻击,对你的目标
+      造成 &e%amount%% &3额外伤害.
+  stone-skin:
+    title: '&6石化皮肤'
+    description: |-
+      &3等级1&8: &e坠落伤害降低 &6%fall%
+      &3等级2&8: &e火焰/岩浆伤害降低 &6%fire%/%lava%
+      &3等级3&8: &e荆棘伤害降低 %thorns%
+  aegis-protection:
+    title: '&6护盾'
+    description: |-
+      &e等级1&8: &3每 &e%amount%&3 秒,
+      产生一个护盾,
+      在下次攻击中抵消所有伤害.
+      &e等级2&8: &3反弹 %damage% 点伤害
+      &e等级3&8: &3生命值低于5时击退对方
+  throw:
+    title: '&6投掷'
+    description: |-
+      &3右键激活,左键攻击可以举起目标,
+      举起目标时,所有的伤害将降低50%.
+      3秒后朝你所面对的方向投掷.
+      你和目标在这段时间内无法攻击,
+      一旦你的目标落地,
+      将对其造成 &e%amount% &3点伤害.
+  execute:
+    title: '&6处决'
+    description: |-
+      &3在连续击中一个目标2次后,
+      有几率给予目标额外效果.
+      &e等级1&8: &3有机会点燃你的目标5秒.
+      &e等级2&8: &3有机会使你的目标中毒.
+      &e等级3&8: &3有机会用雷击你的目标.
+
+      射中目标的次数越多
+      触发技能的几率越大
+      但空枪或击中其它目标将导致技能重置.
+  dual-arrows:
+    title: '&6一箭双雕'
+    description: |-
+      &3你的弩和弓有 &e%chance%% &3的几率同时射出两支箭
+      &3等级1&8: &e第二发箭的伤害会增加 &e%amount%
+      &3等级2&8: &e第二发箭的射速会提高
+      &3等级3&8: &e射出的第二发箭会有火焰附加
+  minions:
+    title: '&6召唤仆从'
+    description: |-
+      &3右击并射击以产生会为你战斗的仆从。
+      &e等级1&8: &3一个骷髅
+      &e等级2&8: &3两个具有隐形和附魔弓的骷髅
+      &e等级3&8: &3三个具有隐形和附魔弩的流浪者
+  fire-crossbow:
+    title: '&6烈火弩'
+    description: |-
+      &3向敌人发射能量箭矢.
+      你可以升级该技能以降低冷却时间.
+  blood-lust:
+    title: '&6嗜血'
+    description: |-
+      &3等级1: 如果你的血怒值超过70%, 将进入发狂状态,
+      你可以额外造成 &e%amount%% &3的伤害.
+      等级2: 在此期间,你的生命会以 &e%regain% &3倍的速度恢复
+      等级3: 在此期间的攻击有机会
+      （基于你当前的血怒值）恢复2点生命值
+  blood-well:
+    title: '&6血池'
+    description: |-
+      &3每次升级时都会大量增加你的血怒值上限.
+      每4秒有 &e%amount%% &3的机会来阻止流失血怒值.
+  bleed:
+    title: '&6放血'
+    description: |-
+      &3你的目标会流血5秒
+      对方每秒会造成 %amount% 点伤害
+      同时你会恢复 %amount% 点生命值
+  eternal-darkness:
+    title: '&6永恒黑暗'
+    description: |-
+      &3攻击一个目标,
+      同时在 &e%amount% &3秒钟内无敌.
+      在这段时间内,
+      你每次攻击目标时会使其致盲1秒.
+  purify:
+    title: '&6净化'
+    description: |-
+      &3每当目标有5点生命,
+      造成 &e%amount% &3伤害,
+      最大为 &e%max% &3.
+      获得 &6%amount% &3失衡之力
+  spirit-fire:
+    title: '&6灵火'
+    description: "&3在光形态下, 被攻击时吸收 &e%amount%% &3的伤害, \n最大吸收量为 &650%. &3元素精灵会储存这些伤害\
+      \n&3在暗形态下,在第一次攻击时, \n每吸收 &e%dark% &3伤害,可额外造成1点伤害."
+  spectre:
+    title: '&6幽灵'
+    description: "&3在光形态中,获得一个护盾, 当被打破时,\n护盾将提供3秒的速度 &c%speed% &3. \n每 &e%amount%\
+      \ &3秒刷新一次护盾\n&3 在黑暗形态下,你的攻击将每 &e%amount% &3秒进行一次充能. \n充能攻击造成 &6%dark%% &3额外伤\
+      害.\""
+  shape-shifter:
+    title: '&6移动转换'
+    description: |-
+      &3当你被黑暗包围时你将会获得伤害加成
+      而在光明的笼罩则会获得防御加成.
+  defile:
+    title: '&6亵渎'
+    description: |-
+      &3右击并攻击,
+      可以使你的目标失衡 &e%time% &3秒,
+      增加其受到的伤害,
+      并使其对你造成的伤害降低 &6%amount%%.
+  consume:
+    title: '&6噬魂'
+    description: |-
+      &3有 %chance%% 点几率夺取对方
+      %amount% 点灵魂
+      若对方没有灵魂，
+      则会给对方造成伤害。
+  disarm:
+    title: '&6解除武装'
+    description: |-
+      &3等级1&8: &e如果对手背包中有空间,
+      则将武器从快捷栏上解除.
+      &3等级2&8: &e将对手的武器和
+      背包内的一个物品进行调换
+      &3等级3&8: &e将快捷栏选中的物品
+      与快捷栏的一个随机位置进行调换
+  neptune:
+    title: '&9海王'
+    description: |-
+      &3等级1&8: &e三叉戟的伤害会增加 %amount%
+      有 %chances.lightning% &e的几率会雷击对方
+      &3等级2&8: &e命中目标后，
+      有 %chances.multiply% &e的几率再落下 %multiply% &e个三叉戟
+      并刺向目标
+      &3等级3&8: &e把三叉戟放在副手上
+      按住shift+右键
+      待准备就绪后，释放shift
+      你可以偷偷溜了
+  blood-circuit:
+    title: '&4血环'
+    description: "&3等级1&8: &e生成一个末影水晶，持续 %duration% 秒\n每 %inferno% ticks, \n末影水晶会给\
+      对方造成 %damage-modifier% 点伤害\n如果目标距离水晶有 %distance% 个方块远\n@e则不会激活水晶\n&3等级2&8: &e恢\
+      复受到伤害量的血量\n&3等级3&8: &e每次激活时会生成恼鬼仆从"
+  purification:
+    title: '&6净化世界'
+    description: |-
+      &e等级1&8: &3守护者,末影人
+      和史莱姆不再以你为目标.
+      &e等级2&8: &3远古守护者,蜘蛛和幻翼将不再主动攻击你.
+      如果你攻击他们他们会反击.
+      &e等级3&8: &3走在草地上时,
+      会铺开花朵,净化世界.
+  seal-of-life:
+    title: '&6生命之印'
+    description: |-
+      &3受重伤时有机会逃离敌人.
+      同时无敌,增加生命恢复.
+  fangs:
+    title: '&6尖牙'
+    description: |-
+      &3想摆脱烦人的猎杀者吗?
+      现在你的能力能更好地杀死他们!
+      潜行激活周围小怪的尖牙能力
+      或正常激活,
+      以直线生成尖牙
+  blackhole:
+    title: '&6黑洞'
+    description: |-
+      &3生成一个黑洞并将敌方拉过去
+      如果有人靠近黑洞
+      黑洞将会爆炸，造成巨大伤害
+  meteorite:
+    title: '&6陨石术'
+    description: |-
+      &3左右键发射多个火球
+      等级越高火球越多
+      爆炸威力也随之增大
+  chain:
+    smash-title: '&6裂地击'
+    smash-description: |-
+      &3跳起来
+      向地面猛力一击
+      将所有物体锤上天
+  mind-possession:
+    title: '&6精神控制'
+    description: |-
+      &3你的麻痹效果会给敌人带来缓慢和致盲debuff
+      等级的提升可以同时提升触发几率和持续时间
+  kindling-of-life:
+    title: '&6生命之火'
+    description: |-
+      &3激活技能可扔出治疗药水
+      随着等级的提升投掷次数和治疗量也会随之提升。
+  asclepius:
+    title: '&6医神之力'
+    description: |-
+      &3激活技能,
+      来给你周围的玩家带来buff.
+      可以在战斗前强化你的队友.
+      仅适用于组队
+  natures-force:
+    title: '&2自然之力e'
+    description: |-
+      &3每 %interval% 秒从蜂巢生成
+      &3持续 %duration% 秒 &3的蜜蜂为你而战.
+      蜜蜂会造成 %amount% &3点伤害.
+      如果有人破坏了蜂巢,
+      蜜蜂就会停止生成.
+  natures-call:
+    title: '&2自然呼唤'
+    description: |-
+      &3生成 %minions% &3只狗
+      为你而战，每一只狗
+      会给对方造成 %amount% 伤害
+  chronoprohiberis:
+    title: '&8时停'
+    description: |-
+      &3手持时钟时，
+      &3冻结 &2%range% &3格区域内的玩家时间
+      &2%duration% &3秒
+      并给对方造成 &2%damage% &3伤害
+  dash:
+    title: '&7Dash'
+    description: |-
+      &3Level 1&8: &e持剑时发动冲锋.
+      随着等级提升, 你的冲锋会更强
+      当前力量&8: &2%amount%
+      &3Level 2&8: &e冲锋时击退你的目标.
+      &3Level 3&8: &e冲锋时对目标造成伤害.
+
+      &6范围&8: &2%range%
+      &6伤害&8: &2%damage%
+      &6击退力度&8: &2%knockback%
+  annihilation:
+    title: '&4&l湮灭'
+    description: |-
+      &3生成许多把剑
+      &3依节奏为你而战.
+      左键以射出剑.
+  barrier:
+    title: '&4结界'
+    description: |-
+      &3使用金锄头激活结界
+      试图侵入结界的敌人会收到伤害并且会弹出去
+      在近战非常有用
+skills-item:
+  energy-booster: '&3能量提升 &e%booster% &3已启动，持续时间 &e%time%'
+  cost: '&c你需要花费 &e%cost% &c点灵魂才能购买'
+  no-free-slot: '&c背包空间不足'
+skill:
+  no-permission: '&c你没有权限选择 &e%skill%'
+  owned-error: '&4你已经拥有职业了!'
+  required-level: '&c你至少需要 &e%level% &c级才能选择该职业'
+  change-cooldown-error: '&c你需要等待 &e%cooldown% &c后才能更改职业'
+  select-cost: '&c你需要 &e%cost% &点灵魂才能选择该职业'
+  affected-by: '&3能力效果取决于 &e%stat%'
+  maximum-level: '&c这个能力已经满级了!'
+  swordsman:
+    dodge-opponent-message: '&c对方躲开了你的攻击!'
+    dodge-message: '&3你躲开了攻击!'
+    active-activation-message: '&3&l千刀斩启动！尽可能地多击中你的目标！'
+    active-finished-message: '&c&l千刀万剐！'
+    ready-activation-message: '&3*你举起了武器* 击中目标触发千刀斩'
+    notready-activation-message: '&7*你放下了武器*'
+  devourer:
+    invis-disabled: '&c你的隐身被禁用30秒!'
+    invis-enabled: '&1你淡入了黑暗之中...'
+    neutrality-disabled: '&c你的中立状态被禁用了30秒!'
+    neutrality-enabled: '&1现在你对怪物中立了!'
+  mage:
+    activation-message: '&3&l*冲击!*'
+  firemage:
+    ready-activation-message: '&3*你的手在燃烧* 击中目标激活地狱之火'
+    notready-activation-message: '&7*能量消散*'
+    activation-message: '&3&l你的目标被地狱之力炸飞!'
+  juggernaut:
+    active-ready-message: '&3*你准备好了* 击中目标并投掷'
+    active-notready-message: '&7*你放下了拳头*'
+    active-activated-message: '&3&l你把对手举过头顶!'
+    active-throw-message-countdown: '&c&l你有 %countdown%秒 的时间来选择你所投掷的方向'
+    active-throw-success: '&3&l你把目标扔了出去!'
+    aegis-success: '&3你的护盾挡住了攻击!'
+  arbalist:
+    minions-msg: '&c谨遵您的召唤'
+  eidolon:
+    active-ready: '&3*破坏性能量从你身上散发出来* 击打目标来释放它'
+    active-not-ready: '&c*能量消散*'
+    active-activation-message: '&3&l你破坏了目标的混沌平衡!'
+    turn-light: '&e你从黑暗变为光明!'
+    turn-dark: '&4黑暗压倒光明!'
+    spirit-expell: '&3你对目标造成 %damage% 额外伤害!'
+    shield-refresh: '&3你感觉到一股能量'
+    shield-speed: '&3你破碎的护盾给你速度加成!'
+    attack-boost: '&3你释放你的攻击,造成 %damage%% 的额外伤害!'
+skill-selected: |-
+  COMPLEX:&3你现在是一名 &e%skills_skill_displayname%
+  &3你可以在 hover:{&e/skill improve,&e点击打开,/skill improve} &3升级你的能力
+mastery:
+  maximum-level: '&c这个技巧已经满级了'
+  not-found: '&e%mastery% &3技巧无效'
+  upgraded: '&3%mastery% &3技巧升级了，扣除 &b%cost% &3点灵魂'
+  downgraded: '&e%mastery% &3技巧降级了，退还 &b%cost% &e点灵魂'
+  cant-downgrade: '&c&e%mastery% &c都0级了还咋降啊'
+  required-level: '&c你至少需要 &3%level% &c级才能使用这个技巧'

@@ -1,0 +1,71 @@
+name: "Juggernaut"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-level: 100
+max-health: 20 * 5
+max-energy: lvl + 20
+energy-regen: 1 + 0.05 * lvl
+required-level: 10
+cost: 3000
+stats: [ STR, INT ]
+energy: mana
+abilities:
+  juggernaut-passive:
+    scaling: def/2
+    chance: def
+  heavy-strikes:
+    # Special Variables: durability
+    required-level: 5
+    scaling: (def / 2) + lvl
+    cost: 100 * (lvl + 1)
+    weapons:
+      - "CONTAINS:AXE"
+  stone-skin:
+    required-level: 5
+    scaling: lvl
+    cost: 100 * (lvl + 1)
+    # CONTACT, ENTITY_ATTACK, ENTITY_SWEEP_ATTACK, PROJECTILE, SUFFOCATION, FALL, FIRE,FIRE_TICK, MELTING, LAVA, DROWNING,
+    # BLOCK_EXPLOSION, ENTITY_EXPLOSION, VOID, LIGHTNING, SUICIDE, STARVATION, POISON, MAGIC, WITHER, FALLING_BLOCK,
+    # THORNS, DRAGON_BREATH, CUSTOM, FLY_INTO_WALL, HOT_FLOOR,CRAMMING, DRYOUT
+    # The placeholders used in the description are the same but they're lowercase. %lava%, %magic% etc...
+    protections:
+      FALL: lvl * (def / 4)
+      # Results in 0 for lvl 1
+      FIRE: max(0, lvl - 1)) * (def/4)
+      LAVA: max(0, lvl - 1) * (def/5)
+      # Results in 0 for lvl 1 and 2
+      THORNS: max(0, lvl - 2) def/3
+  chain-smash:
+    required-level: 20
+    scaling: (str / 2) + lvl
+    range: lvl + 2
+    launch: min(2.5, lvl)
+    cost: 100 * (lvl + 1)
+    activation:
+      key: LR
+      energy: 18
+      cooldown: 15
+      items: [ ]
+  aegis-protection:
+    required-level: 10
+    scaling: 10-lvl
+    damage: str/2
+    knockback:
+      # Health percent.
+      health: 30
+      velocity: 2
+    cost: 100 * (lvl + 1)
+  throw:
+    required-level: 1
+    activation:
+      idle: 5
+      key: R
+      energy: 10
+      cooldown: 15
+      items: [ ]
+    scaling: str/20+lvl*3
+    # Entity types that this ability can be used on.
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+    whitelist: [ '*' ]
+    cost: 100 * (lvl + 1)

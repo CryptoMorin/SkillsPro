@@ -1,0 +1,181 @@
+title: "&8&l-=( &2&lMasteries &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  harvesting:
+    name: "&3Harvesting"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2เมื่อเก็บเกี่ยวพืชผลทางการเกษตร"
+      - "มีโอกาสที่จะได้พวกมันเพิ่มขึ้น"
+      - "เป็น2เท่า"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Logging"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2เมื่อทำการตัดไม้"
+      - "มีโอกาสที่จะได้รับไอเทม"
+      - "และ XP เพิ่มเติม"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Mining"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2เมื่อทำการขุดแร่"
+      - "มีโอกาสที่จะได้รับไอเทม"
+      - "และ XP เพิ่มเติม"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Pacifist"
+    material: WHITE_WOOL
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2ได้รับ Skills XP"
+      - "จากการขุดบล็อคที่สามารถ"
+      - "ได้้รับ EXP และผลผลิดทางการเกษตรได้"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Regeneration"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2Efficiency"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะได้รับความสามารถฟื้นฟูพลังชีวิต"
+      - "เมื่อมีพลังชีวิตเท่ากับหรือน้อยกว่า 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Power"
+    material: BLAZE_POWDER
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสสร้างความเสียหายเพิ่มเติม"
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Glory"
+    material: DIAMOND_SWORD
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะได้รับ XP เพิ่มขึ้น"
+      - "จากการฆ่ามอนสเตอร์"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Thick Skin"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะได้รับความเสียหายน้อยลง"
+      - "เมื่อถูกโจมตีโดยมอนสเตอร์หรือผู้เล่น"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Precision"
+    material: ENDER_EYE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะโจมตีติด criticall"
+      - "เมื่อใช้ธนูในการโจมตี"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Reap"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะได้รับ"
+      - "Soul เพิ่มเติมจากการฆ่า"
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Acrobatics"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2มีโอกาสที่จะได้รับความเสียหายน้อยลง"
+      - "เมื่อได้รับความเสียหายโดยการตกจากที่สูง"
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 4, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

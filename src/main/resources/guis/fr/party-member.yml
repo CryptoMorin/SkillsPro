@@ -1,0 +1,19 @@
+title: "&8-=( &3&lPartie &8)=-"
+type: HOPPER
+sound: BLOCK_CHEST_LOCKED
+
+options:
+  kick:
+    name: "&4Expulser &2%player%"
+    material: BARRIER
+    slot: 0
+  mod:
+    isMod:
+      condition: "%mod%"
+      name: "&4Rétrograder &2%player%"
+      material: GREEN_WOOL
+    else:
+      condition: true
+      name: "&2Grader &2%player%"
+      material: RED_WOOL
+    slot: 3

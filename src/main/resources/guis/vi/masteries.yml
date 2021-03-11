@@ -1,0 +1,179 @@
+title: "&8&l-=( &2&lMasteries &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  harvesting:
+    name: "&3Nông Dân"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Thần may mắn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Khi thu hoạch mùa màng,"
+      - "có cơ hội để có được"
+      - "Nhân Đôi Vật Phẩm."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Phong Phú"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Thần may mắn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Khi phá khối,"
+      - "có cơ hội nhận được các buff."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Khai Thác"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Thần may mắn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Khi phá vỡ quặng,có cơ hội"
+      - "x2 vật phẩm"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Tri Thức"
+    material: WHITE_WOOL
+    lore:
+      - "&3Thần may mắn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Đạt được Kỹ năng XP từ việc"
+      - "phá vỡ các khối có thể làm"
+      - "giảm EXP hoặc thu hoạch cây trồng."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Say Máu"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2Đặc Biệt"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội hồi lại máu cho bạn"
+      - "khi lượng máu của bạn dưới 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Sức Mạnh"
+    material: BLAZE_POWDER
+    lore:
+      - "&cChiến Đấu"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội gây thêm sát thương."
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Thợ Săn"
+    material: DIAMOND_SWORD
+    lore:
+      - "&cChiến Đấu"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội tăng XP thu"
+      - "được từ việc giết mob."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Giáp ẩn"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&cChiến Đấu"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội giảm sát thương khi bị mob"
+      - "hoặc người chơi khác tấn công."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Mắt Quỷ"
+    material: ENDER_EYE
+    lore:
+      - "&3Nội Tại Ẩn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội để tấn công"
+      - "bằng cung tên."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Ánh Trăng"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Nội Tại Ẩn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội để có thêm linh hồn"
+      - "cho mỗi lần giết."
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Nhào Lộn"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Nội Tại Ẩn"
+      - ""
+      - "&3Giá&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Có cơ hội nhận ít"
+      - "sát thương hơn khi ngã."
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 4, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

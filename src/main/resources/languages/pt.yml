@@ -1,0 +1,933 @@
+prefix: '&8[&3Skills&8] &3'
+command:
+  help:
+    description: '&6Mostra todos os comandos.'
+    usage: /Skills help <page>
+    grouped-header: '&8&m---------------=( &c&l%group% &8)=---------------'
+    grouped-commands: COMPLEX:hover:{&8/&2Classes %cmd% &7- %description%,&8/&2k %cmd%,|/skills
+      %cmd%}
+    footer: COMPLEX:hover:{&6←,&6Pagina Anterior,/skills help %previous_page%} %pages%hover:{&6→,&6Proxima
+      Pagina,/skills help %next_page%}
+    footer-page: COMPLEX:hover:{&8[&2%number%&8],&6Ir para pagina &2%number%,/skills
+      help %number%}
+    footer-current-page: COMPLEX:hover:{&8[&2&l%number%&8],&2Pagina Atual}
+    header: '&8&m---------------=(&c&l Skills &6%page%&7/&6%max_pages% &8&m)=---------------'
+    commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2skills %cmd%,|/skills
+      %cmd%}
+  usage: '&cUsage&7: &e/Skills '
+  unknown: '&cComando desconhecido'
+  not:
+    number: '&e%arg% &cNao e um numero &e%needed% &cmust be a number.'
+  select:
+    description: '&eUse para selecionar uma classe.'
+    already-chosen: '&cVoce ja e um  &e%skill%'
+  refresh:
+    description: '&eRecarrega toda sua Energia/Sangue/Desbalanço/Mana'
+    success: '&3Sua energia foi recarregada!'
+  improve:
+    description: '&eUse para abrir o menu de habilidades de classe.'
+  stats:
+    description: '&eUse para distribuir seus pontos de stats.'
+    others-permission: '&4Voce nao tem permissao para ver o status de outros!'
+  mastery:
+    description: '&eUse para administrar suas maestrias.'
+  updates:
+    description: '&eAtualizacao spigot'
+  statistics:
+    description: '&eVeja as estatisticas de uso de classes de todo servidor.'
+  sound:
+    description: '&eTeste um som no jogo antes de usar na configuracao'
+  reload:
+    description: '&eRecarrega o plugin'
+    done: '&3Recarregado.'
+  top:
+    description: '&eUse para ver os players mais fortes'
+    header: '&8&l&m-----------(&6&l Top 10 Players &8&l&m)-----------'
+    entry: '&6%number%. &8(&9%skills_skill_displayname%&8) &3%player% &8- &eLvl %skills_level%'
+    loading: '&eCalculando...'
+  user:
+    description: '&eModifica qualquer coisa na classe de qualquer um.'
+    souls:
+      description: '&eUse para alterar a quantidade de Almas do jogador.'
+      success: '&3%amount% almas foram adicionadas ao jogador.'
+    level:
+      description: '&eUse para alterar o nivel do jogador'
+      success: '&3%amount% niveis foram adicionados ao jogador'
+      not-number: '&cO nivel tem que ser um numero!'
+    xp:
+      description: '&eUse para alterar o XP de um jogador. Obs: Ele tem que estar
+        online!'
+      success: '&e%amount% &3XP foi adicionado ao jogador &e%player%''s &3 Novo XP
+        &8: &e%new%'
+    skill:
+      description: '&eUse para alterar a classe de alguem'
+      success: '&3%player% &eagora e um &3%skill%'
+      not-skill: '&e%skill% &cNao e uma classe existente! Use uma dessas&7: &eAventureiro&8,
+        &eEspadachim&8, &eDevorador&8, &eMago&8, &eFeiticeiro&8, &eTemplario&8, &eArqueiro&8,
+        &eVampiro&8, &eEidolon&8, &eClerigo.'
+    stats:
+      description: '&eUUse para adicionar pontos de stats para o jogador.'
+    reset:
+      description: '&eUse para resetar todos os dados do jogador.'
+      success: '&3Todos os dados do jogador &e%player% &3foram apagados!'
+    statpoints:
+      success: '&3%amount% pontos de status foram adicionados ao jogador &e%player%.'
+    invalid-setter: '&cSeletor invalido!&8: &e%setter% &cuse um dos seguindos seletores&8:
+      &eadd/decrease/set'
+    mastery:
+      description: '&eUse para alterar niveis das  maestrias de um jogador.'
+      set-success: '&e%amount% &3Niveis foram adicionados a maestria do jogador &e%mastery%
+        &3  Novo nivel da maestria&8: &e%new%'
+    improve:
+      description: '&eUse para alterar o nivel das habilidades de um jogador.'
+    improvement:
+      success: '&e%amount% &3niveis foram adicionados a habilidade do jogador &e%ability%&3,
+        Novo nivel&8: &e%new%'
+  bonus:
+    description: '&3Altera o bonus de XP e Almas de um jogador.'
+    give:
+      description: '&3Da ao jogador um bonus.'
+      success: '&3Voce ativou um bonus no jogador com tempo de &e%time%'
+      confirmation: '&3Deu ao &e%player% &3um bonus por &e%time%'
+      multiplier-error: '&cO multiplicador tem que ter as palavras XP ou Souls  E.g.
+        &e5 * soul'
+      multiplier-invalid: '&cMultiplicador inválido. Multiplicadores validos: Ex &e5
+        * soul, xp + 20, etc.'
+    take:
+      success: '&3Removeu todos os boosts do player.'
+      description: '&3Remove os boosts do jogador.'
+    not-found: '&cNão foi possivem encontrar &e%bonus% &cbonus.'
+  boost:
+    already-started: '&cO evento solicitado ja está em progresso! Tempo restante&8:
+      &e%time%'
+    broadcast: '&e%type% &3Bonus ativo por &e%time%&3! ganhe &ex%multiplier% &3%type%
+      por kill!'
+  showactivemessages:
+    description: '&eUse para desativar mensagem das skills'
+    'on': '&3Mensagens de skill ativas!'
+    'off': '&cMensagens de skills desativadas.'
+  about:
+    description: '&6Sobre o plugin'
+  scaling:
+    description: '&6Define sua escala de saúde falsa.'
+    not-in-range: '&cA escala de vida falsa deve estar entre 0 e 80 ou 0 para desativar'
+    set: '&6Sua nova escala de saude faltasa foi definida como &e%scale%'
+  event:
+    not-found: '&cNão consegui encontrar &e%event% &cevent.'
+    start:
+      description: '&3Inicia um evento.'
+    stop:
+      description: '&3Para um evento.'
+      success: '&e%player% &3parou o &e%event% &3evento de xp.'
+    time:
+      description: '&3Altera o tempo de um evento.'
+      set: '&3Mudou o tempo do evento: &e%event% &3. Novo tempo&8: &e%time%'
+    events:
+      description: '&3Obtenha os eventos atuais em execução.'
+      xp: '&3Eventos de XP ativos&8: &eDuração&8: &e%xp_duration% &8- &eMultiplicador&8:
+        &e%xp_multiplier%'
+      soul: '&3Eventos de Almas ativos&8: &eDuração&8: &e%soul_duration% &8- &eMultiplicador&8:
+        &e%soul_multiplier%'
+      nothing: '&cNão há eventos em execução.'
+  info:
+    description: '&eUse para ver seu nível de habilidade, estatísticas e melhorias'
+    xp-bonus: '&3Bonus de XP ativo!&8: &eDuration&8: &e%skills_xp_bonus_duration%
+      &8- &eMultiplier&8: &e%skills_xp_bonus_multiplier%'
+    soul-bonus: '&3Bonus de Almas ativo!&8: &eDuration&8: &e%skills_soul_bonus_duration%
+      &8- &eMultiplier&8: &e%skills_soul_bonus_multiplier%'
+    message: |
+      NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Almas&7: &e%skills_soul%
+      &3Level&7: &e%skills_level%
+      &3XP&7: &e%skills_xp%&8/&e%skills_maxxp%
+      &3Total XP&7: &e%skills_rawxp%
+
+      &6STR &7| &dDEX &7| &9INT &7| &4DEF
+         &6%skills_stat_str% &7| &d%skills_stat_dex% &7| &9%skills_stat_int% &7| &4%skills_stat_def%
+    others: |+
+      NOPREFIX:&8&l&m--------------(&6&l %player% &8&l&m)--------------
+      &3Level&7: &e%skills_level%
+      &3XP&7: &e%skills_xp%&8/&e%skills_maxxp%
+      &3Total XP&7: &e%skills_rawxp%
+
+  friend:
+    description: '&eAdicione um jogador como seu amigo.'
+    request: '&3Uma solicitação de amizade foi enviada para &e%invited%'
+    self: '&cVocê está tão desesperado para se tornar seu proprio amigo?'
+    already-friends: '&cVocê já é amigo de&e%invited%'
+    max: '&cVocê não pode fazer mais amigos.'
+    already-sent: '&cVocê já enviou uma solicitação de amizade para &e%invited%'
+    notification: COMPLEX:&e%inviter% &3quer ser seu amigo. Clique em hover:{&e/skill
+      friend %inviter%,&2Aceitar,/skill friend %inviter%} &3para adicionar como amigo..
+    friended: '&3Agora você é amigo de &e%friend%'
+  souls:
+    description: '&eDeposite ou retire almas do seu banco.'
+    service-unavailable: '&cOs serviços bancários não estão disponíveis no momento.'
+    unknown-transaction: '&cTransação desconhecida &e%transaction%'
+    not-enough-souls: '&cVocê não tem &e%amount% &calmas'
+    not-enough-money: '&cVocê não tem &e%amount% &cMinecoins.'
+    deposit-success: |-
+      &3Você depositou com sucesso &e%amount% &3almas em seu banco &e%translated%
+      &3Seu novo saldo&8: &e%balance%
+    deposit-disabled: '&cVocê não pode depositar almas.'
+    withdraw-disabled: '&cVocê não pode retirar almas.'
+    withdraw-success: |-
+      &3Você retirou com sucesso &e%amount% &3almas do seu banco &e%translated%
+      &3Seu novo saldo&8: &e%balance%
+  tpaccept:
+    description: '&eAceite uma solicitação de teleporte de um amigo.'
+    teleporing: '&3Teleportar para &e%friend% &3em &e%delay% &5Segundos. Não se mexa.'
+    pre-notify: '&3Seu amigo &e%friend% &3estará se teletransportando para você.'
+    canceled: '&cO teletransporte foi cancelado!'
+    canceled-notify: '&cSeu amigo &e%friend% &co teletransporte foi cancelado.'
+    teleporting: '&2Teleporte em &6%countdown% segundos&2... Não se mexa.'
+    teleport-start: '&3O teletransporte começará em &e%delay% segundos. &3Não se mexa.'
+    disconnected: '&cSeu amigo foi desconectado e o teletransporte foi cancelado.'
+    no-request: '&e%name% &cnão enviou nenhuma solicitação de teleporte.'
+    teleported: '&3Teleportado para &e%friend%'
+    notify: '&3Seu amigo &e%friend% &3se teletransportou para você.'
+    no-requests: '&cVocê não tem nenhum pedido de teletransporte enviado para você.'
+    more-than-one: '&cVocê tem mais de uma solicitação de teletransporte. Por favor especifique
+       o nome do jogador do qual você deseja aceitar a solicitação.'
+    offline: '&cSeu amigo que lhe enviou uma solicitação de teleprotação agora está offline.'
+  friendtp:
+    description: '&eTeleporte-se para um amigo.'
+    not-friends: '&cVocê não é amigo de &e%name%'
+    disabled: '&cO teletransporte de amigos está desativado.'
+    teleported: '&3Teleportado para &e%friend%'
+    notify: '&3Seu amigo &e%friend% &3foi teletransportado para você.'
+    requested: '&3Enviou um pedido de teletransporte para &e%friend%'
+    already-requested: '&cVocê já enviou uma solicitação de teletransporte para &e%friend%'
+    expired: '&cSeu pedido de teletransporte para &e%friend% &cExpirou.'
+    expired-notify: '&cO pedido de teleporte de &e%friend% &cExpirou.'
+    notify-request: |-
+      COMPLEX:&3Seu amigo &e%friend% &3quer se teletransportar para você.
+         &3Use hover:{&e/skill tpaccept %friend%,&2Accept,/skill tpaccept %friend%} &3para aceitar.
+         &3ou ignore para &ccancelar &3automáticamente.
+  unfriend:
+    description: '&eRemova um jogador como seu amigo.'
+    removed: '&cVocê cancelou a amizade &e%removed%'
+    self: '&cVocê deve estar realmente desapontado para tirar voce mesmo como amigo seu corno'
+    invalid: '&cVocê não é amigo de &e%removed%'
+    notification: '&e%remover% &cdeixou de ser amigo de você!'
+  friends:
+    description: '&eLista de todos os seus amigos.'
+    teleport-not-online: '&e%name% &cnão está online para se teletransportar!'
+    teleport-permission: '&cVocê não tem permissão para se teletransportar para amigos.'
+  party:
+    description: '&eCrie um grupo com seus amigos.'
+    create:
+      description: '&3Criar um novo grupo.'
+      name: '&cVoce tem que colocar um nome no seu grupo.'
+      created: '&3Voce criou um novo grupo!'
+      already-partying: '&cVoce já esta em um grupo.'
+    rename:
+      description: '&eRenomeie seu grupo.'
+      name: '&cVocee precisa escolher um novo nome pro seu grupo.'
+      renamed: '&3O nome do grupo agora é &e%name%'
+    leave:
+      description: '&eSair do grupo..'
+      left: '&e%player% &csaiu do grupo.'
+      disband-confirm: '&cVoce é o lider do grupo, se voce sair o grupo vai ser deletado! Digite o comando novamente para confirmar.'
+      disbanded: '&cO grupo &e%party% &cfoi desfeito.'
+    invite:
+      description: '&eConvide outros jogadores para seu grupo.'
+      self: '&cVoce não pode convidar a sí mesmo!'
+      invited: '&3Convidou &e%invited% &3para o grupo.'
+      max: '&cSeu grupo já está cheio!'
+      permission: '&cApenas moderadores podem convidar pro grupo.'
+      already-invited: '&e%invited% &3ja foi convidado.'
+      arleady-partying: '&e%invited% &cestá em outro grupo.'
+      notification: |-
+        COMPLEX:&e%inviter% &3Convidou voce para o grupo
+        use hover:{&2/skill party accept %party%,&2Accept,/skill party accept %party%} &3para aceitar.
+        ou ignore para cancelar automaticamente.
+      expired: '&cO convite de entrar no grupo de &e%inviter% &cexpirou!'
+    kick:
+      description: '&eExpulse um membro do grupo.'
+      kicked: '&e%kicked% &cfoi expluso do grupo por &e%kicker%'
+      self: COMPLEX:&cse voce quer expulsar a só mesmo use hover:{&e/skill party
+        leave,&eLeave,/skill party leave}
+      not-in-party: '&e%kicked% &cnão está no seu grupo.'
+      permission: '&capenas moderadoes podem expulsar do grupo.'
+    mod:
+      description: '&ePromova ou rebaixe membros do grupo.'
+      promoted: '&e%mod% &3foi promovido a moderador do grupo.'
+      demoted: '&e%mod% &cfoi rebaixado.'
+      permission: '&capenas o lider pode definir outros jogadores como moderador.'
+      self: '&cVoce não pode rebaixar a sí mesmo.'
+      not-in-party: '&e%mod% &cnão está no grupo.'
+    leader:
+      description: '&eDefine um novo lider pro grupo'
+      set: '&e%leader% &3Foi definido como novo lider do grupo!'
+      permission: '&cApenas o lider do grupo pode definir outro lider.'
+      self: '&cVoce ja é um lider!'
+      not-in-party: '&e%leader% &cNão está no seu grupo.'
+    chat:
+      description: '&3Altere o chat grupo.'
+      enabled: '&2O chat de grupo foi ativado.'
+      disabled: '&cO chat de grupo foi desativado.'
+    accept:
+      description: '&eAceite convites de grupos.'
+      joined: '&9%player% &2entrou no grupo!'
+      not-invited: '&cVoce não foi convidado a nenhum grupo.'
+      not-invited-specific: '&cVoce não foi convidado para entrar em &e%party%'
+      name: '&cVoce recebeu muitos convites de grupo. Especifique um por favor.'
+      in-party: '&cVoce ja está em um grupo!.'
+    list-description: '&eLista de membros do grupo.'
+  shop:
+    description: '&eCompre Itens especiais para classes!'
+    give:
+      permission: '&cVoce não tem permissão para usar este comando.'
+      usage: '&cUsage&8: &e/skills shop give <type> [player] [amount]'
+      invalid-type: |-
+        &cInvalid Skills item type&8: &e%type%
+        &cAvailable Types&8: &eXP, Energy_Booster, Energy_Potion
+command-help-negative-pages: '&cNão há páginas ocultas.'
+guis:
+  statmenu:
+    statpoints:
+      needed: '&cSão necessários pelo menos 2 pontos de estatística para distribuir
+        automaticamente.'
+      distribution: '&e%amount% &3pontos adicionados em &e%stat%'
+      spent: '&3Usou &e%amount% &3pontos de status.'
+    reset:
+      message: '&cSeus pontos de status foram redefinidos.'
+command-info-others-permission: '&4Você não tem permissão para ver outras informações.'
+not-enough:
+  souls: '&cVocê não tem almas suficientes!'
+  statpoints: '&cNão há pontos estatísticos suficientes.'
+kill-message: '&3Ganhou &e%xp% XP &3e &e%souls% Almas &3por matar &e%name%'
+player-not-found: '&cNão foi possível encontrar o jogador &e%name%.'
+invalid-time: '&cHora inválida.'
+players-only: '&cSomente jogadores podem usar este comando.'
+party-members-too-far: '&cYour party members are too far apart! No bonus is available.'
+no-skill: '&cVocê não tem uma classe!'
+no-party: '&cYou''re not in a party!'
+no-skill-displayname: Novato
+permission: '&4Você não tem permissão para usar esse comando!'
+death: '&cVoce perdeu &e%souls% &calma(s) &ce &e%xp% &cXP.'
+event-not-running: '&e%event% &cevento não está sendo executado!'
+bonus-inactive: '&cBônus inativo'
+max-level: '&cVocê atingiu o nível máximo. Você não poderá mais subir de nível.'
+ability:
+  upgraded: '&3Habilidade upada!'
+  maxxed: '&cA habilidade está no nível máximo.'
+  not-found: '&e%ability% &3habilidade não encontrada.'
+  invalid-level: '&cO nível de habilidade deve ser um valor entre 0 e 3'
+  required-level: '&cVocê precisa ter pelo menos nível &e%level% &cpara usar essa
+    habilidade'
+  upgrade-notification: '&3Voce tem &e%skills_soul% &3almas. Voce pode upar suas skills&8:
+    %abilities%'
+  upgrade-notification-list: '&6%ability% &7➛ &3%ability_level% '
+  title: '&6&lPassiva'
+  swordsman-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Voce pode usar a sua mao esquerda para atacar agora!
+      Se ataque normal e aumentado em &e%amount%
+      Voce pode aumentar esse dano
+      adquirindo pontos em STR
+  arbalist-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Quanto maior a distância
+       entre você e seu alvo,
+       maior o dano.
+
+       Tem a chance de gerar
+       uma chuva de flechas de fogo.
+       Quanto maior o seu nível de habilidade
+       maior sua chance.
+  eidolon-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Fantasma tem uma forma clara e escura.
+       Quando seu desequilíbrio atinge &6100&3,
+      você muda para outra forma.
+       O desequilíbrio é obtido com o tempo.
+       Ao alterar, restaure &e%amount% &3de vida.
+  devourer-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Seus ataques causam corrosão
+       para o seu inimigo, fazendo ele sangrar
+       e perder &e%amount% &3de vida
+      toda vez que são afetados.
+  mage-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Ao atacar com cajados (Enxada)
+      voce ganha de volta  &e%amount% &3mana por golpe.
+      Atacar com enxadas causará mais dano,
+       variando de 4 para uma enxada de madeira,
+       8 para uma enxada de diamante.
+  firemage-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Quando em chamas, recupere &e%amount% &3extra
+      de saúde ao curar.
+      Você também é imune a dano de fogo.
+  priest-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Ande sobre a água como Jesus.
+       Seu corpo rejeita automaticamente a lava.
+      &cVocê se torna fraco e
+       vulnerável no nether e no The End!
+  vampire-Passiva:
+    title: '&6Passiva'
+    description: |-
+      &3Você perderá sangue ao longo do tempo.
+       Atacar dá a você alguns
+       sangue por golpe. Para cada
+      %blood% sangue que você tem, inflinge um adicional de
+      &e%amount% &3dano corpo a corpo aos seus alvos.
+  juggernaut-Passiva:
+    title: '&6Passiva'
+    description: '&3Reduza os ataques recebidos em  &e%amount%%'
+  dodge:
+    title: '&6Esquiva Suprema'
+    description: |-
+      &3Voce tem uma chance de &e%amount%% &3de esquivar dos
+      ataques de seus inimigos
+      *Maximo: &640%
+  parry:
+    title: '&6Bloqueio'
+    description: |-
+      &3Se voce esta segurando uma espada,
+      e seu oponente tem menos
+      &3STR que voce, voce vai refletir &e%amount%%
+      &3de dano de volta.
+  pierce:
+    title: '&6Penetração Crítica'
+    description: |-
+      &3Se seu &6STR &3é mais alto
+      que a  &4DEF&3 do seu inimigo,
+      seu ataque vai inflingir &e%amount%%
+      &3a mais de dano
+  thousand-cuts:
+    title: '&6Mil Cortes Divinos'
+    description: |-
+      &3Botão direito para ativar
+      quando estiver usando uma espada.
+      &3Inflinge &e%amount% &3de dano por hit no inimigo sem interrupção,
+      desorientando o inimigo
+      pelos próximos 2 segundos.
+  gliders:
+    title: '&6Planadores'
+    description: |-
+      &3Nivel 1&8: &eAo correr,
+       ganhe &e5 segundos de &evelocidade
+       dependendo do seu nível.
+      &3Nivel 2&8: &eSem dano de queda.
+      &3Nivel 3&8: &eSalto duplo!
+  cloak:
+    title: '&6Manto Supremo'
+    description: |-
+      &3Nivel 1&8: &eGanha invisbilidade permanente.
+      Quando você ataca, a invisibilidade
+       fica desativada por 30 segundos.
+      &3Nivel 2: &eMobs hostis naturalmente
+       serão neutros com você.
+       Se você atacar um mob hostil, a neutralidade é
+       desativada por 30 segundos.
+      Alguns mobs como Enderman, endermite,
+      wither, guardians e o ender dragon
+      ainda serao capaz de vê-lo.
+      &3Nivel 3&8: &eO primeiro ataque que você faz
+       antes de se tornar visível
+       inflinge &6%amount% &edano extra.
+  blink:
+    title: '&6Piscar'
+    description: |-
+      &3Teleporte-se para o seu alvo
+       aleatoriamente, criando um aura em volta.
+       A aleatoriedade do teletransporte e as contagens
+       aumentar com o nívelda skill.
+  hook:
+    title: '&6Gancho'
+    description: |-
+      &3Clique com o botão direito do mouse para obter um gancho.
+       Útil para escapar de seus inimigos.
+      Apenas subindo de nível
+      aumenta o alcance do seu gancho (Flecha).
+      &3Nivel 2: &eVocê não sofrerá danos por quedas nos ganchos.
+  reflect:
+    title: '&6Refletir'
+    description: |-
+      &3Quando você é atacado,
+       e você está segurando
+       uma cajado, tem uma chance
+       (com base no material de seu cajado)
+      de refletir &e%amount% &3para o atacante.
+  explosion-spell:
+    title: '&6Feitiço de Explosão'
+    description: |-
+      &3Quando você está atacando e está segurando um
+       cajado, tem uma chance
+       (com base no material da seu cajado)
+       inflingir &e%amount%% &3mais dano ao seu inimigo.
+  heal-spell:
+    title: '&6Feitiço de Cura'
+    description: |-
+      &3Para cada 10 mana que você tem,
+       regenera &e%amount%&3 saúde adicional,
+      se sua saúde estiver abaixo de 20%.
+  energy-flux:
+    title: '&6Fluxo de energia'
+    description: |-
+      &3Ao clicar com o botão direito do mouse com uma enxada,
+      disparar rapidamente raios de energia que
+       inflinge &e%amount% &3dano em uma linha.
+      Acertos repetidos no mesmo alvo
+       dentro &6%cooldown%s &3vai
+       inflingir &650% &3menos danos.
+      Mais níveis aumentam
+       distância para atingir seu alvo.
+  absorb-energy:
+    title: '&6Absorver energia'
+    description: |-
+      &3Quando atacado, seu próximo ataque
+       colocarar seus inimigos em chamas
+       por &e%amount% &3segundos.
+  phoenix-essence:
+    title: '&6Essencia Fenix'
+    description: |-
+      &3Inflinge &e%amount% &3a mais de dano
+      por cada  &61 segundo que
+      &3seu alvo está em chamas.
+  black-fire:
+    title: '&6Fogo Negro'
+    description: |-
+      &3Quando alvos em um raio
+       de &65 blocos &3de voce,
+      aumentar seu dano de fogo por &e%amount%
+  inferno:
+    title: '&6Inferno'
+    description: |-
+      &3Clique com o botão direito e acerte um alvo
+       com sua equipe para ativar.
+       inflinge imediatamente &e%amount% &3 dano de fogo,
+      mais 1 dano por acada 20 segundos que o alvo ta em chamas.
+  heavy-strikes:
+    title: '&6Pancada Pesada'
+    description: |-
+      &3Se você estiver usando um machado para atacar,
+      inflinge &e%amount% &3 a mais de danos
+       a armadura do seu adversario.
+  stone-skin:
+    title: '&6Pele de pedra'
+    description: |-
+      &3Level 1&8: &eO dano por queda é reduzido em &6%fall%
+      &3Level 2&8: &eDano de fogo/lava é
+       reduzido em &6%fire%/%lava%
+      &3Level 3&8: &eDano de espinhos é
+       reduzido em %thorns%
+  aegis-protection:
+    title: '&6Escudo Aégis'
+    description: |-
+      &eLevel 1&8: &3A cada &e%amount%&3 segundos,
+      regenera um escudo que nega todo
+       dano para o próximo ataque que receber.
+      &eLevel 2&8: &3Reflete %damage% de dano.
+      &eLevel 3&8: &3Derrube seu alvo
+       se a saúde dele estiver abaixo de 5 pontos.
+  throw:
+    title: '&6Lançar'
+    description: |-
+      &3Clique com o botão direito e clique no
+       seu alvo para ativar.
+       levante seu inimigo por 3 segundos,
+       tornando você e seu alvo incapazes
+       atacar pela duração,
+       então jogue seu inimigo no
+       direção que você está olhando.
+      Uma vez que seu alvo atinge o chão,
+      inlfinge &e%amount% &3dano ao seu alvo.
+      Enquanto você estiver carregando seu alvo,
+       todo o dano recebido é reduzido em 50%
+  execute:
+    title: '&6Combo Divino'
+    description: |-
+      &3Depois de atirar em um único alvo
+       Duas vezes seguidas, tenha a chance de
+       execute um desses combos.
+
+      &eLevel 1&8: &3Tem a chance de deixar
+       seu alvo pegando fogo por 5 segundos.
+      &eLevel 2&8: &3Tenha a chance de envenenar
+       seu alvo.
+      &eLevel 3&8: &3Tem a chance cair
+       um raio no seu alvo.
+
+      As chances aumentarão quanto mais
+       você atira no alvo.
+       Seu combo será redefinido se você perder
+       ou acertar outro alvo.
+  dual-arrows:
+    title: '&6Flecha Dupla'
+    description: "&3Seu arco tem %chance%% chances de \ndisparar duas flechas ao mesmo\
+      \ tempo.\n&3Level 1&8: &eAumenta o dano da segunda \nflecha por &3%amount%&e.\n\
+      &3Level 2&8: &eA segunda flecha\ntem uma velocidade mais alta.\n&3Level 3&8:\
+      \ &eA segunda flecha\nvai ser uma flecha de fogo."
+  minions:
+    title: '&6Flecha de Minions'
+    description: "&3Clique com o botão direito e atire \ncom um arco para\nspawnar\
+      \ esqueletos que vão\nlutar por voce.\n\n&eLevel 1&8: &3Um esqueleto\n&eLevel\
+      \ 2&8: &3Dois esqueletos com invisibilidade\n e melhores arcos.\n&eLevel 3&8:\
+      \ &33 Saqueadores  com invisibilidade\ne flechas de fogo."
+  fire-crossbow:
+    title: '&6Besta de Fogo'
+    description: |-
+      &3Atire uma flecha no seu inimigo
+       perfurando. Não usa setas,
+       e usa energia.
+       Atualize para reduzir o tempo de espera.
+  blood-lust:
+    title: '&6Desejo de sangue'
+    description: "&3Level 1: Se você tiver mais de 70% de\nseu sangue, Entra em um\
+      \ frenesi,\npermitindo que você inflinge\n&e%amount%% &3mais danos do que o\
+      \ normal.\nLevel 2: Sua regeneração natural da saúde é\naumentada por %regain%\
+      \ durante esse tempo. \nLevel 3: Ataques durante esta duração\ntem uma chance\
+      \ (com base no seu\nsangue atual) para curá-lo em 2"
+  blood-well:
+    title: '&6Poço de sangue'
+    description: |-
+      &3Aumenta seus níveis máximos de sangue em um grande
+       valor cada atualização. Tem &e%amount%% &3 de chance
+      de parar a perda de sangue a cada 4 segundos.
+  bleed:
+    title: '&6Sangrar'
+    description: |-
+      &3Seu alvo sangrará por
+       5 segundos. Toda vez
+       seu alvo é danificado em %amount%
+      você recebe %amount% de vida.
+  eternal-darkness:
+    title: '&6Escuridão eterna'
+    description: |-
+      &3Clique com o botão direito do mouse e acerte um alvo para se tornar
+       invencível durante &e%amount% &3segundos.
+      Durante esse período, você cega os alvos
+       que você ataca por 1 segundo por golpe.
+  purify:
+    title: '&6Purificar'
+    description: |-
+      &3Inflinge &e%amount% &3dano para
+       a cada 5 pontos de vida que seu alvo possui,
+      até um máximo de &e%max%&3.
+      &6%amount% &3o desequilíbrio é obtido quando você ataca.
+  spirit-fire:
+    title: '&6Espirito de Fogo'
+    description: "&3Na forma de luz, absorve &e%amount%%\n&3dano ao ser atingido,\
+      \ até um  máximo de &650%.\n&3Esta quantidade é armazenada. \n&3Na forma Escura,\
+      \ dispara todo o dano armazenado\nno primeiro ataque que inflingir\n1 dano por\
+      \ &e%dark% &3dano absorvido"
+  spectre:
+    title: '&6Espectro'
+    description: "&3Na forma de Luz, ganhe um escudo que irá\ndar velocidade &c%speed%&3\
+      \ por 3 segundos\nquando quebrado.\nO escudo atualiza a cada &e%amount% &3segundos\
+      \ \nNa forma Escura, seu ataque será\nser carregado a cada &e%amount% &3segundos.\n\
+      ataques carregados inflingem &6%dark%%\n&3dano adicional."
+  shape-shifter:
+    title: '&6Forma Eólica'
+    description: |-
+      &3Quando estiver na forma das trevas, você da mais
+       dano ao inimigo.
+      Quanto mais escuro o lugar, mais dano você causa.
+      Quando você está em lugares claros,
+      você sofrerá menos danos.
+      Quanto mais brilhante, menos dano você receberá.
+  defile:
+    title: '&6Desfiladeiro Mágico'
+    description: |-
+      &3Clique com o botão direito e ataque inflingir
+       desequilibrio  em seu alvo,
+       aumentando o dano que ele recebe,
+      e reduzindo o dano dele causado a
+       voce por &6%amount%% &3por &e%time% segundos&3.
+  consume:
+    title: '&6Consumir'
+    description: |-
+      &3Tenha uma chance  %chance%% de roubar
+      %amount% &3almas de seus oponentes
+      ou causar dano massivo
+       se eles não têm almas.
+  disarm:
+    title: '&6Desarme'
+    description: |-
+      &3Level 1&8: &eRoube a arma do seu oponente
+       e coloque em seu inventário se
+       voce tiver  espaço livre.
+      &3Level 2&8: &eSubstitua a arma do seu oponente
+       com um item em seu inventário.
+      &3Level 3&8: &eAltere também o slot da barra de acesso que eles estão usando.
+  neptune:
+    title: '&9Netuno'
+    description: |-
+      &3Level 1&8: &eInflinge %amount% &ea mais de danos com tridentes.
+      Tenha uma chance de %chances_lightning% &e
+      atingir o seu oponente com
+      raios se estiver usando um tridente.
+      &3Level 2&8: &eTem a chance de  %chances_multiply% &e
+      invocar %multiply% &emultiplos tridentes
+      focando seu alvo após
+      um ataque com sucesso de tridente.
+      &3Level 3&8: &eVocê pode se lançar com
+       seu tridente enquanto segura
+       na sua segunda mão e esgueirando-se
+       Obs:Isso é um pouco complicado.
+      Voce precisa pressionar e soltar o botão de agachar
+      uma vez solto, use o botão direito
+      Voce pode literalmente voar desse jeito.
+  blood-circuit:
+    title: '&4Circuito Sanguíneo'
+    description: |-
+      &3Level 1&8: &eGera um EnderCrystal que
+       age como um circuito sanguíneo entre
+       você e seu oponente por %duration% segundos.
+      Cada %inferno% ticks, o EnderCrystal vai
+       ativar e danificar seu oponente %amount%
+      e aumenta esse dano por %damage-modifier%
+      Seu inferno vai parar de ativar se o seu
+       alvo esta a  %distance% blocos &ealém do cristal.
+      &3Level 2&8: &eVocê será curado com a mesma quantidade de
+       dano que seu inferno inflinge para o seu oponente.
+      &3Level 3&8: &eCria minions vex toda vez
+       seu inferno é ativado.
+  purification:
+    title: '&6Benção Divina'
+    description: |-
+      &eLevel 1&8: &3Guardiões, endermens e
+       os slimes não terão mais como voce como alvo.
+      &eLevel 2&8: &3Elder guardians, aranhas e
+      Phantoms tambem não terão voce como alvo.
+      Mas se voce atacar eles, eles vão atacar de volta.
+      &eLevel 3&8: &3Plantas ao arredor de voce irão crescer mais rapido.
+  seal-of-life:
+    title: '&6Selo da Vida'
+    description: |-
+      &3Tenha a chance de escapar dos inimigos
+       quando estiver gravemente ferido.
+      fique invencível e aumente a regeneração.
+      por um curto período de tempo.
+  fangs:
+    title: '&6Presas'
+    description: |-
+      &3Sempre quis se livrar daqueles
+       evokers irritantes?
+      Agora você pode matar
+       eles com suas
+       propias mãos e ainda melhor!
+      Agaixe-se e use a habilidade em um mob
+      Irá atacar todos em sua volta.
+  blackhole:
+    title: '&6Buraco Negro'
+    description: |-
+      &3Crie um buraco negro e puxe todos
+       os inimigos em torno dele.
+       Este buraco negro vai dar um
+       dano massivo se alguém se aproximar dele.
+  meteorite:
+    title: '&6Chuva de Meteoros'
+    description: "&3Invoque uma chuva de meteoros\nem cima de seu inimigo e veja \n\
+      ele se chamuscar!"
+  chain:
+    smash-title: '&6Pulo Tonelada'
+    smash-description: |-
+      &3Pule e bata no chão com seu machado
+      para causar um terremoto e lançar
+      todos para os céus.
+      Obs:Precisa usar um machado!
+  mind-possession:
+    title: '&6Posse da mente'
+    description: |-
+      &3Tenha a chance de paralisar seu
+       inimigo com lentidão e cegueira.
+       Níveis mais altos oferecem maiores chances e duração.
+  kindling-of-life:
+    title: '&6Oração'
+    description: |-
+      &3Cure seus companheiros de equipe
+       para apoiá-los.
+       Níveis mais altos dão maior velocidade
+       e maior cura.
+       *Precisa ter uma enxada na mão*
+  asclepius:
+    title: '&6Bastão Asclépio'
+    description: |-
+      &3Dê buffs aos seus amigos enquanto segura uma enxada
+      Apoie seus colegas de equipe antes de uma luta
+      com alguns buffs.
+      Funcinona apenas com membros da facção.
+      *Precisa ter uma enxada na mão*
+  natures-force:
+    title: '&2Força da Natureza'
+    description: |-
+      &3Cria abelhas a cada %interval% segundos
+      &3por %duration% segundos &3de uma colméia
+      para lutar por voce.
+      Essas abelhas tem  %amount% &3dano.
+      Se alguém quebra a colméia,
+      as abelhas vão parar de spawnar.
+  natures-call:
+    title: '&2Chamado da natureza'
+    description: |-
+      &3Cria %minions% &3lobos para lutar
+      por voce. Cada lobo tem um ataque
+      de %amount%.
+  dash:
+    title: '&6Dash'
+    description: |-
+      &3Acione um solavanco que fará voce
+      dar um dash para frente e confunda seus inimigos
+      o dash fica mais forte
+      em niveis mais altos.
+      Poder atual&8: %amount%
+  swordsman-passive:
+    title: '&6Passiva'
+    description: |-
+      &3 Seu ataque e aumentado em &e%amount%
+      Voce pode aumentar esse dano
+      adquirindo pontos em STR
+  arbalist-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Quanto maior a distância
+       entre você e seu alvo,
+       maior o dano.
+
+       Tem a chance de gerar
+       uma chuva de flechas de fogo.
+       Quanto maior o seu nível de habilidade
+       maior sua chance.
+  eidolon-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Fantasmas tem sua forma das Trevas e da Luz.
+      Quando seu desequilibrio chega a  &6100&3,
+      voce muda para a outra forma.
+      desequilibrio é ganho com o tempo.
+      Quando mudar de forma, restaura &e%amount% &3de vida.
+  devourer-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Seus ataques causam corrosão
+       para o seu inimigo, fazendo ele sangrar
+       e perder &e%amount% &3de vida
+      toda vez que são afetados.
+  mage-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Ao atacar com cajados (Enxada)
+      voce ganha de volta  &e%amount% &3mana por golpe.
+      Atacar com enxadas causará mais dano,
+       variando de 4 para uma enxada de madeira,
+       10 para uma enxada de netherita.
+  firemage-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Quando em chamas, recupere &e%amount% &3extra
+      de saúde ao curar.
+      Você também é imune a dano de fogo.
+  priest-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Ande sobre a água como Jesus.
+       Seu corpo rejeita automaticamente a lava.
+      &cVocê se torna fraco e
+       vulnerável no nether e no The End!
+  vampire-passive:
+    title: '&6Passiva'
+    description: |-
+      &3Você perderá sangue ao longo do tempo.
+       Atacar dá a você alguns
+       sangue por golpe. Para cada
+      %blood% sangue que você tem, inflinge um adicional de
+      &e%amount% &3dano corpo a corpo aos seus alvos.
+  juggernaut-passive:
+    title: '&6Passiva'
+    description: '&3Reduza os ataques recebidos em  &e%amount%%'
+  chronoprohiberis:
+    title: '&8Reversão Temporal'
+    description: |-
+      &3Pare o tempo em volta de
+      seus inimigos &2%range% &3blocos
+      em volta de voce por  &2%duration% &3segundos
+      e inflinge &2%damage% &3danos.
+skills-item:
+  energy-booster: '&3Impulsionador de energia &e%booster% &3ativador por  &e%time%'
+  cost: '&cVocê precisa &e%cost% &calmas para comprar este item.'
+  no-free-slot: '&cVoce não tem espaço livre no iventário.'
+skill:
+  no-permission: '&cVocê não tem permissão para usar a classe  &e%skill%'
+  owned-error: '&4Você já possui uma classe!'
+  required-level: '&cVocê precisa ter pelo menos nível &e%level% &cpara usar essa
+    classe.'
+  change-cooldown-error: '&cVocê precisa esperar &e%cooldown% &cpara mudar sua classe.'
+  select-cost: '&cVocê precisa &e%cost% &calmas para selecionar esta classe.'
+  affected-by: |-
+    &3A efetividade dessa melhoria é
+    também afetado por &e%stat%
+  maximum-level: '&cEssa melhoria esta atualizada para o nível máximo.'
+  swordsman:
+    dodge-opponent-message: '&cSeu ataque foi esquivado!'
+    dodge-message: '&3Ataque esquivado!'
+    active-activation-message: '&3&lMil Cortes Divinos ativados! Atinja seu alvo quantas
+      vezes que puder!'
+    active-finished-message: '&c&lMil Cortes Divinos acabou'
+    ready-activation-message: '&3*Você levanta sua arma * Acerte um alvo para ativar
+      Mil Cortes Divinos'
+    notready-activation-message: '&7*Você abaixa sua arma*'
+  devourer:
+    invis-disabled: '&cSua invisibilidade foi desativada por 30 segundos!'
+    invis-enabled: '&1Você desaparece na escuridão ...'
+    neutrality-disabled: '&cSua neutralidade foi desativada por 30 segundos!'
+    neutrality-enabled: '&1Agora você é neutro para mobs.'
+  mage:
+    activation-message: '&3&l*CABUUM!*'
+  firemage:
+    ready-activation-message: '&3*Suas mãos queimam com tanto poder * Atinja um alvo
+      para ativar Inferno'
+    notready-activation-message: '&7*O poder se dissipa*'
+    activation-message: '&3&lSeu alvo é atingido por um poder infernal!'
+  juggernaut:
+    active-ready-message: '&3*Você levanta os punhos e esta pronto!* Acerte um alvo
+      para carregar e atirar ele.'
+    active-notready-message: '&7*Você abaixa os punhos*'
+    active-activated-message: '&3&lVocê agarra seu oponente no pescoço!'
+    active-throw-message-countdown: '&c&lZUUM! Seu oponente será arremessado na direção
+      do seu olhar em %countdown%'
+    active-throw-success: '&3&lAtirou alvo no local!'
+    aegis-success: '&3Seu escudo Aégis bloqueia o ataque!'
+  arbalist:
+    minions-msg: '&cVocê invocou seus servos.'
+  eidolon:
+    active-ready: '&3*Energia disruptiva irradia de você * Acerte em um alvo para
+      contamina-lo'
+    active-not-ready: '&c*A energia se dissipa*'
+    active-activation-message: '&3&lVocê interrompeu o equilíbrio espiritual do seu
+      alvo!'
+    turn-light: '&eSua escuridão se torna Luz!'
+    turn-dark: '&4Sua luz foi apagada pela escuridão'
+    spirit-expell: '&3Você explode seu alvo com %damage% dano extra!'
+    shield-refresh: '&3Você sente uma onda de energia'
+    shield-speed: '&3Seu escudo se despedaça para lhe dar velocidade!'
+    attack-boost: '&3Voce solta todo poder guardado e inflinge  %damage%% a mais de
+      danos'
+skill-selected: |-
+  COMPLEX:&3Você é agora um &e%skills_skill_displayname%
+  &3Você pode atualizar suas habilidades em hover:{&e/habilidades,&eClique aqui para abrir,/skill improve}
+  &3e também distruibuir seus pontos de stats em hover:{&e/stats,&eClique aqui para abrir,/skill stats}
+mastery:
+  maximum-level: '&cEssa maestria ja está no nível maximo!'
+  not-found: '&e%mastery% &3Maestria não encontrada'
+  upgraded: '&3Aumentou a maestria &e%mastery% &3 com &e%cost% &3almass.'
+  downgraded: '&3Diminuiu a maestria  &e%mastery% &3e ganhou &e%cost% &3almas.'
+  required-level: '&cVocê precisa ter pelo menos nível &3%level% &cpara usar essa
+    maestria.'
+  cant-downgrade: '&cVoce não pode diminuir sua maestria &e%mastery% &cnunca mais.'
+events-name:
+  souls: Almas
+  xp: XP

@@ -1,0 +1,46 @@
+title: "&8-=( &9&lMagic Shop &8)=-"
+rows: 3
+sound: BLOCK_CHEST_LOCKED
+
+# The skills-item option refers to the items specified in config.yml -> skills-items
+# For adding new items here to the options, note that the option name must start with "sell-" prefix.
+options:
+  sell-xp:
+    name: "&2Skills XP&8: &910"
+    material: EXPERIENCE_BOTTLE
+    skills-item: xp
+    lore: "&3Cost&8: &e5"
+    cost: 5
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    posx: 5
+    posy: 2
+  sell-booster:
+    name: "&2Energy Booster&8: &95 &7- &9One minute"
+    material: POTION
+    lore: "&3Cost&8: &e10"
+    skills-item: energy-booster
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 255, 0, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 2
+    posy: 2
+  sell-energy:
+    name: "&2Energy Potion&8: &950"
+    material: POTION
+    skills-item: energy-potion
+    lore: "&3Cost&8: &e10"
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 0, 255, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 8
+    posy: 2
+  orange-glass:
+    name: ''
+    material: ORANGE_STAINED_GLASS_PANE
+    slots: [ 1, 4, 7, 19, 22, 25 ]
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 3, 5, 6, 8, 9, 17, 18, 20, 21, 23, 24, 26 ]

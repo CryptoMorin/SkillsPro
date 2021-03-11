@@ -1,0 +1,189 @@
+main: ${project.groupId}.main.${project.name}
+name: ${project.name}
+description: ${project.description}
+author: Crypto Morin
+authors: [ Hex_27 ]
+version: ${project.version}
+api-version: "1.13"
+softdepend: [ Citizens, MyPet, PlaceholderAPI, MVdWPlaceholderAPI, WorldGuard, Residence, Factions, Vault, Kingdoms, DiscordSRV,
+              MythicMobs, Boss, EliteMobs, LorinthsRpgMobs ]
+
+commands:
+  skills:
+    description: Main command, opens help page.
+    aliases: [ skill, skillpro, skillspro ]
+
+permissions:
+  skills.bossbar:
+    default: true
+  skills.xp:
+    default: true
+  skills.souls:
+    default: true
+  skills.command.actionbar:
+    default: true
+  skills.command.race:
+    default: true
+  skills.command.shop.give:
+    default: op
+  skills.xp.<multiplier>:
+    default: op
+  skills.souls.<multiplier>:
+    default: op
+  skills.mastery.glory:
+    default: true
+  skills.mastery.power:
+    default: true
+  skills.mastery.thick_skin:
+    default: true
+  skills.mastery.harvesting:
+    default: true
+  skills.mastery.logging:
+    default: true
+  skills.mastery.mining:
+    default: true
+  skills.mastery.pacifist:
+    default: true
+  skills.mastery.regeneration:
+    default: true
+  skills.mastery.precision:
+    default: true
+  skills.command.help:
+    default: true
+  skills.mastery.reap:
+    default: true
+  skills.mastery.serration:
+    default: true
+  skills.command.mastery:
+    description: Permission for masteries command.
+    default: true
+  skills.command.mastery.others:
+    default: true
+  skills.command.mastery.*:
+    description: Permission for all the masteries commands.
+    default: true
+  skills.command.top:
+    description: Access to top levels.
+    default: true
+  skills.command.top.exclude:
+    default: false
+  skills.command.shop:
+    default: true
+  skills.command.info:
+    description: Access to info command.
+    default: true
+  skills.command.info.others:
+    description: Access to other player's info command.
+    default: op
+  skills.command.info.others.details:
+    description: Shows all the information about a player's skill.
+    default: op
+  skills.command.hpscaling:
+    description: Sets your fake health scaling.
+    default: op
+  skills.command.select:
+    description: Selects a skill.
+    default: true
+  skills.select.swordsman:
+    description: Select all the swordsman skill.
+    default: true
+  skills.select.mage:
+    description: Select all the mage skill.
+    default: true
+  skills.select.arbalist:
+    description: Select all the arbalist skill.
+    default: true
+  skills.select.firemage:
+    description: Select all the firemage skill.
+    default: true
+  skills.select.priest:
+    description: Select all the priest skill.
+    default: true
+  skill.party.spy:
+    default: op
+  skills.select.eidolon:
+    description: Select all the swordsman skill.
+    default: true
+  skills.select.vampire:
+    description: Select all the vampire skill.
+    default: true
+  skills.select.devourer:
+    description: Select all the devourer skill.
+    default: true
+  skills.select.juggernaut:
+    description: Select all the juggernaut skill.
+    default: true
+  skills.command.sound:
+    default: op
+  skills.command.souls:
+    default: true
+  skills.command.improve:
+    description: Improvement GUI command.
+    default: true
+  skills.command.updates:
+    description: Check for plugin updates.
+    default: op
+  skills.command.stats:
+    description: Open stats menu.
+    default: true
+  skills.command.stats.others:
+    description: Open stats menu for others.
+    default: op
+  skills.command.statistics:
+    description: Beep Boop.
+    default: op
+  skills.command.showactivemessage:
+    description: Enable or disable ability activation message.
+    default: true
+  skills.command.about:
+    description: About the plugin.
+    default: true
+  skills.change:
+    description: Allows the player to select if a skill if they already have one.
+    default: true
+  skills.command.music:
+    default: op
+  skills.change.cooldownbypass:
+    description: Bypasses the cooldown for changing your skill.
+    default: op
+  skills.command.friend:
+    default: true
+  skills.command.unfriend:
+    default: true
+  skills.command.friends:
+    default: true
+  skills.command.friendtp:
+    default: true
+  skills.command.tpaccept:
+    default: true
+  skills.command.friendtp.instant:
+    default: op
+  skills.command.party:
+    default: true
+  skills.command.party.accept:
+    default: true
+  skills.command.party.chat:
+    default: true
+  skills.command.party.create:
+    default: true
+  skills.command.party.invite:
+    default: true
+  skills.command.party.kick:
+    default: true
+  skills.command.party.leader:
+    default: true
+  skills.command.party.leave:
+    default: true
+  skills.command.party.list:
+    default: true
+  skills.command.party.mod:
+    default: true
+  skills.command.party.rename:
+    default: true
+  skills.armorweight.bypass:
+    default: false
+  skills.actionbar:
+    default: true
+  skills.use-creative:
+    description: Use abilities in creative mode.
+    default: op

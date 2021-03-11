@@ -1,0 +1,16 @@
+title: "&8-=( &4&lConfirm Reset &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4Confirm"
+    material: LIME_CONCRETE
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+  cancel:
+    name: "&2Cancel"
+    material: RED_CONCRETE
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

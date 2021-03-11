@@ -1,0 +1,21 @@
+title: "&8-=( &4&lChấp nhận Reset &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4Đồng ý"
+    material: RED_WOOL
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+    lore:
+      - "&eKhi bạn đặt lại điểm chỉ số của mình"
+      - "tất cả các chỉ số được chỉ định thành"
+      - "các loại chỉ số khác nhau sẽ bị xóa"
+      - "và thêm vào các chỉ số của bạn."
+  cancel:
+    name: "&2Hủy bỏ"
+    material: BARRIER
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

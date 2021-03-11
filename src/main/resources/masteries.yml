@@ -1,0 +1,249 @@
+# Masteries are a replacement for professions and Jobs.
+# Some of them are not really interesting but they're being worked on.
+# You can read what each mastery do in the GUI /skill mastery
+
+enabled: true
+
+# Allow downgrading masteries.
+downgrade: true
+
+# You can also use "required-level" by default all of them can be used from level 0
+masteries:
+  # When harvesting an corps, get extra
+  harvesting:
+    enabled: true
+    name: "Harvesting"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: 100
+    scaling: 0
+    blocks:
+      CARROTS:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 10
+        drops:
+          carrot:
+            material: CARROT
+            amount: randInt(1, 3)
+      POTATOES:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 10
+        drops:
+          potatoes:
+            material: POTATO
+            amount: randInt(1, 3)
+      NETHER_WART:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 10
+        drops:
+          nether-warts:
+            material: NETHER_WART
+            amount: randInt(1, 3)
+      WHEAT:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: WHEAT
+            amount: randInt(1, 3)
+      BEETROOTS:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: BEETROOT
+            amount: randInt(1, 3)
+  mining:
+    enabled: true
+    name: "Mining"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    scaling: 0
+    # 100 because each block has its own chance.
+    chance: 100
+    # XP is the skills XP and EXP is the vanilla XP.
+    # They all support formulas.
+    blocks:
+      EMERALD_ORE:
+        chance: randInt(0, (lvl + 9) / 2)
+        xp: 2
+        exp: 10
+        souls: 0
+        drops:
+          diamond:
+            material: EMERALD
+            amount: randInt(1, (lvl + 9) / 3)
+      DIAMOND_ORE:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 4
+        souls: 0
+        drops:
+          diamond:
+            material: DIAMOND
+            amount: randInt(1, (lvl + 9) / 3)
+      GOLD_ORE:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 4
+        souls: 0
+        drops:
+          diamond:
+            material: GOLD_INGOT
+            amount: randInt(1, (lvl + 9) / 3)
+      IRON_ORE:
+        chance: randInt(0, lvl + 1)
+        exp: 1
+        drops:
+          diamond:
+            material: IRON_INGOT
+            amount: randInt(1, (lvl + 9) / 3)
+      COAL_ORE:
+        chance: randInt(0, lvl * 2)
+        drops:
+          diamond:
+            material: COAL
+            amount: randInt(1, (lvl + 9) / 3)
+  regeneration:
+    enabled: true
+    name: "Regeneration"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, lvl * 10)
+    # Health percent
+    percent: 30
+    # Amount of times to keep healing the player (every 10 tick)
+    scaling: 10
+  logging:
+    enabled: true
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: 100
+    scaling: 0
+    blocks:
+      OAK_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: OAK_PLANKS
+            amount: randInt(1, (lvl + 9) / 3)
+      ACACIA_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: ACACIA_PLANKS
+            amount: randInt(1, (lvl + 9) / 3)
+      BIRCH_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: BIRCH_PLANKS
+            amount: randInt(1, (lvl + 9) / 3)
+      DARK_OAK_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: DARK_OAK_PLANKS
+            amount: randInt(1, (lvl + 9) / 3)
+      JUNGLE_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: JUNGLE_PLANKS
+            amount: randInt(1, (lvl + 9) / 3)
+      SPRUCE_LOG:
+        chance: randInt(0, (lvl + 1) * 2)
+        xp: 2
+        exp: 10
+        drops:
+          diamond:
+            material: SPRUCE_PLANKS
+            amount: randInt(1, (lvl + 6) / 3)
+  pacifist:
+    enabled: true
+    name: "Pacifist"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: 100
+    scaling: randInt(0, (lvl + 1) * 3)
+    disabled-blocks: [ ]
+    # Vanilla EXP Scaling
+    exp: randInt(0, (lvl + 1) * 3)
+  precision:
+    enabled: true
+    name: "Precision"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    scaling: randInt(0, (lvl / 3) + 2)
+  reap:
+    enabled: true
+    name: "Reap"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    scaling: randInt(0, (lvl / 2) + 1)
+  glory:
+    enabled: true
+    name: "Glory"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    scaling: randInt(0, lvl + 1)
+  power:
+    enabled: true
+    name: "Power"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    scaling: randInt(0, (lvl / 3) + 2)
+  thick-skin:
+    enabled: true
+    name: "Thick Skin"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    # The reduced damage.
+    scaling: randInt(0, lvl + 1)
+  acrobatics:
+    enabled: true
+    name: "Acrobatics"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    # The reduced damage.
+    scaling: lvl / 2
+  fortune:
+    enabled: true
+    name: "Fortune"
+    max-level: 100
+    cost: (lvl + 1) * 50
+    chance: randInt(0, (lvl + 1) * 2)
+    # The reduced damage.
+    scaling: 0
+    mobs:
+      ZOMBIE:
+        rotten-flesh:
+          chance: randInt(0, (lvl + 9) / 2)
+          material: ROTTEN_FLESH
+          amount: randInt(1, (lvl + 9) / 3)
+      SKELETON:
+        bone:
+          chance: randInt(0, lvl + 1)
+          material: BONE
+          amount: randInt(1, (lvl + 9) / 3)

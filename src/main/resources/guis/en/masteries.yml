@@ -1,0 +1,193 @@
+title: "&8&l-=( &2&lMasteries &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  fortune:
+    name: "&4Fortune"
+    material: NETHER_STAR
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Get bonus items"
+      - "killing different mobs."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 1
+  harvesting:
+    name: "&3Harvesting"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2When harvesting crops,"
+      - "have a chance to get"
+      - "double the amount."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Logging"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2When breaking logs,"
+      - "have a chance get additional drops and XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Mining"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2When breaking ores, have"
+      - "a chance to gain additional drops and XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Pacifist"
+    material: WHITE_WOOL
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Gain Skills XP from"
+      - "harvesting crops."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Regeneration"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2Efficiency"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have chance to regenerate"
+      - "when your health is under 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Power"
+    material: BLAZE_POWDER
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to deal more damage."
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Glory"
+    material: DIAMOND_SWORD
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to increase"
+      - "XP gained from killing mobs."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Thick Skin"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&cBrutality"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to reduce damage taken"
+      - "when hit by another mob or player."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Precision"
+    material: ENDER_EYE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to critically"
+      - "strike with bows."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Reap"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to gain"
+      - "an extra soul per kill."
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Acrobatics"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Cost&8: &e%cost%"
+      - "&3Level&8: &e%level%"
+      - ""
+      - "&2Have a chance to take"
+      - "less damage when falling."
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

@@ -1,0 +1,152 @@
+title: "&8-=( &c&l能力 &8)=-"
+rows: 6
+sound: BLOCK_ENCHANTMENT_TABLE_USE
+
+# This is not 100% customizable in order to maintain the nice level animation.
+options:
+  info:
+    name: "&7-=[ &9信息 &7]=-"
+    material: PLAYER_HEAD
+    skull: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxYWZlOTczYzU0ODJmZGM3MWU2YWExMDY5ODgzM2M3OWM0MzdmMjEzMDhlYTlhMWEwOTU3NDZlYzI3NGEwZiJ9fX0="
+    lore:
+      - "&2触发键&8:"
+      - "&eL = 鼠标左键&7, &eR = 鼠标右键&7,"
+      - "&eS = Shift&7, &eQ = 丢物品&7,"
+      - "&eF = 切换物品&7, &eC<key> = 偷袭"
+      - ''
+      - "&2摁下对应触发键"
+      - "以激活技能"
+      - "需要一个接一个地按"
+      - "注意:部分技能触发"
+      - "需要手持特定物品"
+    posx: 5
+    posy: 1
+  passive:
+    enabled:
+      condition: "!%disabled%"
+      name: "%title%"
+      material: PURPLE_DYE
+      slots: [ 49 ]
+      lore:
+        - "%description%"
+    disabled:
+      condition: "%disabled%"
+      name: "%title%"
+      material: MAGENTA_DYE
+      slots: [ 49 ]
+      lore:
+        - "%description%"
+  ability:
+    maxxed:
+      condition: "%level% === 3 && !%disabled%"
+      name: "%title%"
+      material: LIGHT_BLUE_DYE
+      slots: [ 11, 20, 29, 38 ]
+      lore:
+        - "%description%"
+        - ""
+        - "&2等级&8: &e%level%"
+    enabled:
+      condition: "%skills_level% >= %required-level% && !%disabled%"
+      # 变量: %title%, %description%, %cost%, %level%, %required-level%
+      name: "%title%"
+      material: LIME_DYE
+      # 除非另有需要，没事别改槽位
+      #此处指定的插槽右侧需要4个空闲槽位。
+      #但是添加/删除插槽与GUI页面不兼容。
+      slots: [ 11, 20, 29, 38 ]
+      lore:
+        - "%description%"
+        - ""
+        - "&2花费&8: &e%cost%"
+        - "&2等级&8: &e%level%"
+    disabled:
+      condition: "%disabled%"
+      name: "%title%"
+      material: GRAY_DYE
+      slots: [ 11, 20, 29, 38 ]
+      lore:
+        - "%description%"
+        - ""
+        - "&2等级&8: &e%level%"
+    cant-access:
+      condition: "%skills_level% < %required-level%"
+      name: "%title%"
+      material: BARRIER
+      slots: [ 11, 20, 29, 38 ]
+      lore:
+        - "%description%"
+        - ""
+        - "&2所需等级&8: &e%required-level%"
+  # 特殊变量:  %cooldown%, %energy%, %activation%
+  active-ability:
+    maxxed:
+      condition: "%level% === 3 && !%disabled%"
+      name: "%title%"
+      material: LIGHT_BLUE_DYE
+      # 不 要 更 改 槽 位
+      slots: [ -1 ]
+      flags: [ HIDE_ENCHANTS ]
+      enchants:
+        DURABILITY: 1
+      lore:
+        - "%description%"
+        - ""
+        - "&2等级&8: &e%level%"
+        - "&2触发键&8: &e%activation%"
+    enabled:
+      condition: "%skills_level% >= %required-level% && !%disabled%"
+      name: "%title%"
+      material: LIME_DYE
+      # 不 要 更 改 槽 位
+      slots: [ -1 ]
+      flags: [ HIDE_ENCHANTS ]
+      enchants:
+        DURABILITY: 1
+      lore:
+        - "%description%"
+        - ""
+        - "&2花费&8: &e%cost%"
+        - "&2等级&8: &e%level%"
+        - "&2触发键&8: &e%activation%"
+    disabled:
+      condition: "%disabled%"
+      name: "%title%"
+      material: GRAY_DYE
+      # 不 要 更 改 槽 位
+      slots: [ -1 ]
+      flags: [ HIDE_ENCHANTS ]
+      enchants:
+        DURABILITY: 1
+      lore:
+        - "%description%"
+        - ""
+        - "&2等级&8: &e%level%"
+        - "&2触发键&8: &e%activation%"
+    cant-access:
+      condition: "%skills_level% < %required-level%"
+      name: "%title%"
+      material: BARRIER
+      # 不 要 更 改 槽 位
+      slots: [ -1 ]
+      flags: [ HIDE_ENCHANTS ]
+      enchants:
+        DURABILITY: 1
+      lore:
+        - "%description%"
+        - ""
+        - "&2所需等级&8: &e%required-level%"
+  red-glass:
+    name: ''
+    material: RED_STAINED_GLASS_PANE
+    slots: [ 1, 2, 3, 5, 6, 7, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 50, 51, 52, 53 ]
+  next-page:
+    name: '&6下一页 &7- &e%page%&8/&e%pages%'
+    material: PLAYER_HEAD
+    skull: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19"
+    slot: 8
+  previous-page:
+    name: '&6上一页 &7- &e%page%&8/&e%pages%'
+    material: PLAYER_HEAD
+    skull: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0="
+    slot: 0

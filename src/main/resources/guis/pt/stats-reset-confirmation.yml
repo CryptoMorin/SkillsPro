@@ -1,0 +1,21 @@
+title: "&8-=( &4&lConfirmar Reset de Stats &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4Confirmar"
+    material: RED_WOOL
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+    lore:
+      - "&eUma vez que reseta seus stats"
+      - "todos os pontos atribuidos anteriormente"
+      - "indiferente de qual stats"
+      - "serão removidos e adicionados a seus Pontos de Status."
+  cancel:
+    name: "&2Cancelar"
+    material: BARRIER
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

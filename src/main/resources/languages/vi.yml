@@ -1,0 +1,887 @@
+prefix: '&8[&3Skills&8] &3'
+command:
+  help:
+    description: '&6Sử dụng để hiển thị các lệnh'
+    usage: /Skills help <Trang>
+    grouped-header: '&8&m---------------=( &c&l%group% &8)=---------------'
+    grouped-commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2k %cmd%,|/skills
+      %cmd%}
+    footer: COMPLEX:hover:{&6←,&6Previous Page,/skills help %previous_page%} %pages%hover:{&6→,&6Next
+      Page,/skills help %next_page%}
+    footer-page: COMPLEX:hover:{&8[&2%number%&8],&6Đi tới trang &2%number%,/skills help
+      %number%}
+    footer-current-page: COMPLEX:hover:{&8[&2&l%number%&8],&2Trang hiện tại}
+    header: '&8&m---------------=(&c&l Skills &6%page%&7/&6%max_pages% &8&m)=---------------'
+    commands: COMPLEX:hover:{&8/&2skills %cmd% &7- %description%,&8/&2skills %cmd%,|/skills
+      %cmd%}
+  usage: '&cSử dụng&7: &e/Skills '
+  unknown: '&cLệnh không xác định!'
+  not:
+    number: '&e%arg% %ckhông phải là một con số! &e%needed% &cphải là một số..'
+  select:
+    description: '&eSử dụng để học Class'
+    already-chosen: '&cBạn Đã là Class &e%skill%'
+  refresh:
+    description: '&eBổ sung tất cả năng lượng/máu/mất cân bằng/mana của bạn'
+    success: '&3Bổ sung năng lượng của bạn.'
+  improve:
+    description: '&eSử dụng để mở menu nâng cấp kỹ năng của bạn'
+  stats:
+    description: '&eSử dụng để quản lý số liệu thống kê của bạn'
+    others-permission: '&4Bạn không có quyền xem số liệu thống kê của người khác.'
+  mastery:
+    description: '&eSử dụng để quản lý chủ của bạn'
+  updates:
+    description: '&eKiểm tra cập nhật trên Spigot.'
+  statistics:
+    description: '&eXem tổng người chơi Server chọn Class nào nhiều nhất.'
+  sound:
+    description: '&eKiểm tra âm thanh trong trò chơi trước khi sử dụng nó trong cấu hình.'
+  reload:
+    description: '&eĐang tải lại Plugins.'
+    done: '&3Đã tải lại.'
+  top:
+    description: '&eXem các Class có cấp độ cao nhất'
+    header: '&8&l&m-----------(&6&l Top 10 Players &8&l&m)-----------'
+    entry: '&6%number%. &8(&9%skills_skill_displayname%&8) &3%player% &8- &eLvl %skills_level%'
+    loading: '&eThống kê...'
+  user:
+    description: '&eSửa đổi dữ liệu kỹ năng của người chơi.'
+    souls:
+      description: '&eSử dụng để thao túng số lượng linh hồn người chơi'
+      success: '&3%amount% đã được thêm vào số lượng linh hồn'
+    level:
+      description: '&eSử dụng để thao túng cấp độ của người chơi'
+      success: '&3%amount% đã được thêm vào cấp độ của người chơi'
+      not-number: '&ccấp độ phải là một con số!'
+    xp:
+      description: '&eSử dụng để thao tác xp của một người chơi. Người chơi phải trực tuyến'
+      success: '&e%amount% &3XP has been added to &e%player%''s &3XP. New XP&8: &e%new%'
+    skill:
+      description: '&eSử dụng để thao túng kỹ năng người chơi'
+      success: '&3%player% &eis now a &3%skill%'
+      not-skill: '&e%skill% &ckhông phải là một kỹ năng hiện có&7: &enone&8, &eKiếm
+        Sỉ&8, &eHư Không&8, &ePháp Sư&8, &ePháp Sư lữa&8, &eXạ Thủ&8, &eHắc ám&8,
+        &eMa cà Rồng&8, &eĐấu Sỉ&8, &eLinh Mục'
+    stats:
+      description: '&eSử dụng để thêm điểm thống kê cho người chơi'
+    reset:
+      description: '&eSử dụng để xóa dữ liệu của người chơi được chỉ định'
+      success: '&3%player%''s thống kê, cấp độ, kỹ năng, thành thạo và cải thiện thiết
+        lập lại'
+    statpoints:
+      success: '&3%amount% statpoint đã được thêm vào trình phát'
+    invalid-setter: '&cInvalid setter&8: &e%setter% &cUse one of the following keywords&8:
+      &eadd/decrease/set'
+    mastery:
+      description: '&eSử dụng để sửa đổi cấp độ thành thạo của người chơi.'
+      set-success: '&e%amount% &3đã được thêm vào của người chơi &e%mastery% &3Thành
+        thạo, Cấp Mới&8: &e%new%'
+    improve:
+      description: '&eSử dụng để sửa đổi các nâng cấp kỹ năng của người chơi.'
+    improvement:
+      success: '&e%amount% &3đã được thêm vào khả năng &e%ability% &acủa người chơi,
+        Cấp Mới&8: &e%new%'
+  bonus:
+    description: '&3Quản lý phần thưởng XP / Souls của người chơi.'
+    give:
+      description: '&3Cung cấp cho người chơi một Buff.'
+      success: '&3Bạn đã được nhận Buff trong &e%time% Phút&3!'
+      confirmation: '&3Trao cho người chơi &e%player% &3Buff trong &e%time% Phút&3!'
+      multiplier-error: '&cSố nhân phải chứa từ khóa XP hoặc soul! Ví dụ. &e5 * soul'
+      multiplier-invalid: '&cSố nhân không hợp lệ. Số nhân là: Ví dụ: & e5 * linh
+        hồn, xp + 20, etc.'
+    take:
+      success: '&3Đã xóa tất cả các buff từ người chơi.'
+      description: '&3Nhận phần buff tích cực từ người chơi.'
+    not-found: '&cKhông thể tìm thấy &cbuff &e%bonus%.'
+  boost:
+    already-started: '&cbuff được chỉ định đã được tiến hành! Thời gian còn lại&8:
+      &e%time%'
+    broadcast: '&e%type% &3tăng kích hoạt cho &e%time% Phút&3! Được &ex%multiplier%
+      &3xp mỗi lần giết!'
+  showactivemessages:
+    description: '&eSử dụng để chuyển các thông điệp kỹ năng hoạt động'
+    'on': '&3Tin nhắn đang hoạt động sẽ được hiển thị.'
+    'off': '&cTin nhắn hoạt động sẽ không được hiển thị.'
+  about:
+    description: '&6Thông Tin về Plugins.'
+  debug:
+    description: '&6Bật Chế độ dò soát lỗi &f&l[&fby Zednatsumi&f&l].'
+    'on': '&6Chế độ dò soát lỗi&8: &3BẬT'
+    'off': '&6Chế độ dò soát lỗi&8: &cTẮT'
+    message: '&8[&4SOÁT LỖI&7-&5%priority%&8] &e%damager% &7(&e%custom_damager%&7) &6bị tấn công
+      &c%entity% &7(&c%custom_entity%&7)&8: &9Sát thương&8: &2%damage% &7| &9Sát thương cuối cùng&8:
+      &2%final_damage%'
+  scaling:
+    description: '&6Đặt thang đo sức khỏe giả của bạn.'
+    not-in-range: '&cThang đo sức khỏe phải nằm trong khoảng từ 0 đến 80 hoặc 0 để vô hiệu hóa'
+    set: '&6Tỷ lệ giả mới của bạn đã được đặt thành &e%scale%'
+  event:
+    not-found: '&cKhông thể tìm thấy &cevent &e%event%.'
+    start:
+      description: '&3Bắt đầu Event.'
+    stop:
+      description: '&3Dừng Event lại.'
+      success: '&e%player% &3đã dừng &3event &e%event%.'
+    time:
+      description: '&3Thay đổi thời gian của một Event.'
+      set: '&3Thay đổi Thời gian &eevent &e%event% . Đến&8: &e%time%'
+    events:
+      description: '&3Nhận các sự kiện đang chạy hiện tại.'
+      xp: '&3Sự kiện XP hoạt động&8: &eThời hạn&8: &e%xp_duration% &8- &eNhân thêm&8:
+        &e%xp_multiplier%'
+      soul: '&3Sự kiện linh hồn hoạt động&8: &eThời hạn&8: &e%soul_duration% &8- &eNhân thêm&8:
+        &e%soul_multiplier%'
+      nothing: '&cKhông có sự kiện nào đang diễn ra.'
+  info:
+    description: '&eSử dụng để xem cấp độ kỹ năng, số liệu thống kê và Điểm Stat của Bạn'
+    xp-bonus: '&3Phần thưởng XP hoạt động&8: &eThời hạn&8: &e%skills_xp_bonus_duration%
+      &8- &eNhân thêm&8: &e%skills_xp_bonus_multiplier%'
+    soul-bonus: '&3Phần thưởng linh hồn hoạt động&8: &eThời hạn&8: &e%skills_soul_bonus_duration%
+      &8- &eNhân thêm&8: &e%skills_soul_bonus_multiplier%'
+    message: |
+      THÔNG TIN:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Linh hồn&7: &e%skills_fancy_soul%
+      &3Level&7: &e%skills_fancy_level%
+      &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
+      &3Tổng XP&7: &e%skills_fancy_rawxp%
+
+      &6STR &7| &dDEX &7| &9INT &7| &4DEF
+         &6%skills_stat_str% &7| &d%skills_stat_dex% &7| &9%skills_stat_int% &7| &4%skills_stat_def%
+    others: |+
+      THÔNG TIN:&8&l&m--------------(&6&l %player% &8&l&m)--------------
+      &3Level&7: &e%skills_fancy_level%
+      &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
+      &3Tổng XP&7: &e%skills_fancy_rawxp%
+
+  friend:
+    description: '&eThêm người chơi làm bạn của bạn.'
+    request: '&3Một yêu cầu kết bạn đã được gửi tới &e%invited%'
+    self: '&cBạn có tuyệt vọng với friendzone không?'
+    already-friends: '&cYou''re already friends with &e%invited%'
+    max: '&cDanh Sách bạn bè của bạn đã đầy.'
+    already-sent: '&cBạn đã gửi yêu cầu kết bạn tới &e%invited%'
+    notification: COMPLEX:&e%inviter% &3muốn làm bạn với bạn. Làm sài lệnh:{&e/skill
+      friend %inviter%,&2Accept,/skill friend %inviter%} &3Accept.
+    friended: '&3Bây giờ bạn là bạn với &e%friend%'
+  shop:
+    description: '&eMua kỹ năng vật phẩm đặc biệt.'
+    give:
+      permission: '&cBạn không có quyền sử dụng lệnh đó.'
+      usage: '&cDùng&8: &e/skills shop give <Tên> [player] [số lượng]'
+      invalid-type: |-
+        &cLoại mục Kỹ năng không hợp lệ&8: &e%type%
+        &cCác loại có sẵn&8: &eXP, Energy_Booster, Energy_Potion
+  souls:
+    description: '&eCho linh hồn hoặc rút linh hồn từ kho đồ của bạn.'
+    service-unavailable: '&cDịch vụ Linh hồn hiện không có sẵn.'
+    unknown-transaction: '&cGiao dịch không xác định &e%transaction%'
+    not-enough-souls: '&cBạn không có &e%amount% &cLinh hồn.'
+    not-enough-money: '&cBạn không có &e%amount% &cTiền.'
+    deposit-success: |-
+      &3Bạn đã gửi thành công &e%amount% &3linh hồn từ ngân hàng của mình để &e%translated%
+      &3Số linh hồn hiện tại của bạn&8: &e%balance%
+    deposit-disabled: '&cBạn không thể ký gửi linh hồn.'
+    withdraw-disabled: '&cBạn không thể rút linh hồn.'
+    withdraw-success: |-
+      &3Bạn đã rút thành công &e%amount% &3linh hồn từ ngân hàng của mình để &e%translated%
+      &3Số linh hồn hiện tại bạn&8: &e%balance%
+  tpaccept:
+    description: '&eAccept a teleportation request from a friend.'
+    teleporing: '&3Teleporting to &e%friend% &3in &e%delay% &5seconds. Do not move.'
+    pre-notify: '&3Your friend &e%friend% &3will be teleporting to you.'
+    canceled: '&cTeleportation has been cancelled!'
+    canceled-notify: '&cYour friend &e%friend% &cteleportation has been canceled.'
+    teleporting: '&3Teleporting in &e%countdown% seconds&3... Don''t move.'
+    teleport-start: '&3Teleportation will start in &e%delay% seconds. &3Don''t move!'
+    disconnected: '&cYour friend has been disconnected and the teleportation has been
+      canceled.'
+    no-request: '&e%name% &cdid not send you any teleportation requests.'
+    no-requests: '&cYou don''t have any teleportation requests sent to you.'
+    more-than-one: '&cYou have more than one teleportation requests. Please specify
+      the player name that you want to accept the request from.'
+    offline: '&cYour friend that sent you a teleprotation request is now offline.'
+    teleported: '&3Teleported to &e%friend%'
+    notify: '&3Your friend &e%friend% &3has teleported to you.'
+  friendtp:
+    description: '&eTeleport to a friend.'
+    not-friends: '&cYou''re not friends with &e%name%'
+    disabled: '&cFriend teleportation is disabled.'
+    teleported: '&3Teleported to &e%friend%'
+    notify: '&3Your friend &e%friend% &3has teleported to you.'
+    requested: '&3Sent a teleportation request to &e%friend%'
+    already-requested: '&cYou''ve already sent a teleportation request to &e%friend%'
+    expired: '&cYou''re teleportation request to &e%friend% &chas been expired.'
+    expired-notify: '&cYour friends &e%friend% &cteleportation request has expired.'
+    notify-request: |-
+      COMPLEX:&3Your friend &e%friend% &3wants to teleport to you.
+         &3Do hover:{&e/skill tpaccept %friend%,&2Accept,/skill tpaccept %friend%} &3to accept.
+         &3Or ignore to &cdecline &3automatically.
+  unfriend:
+    description: '&eXóa một người chơi làm bạn của bạn.'
+    removed: '&cBạn đã không kết bạn &e%removed%'
+    self: '&cBạn phải thực sự thất vọng khi hủy kết bạn.'
+    invalid: '&cBạn không phải là bạn với &e%removed%'
+    notification: '&e%remover% &cđã hủy kết bạn với bạn'
+  friends:
+    description: '&eDanh sách tất cả bạn bè của bạn.'
+    teleport-not-online: '&e%name% &ckhông online để dịch chuyển tức thời!'
+    teleport-permission: '&cBạn không có quyền dịch chuyển đến bạn bè.'
+  party:
+    description: '&eTiệc tùng với bạn bè.'
+    create:
+      description: '&3Tạo một bữa tiệc mới.'
+      name: '&cBạn cần chọn một tên cho bữa tiệc của bạn..'
+      created: '&3Bạn đã tạo một bữa tiệc mới!'
+      already-partying: '&cBạn đã tham gia một bữa tiệc.'
+    rename:
+      description: '&eĐổi tên Bữa tiệc của bạn.'
+      name: '&cBạn cần chọn một tên cho bữa tiệc của bạn.'
+      renamed: '&3Tên Tiệc đã được đổi thành &e%name%'
+    leave:
+      description: '&eRời khỏi bữa tiệc hiện tại của bạn.'
+      left: '&e%player% &cđã rời khỏi bữa tiệc.'
+      disband-confirm: '&cBạn là người lãnh đạo đảng. Nếu bạn rời khỏi bữa tiệc, bữa
+        tiệc sẽ giải tán .Làm lại lệnh nếu bạn muốn tiếp tục'
+      disbanded: '&cBữa Tiệc &e%party% &cđã giải tán.'
+    invite:
+      description: '&eMời những người chơi khác đến bữa tiệc của bạn.'
+      self: '&cBạn không thể... mời chính mình...'
+      invited: '&3Mời &e%invited% &3Tới bữa tiệc.'
+      max: '&cBạn không thể mời thêm thành viên.'
+      permission: '&cChỉ người điều hành bữa tiệc mới có thể mời người chơi.'
+      already-invited: '&e%invited% &3đã được mời đến bữa tiệc.'
+      arleady-partying: '&e%invited% &cđã ở một bữa tiệc khác.'
+      notification: |-
+        THÔNG TIN:&e%inviter% &3đã mời bạn đến bữa tiệc của họ.
+        dùng lệnh:{&2/skill party accept %party%,&2Chấp nhận,/skill party accept %party%} &3tham gia bữa tiệc.
+        Hoặc bỏ qua nó để từ chối.
+      expired: '&cLời mời tham gia của bạn &e%inviter% &cbữa tiệc đã hết hạn!'
+    kick:
+      description: '&eĐá một thành viên từ nhóm của bạn'
+      kicked: '&e%kicked% &cđã bị đuổi ra khỏi bữa tiệc bởi &e%kicker%'
+      self: COMPLEX:&cNếu bạn muốn tự đá mình, cứ bấm:{&e/skill party
+        leave,&eLeave,/skill party leave}
+      not-in-party: '&e%kicked% &ckhông có trong bữa tiệc của bạn.'
+      permission: '&cChỉ người điều hành đảng mới có thể đá thành viên.'
+    mod:
+      description: '&eThúc đẩy hoặc hạ cấp Thành viên.'
+      promoted: '&e%mod% &3đã được thăng chức thành người quản lý.'
+      demoted: '&e%mod% &cđã bị hạ cấp.'
+      permission: '&cChỉ lãnh đạo đảng mới có thể thúc đẩy và hạ cấp thành viên.'
+      self: '&cBạn không thể hạ cấp chính mình...'
+      not-in-party: '&e%mod% &ckhông có trong bữa tiệc của bạn.'
+    leader:
+      description: '&eĐặt một nhà lãnh đạo mới cho bữa tiệc.'
+      set: '&e%leader% &3đã được thiết lập là người lãnh đạo đảng mới!'
+      permission: '&cChỉ lãnh đạo đảng mới có thể thiết lập người lãnh đạo.'
+      self: '&cBạn đã là người lãnh đạo...'
+      not-in-party: '&e%leader% &ckhông có trong bữa tiệc của bạn.'
+    chat:
+      description: '&3Chỉ sửa trò truyện trong bữa tiệc.'
+      enabled: '&2Trò chuyện bữa tiệc đã được kích hoạt.'
+      disabled: '&cTrò chuyện bữa tiệc đã bị vô hiệu hóa.'
+    accept:
+      description: '&eChấp nhận lời mời đến một bữa tiệc.'
+      joined: '&9%player% &2đã tham gia bữa tiệc!'
+      not-invited: '&cBạn không được mời đến bất kỳ bữa tiệc nào.'
+      not-invited-specific: '&cBạn không được mời vào bữa tiệc &e%party%'
+      name: '&cBạn có nhiều lời mời. Vui lòng chỉ định tên bên bạn muốn tham gia.'
+      in-party: '&cBạn đã tham gia một bữa tiệc.'
+    list-description: '&eDanh sách thành viên.'
+command-help-negative-pages: '&cKhông có trang ẩn.'
+events-name:
+  souls: Souls
+  xp: XP
+guis:
+  statmenu:
+    statpoints:
+      needed: '&cCần ít nhất 2 điểm stat để sài tự động nâng.'
+      distribution: '&e%amount% &3điểm thêm vào &e%stat%'
+      spent: '&3Sử dụng &e%amount% &3stat points.'
+    reset:
+      message: '&cĐiểm stat của bạn đã được đặt lại.'
+command-info-others-permission: '&4Bạn không được phép xem thông tin của người khác.'
+not-enough:
+  souls: '&cBạn không có đủ linh hồn!'
+  statpoints: '&cKhông đủ điểm stat.'
+kill-message: '&3Nhận Được &e%xp% XP &3và &e%souls% Linh hồn &3Vì đã giết &e%name%'
+player-not-found: '&cKhông thể tìm thấy người chơi &e%name%.'
+invalid-time: '&cThời gian không hợp lệ.'
+players-only: '&cChỉ người chơi mới có thể sử dụng lệnh này.'
+party-members-too-far: '&cCác thành viên trong nhóm của bạn quá xa nhau! Không có tiền thưởng.'
+no-skill: '&cBạn không có kỹ năng!'
+no-party: '&cBạn không tham gia một bữa tiệc!'
+no-skill-displayname: None
+permission: '&4Bạn không được phép sử dụng lệnh đó!'
+death: '&cBạn đã mất &e%souls% &cLinh hồn(s) &cVà &e%xp% &cXP.'
+event-not-running: '&e%event% &csự kiện không chạy!'
+bonus-inactive: '&cbuff không hoạt động'
+max-level: '&cBạn đã đạt mức tối đa. Bạn sẽ không thể tăng cấp nữa.'
+ability:
+  upgraded: '&3Nâng Cấp Kỹ Năng'
+  maxxed: '&cKỹ Năng đã ở cấp tối đa.'
+  not-found: '&e%ability% &3Kỹ năng ko tìm thấy.'
+  invalid-level: '&cCấp độ khả năng phải là một giá trị trong khoảng 0-3'
+  required-level: '&cBạn cần ít nhất là cấp &e%level% &cđể sử dụng khả năng này.'
+  upgrade-notification: '&3Bạn có &e%skills_soul% &3linh hồn. Bây giờ bạn có thể nâng
+    cấp&8: %abilities%'
+  upgrade-notification-list: '&6%ability% &7➛ &3%ability_level% '
+  title: '&6&lNội Tại'
+  swordsman-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Bạn có thể sử dụng tay trái
+      tấn công lập tức gây thêm &e%amount% sát thương
+      Bạn có thể tăng thêm sát thương
+      Bằng cách nâng vào STR.
+  arbalist-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Khoảng cách càng xa
+      giữa bạn và mục tiêu của bạn, sẽ
+      gây thêm sát thương càng nhiều.
+
+      có cơ hội triệu hồi
+      đám mây Thanh Trừng.
+      Cấp độ kỹ năng càng cao thì
+      có hội triệu hồi mây cài cao.
+  eidolon-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Hắm ám có dạng sáng và tối.
+      Khi Ánh sáng Và bóng tối của bạn chạm ngưỡng &6100&3,
+      bạn đổi sang dạng khác.
+      Ánh Sáng và bóng tối có được theo thời gian.
+      Khi thay đổi, khôi phục &e%amount% &3Máu.
+  devourer-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Các cuộc tấn công của bạn gây ra
+      sự ăn mòn cho kẻ thù của bạn
+      khiến chúng mất &e%amount% &3Máu
+      mỗi khi chúng bị ảnh hưởng.
+  mage-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Khi tấn công với Đồng loại (cuốc),
+      bạn nhận lại &e%amount% &3mana mỗi lần đánh.
+      Tấn công bằng cuốc sẽ gây sát thương nhiều hơn,
+      từ 4 cho một cái cuốc gỗ,
+      đến 8 cho một cuốc kim cương
+  firemage-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Khi cháy, lấy lại &e%amount% &3thêm
+      Máu khi Hồi phục.
+      Bạn cũng miễn nhiễm với Lữa.
+  priest-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Bạn có thể đi trên mặt nước.
+      và cũng có thể đi trên nhang thạch.
+      &cBạn sẽ dễ bị mất máu
+      khi ở Nether và The End!
+  vampire-passive:
+    title: '&6Nội Tại'
+    description: |-
+      &3Bạn sẽ mất máu theo thời gian.
+      Khi tấn công cho bạn ít máu
+      mỗi lần đánh. Cứ %blood% Máu bạn có,
+      gây thêm &e&amount& sát thương cận chiến
+      cho mục tiêu của bạn.
+  juggernaut-passive:
+    title: '&6Nội tại'
+    description: '&3giảm sát thương từ mọi nguồn đi &e%amount%'
+  natures-force:
+    title: '&2Cặm Bẫy Chết chóc'
+    description: |-
+      &3Triệu hồi Ong sau mỗi %interval% giây
+      &3hoặc %duration% giây &3từ 1 tổ Ong
+      để chiến đấu cùng bạn.
+      Những con Ong có %amount% &3Sát thương.
+      Nếu ai làm vỡ tổ Ong,
+      Ong sẽ ko được triệu hồi.
+  natures-call:
+    title: '&2Bọ Hư không'
+    description: |-
+      &3Triệu hồi %minions% &3Con cáo để
+      chiến đấu với bạn. Mỗi con Cáo
+      có sát thương là %amount%
+  dodge:
+    title: '&6Né Tránh'
+    description: |-
+      &3Bạn có &e%amount%% &3tránh né
+      đòn tấn công của đối thủ.
+      Tối đa &640%
+  parry:
+    title: '&6Phản Đòn'
+    description: |-
+      &3Nếu bạn đang cầm một thanh kiếm,
+      và đối thủ của bạn có điểm
+      &3stat thấp hơn bạn &3bạn sẽ phản lại &e%amount%%
+      &3Sát thương của đối thủ gây cho bạn
+  pierce:
+    title: '&6Xuyên giáp'
+    description: |-
+      &3Nếu &6STR &3của bạn cao hơn
+      hơn đối thủ của bạn &4DEF&3,
+      Khi chiến đấu giáp của bạn sẽ tăng &e%amount%%
+      &3Giảm sát thương nhiều hơn
+  thousand-cuts:
+    title: '&6Trăn Trối'
+    description: |-
+      &3Nhấp chuột phải để kích hoạt
+      trong khi cầm kiếm
+      &3Có &e%amount% &3sát thương đòn
+      đánh vào mục tiêu tiếp theo bạn tấn công,
+      trong khi làm họ mất phương hướng
+      trong 2 giây tiếp theo.
+  gliders:
+    title: '&6Bản năng Hư Không'
+    description: |-
+      &3Level 1&8: &eKhi chạy (Ctrl),
+      Tăng &etốc độ trong &e5 giây
+      tùy theo cấp độ Kỹ năng.
+      &3Level 2&8: &ekhông nhận sát thương khi rơi xuống.
+      &3Level 3&8: &eNhảy 2 lần!
+  cloak:
+    title: '&6Cloak'
+    description: |-
+      &3Level 1&8: &eTrở nên tàng hình vĩnh viễn.
+      Khi bạn tấn công, Tàng hình sẽ bị
+      vô hiệu hóa trong 30 giây.
+      &3Level 2: &eTất cả Mob bình thường sẽ coi
+      bạn là đồng minh, vào ko chủ động tấn công bạn.
+      Nếu bạn tấn công chúng, chế độ đồng minh
+      sẽ bị vô hiệu hóa trong 30 giây.
+      Một số mob như Enderman, endermite,
+      wither, guardians và cả ender dragon
+      vẫn có thể nhìn thấy bạn khi bạn tàng hình.
+      &3Level 3&8: &eCuộc tấn công đầu tiên bạn đánh
+      khi đang tàng hình sẽ
+      gây ra &6%amount% &eSát thương.
+  blink:
+    title: '&6Ám Sát'
+    description: |-
+      &3Dịch chuyển xung quanh mục tiêu của bạn
+      ngẫu nhiên, tạo ra một TPAura.
+      Spam ngẫu nhiên và dịch chuyển tức thời
+      tăng cho mỗi cấp.
+  hook:
+    title: '&6Hit and Run'
+    description: |-
+      &3Nhấp chuột phải để có được một cái móc vật lộn.
+      Hữu ích để thoát khỏi kẻ thù của bạn.
+      Hiện tại lên cấp chỉ làm
+      tăng phạm vi hook (mũi tên) của bạn.
+      &3Level 2: &eBạn sẽ không nhận sát thương rơi từ móc.
+  reflect:
+    title: '&6Phản Chiếu'
+    description: |-
+      &3Khi bạn bị tấn công, và bạn đang giữ
+      một Cây Cuốc, có cơ hội
+      (dựa trên chỉ số Vũ Khí của bạn)
+      để gây thêm &e%amount% &3với kẻ tấn công.
+  explosion-spell:
+    title: '&6Bùa Nổ'
+    description: |-
+      &3Khi bạn đang tấn công, và bạn đang giữ một
+      Cây Cuốc, có cơ hội
+      (dựa trên chỉ số Vũ Khí của bạn)
+      để gây thêm &e%amount%% &3sát thương cho kẻ thù của bạn.
+  heal-spell:
+    title: '&6Bậc Thầy Pháp Sư'
+    description: |-
+      &3Cứ 10 mana bạn có,
+      Tái Tạo &e%amount%&3 Máu bổ sung,
+      nếu Máu của bạn dưới 20%.
+  energy-flux:
+    title: '&6Mãnh Năng Lượng'
+    description: |-
+      &3Khi nhấp chuột phải bằng một cái cuốc,
+      nhanh chóng bắn tia năng lượng
+      gây &e%amount% &3sát thương trong một dòng.
+      Lượt Bắn lặp lại trên cùng một mục tiêu
+      trong &6%cooldown%s &3giây
+      Gây Sát thương ít hơn &650%.
+      Nhiều cấp độ cung cấp cho bạn thêm
+      Khoảng cách để trúng mục tiêu của bạn
+  absorb-energy:
+    title: '&6Hấp thụ năng lượng'
+    description: |-
+      &3Khi bị tấn công, tấn công tiếp theo của bạn sẽ
+      đặt mục tiêu của bạn dính hiệu ứng lữa
+      cho tối đa &e%amount% &3giây.
+  phoenix-essence:
+    title: '&6Bùng cháy'
+    description: |-
+      &3Gây thêm &e%amount% &3sát thương
+      cứ sau mỗi &61 giây
+      &3nếu mục tiêu của bạn đang bị cháy.
+  black-fire:
+    title: '&6Lửa đen'
+    description: |-
+      &3Khi các mục tiêu trong bán kính
+      là &65 blocks &3gần bạn,
+      tăng sát thương phải nhận của chúng Thêm &e%amount%
+  inferno:
+    title: '&6Địa ngục'
+    description: |-
+      &3Nhấp chuột phải vào mục tiêu
+      với hiệu ứng của bạn để kích hoạt.
+      Gây &e%amount% sát thương ngay lập tức
+      cộng thêm 1 sát thương trên 20 lần bắn trúng mục tiêu
+  heavy-strikes:
+    title: '&6Tấn công nặng nề'
+    description: |-
+      &3Nếu bạn đang sử dụng rìu để tấn công,
+      gây ra &e%amount%% &3sát thương cho mục tiêu của bạn.
+  stone-skin:
+    title: '&6Mình đồng Da sắt'
+    description: |-
+      &3Level 1&8: &eGiảm sát thương khi rơi xuống đến &6%fall%
+      &3Level 2&8: &eGiảm sát thương  nhận vào của
+      lửa/dung nham tới &6%fire%/%lava%
+      &3Level 3&8: &egiảm sát thương của
+      gai đến %thorns%
+  aegis-protection:
+    title: '&6Lòng Dũng Cảm'
+    description: |-
+      &eLevel 1&8: &3Cứ sau &e%amount%&3 giây,
+      làm mới một tấm khiên phủ nhận tất cả
+      sát thương cho đòn tấn công tiếp theo.
+      &eLevel 2&8: &3Phản lại %damage% sát thương.
+      &eLevel 3&8: &3Đầy lùi mục tiêu của
+      bạn nếu bạn còn dưới 5 Máu.
+  throw:
+    title: '&6Sett'
+    description: |-
+      &3Rìu và nhấp chuột phải vào
+      mục tiêu của bạn để kích hoạt.
+      Thực hiện mục tiêu của bạn trong 3 giây,
+      làm cho bạn và mục tiêu của bạn không thể
+      để tấn công trong thời gian nhất định,
+      sau đó ném kẻ thù của bạn vào
+      hướng bạn đang nhìn.
+      Khi mục tiêu của bạn chạm đất,
+      gây ra &e%amount% &3sát thương cho mục tiêu của bạn.
+      Trong khi bạn đang thực hiện Skill này,
+      Mọi sát thương nhận vào giảm đến 50%
+  execute:
+    title: '&6Chuẩn xác'
+    description: |-
+      &3Sau khi bắn một mục tiêu duy nhất
+      2 lần liên tiếp, có cơ hội Thực Hiện
+      một trong những combo này.
+
+      &eLevel 1&8: &3Có cơ hội làm cho mục tiêu
+      của bạn bốc cháy trong 5 giây.
+      &eLevel 2&8: &3Có cơ hội đầu độc mục tiêu
+      của bạn.
+      &eLevel 3&8: &3Có cơ hội tấn công
+      một tia sét vào mục tiêu của bạn.
+
+      Cơ hội sẽ tăng thêm
+      khi bạn bắn mục tiêu.
+      Combo của bạn sẽ thiết lập tại
+      nếu bạn bỏ lỡ hoặc bắn trúng mục tiêu khác.
+  dual-arrows:
+    title: '&6Ưng Nhãn'
+    description: "&3Cây cung của bạn có %chance%% cơ hội \nbắn ra 2 mũi tên cùng 1 lúc.\n\
+      &3Level 1&8: &eTăng sát thương \nmũi tên thứ 2 của bạn tới &3%amount%&e.\n&3Level\
+      \ 2&8: &eMũi tên thứ hai sẽ có\nTốc độ bay nhanh hơn.\n&3Level 3&8: &eMũi\
+      \ tên Thứ 2 sẽ là\nmột mũi tên lửa."
+  minions:
+    title: '&6Mũi Tên Triệu hồi'
+    description: "&3Nhấp chuột phải và bắn để \nsinh ra bộ xương minion sẽ\nChiến đấu thay cho bạn.\
+      \ that will\nfight for you.\n\n&eLevel 1&8: &3Sẽ sinh ra 1 skeleton\n&eLevel 2&8: &3Sinh\
+      \ ra 2 skeletons với khả năng tàng hình\nhiệu ứng và cung tốt hơn.\n&eLevel 3&8: &33 Trụ cột\
+      \ với tàng hình và mũi tên lửa."
+  fire-crossbow:
+    title: '&6Nỏ lửa'
+    description: |-
+      &3Bắn một mũi tên vào kẻ thù của bạn
+      bằng cách đánh thường bằng Cung. Không sử dụng mũi tên,
+      và thay vào đó sử dụng năng lượng.
+      Nâng cấp để giảm thời gian hồi chiêu
+  blood-lust:
+    title: '&6Huyết thệ'
+    description: "&3Level 1: Nếu bạn có nhiều hơn 70% Máu\nbạn sẽ trở nên\
+      \ điên cuồng,\ncho phép bạn gây thêm\n&e%amount%% &3Damage nhiều hơn bình thường.\n\
+      Level 2: hồi máu tự nhiên của bạn\nTăng mạnh thêm %regain% trong thời gian này\
+      \ time. \nLevel 3: Tấn công trong thời gian này\ncó cơ hội (dựa trên\n\
+      Số máu hiện tại) để Hồi cho bạn bằng 2 Máu"
+  blood-well:
+    title: '&6Hồ Máu'
+    description: |-
+      &3Tăng máu tối đa của bạn lên rất nhiều,
+      số linh hồn mỗi lần nâng cấp. Có &e%amount%% &3cơ hội
+      để ngăn chặn mất máu cứ sau 4 giây.
+  bleed:
+    title: '&6Truyền máu'
+    description: |-
+      &3Mục tiêu của bạn sẽ bị chảy máu
+      trong 5 giây. mỗi khi mục tiêu
+      của bạn bị mất %amount% máu
+      lúc đó bạn sẽ hồi lại %amount% Máu.
+  eternal-darkness:
+    title: '&6Bóng tối vĩnh cửu'
+    description: |-
+      &3Lén lún và bắn trúng mục tiêu để trở thành
+      bất khả chiến bại trong &e%amount% &3giây.
+      Trong thời gian này, bạn sẽ làm mù các mục tiêu
+      bạn tấn công trong 1 giây mỗi lần đánh.
+  purify:
+    title: '&6Thanh lọc'
+    description: |-
+      &3Thỏa thuận sẽ cho &e%amount% &3sát thương cho thêm
+      cứ 5 Máu thì mục tiêu của bạn sẽ chịu sát thương,
+      lên đến tối đa &e%max%&3.
+      &6%amount% &3mất cân bằng khi bạn tấn công.
+  spirit-fire:
+    title: '&6Chiến Binh tận thế'
+    description: "&3Ở dạng Bóng Tối, hấp thụ &e%amount%%\n&3sát thương khi đánh,\
+      \ tối đa là &650%.\n&3Số Linh hồn được lưu trữ. \n&3Ở dạng Dark, Trục xuất linh hồn đã lưu\n\
+      trong cuộc tấn công đầu tiên gây thêm\n1 Sát thương mỗi &e%dark% &3Sát thương hấp thụ"
+  spectre:
+    title: '&6Khiếp hãi'
+    description: "&3Ở dạng Ánh sáng, có được một tấm khiên, điều đó sẽ\ntăng &c%speed%&3\
+      \ tốc độ trong 3 giây\nkhi bị phá vỡ bởi một mob khác.\nKhiên làm mới mỗi &e%amount%\
+      \ &3giây. \nỞ dạng Dark, đòn tấn công của bạn sẽ\nbị tính phí mỗi &e%amount% &3giây.\n\
+      Tính phí thỏa thuận tấn công gây &6%dark%%\n&3sát thương thêm."
+  shape-shifter:
+    title: '&6Chúa Tể Bóng Tối'
+    description: |-
+      &3Khi trời tối, bạn sẽ gây thêm
+      sát thương lên kẻ thù.
+      Càng tối, bạn càng gây ra nhiều sát thương.
+      Khi bạn ở những nơi Sáng chói,
+      bạn sẽ chịu ít sát thương hơn.
+      Càng sáng càng ít damage.
+  chronoprohiberis:
+    title: '&8Dây cốt Thời gian'
+    description: |-
+      &3Ngưng động thời gian mọi kẻ
+      địch trong bán kính &2%range% &3Khối
+      và &2%duration% &3giây
+      sau đó gây &2%damage% &3Sát thương.
+  defile:
+    title: '&6Tiến công vũ bão'
+    description: |-
+      &3Nhấp chuột phải và tấn công để làm mất
+      sự cân bằng trong mục tiêu của bạn,
+      gây thêm sát thương lên nó,
+      và giảm sát thương của nó gây ra cho
+      bạn đến &6%amount%% &3trong &e%time% &3giây.
+  consume:
+    title: '&6Tước đoạt'
+    description: |-
+      &3Có %chance%% Cơ hội đánh cắp
+      %amount% linh hồn từ đối thủ
+      hoặc gây 1 lượng lớn sát thương
+      nếu đối thủ ko có chút linh hồn nào.
+  disarm:
+    title: '&6Chiếm đoạt'
+    description: |-
+      &3Level 1&8: &eĐặt vũ khí của đối thủ vào kho
+      của họ nếu họ
+      còn chỗ chứa trong kho.
+      &3Level 2&8: &eThay thế vũ khí của đối thủ bằng
+      một vật phẩm trong kho của họ.
+      &3Level 3&8: &eĐồng thời thay đổi vị trí thanh hotbar họ đang sử dụng.
+  dash:
+    title: '&7Tử Kiếm'
+    description: |-
+      &3Level 1&8: &eVừa cấm kiếm vừa lướt.
+      gây sát thương trên đường lướt
+      cấp càng cao càng nhiều sát thương.
+      Sát thương hiện tại&8: &2%amount%
+      &3Level 2&8: &eđánh bật lùi mục tiêu
+      khi bạn lao tới.
+      &3Level 3&8: &eTăng sát thương lên mục tiêu khi lao tới.
+
+      &6Bán Kính&8: &2%range%
+      &6Sát Thương&8: &2%damage%
+      &6Knockback Power&8: &2%knockback%
+  annihilation:
+    title: '&4&lChinh phục'
+    description: |-
+      &3Triệu hồi Thánh Kiếm
+      &3Chiến đấu cùng với
+      bạn trong Giao trân.
+      Chuột trái để Phóng Kiếm.
+  neptune:
+    title: '&9Ngọn Giáo Sao Băng'
+    description: |-
+      &3Level 1&8: &eGây thêm %amount% &esát thương với đinh ba.
+      Có %chances.lightning% &ecơ hội triều hồi sét
+      để tấn công đối thủ
+      bằng sét từ cây đinh ba.
+      &3Level 2&8: &eCó %chances.multiply% &eCơ hội
+      tạo ra %multiply% &eCây đinh ba nhắm vào
+      đối thủ của bạn, sau khi đánh thành công
+      với cây đinh ba.
+      &3Level 3&8: &eBạn có thể phóng mình bằng cây đinh ba
+      trong khi cầm nó bằng tay
+      và lén lút Đây là một mẹo nhỏ.
+      Bạn cần buông nút sneak 
+      một khi bạn thả nút nhấp chuột phải.
+      Bạn có thể bay kỹ thuật với điều này.
+  blood-circuit:
+    title: '&4Địa Ngục Hóa Quỷ'
+    description: |-
+      &3Level 1&8: &eTạo ra một tinh thể ender
+      hoạt động như một mạch máu giữa
+      bạn và đối thủ trong  %duration% giây.
+      Cứ sau %inferno% tích tắc, tinh thể ender sẽ kích hoạt
+      và gây sát thương cho đối thủ của bạn thêm %amount%
+      và tăng sát thương này thêm %damage-modifier%
+      Địa ngục của bạn sẽ ngừng kích hoạt nếu
+      mục tiêu của bạn đứng xa quá %distance% Khối
+      so với Tinh thể
+      &3Level 2&8: &eBạn sẽ được chữa lành cùng một lượng
+      sát thương vô sinh cho đối thủ của bạn.
+      &3Level 3&8: &eTạo ra Vex Mỗi Khi Skill
+      Địa ngục của bạn được kích hoạt.
+  purification:
+    title: '&6Trà trộm'
+    description: |-
+      &eCấp 1&8: &3Người giám hộ, endermen và
+      slime sẽ không còn nhắm bạn là mục tiêu.
+      &eCấp 2&8: &3Người giám hộ Già, nhện và
+      phantoms sẽ không còn nhắm mục tiêu bạn.
+      nó sẽ đánh bạn nếu bạn tấn công nó.
+      &eCấp 3&8: &3Cây trồng xung quanh bạn sẽ
+      phát triển nhanh hơn.
+  seal-of-life:
+    title: '&6Bảo Kê'
+    description: |-
+      &3Có cơ hội trốn thoát kẻ thù
+      khi bị thương nặng.
+      Bất khả chiến bại và tăng khả năng tái sinh
+  fangs:
+    title: '&6Quỷ'
+    description: |-
+      &3Bạn đã bảo giờ muốn thoát khỏi
+      những kẻ phiền nhiễu?
+      bây giờ bạn có thể giết chúng
+      bằng khả năng của mình
+      và thầm chí tốt hơn!
+      lén lút trong khi kích hoạt
+      khả năng sử dụng Quỷ
+      trên mob xung quanh
+      hoặc kích hoạt nó bình thường
+      để xin ra Quỷ theo đường thẳng.
+  blackhole:
+    title: '&6Hố Đen vũ Trụ'
+    description: |-
+      &3Tạo ra một hố Đen và kéo
+      kẻ thù xunh quanh vào đó.
+      Hố đen này sẽ gây sát thương
+      cực lớn nếu có ai đó đến gần nó.
+  meteorite:
+    title: '&6Mảnh Thiên Thạch'
+    description: |-
+      &3bắn nhiều quả cầu lửa
+      vào kẻ thù của bạn.
+      cấp kỹ năng càng cao sẽ càng
+      nhiều quả cầu lửa
+      và sức công phá.
+  chain:
+    smash-title: '&6Siêu Hùng Giáng Thế'
+    smash-description: |-
+      &3Nhảy và làm một
+      cú đấm mạnh vào
+      mặt đất và thổi tung tất cả
+      vào không trung.
+  mind-possession:
+    title: '&6Rối Loạn'
+    description: |-
+      &3Có cơ hội làm tê liệt
+      kẻ thù với sự chậm chạp và mù quáng.
+      Cấp độ cao hơn cho cơ hội và thời gian lâu hơn.
+  kindling-of-life:
+    title: '&6Chữa Lành'
+    description: |-
+      &3Nhấp chuột phải và chữa lành cho đồng đội của bạn
+      để hỗ trợ họ.
+      Cấp độ cao hơn cho tốc độ nhanh hơn
+      và Hồi Máu Nhiều hơn.
+  asclepius:
+    title: '&6Ban Phước'
+    description: |-
+      &3Ban tặng Hiệu ứng cho xung quanh
+       trong khi cầm Cuốc.
+      Hỗ trợ đồng đội của bạn trước khi chiến đấu
+      với một số Buff.
+      Chỉ hoạt động trong bữa tiệc
+      thành viên hoặc phe phái.
+skills-item:
+  energy-booster: '&3Tăng cường năng lượng &e%booster% &3được kích hoạt trong &e%time%'
+  cost: '&cBạn cần &e%cost% &cLinh hồn để mua cái này.'
+  no-free-slot: '&cBạn không có chỗ trống trong kho đồ của mình.'
+skill:
+  no-permission: '&cBạn không được phép sử dụng &e%skill%'
+  owned-error: '&4Bạn đã sở hữu một Class!'
+  required-level: '&cBạn cần ít nhất là cấp &e%level% &cđể sử dụng kỹ năng này.'
+  change-cooldown-error: '&cBạn cần đợi &e%cooldown% &cđể thay đổi Class của bạn.'
+  select-cost: '&cBạn cần &e%cost% &clinh hồn để chọn kỹ năng này.'
+  affected-by: |-
+    &3Bạn Muốn Tăng Damage này
+    bạn hãy Tăng Vào &e%stat%
+  maximum-level: '&cKỹ năng đã ở mức tối đa.'
+  swordsman:
+    dodge-opponent-message: '&cĐòn tấn công của bạn đã bị né tránh!'
+    dodge-message: '&3Tấn công Liên tiếp!'
+    active-activation-message: '&3&lHàng ngàn vết cắt được kích hoạt! Đạt nhiều mục
+      tiêu nhiều lần bạn có thể!'
+    active-finished-message: '&c&lHàng ngàn vết cắt đã biến mất'
+    ready-activation-message: '&3*Bạn Đã sẵn sàng* Đánh trúng mục tiêu để kích hoạt
+      Ngàn cắt'
+    notready-activation-message: '&7*Bạn không sẵn sàng*'
+  devourer:
+    invis-disabled: '&cTàng hình của bạn bị vô hiệu hóa trong 30 giây!'
+    invis-enabled: '&1Bạn đang dần tàng hình ...'
+    neutrality-disabled: '&cTính trung lập của bạn bị vô hiệu hóa trong 30 giây!'
+    neutrality-enabled: '&1Bây giờ bạn là người bình thường.'
+  mage:
+    activation-message: '&3&l*WHOOSH!*'
+  firemage:
+    ready-activation-message: '&3*Tay bạn bị bỏng với sức mạnh* Đánh trúng mục tiêu
+      để kích hoạt Địa Ngục'
+    notready-activation-message: '&7*Sức mạnh tiêu tan*'
+    activation-message: '&3&lMục tiêu của bạn được thổi bùng với sức mạnh vô sinh!'
+  juggernaut:
+    active-ready-message: '&3*Bạn sẵn sàng* Đánh trúng mục tiêu để mang và ném nó'
+    active-notready-message: '&7*Bạn hạ nắm đấm xuống*'
+    active-activated-message: '&3&lBạn nắm lấy đối thủ của bạn trên đầu của bạn!'
+    active-throw-message-countdown: '&c&lMỤC TIÊU! Ném đối thủ theo hướng của bạn
+      trong %countdown%'
+    active-throw-success: '&3&lĐã ném mục tiêu tại vị trí!'
+    aegis-success: '&3Lá Chắn của bạn chặn cuộc tấn công!'
+  arbalist:
+    minions-msg: '&cBạn đã triều hồi Cung thủ.'
+  eidolon:
+    active-ready: '&3*Năng lượng đột phá tỏa ra từ bạn* Đập một mục tiêu để làm ô
+      uế nó'
+    active-not-ready: '&c*Năng lượng tiêu tan*'
+    active-activation-message: '&3&lBạn đã phá vỡ sự cân bằng tinh thần của mục tiêu
+      của bạn!'
+    turn-light: '&eBóng tối của bạn mờ dần vào ánh sáng!'
+    turn-dark: '&4Bóng tối lấn át ánh sáng!'
+    spirit-expell: '&3Bạn bắn mục tiêu của bạn với %damage% Sát thương thêm!'
+    shield-refresh: '&3Bạn cảm thấy một sự gia tăng năng lượng'
+    shield-speed: '&3Khiên của bạn phá vỡ để cung cấp cho bạn tốc độ!'
+    attack-boost: '&3Bạn trục xuất Sức mạnh của mình để gây thêm %damage%% Sát thương!'
+skill-selected: |-
+  THÔNG TIN:&3Bây giờ bạn là một &e%skills_skill_displayname%
+  &3Bạn có thể nâng cấp Kỹ năng của mình bằng lệnh:{&e/skill improve,&eNhấn vào đây để mở,/skill improve}
+mastery:
+  maximum-level: '&cThành thạo này được nâng cấp lên mức tối đa.'
+  not-found: '&e%mastery% &3không tìm thấy.'
+  upgraded: '&3Nâng cấp &e%mastery% &3Thành thạo.'
+  downgraded: '&3hạ cấp &e%mastery% &3Thành thạo.'
+  required-level: '&cBạn cần ít nhất là cấp &3%level% &cđể sử dụng thành thạo này.'
+  cant-downgrade: '&cBạn không thể hạ cấp &e%mastery% &cthành thạo này nữa.'

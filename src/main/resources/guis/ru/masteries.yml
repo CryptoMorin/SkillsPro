@@ -1,0 +1,183 @@
+title: "&8&l-=( &2&lМАСТЕРСТВО &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  harvesting:
+    name: "&3Фермерство"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Мастерство"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2При сборе урожая,"
+      - "&2есть шанс получить"
+      - "&2EXP и уровень Умений."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Лесорубство"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Мастерство"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Когда рубите деревья,"
+      - "&2есть шанс получить х2 брёвен,"
+      - "&2EXP и уровень Умений."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Хаштер"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Мастерство"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2При добыче редких ископаемых"
+      - "&2есть шанс получить EXP"
+      - "&2и уровень Умений."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Пацифизм"
+    material: WHITE_WOOL
+    lore:
+      - "&3Мастерство"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Получайте доп.опыт Умений"
+      - "&2за ломание блоков и фермерство."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Регенерация"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс"
+      - "&2восстановить ХП"
+      - "&2когда уровень"
+      - "&2здоровья ниже 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Могущество"
+    material: BLAZE_POWDER
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс нанести"
+      - "&2больше урона."
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Примечательность"
+    material: DIAMOND_SWORD
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс получить больше"
+      - "&2XP за убийства монстров."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Толстокожий"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс снизить полученный урон"
+      - "&2от монстра или нападаемого игрока."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Зазубрины"
+    material: ENDER_EYE
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс нанести доп."
+      - "&2крит.урон стреляя с лука."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Коллекционер Душ"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Эффективность"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс собрать"
+      - "&2дополнительные души."
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Акробатика"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Улучшенный Геном"
+      - ""
+      - "&3Стоимость&8: &e%cost%"
+      - "&3Уровень&8: &e%level%"
+      - ""
+      - "&2Есть шанс снизить урон"
+      - "&2при падении с высоты."
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 4, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

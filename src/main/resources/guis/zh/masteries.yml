@@ -1,0 +1,174 @@
+title: "&8&l-=( &2&l技巧树 &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  harvesting:
+    name: "&3收割"
+    material: DIAMOND_HOE
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2收割作物时,"
+      - "有机会会获得双倍产物"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3砍伐"
+    material: DIAMOND_AXE
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2伐木时,,"
+      - "有机会会获得更多木头"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3挖掘"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2挖矿时，"
+      - "有机会再获得一个矿物"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3和平主义者"
+    material: WHITE_WOOL
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2在采集和伐木时有机会获得经验值"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3再生"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2效率类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2生命值大于20时,,"
+      - "可通过进食来恢复生命"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3力量"
+    material: BLAZE_POWDER
+    lore:
+      - "&c战斗类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2有几率额外造成1点伤害"
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3荣耀"
+    material: DIAMOND_SWORD
+    lore:
+      - "&c战斗类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2击杀怪物可以获得更多经验值"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3皮糙肉厚"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&c战斗类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2有几率抵挡部分的伤害'"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3精准"
+    material: ENDER_EYE
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2用弓箭时会受到暴击加成，"
+      - "造成50%的额外伤害"
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3灵魂收割机"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2每一次击杀后"
+      - "有一定几率获得灵魂"
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3敏捷"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3技巧类"
+      - ""
+      - "&3花费&8: &e%cost%"
+      - "&3等级&8: &e%level%"
+      - ""
+      - "&2有几率"
+      - "减少摔落伤害"
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 4, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]

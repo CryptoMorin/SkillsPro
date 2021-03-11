@@ -1,0 +1,21 @@
+title: "&8-=( &4&lConfirmation remise à 0 &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4Confirmer"
+    material: RED_WOOL
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+    lore:
+      - "&eUne fois que vous réinitialisez vos statistiques"
+      - "tous les statpoints attribués à"
+      - "différents types de statistiques seront"
+      - "supprimé et ajouté à vos statpoints."
+  cancel:
+    name: "&2Annuler"
+    material: BARRIER
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

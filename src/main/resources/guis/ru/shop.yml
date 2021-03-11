@@ -1,0 +1,55 @@
+title: "&8-=( &9&lМИСТИЧЕСКАЯ-ЛАВКА &8)=-"
+rows: 3
+sound: BLOCK_CHEST_LOCKED
+
+options:
+  sell-xp:
+    name: "&2Бутыль Видений&8"
+    material: EXPERIENCE_BOTTLE
+    skills-item-type: 'XP: 2'
+    lore:
+      - "&3Цена&8: &e250&a⁂"
+      - "&3Ваши глаза видят будущее,"
+      - "&3это помогает вам обучаться."
+      - "&3Бутылка готовой прокачки EXP."
+    cost: 250
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    posx: 5
+    posy: 2
+  sell-booster:
+    name: "&2Поток Маны"
+    cost: 400
+    material: POTION
+    skills-item-type: 'ENERGY_BOOSTER: 2, 600'
+    lore:
+      - "&3Цена&8: &e400&a⁂"
+      - "&3Ускоряет регенирацию MP."
+      - "&3Время действия : &95 &3минут."
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 255, 0, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 2
+    posy: 2
+  sell-energy:
+    name: "&2Зелье Энергии"
+    cost: 300
+    material: POTION
+    skills-item-type: 'ENERGY_POTION: 50'
+    lore:
+      - "&3Цена&8: &e300"
+      - "&3Восполняет Ману Скиллов"
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 0, 255, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 8
+    posy: 2
+  orange-glass:
+    name: ''
+    material: ORANGE_STAINED_GLASS_PANE
+    slots: [ 1, 4, 7, 19, 22, 25 ]
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 3, 5, 6, 8, 9, 17, 18, 20, 21, 23, 24, 26 ]

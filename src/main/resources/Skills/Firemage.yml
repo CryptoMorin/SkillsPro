@@ -1,0 +1,56 @@
+name: "Fire Mage"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-level: 100
+max-health: 20 * 6
+max-energy: lvl + 20
+energy-regen: 1 + 0.05 * lvl
+required-level: 20
+cost: 3000
+stats: [ DEX, STR ]
+energy: health
+abilities:
+  firemage-passive:
+    scaling: int/20
+  absorb-energy:
+    required-level: 5
+    scaling: lvl+int/10
+    # Set target on fire. In seconds.
+    fire: lvl * 5
+    cost: 100 * (lvl + 1)
+  phoenix-essence:
+    required-level: 5
+    # %fire% is the entity on fire duration in seconds.
+    fire-mod: min(%fire%, 5)
+    # damage + (scaling * fire-mod)
+    scaling: int/9+lvl*2
+    cost: 100 * (lvl + 1)
+  black-fire:
+    required-level: 5
+    scaling: lvl+str/20
+    cost: 100 * (lvl + 1)
+  meteorite:
+    required-level: 20
+    activation:
+      key: LR
+      energy: 20
+      cooldown: 10
+      items: [ ]
+    scaling: lvl+str/5
+    fireballs: lvl * 2
+    range: lvl * 2
+    yield: 0.5 + (lvl / 3)
+    cost: 100 * (lvl + 1)
+  inferno:
+    required-level: 1
+    activation:
+      idle: 5
+      key: R
+      energy: 6
+      cooldown: 6
+      items: [ ]
+    scaling: lvl*2+int/5
+    # The fire range
+    range: (lvl * 2) - 1
+    cost: 100 * (lvl + 1)

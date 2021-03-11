@@ -1,0 +1,22 @@
+title: "&8-=( &4&lПОДТВЕРДИТЕ СБРОС &8&l)=-"
+type: HOPPER
+sound: BLOCK_CHEST_OPEN
+
+options:
+  reset:
+    name: "&4Подтвердить"
+    material: RED_WOOL
+    slot: 1
+    sound: ENCHANT_THORNS_HIT
+    lore:
+      - "&eКак только вы сбросите"
+      - "свою статистику, все назначенные"
+      - "очки для различных типов состояний"
+      - "будут удалены и добавлены к"
+      - "вашим свободным очкам."
+  cancel:
+    name: "&2Отмена"
+    material: BARRIER
+    sound: BLOCK_NOTE_BLOCK_BASS
+    slot: 3
+

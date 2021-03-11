@@ -1,0 +1,84 @@
+name: "Mage"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + lvl/2
+max-health: 20 * 6
+max-energy: lvl + 20
+energy-regen: 1 + 0.04 * lvl
+max-level: 100
+required-level: 10
+cost: 3000
+stats: [ DEX, INT ]
+energy: mana
+abilities:
+  mage-passive:
+    scaling: int/10
+    hoe-damage:
+      NETHERITE_HOE: 9
+      DIAMOND_HOE: 8
+      GOLDEN_HOE: 7
+      IRON_HOE: 6
+      STONE_HOE: 5
+      WOODEN_HOE: 4
+  reflect:
+    scaling: lvl
+    required-level: 5
+    chance: lvl * 10
+    cost: 100 * (lvl + 1)
+  neptune:
+    scaling: lvl + (str / 2)
+    required-level: 20
+    cost: 100 * (lvl + 1)
+    multiply: min(5, (str + 6) / 3)
+    chances:
+      lightning: lvl * (int + 5)
+      multiply: lvl * (dex + 5)
+  explosion-spell:
+    scaling: int + str / 2
+    required-level: 10
+    hoe-chance:
+      NETHERITE_HOE: 60
+      DIAMOND_HOE: 50
+      GOLDEN_HOE: 40
+      IRON_HOE: 30
+      STONE_HOE: 20
+      WOODEN_HOE: 10
+    chance:
+    cost: 100 * (lvl + 1)
+  heal-spell:
+    required-level: 20
+    # "regain" placeholder is the amount of health from natural regen or satiation.
+    scaling: (%skills_precise_energy% / 10) * lvl
+    health: 30
+    cost: 100 * (lvl + 1)
+  energy-flux:
+    required-level: 1
+    activation:
+      key: R
+      energy: 3
+      cooldown: 2
+      items: [ "CONTAINS:HOE" ]
+    scaling: 1+lvl*2+int/10
+    # The range of fire. How long the player can shoot the beam.
+    range: lvl * 12
+    # Level 3 pass through blocks?
+    pass-through: true
+    cost: 100 * (lvl + 1)
+  chronoprohiberis:
+    required-level: 1
+    activation:
+      key: LR
+      energy: '%skills_max_energy%'
+      cooldown: 5
+      items: [ "CLOCK" ]
+    # The duration of the time stop in seconds.
+    duration: 5 + lvl
+    # The range of this ability to detect entities.
+    range: 10
+    # Blacklisted entity types.
+    blacklisted: [ ]
+    damage: 3
+    effects:
+      - "SLOWNESS, 5 + lvl, 5"
+      - "CONFUSION, 15, 1"
+      - "BLINDNESS, 15, 1"

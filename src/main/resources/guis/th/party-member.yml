@@ -1,0 +1,19 @@
+title: "&8-=( &3&lParty &8)=-"
+type: HOPPER
+sound: BLOCK_CHEST_LOCKED
+
+options:
+  kick:
+    name: "&4เตะ &2%player% ออกจากปาร์ตี้"
+    material: BARRIER
+    slot: 0
+  mod:
+    isMod:
+      condition: "%mod%"
+      name: "&4ลดขั้นของ &2%player%"
+      material: GREEN_WOOL
+    else:
+      condition: true
+      name: "&2เลื่อนขั้นของ &2%player%"
+      material: RED_WOOL
+    slot: 3

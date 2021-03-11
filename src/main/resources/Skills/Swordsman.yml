@@ -1,0 +1,168 @@
+# Activation keys can be: L = Left-click, R = Right-click, S = Shift, Q = Drop Item, F = Switch Item, C<key> = While Sneaking
+# For example activation key for an ability is "LRQFFCQ" -> left-click, right-click, drop item, switch item two times, drop item while sneaking.
+# F (switch items) works with no item in hand as well, however R (right-click) won't work if you're not holding an item,
+# but it works if you right-click on a block with empty hands.
+# For C<key> (while sneaking) option you don't need to sneak at that exact order. You can be sneaking the whole time while doing the other keys.
+# But that's different for S (Shift, Sneak) key. It maintains its order. Combinations such as "CS", "SC" or "CC" don't make sense, they're basically "S"
+# Time between each key press can be configured in config.yml
+# The combination is unlimited but it's recommended to keep a short script.
+# Also note that if a skill has multiple active abilities, expressions such as "SSL" and "SSLS" for two abilities in a single skill are not allowed.
+# Since "SSL" ability will be activated before "SSLS" ability.
+
+# Activation Items
+# To activate the ability with any item or even without any, use empty list []
+# If an item's name is specified starting with "CONTAINS:" it'll accept any item type that has the string in its type name.
+# E.g. CONTAIS:BOW -> CROSSBOW, BOW | CONTAINS:SWORD -> DIAMOND_SWORD, WOODEN_SWORD, GOLDEN_SWORD, etc...
+# You can also use RegEx with "REGEX:" prefix. But it's not recommended for performance.
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html (tip: use Ctrl+F to find the material you want)
+
+# Commands support arguments, the command can either be executed from the player or the console.
+# Supports all the placeholders.
+# E.g.
+# commands-to-perform-upon-select:
+# - PLAYER:spawn
+# - CONSOLE:give %player% 0 %skills_level% DEAD_BUSH
+
+# Health is the the player's max health. If you set this to 0, the plugin will no longer modify the health.
+# Max-health is the maximum value that "health" can increase to.
+# Note that these values are decimals. 1 means half a heart.
+# So if you want to have 20 whole hearts you need to put 40
+
+# Energy is the energy type the skill uses.
+# The energy name must be the node name.
+
+# Under each ability you can add "disabled-regions" for WorldGuard regions.
+# Only WorldGuard 7 supports this.
+# Example: disabled-regions: [pvparena1, pvparena2, ...]
+# Note, you can disable all the regions with PvP flag off in config.yml
+
+# You can also add these properties to any active ability:
+# activation:
+#  key: The activation key used to activate this ability.
+#  energy: The energy cost to enable this ability.
+#  cooldown: Cooldown for activating the ability again.
+#  items: List of items that the player must hold to activate the ability.
+#  idle: If this ability is a non-instant ability (if it's used instantly without needing to hit a player first)
+#        this is the ticks before going out of "ready" state with no responses.
+#   messages:
+#    idle: When player ability is activated but isn't used.
+#    activated: When ability is activated.
+#    finished: When ability is finished. Not used for abilities that are activated instantly.
+#    ready: When a non-instant ability is activated and waiting for response.
+
+# Placeholders in the GUI for normal scaling is %amount%
+# Other scalings have the placeholder with their own name.
+# For example "chance" scaling placeholder is %chance%
+# These scalings will be colored if a stat is specified in their
+# formula with the stat color defined in the config.
+# Scalings that use dynamic numbers such as "damage" or "durability"
+# placeholders will not be displayed as numbers but will show the formula itself,
+# since the program can't predict those dynamic values.
+
+# Scaling variables:
+# lvl - The level of the current ability. If this is used outside of abilities section, it refers to the level of skill.
+# Placeholders for Stats are their node name case-sensitive. You just need the node name not %skills_stat_<node>% however you can use that as well.
+# And supports all the placeholders.
+# Note do not use placeholders in scaling that define the placeholder itself or you will get StackOverflowError.
+# For example you can't use %skills_max_energy% in "max-energy" scaling.
+# However there are special variables for certain scalings and they're marked with a comment.
+# Chance scalings have min value of 0 and maximum value of 100
+# Most of the scalings have a special placeholder "damage"
+# All the math operations are accepted.
+# +-^*/() sqrt(num) round(num) floor(num) log(num) cos(num) etc...
+# You can see a full list from Java's Math class: https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html
+# Special cases: random(min, max) will give you a double and there is randInt(min, max) that gives an integer.
+
+# The internal names can be changed. However data loss will occur.
+
+name: "Swordsman"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+health: 20 + (lvl / 2)
+max-level: 100
+max-health: 20 * 10
+max-energy: lvl + 20
+energy-regen: 1 + 0.05 * lvl
+damage-cap: 100
+required-level: 0
+cost: 0
+stats: [ STR, DEX ]
+energy: mana
+abilities:
+  swordsman-passive:
+    scaling: str/2
+    # Type of weapons Swordsman are allowed to use for duel wielding.
+    weapons: [ "CONTAINS:SWORD" ]
+    cooldown: true
+  parry:
+    # Percent of the damage
+    required-level: 5 * (lvl + 1)
+    scaling: dex/5+lvl*2
+    # The stat to compare to other player.
+    stat: str
+    chance: lvl * 10
+    cost: 100 * (lvl + 1)
+  pierce:
+    required-level: 10 * (lvl + 1)
+    # Get x percent of the current damage.
+    scaling: 100 * lvl / 2
+    cost: 100 * (lvl + 1)
+    # The stat to compare to other player.
+    # The attacker's DEF points needs to be greater than the defender's DEF points. If it's equal or less, then it won't work.
+    stat: def
+  dodge:
+    required-level: 10 * (lvl + 1)
+    scaling: dex/7+(lvl*5)
+    cost: 100 * (lvl + 1)
+    weapons:
+      - "CONTAINS:SWORD"
+  dash:
+    required-level: 10 * (lvl + 1)
+    scaling: lvl
+    cost: 100 * (lvl + 1)
+    # The radius used for knockback and charge.
+    range: 2
+    vertical-slash-level: 3
+    effects: [ ]
+    charge:
+      level: 3
+      knockback: 2
+      damage: lvl + (str / 2)
+    activation:
+      key: LR
+      energy: 5
+      cooldown: 3
+      items:
+        - 'CONTAINS:SWORD'
+  thousand-cuts:
+    required-level: 1 * (lvl + 1)
+    activation:
+      idle: 5
+      key: R
+      energy: 20
+      cooldown: 10
+      items:
+        - 'CONTAINS:SWORD'
+    scaling: (lvl * 2) + (STR / 10)
+    cut-count: lvl * 3
+    cost: 100 * (lvl + 1)
+  annihilation:
+    required-level: 30 * (lvl + 1)
+    damage: str + (lvl * 3)
+    throw:
+      damage: (str / 2) + lvl
+      cooldown: 7 - lvl
+    # The duration of the summons in seconds.
+    # Please change the cooldown if you're going to change this option.
+    duration: 20 + (lvl * 5)
+    range: 7 + lvl
+    distance: 10 + (lvl * 5)
+    activation:
+      idle: 5
+      key: LLR
+      energy: 20
+      # Note that the cooldown MUST be greater than the duration or the server will crash.
+      cooldown: (20 + (lvl * 5)) + 10
+      items:
+        - 'CONTAINS:SWORD'
+    cost: 500 * (lvl + 1)

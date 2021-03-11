@@ -1,0 +1,46 @@
+title: "&8-=( &9&l魔法商店 &8)=-"
+rows: 3
+sound: BLOCK_CHEST_LOCKED
+
+options:
+  sell-xp:
+    name: "&2职业经验&8: &910"
+    material: EXPERIENCE_BOTTLE
+    skills-item-type: '经验: 10'
+    lore: "&3花费&8: &e5"
+    cost: 5
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    posx: 5
+    posy: 2
+  sell-booster:
+    name: "&2能量提升&8: &95 &7- &91分钟"
+    cost: 10
+    material: POTION
+    skills-item-type: 'ENERGY_BOOSTER: 5, 60'
+    lore: "&3花费&8: &e10"
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 255, 0, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 2
+    posy: 2
+  sell-energy:
+    name: "&2能量药水&8: &950"
+    cost: 10
+    material: POTION
+    skills-item-type: 'ENERGY_POTION: 50'
+    lore: "&3花费&8: &e10"
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    # RGB Potion Color
+    color: 0, 255, 0
+    flags: [ HIDE_POTION_EFFECTS ]
+    posx: 8
+    posy: 2
+  orange-glass:
+    name: ''
+    material: ORANGE_STAINED_GLASS_PANE
+    slots: [ 1, 4, 7, 19, 22, 25 ]
+  black-glass:
+    name: ''
+    material: BLACK_STAINED_GLASS_PANE
+    slots: [ 0, 2, 3, 5, 6, 8, 9, 17, 18, 20, 21, 23, 24, 26 ]

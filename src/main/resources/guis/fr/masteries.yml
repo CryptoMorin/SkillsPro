@@ -1,0 +1,196 @@
+title: "&8&l-=( &2&lMaîtrises &8&l)=-"
+rows: 5
+sound: BLOCK_CHEST_OPEN
+
+options:
+  fortune:
+    name: "&4Fortune"
+    material: NETHER_STAR
+    lore:
+      - "&cBrutalité"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Obtenez des items bonus"
+      - "en tuant différents mobs."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 1
+  harvesting:
+    name: "&3Récolte"
+    material: DIAMOND_HOE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Lors de la récolte des cultures,"
+      - "vous avez une chance de"
+      - "doubler le montant de graines."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 2
+  logging:
+    name: "&3Exploitation du bois"
+    material: DIAMOND_AXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Quand vous cassez un tronc,"
+      - "vous avez une chance d'obtenir"
+      - "un item additionnel et de l''XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 2
+  mining:
+    name: "&3Minage"
+    material: DIAMOND_PICKAXE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Nveau&8: &e%level%"
+      - ""
+      - "&2Quand vous piochez des minerais"
+      - "vous avez une chance d'obtenir"
+      - "un item additionnel et de l''XP."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 5
+    posy: 2
+  pacifist:
+    name: "&3Pacifiste"
+    material: WHITE_WOOL
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Gagnez de l'XP de compétence en"
+      - "cassant des blocs pouvant"
+      - "donner de l'XP ou donner des graines."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 3
+  regeneration:
+    name: "&3Regénération"
+    material: ENDER_PEARL
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&2Efficacité"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance de regénérer votre vie"
+      - "lorsque votre vie est sous 30%"
+    posx: 5
+    posy: 3
+  power:
+    name: "&3Puissance"
+    material: BLAZE_POWDER
+    lore:
+      - "&cBrutalité"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance d'infliger plus de dommages."
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 3
+    posy: 3
+  glory:
+    name: "&3Gloire"
+    material: DIAMOND_SWORD
+    lore:
+      - "&cBrutalité"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance d'augmenter votre"
+      - "XP gagné en tuant des mobs."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 6
+    posy: 2
+  thick-skin:
+    name: "&3Peau épaisse"
+    material: DIAMOND_CHESTPLATE
+    lore:
+      - "&cBrutalité"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance de réduire les dommages"
+      - "quand vous êtes frappé par un mob/joueur."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 7
+    posy: 2
+  precision:
+    name: "&3Précision"
+    material: ENDER_EYE
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance supplémentaire de faire"
+      - "un coup critique avec un arc."
+    flags: [ HIDE_ATTRIBUTES ]
+    sound: ENTITY_PLAYER_LEVELUP
+    posx: 4
+    posy: 4
+  reap:
+    name: "&3Moisson des âmes"
+    material: BLUE_DYE
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance de gagner"
+      - "une âme supplémentaire en tuant."
+    posx: 6
+    posy: 4
+  acrobatics:
+    name: "&3Acrobaties"
+    material: LEATHER_BOOTS
+    sound: ENTITY_PLAYER_LEVELUP
+    lore:
+      - "&3Finesse"
+      - ""
+      - "&3Coût&8: &e%cost%"
+      - "&3Niveau&8: &e%level%"
+      - ""
+      - "&2Une chance d'avoir moins"
+      - "de dommages quand vous tombez."
+    posx: 5
+    posy: 5
+  lime-glass:
+    name: ''
+    material: LIME_STAINED_GLASS_PANE
+    slots: [ 1, 7, 9, 17, 27, 35, 37, 43 ]
+  green-glass:
+    name: ''
+    material: GREEN_STAINED_GLASS_PANE
+    slots: [ 0, 8, 36, 44 ]
+  gray-glass:
+    name: ''
+    material: GRAY_STAINED_GLASS_PANE
+    slots: [ 2, 3, 5, 6, 7, 10, 16, 18, 19, 21, 23, 25, 26, 28, 29, 31, 33, 34, 38, 39, 41, 42 ]
