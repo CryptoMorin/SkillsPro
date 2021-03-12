@@ -68,7 +68,6 @@ public class EidolonSpiritFire extends Ability {
 
     @Override
     public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%dark%",
-                getScalingDescription(info, getExtra(info, "dark-scaling").getString())};
+        return new Object[]{"%dark%", getScalingDescription(info, getExtra(info, "dark-scaling").getString())};
     }
 }

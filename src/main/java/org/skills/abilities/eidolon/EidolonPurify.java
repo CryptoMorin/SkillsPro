@@ -21,9 +21,8 @@ public class EidolonPurify extends Ability {
         if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
         if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
 
-
-        Player p = (Player) event.getDamager();
-        SkilledPlayer info = this.checkup(p);
+        Player player = (Player) event.getDamager();
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
         double damage = this.getScaling(info, event) * getExtraScaling(info, "hp", event);
@@ -31,7 +30,7 @@ public class EidolonPurify extends Ability {
         if (damage > max) damage = max;
 
         event.setDamage(event.getDamage() + damage);
-        if (p.isOnline()) info.setEnergy(info.getEnergy() + (event.getDamage() / getExtraScaling(info, "energy-per-damage", event)));
+        info.setEnergy(info.getEnergy() + (event.getDamage() / getExtraScaling(info, "energy-per-damage", event)));
     }
 
     @Override

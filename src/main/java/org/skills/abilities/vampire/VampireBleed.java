@@ -23,7 +23,7 @@ public class VampireBleed extends Ability {
     public void onVampireAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
         if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
 
         Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);

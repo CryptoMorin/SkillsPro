@@ -14,8 +14,14 @@ public class FireMagePassive extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onFireDamage(EntityDamageEvent event) {
-        if (event.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && event.getCause() != EntityDamageEvent.DamageCause.FIRE && event.getCause() != EntityDamageEvent.DamageCause.LAVA)
-            return;
+        switch (event.getCause()) {
+            case FIRE_TICK:
+            case FIRE:
+            case LAVA:
+                break;
+            default:
+                return;
+        }
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();

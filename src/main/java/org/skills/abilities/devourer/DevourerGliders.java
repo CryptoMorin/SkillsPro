@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.Ability;
@@ -25,8 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class DevourerGliders extends Ability {
-    private static final Set<UUID> TEMP_FLY = new HashSet<>();
-    private static final Set<UUID> JUMPING = new HashSet<>();
+    private static final Set<UUID> TEMP_FLY = new HashSet<>(), JUMPING = new HashSet<>();
 
     public DevourerGliders() {
         super("Devourer", "gliders");
@@ -37,6 +37,13 @@ public class DevourerGliders extends Ability {
             Player player = Bukkit.getPlayer(x);
             if (player != null) player.setAllowFlight(false);
         });
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        UUID id = event.getPlayer().getUniqueId();
+        TEMP_FLY.remove(id);
+        JUMPING.remove(id);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -125,5 +132,10 @@ public class DevourerGliders extends Ability {
         dis.count = 70;
         dis.offset(0.5, 0.5, 0.5);
         dis.spawn();
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+
     }
 }

@@ -23,10 +23,12 @@ import org.skills.utils.LocationUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class PriestPassive extends Ability {
-    private static final Set<UUID> jesus = new HashSet<>();
+    /**
+     * No need for disposable handler. Already handled here.
+     */
+    private static final Set<Integer> JESUS = new HashSet<>();
 
     public PriestPassive() {
         super("Priest", "passive");
@@ -79,12 +81,12 @@ public class PriestPassive extends Ability {
                 Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
                     player.setAllowFlight(true);
                     player.setFlying(true);
-                    jesus.add(player.getUniqueId());
+                    JESUS.add(player.getEntityId());
                 });
                 player.spawnParticle(Particle.CLOUD, player.getLocation(), 30, 0.3, 0, 0.3, 0.3);
             } else {
                 if (!player.getAllowFlight()) return;
-                if (!jesus.remove(player.getUniqueId())) return;
+                if (!JESUS.remove(player.getEntityId())) return;
                 Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
                     player.setAllowFlight(false);
                     player.setFlying(false);
@@ -96,7 +98,7 @@ public class PriestPassive extends Ability {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (jesus.remove(player.getUniqueId())) {
+        if (JESUS.remove(player.getEntityId())) {
             player.setAllowFlight(false);
             player.setFlying(false);
         }
@@ -105,7 +107,7 @@ public class PriestPassive extends Ability {
     @EventHandler(ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        if (jesus.remove(player.getUniqueId())) {
+        if (JESUS.remove(player.getEntityId())) {
             player.setAllowFlight(false);
             player.setFlying(false);
         }
@@ -119,7 +121,7 @@ public class PriestPassive extends Ability {
 
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
-        if (!jesus.remove(player.getUniqueId())) return;
+        if (!JESUS.remove(player.getEntityId())) return;
         player.setAllowFlight(false);
         player.setFlying(false);
     }

@@ -20,9 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SwordsmanThousandCuts extends ActiveAbility {
-    private static final Map<Integer, Integer> activeTrapcount = new HashMap<>();
+    /**
+     * No need for disposable handler. Timer takes care of it.
+     */
+    private static final Map<Integer, Integer> activeTrapcount = new HashMap<>(), thousandcuts = new HashMap<>();
     private static final Map<Integer, Location> activeLocation = new HashMap<>();
-    private static final Map<Integer, Integer> thousandcuts = new HashMap<>();
 
     public SwordsmanThousandCuts() {
         super("Swordsman", "thousand_cuts", false);
@@ -30,9 +32,9 @@ public class SwordsmanThousandCuts extends ActiveAbility {
 
     @EventHandler(ignoreCancelled = true)
     public void onSwordsmanAttack(EntityDamageByEntityEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
         if (!(event.getDamager() instanceof Player)) return;
         if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
 
         Player player = (Player) event.getDamager();
         SkilledPlayer info;

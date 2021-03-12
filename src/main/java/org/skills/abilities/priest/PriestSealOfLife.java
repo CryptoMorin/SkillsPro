@@ -65,8 +65,7 @@ public class PriestSealOfLife extends Ability {
                 @Override
                 public void run() {
                     p.spawnParticle(Particle.VILLAGER_HAPPY, p.getLocation(), 50, 1, 1, 1, 0);
-                    i--;
-                    if (i == 0) cancel();
+                    if (--i == 0) cancel();
                 }
             }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);
             new Cooldown(p.getUniqueId(), SEAL_OF_LIFE, (long) this.getScaling(info), TimeUnit.SECONDS);

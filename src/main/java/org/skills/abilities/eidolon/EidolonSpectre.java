@@ -11,7 +11,6 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.locale.SkillsLang;
 import org.skills.utils.Cooldown;
-import org.skills.utils.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 

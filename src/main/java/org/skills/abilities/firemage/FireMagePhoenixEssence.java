@@ -14,8 +14,8 @@ public class FireMagePhoenixEssence extends Ability {
     @EventHandler(ignoreCancelled = true)
     public void onFireMageAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
-        Player p = (Player) event.getDamager();
-        SkilledPlayer info = this.checkup(p);
+        Player player = (Player) event.getDamager();
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
         int fire = event.getEntity().getFireTicks();

@@ -23,12 +23,13 @@ import org.skills.main.locale.SkillsLang;
 import org.skills.managers.LastHitManager;
 import org.skills.utils.Cooldown;
 
-import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class DevourerCloak extends Ability {
-    private static final String INVIS = "DEVOURER_INVIS";
-    private static final String NEUTRAL = "DEVOURER_NEUTRAL";
+    private static final String INVIS = "DEVOURER_INVIS", NEUTRAL = "DEVOURER_NEUTRAL";
+    private static final Set<EntityType> TYPES = EnumSet.of(EntityType.ENDER_DRAGON, EntityType.WITHER, EntityType.ENDERMAN, EntityType.GUARDIAN, EntityType.ENDERMITE);
 
     public DevourerCloak() {
         super("Devourer", "cloak");
@@ -112,15 +113,14 @@ public class DevourerCloak extends Ability {
     public void onTarget(EntityTargetEvent event) {
         if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
         if (!(event.getTarget() instanceof Player)) return;
-        if (Arrays.asList(EntityType.ENDER_DRAGON, EntityType.WITHER, EntityType.ENDERMAN, EntityType.GUARDIAN, EntityType.ENDERMITE).contains(event.getEntityType()) ||
-                event.getEntityType().name().equals("ELDER_GUARDIAN")) return;
+        if (TYPES.contains(event.getEntityType()) || event.getEntityType().name().equals("ELDER_GUARDIAN")) return;
 
-        Player p = (Player) event.getTarget();
-        SkilledPlayer info = this.checkup(p);
+        Player player = (Player) event.getTarget();
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
         if (!getExtra(info).getBoolean("neutrality")) return;
-        if (info == null || info.getImprovementLevel(this) < 2) return;
-        if (!Cooldown.isInCooldown(p.getUniqueId(), NEUTRAL)) event.setCancelled(true);
+        if (info.getImprovementLevel(this) < 2) return;
+        if (!Cooldown.isInCooldown(player.getUniqueId(), NEUTRAL)) event.setCancelled(true);
     }
 }

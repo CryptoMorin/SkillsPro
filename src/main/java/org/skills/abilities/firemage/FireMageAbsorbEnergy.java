@@ -3,6 +3,7 @@ package org.skills.abilities.firemage;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class FireMageAbsorbEnergy extends Ability {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFireMageAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
 
         Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);
@@ -35,14 +36,15 @@ public class FireMageAbsorbEnergy extends Ability {
             Entity entity = event.getEntity();
             entity.setFireTicks((int) (entity.getFireTicks() + (getExtraScaling(info, "fire", event) * 20)));
 
+            Location loc = entity.getLocation();
             if (lvl == 1) {
-                player.spawnParticle(Particle.FLAME, entity.getLocation(), chance / 2, 0.5, 0.5, 0.5, 0.2);
+                player.spawnParticle(Particle.FLAME, loc, chance / 2, 0.5, 0.5, 0.5, 0.2);
             } else {
                 XSound.ITEM_FIRECHARGE_USE.play(entity);
                 if (lvl == 2) {
-                    player.spawnParticle(Particle.FLAME, entity.getLocation(), (chance / 2) + 10, 0.3, 0.3, 0.3, 0.3);
+                    player.spawnParticle(Particle.FLAME, loc, (chance / 2) + 10, 0.3, 0.3, 0.3, 0.3);
                 } else {
-                    XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, false, false, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME).withCount(2));
+                    XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
                 }
             }
         }

@@ -9,7 +9,6 @@ import org.skills.data.database.json.JsonDatabase;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
-import org.skills.utils.StringUtils;
 
 import java.io.File;
 

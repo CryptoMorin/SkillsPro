@@ -19,7 +19,7 @@ public class JuggernautHeavyStrikes extends Ability {
     public void onJuggernautAttack(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof LivingEntity)) return;
         if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
 
         Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);

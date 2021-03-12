@@ -1,4 +1,0 @@
-Added short stat variable support for main skill scalings.
-Fixed some defensive abilities that instantly killed players who reflected damage using thorns enchantment.
-Improved Mage Explosion Spell hoe-chance config and performance.
-Performance improvements in various parts.

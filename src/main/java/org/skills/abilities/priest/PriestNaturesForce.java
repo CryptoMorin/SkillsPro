@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PriestNaturesForce extends ActiveAbility {
-    private static final String NATURES_FORCE = "NATURES_FORCE";
-    private static final String BEEHIVE = "BEEHIVE";
-    private static final String NATURES_FORCE_TARGET = "NATURES_FORCE_TARGET";
+    private static final String NATURES_FORCE = "NATURES_FORCE", BEEHIVE = "BEEHIVE", NATURES_FORCE_TARGET = "NATURES_FORCE_TARGET";
     private static final ParticleDisplay DEATH = ParticleDisplay.simple(null, Particle.FLAME).withCount(100).offset(0.5, 0.5, 0.5);
 
     public PriestNaturesForce() {

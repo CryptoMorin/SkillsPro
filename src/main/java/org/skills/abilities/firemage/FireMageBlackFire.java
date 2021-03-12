@@ -24,14 +24,14 @@ public class FireMageBlackFire extends Ability {
             if (EntityUtil.isInvalidEntity(entity)) continue;
             if (!(entity instanceof Player)) continue;
 
-            Player p = (Player) entity;
-            SkilledPlayer info = this.checkup(p);
+            Player player = (Player) entity;
+            SkilledPlayer info = this.checkup(player);
             if (info == null) return;
 
             double chance = this.getScaling(info);
             event.setDamage(event.getDamage() + chance);
             Location location = event.getEntity().getLocation();
-            p.getWorld().playEffect(location, Effect.STEP_SOUND, Material.COAL_BLOCK);
+            player.getWorld().playEffect(location, Effect.STEP_SOUND, Material.COAL_BLOCK);
         }
     }
 }

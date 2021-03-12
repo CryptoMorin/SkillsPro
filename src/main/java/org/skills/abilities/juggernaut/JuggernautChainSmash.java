@@ -28,6 +28,10 @@ public class JuggernautChainSmash extends ActiveAbility {
     private static final Set<Integer> PERFORMING = new HashSet<>();
     private static final String CHAIN_SMASH = "CHAIN_SMASH";
 
+    static {
+        addDisposableHandler(PERFORMING);
+    }
+
     public JuggernautChainSmash() {
         super("Juggernaut", "chain_smash", true);
     }

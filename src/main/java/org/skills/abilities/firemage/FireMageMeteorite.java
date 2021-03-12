@@ -2,7 +2,10 @@ package org.skills.abilities.firemage;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -21,7 +24,6 @@ import org.skills.services.manager.ServiceHandler;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FireMageMeteorite extends ActiveAbility {
@@ -66,7 +68,7 @@ public class FireMageMeteorite extends ActiveAbility {
                 Fireball fireball = (Fireball) src.getWorld().spawnEntity(src, EntityType.FIREBALL);
                 fireball.setDirection(direction.multiply(0.01));
                 fireball.setYield(yield);
-                fireball.setMetadata(METEORITE, new FixedMetadataValue(SkillsPro.get(), player.getUniqueId()));
+                fireball.setMetadata(METEORITE, new FixedMetadataValue(SkillsPro.get(), player));
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -90,10 +92,9 @@ public class FireMageMeteorite extends ActiveAbility {
         List<MetadataValue> meta = fireBall.getMetadata(METEORITE);
         if (meta.isEmpty()) return;
 
-        UUID id = (UUID) meta.get(0).value();
-        if (event.getEntity().getUniqueId().equals(id)) event.setCancelled(true);
+        Player caster = (Player) meta.get(0).value();
+        if (caster == event.getEntity()) event.setCancelled(true);
         else {
-            Player caster = Bukkit.getPlayer(id);
             if (caster == null || !ServiceHandler.canFight(event.getEntity(), caster)) event.setCancelled(true);
         }
     }
@@ -107,8 +108,7 @@ public class FireMageMeteorite extends ActiveAbility {
         ParticleDisplay display = ParticleDisplay.simple(fireBall.getLocation(), Particle.LAVA).withCount(50).offset(1, 1, 1);
         display.spawn();
 
-        UUID id = (UUID) fireBall.getMetadata(METEORITE).get(0).value();
-        OfflinePlayer player = Bukkit.getOfflinePlayer(id);
+        Player player = (Player) fireBall.getMetadata(METEORITE).get(0).value();
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         double scaling = getScaling(info);
         double range = getExtraScaling(info, "range");
@@ -122,7 +122,7 @@ public class FireMageMeteorite extends ActiveAbility {
                 if (player1.getGameMode() == GameMode.CREATIVE || player1.getGameMode() == GameMode.SPECTATOR) continue;
             }
 
-            LastHitManager.damage((LivingEntity) entity, (Player) player, scaling);
+            LastHitManager.damage((LivingEntity) entity, player, scaling);
         }
     }
 }

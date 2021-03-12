@@ -54,11 +54,11 @@ public class JuggernautStoneSkin extends Ability {
             String scaling = protections.getString(protection);
             String edit;
             try {
-                edit = "" + getAbsoluteScaling(info, scaling);
+                edit = String.valueOf(getAbsoluteScaling(info, scaling));
             } catch (ArithmeticException ignored) {
                 edit = protections.getString(protection);
             }
-            edits.add("%" + cause.get().name().toLowerCase(Locale.ENGLISH) + "%");
+            edits.add('%' + cause.get().name().toLowerCase(Locale.ENGLISH) + '%');
             edits.add(Ability.getScalingColor(scaling) + edit);
         }
 
