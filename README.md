@@ -1,4 +1,4 @@
-![Logo](https://proxy.spigotmc.org/5401a3e7b04aa31cea95fbb066ec5f8a7e52517e?url=http%3A%2F%2Fi.imgur.com%2FdFu81wY.jpg)
+![Logo](https://alzhecorporation.fr/cdn/skillspro.jpg)
 
 SkillsPro is a Minecraft plugin for RPG servers that provides many unique classes/skills for players.\
 Each skill has its own unique passive and active abilities. These abilities can be improved.\
