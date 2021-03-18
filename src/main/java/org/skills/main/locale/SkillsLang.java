@@ -650,7 +650,7 @@ public enum SkillsLang {
         TextComponent main = HoverLang.getComplexMessage(placeholder, LanguageManager.getMessage(this), edits);
         String complex = null;
         if (main != null) complex = main.toLegacyText();
-        if (complex == null) complex = parse((CommandSender) placeholder, edits);
+        if (complex == null) complex = parse(placeholder, edits);
 
         boolean prefix = SkillsConfig.PREFIX.getBoolean();
         if (complex.startsWith("NOPREFIX:")) {
