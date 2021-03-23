@@ -39,6 +39,7 @@ public class NBTWrappers {
 
         /**
          * @param nbtObject The NBT object
+         *
          * @return The correct {@link NBTBase} or null if the tag is not supported
          */
         public static NBTBase<?> fromNBT(Object nbtObject) {
@@ -387,7 +388,9 @@ public class NBTWrappers {
 
         /**
          * Adds the {@link NBTBase}, if the type of the list is correct or the list is empty
+         *
          * @param base The {@link NBTBase} to add
+         *
          * @return True if it was added.
          */
         @SuppressWarnings({"rawtypes", "unchecked"})
@@ -397,6 +400,7 @@ public class NBTWrappers {
 
         /**
          * @param type The type to check for
+         *
          * @return True if the list is empty or this type
          */
         @SuppressWarnings("rawtypes")

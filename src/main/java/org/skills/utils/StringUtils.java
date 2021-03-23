@@ -47,6 +47,7 @@ import java.util.*;
 
 /**
  * A string util class extending Apache's {@link org.apache.commons.lang.StringUtils}
+ *
  * @author Crypto Morin
  * @version 3.0.0
  */
@@ -58,7 +59,9 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
     /**
      * Capitalizes the first letter of a string and lowercase the other letters.
      * Apache's {@link org.apache.commons.lang.StringUtils#capitalize(String)} doesn't lowercase the other half.
+     *
      * @param str the string to capitalize.
+     *
      * @return a capitalized word.
      * @since 1.0.0
      */
@@ -106,7 +109,9 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      * Checks if every single character in a string is English.
      * English characters consists of whitespaces, alphabets and numbers
      * Characters such as <code>!@#$%^&*()_+|</code> will not be accepted.
+     *
      * @param str the string to check.
+     *
      * @return true if the whole string is in English, otherwise false.
      * @see #containsNumber(String)
      * @since 1.0.0
@@ -207,7 +212,9 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Checks if the given string contains a number.
+     *
      * @param str the string to check the numbers.
+     *
      * @return true if the string contains any number, otherwise false.
      * @see #isEnglish(String)
      * @since 1.0.0
@@ -289,7 +296,9 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      *         getGroupedOption("GOODBYE_CRUEL_WORLD", 1, 2);
      *         // Output: goodbye: cruel: world:
      *     </pre></blockquote>
+     *
      * @param grouped the groups index (will be replaced with "_").
+     *
      * @return the config option.
      * @since 1.0.0
      */
@@ -319,8 +328,10 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Checks if the given string is equal to any of the other strings.
+     *
      * @param str     the original string.
      * @param strings the other strings to check.
+     *
      * @return true if the original string is equal to one of the other strings, otherwise false.
      * @since 1.0.0
      */
@@ -336,6 +347,7 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Gets the current full time.
+     *
      * @return current time with the format of <b>yyyy/MM/dd hh:mm:ss</b>
      * @since 1.0.0
      */
@@ -351,6 +363,7 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Gets the current time.
+     *
      * @return current time with the format of <b>hh:mm:ss</b>
      * @since 1.0.0
      */
@@ -366,8 +379,10 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Checks if the given string contains any of the other strings.
+     *
      * @param str     the original string
      * @param strings the other strings to check
+     *
      * @return true if the original string contains one of the other strings, otherwise false.
      * @since 1.0.0
      */
@@ -391,9 +406,11 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      *         buildArguments(args, "", 1);
      *         // Output: higoodbye
      *     </pre></blockquote>
+     *
      * @param args    the arguments to convert to string.
      * @param joinStr the string to put between each argument when converting to string.
      * @param from    the index where it should start converting from.
+     *
      * @return a converted string.
      * @since 1.0.0
      */

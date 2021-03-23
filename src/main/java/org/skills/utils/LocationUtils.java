@@ -69,8 +69,10 @@ public class LocationUtils {
 
     /**
      * https://www.spigotmc.org/threads/getting-location-of-players-right-hand.185095/#post-1946347
+     *
      * @param entity  The entity to get the hand location from.
      * @param offhand whether the location should be the player's offhand or main hand.
+     *
      * @return location of the entity's hand.
      */
     public static Location getHandLocation(LivingEntity entity, boolean offhand) {
@@ -199,7 +201,9 @@ public class LocationUtils {
 
     /**
      * Gets the BlockFace of the block the player is currently targeting.
+     *
      * @param entity the entity's whos targeted blocks BlockFace is to be checked.
+     *
      * @return the BlockFace of the targeted block, or null if the targeted block is non-occluding.
      */
     public static BlockFace getEntityBlockFace(LivingEntity entity) {

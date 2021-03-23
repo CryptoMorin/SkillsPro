@@ -17,6 +17,7 @@ public class Cooldown {
 
     /**
      * Starts a new cooldown for the given ID with the name.
+     *
      * @param id   the ID of the entity.
      * @param name the cooldown's name.
      * @param time the time in milliseconds.

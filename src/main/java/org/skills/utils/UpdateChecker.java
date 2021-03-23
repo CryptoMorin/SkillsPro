@@ -74,6 +74,7 @@ import java.util.concurrent.CompletableFuture;
  * </pre></blockquote><p>
  * To get your <b>$RESOURCE_ID</b> you need to go to your plugin's Spigot page and
  * the link should look like this <i>https://www.spigotmc.org/resources/PLUGIN-NAME.<b>$RESOURCE_ID</b>/</i>
+ *
  * @author Crypto Morin
  * @version 2.0.0
  */
@@ -115,8 +116,10 @@ public class UpdateChecker implements Listener {
      *     1.0.0.0.0 > 1.0.0 (Not really, but still...)
      *     1.0.0 = 1.0.0-beta = 1.0.0-SNAPSHOT = 1.0.0b = 1.0.0a
      * </pre>
+     *
      * @param oldVer the old version.
      * @param newVer the new version.
+     *
      * @return true if the newVer is higher than oldVer, otherwise false.
      * @since 1.0.0
      */
@@ -166,6 +169,7 @@ public class UpdateChecker implements Listener {
      * Gets the last HTTP response code received from {@link #getVersion()}
      * A list of response codes with names can be found in {@link HttpURLConnection}
      * Any other codes other than {@link HttpURLConnection#HTTP_OK} is not normal.
+     *
      * @return the last HTTP response code received while getting the version.
      * @since 1.0.0
      */
@@ -176,6 +180,7 @@ public class UpdateChecker implements Listener {
     /**
      * <b>Initialization</b> - Can be called multiple times.<br>
      * A simple of waiting and preparing for the next action is to use {@link CompletableFuture#thenRunAsync(Runnable)}
+     *
      * @return the new version string.
      * @see #sendUpdates()
      * @since 1.0.0
@@ -190,6 +195,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * You need to run {@link #checkForUpdates()} first to use this.
+     *
      * @return true if there's a new version available and you should update, otherwise false.
      * @see #getLatestVersion()
      * @since 1.0.0
@@ -200,6 +206,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * You need to run {@link #checkForUpdates()} first to use this.
+     *
      * @return the latest version that was obtained from {@link #getVersion()}
      * @see #canUpdate()
      * @since 1.0.0
@@ -210,6 +217,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * Sends plugin updates to console.
+     *
      * @since 1.0.0
      */
     public void sendUpdates() {
@@ -226,6 +234,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * Notify admins about updates when they join the server.
+     *
      * @since 1.0.0
      */
     @EventHandler
@@ -237,6 +246,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * Sends a message to console.
+     *
      * @see #sendMessages(CommandSender, String)
      * @since 1.0.0
      */
@@ -246,8 +256,10 @@ public class UpdateChecker implements Listener {
 
     /**
      * A simple built-in feature to send fancy messages.
+     *
      * @param receiver the receiver which is either a player or the console. Null also means console.
      * @param msg      the message that is going to be sent to the receiver.
+     *
      * @since 1.0.0
      */
     private void sendMessages(@Nonnull CommandSender receiver, @Nonnull String msg) {
@@ -273,6 +285,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * Gets the version of the Spigot plugin resource asynchronous.
+     *
      * @return the plugin's version or null if no response or empty version string.
      * @see #checkForUpdates()
      * @since 1.0.0
@@ -307,6 +320,7 @@ public class UpdateChecker implements Listener {
      * Downloads any available update to plugin's data folder using <a href="https://spiget.org">SpiGet</a> API asynchronous.<br>
      * <b>Only works with free plugins.</b> Don't waste your time making one for premium ones.
      * Uses HTTP request.
+     *
      * @since 1.0.0
      */
     @Nonnull

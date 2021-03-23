@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *     '-'       20 / 20     NO_SIDE        Subtract/unary-negative
  * </pre>
  * <p>Note that this class should be opened in UTF-8</p>
+ *
  * @version 2020.3
  */
 public final class MathEval {
@@ -164,6 +165,7 @@ public final class MathEval {
 
     /**
      * Evaluate a complete (sub-)expression.
+     *
      * @param beg Inclusive begin offset for subexpression.
      * @param end Inclusive end offset for subexpression.
      */
@@ -173,6 +175,7 @@ public final class MathEval {
 
     /**
      * Evaluate the next operand of an expression.
+     *
      * @param beg Inclusive begin offset for subexpression.
      * @param end Inclusive end offset for subexpression.
      * @param pnd Pending operator (operator previous to this subexpression).
@@ -430,6 +433,7 @@ public final class MathEval {
 
         /**
          * Parse the next argument, throwing an exception if there are no more arguments.
+         *
          * @throws ArithmeticException If there are no more arguments.
          */
         public double next() {

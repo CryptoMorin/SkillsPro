@@ -36,6 +36,7 @@ import java.util.UUID;
  * {@link UUID#toString()} when compared to the implementations in Java 8 and older. Under Java 9 and newer,
  * {@link #fromString(CharSequence)} is about six times faster than the JDK implementation and {@link #toString(UUID)}
  * does not offer any performance enhancements (or regressions!).</p>
+ *
  * @author <a href="https://github.com/jchambers/">Jon Chambers</a>
  */
 public final class FastUUID {
@@ -87,7 +88,9 @@ public final class FastUUID {
     /**
      * Parses a UUID from the given character sequence. The character sequence must represent a UUID as described in
      * {@link UUID#toString()}.
+     *
      * @param uuidSequence the character sequence from which to parse a UUID
+     *
      * @return the UUID represented by the given character sequence
      * @throws IllegalArgumentException if the given character sequence does not conform to the string representation as
      *                                  described in {@link UUID#toString()}
@@ -137,7 +140,9 @@ public final class FastUUID {
     /**
      * Returns a string representation of the given UUID. The returned string is formatted as described in
      * {@link UUID#toString()}.
+     *
      * @param uuid the UUID to represent as a string
+     *
      * @return a string representation of the given UUID
      */
     public static String toString(UUID uuid) {

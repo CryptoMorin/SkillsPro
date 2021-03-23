@@ -39,6 +39,7 @@ import java.util.*;
  * <b>Active:</b> Abilities that need manual activiation by the player to work.
  * <p>
  * If an ability's max level is 0, then that ability is not upgradable.
+ *
  * @see ActiveAbility
  */
 public abstract class Ability implements Listener {

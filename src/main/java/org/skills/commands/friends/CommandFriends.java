@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
@@ -43,7 +44,8 @@ public class CommandFriends extends SkillsCommand {
             GUIOption holder = gui.getHolder("friend");
             ItemStack item = holder.getItem();
             ItemMeta meta = item.getItemMeta();
-            SkullUtils.applySkin(meta, friend);
+            if (meta instanceof SkullMeta) SkullUtils.applySkin(meta, friend);
+            else MessageHandler.sendConsolePluginMessage("&4Cannot set friend skin on an item that is not a skull&8: &e" + item);
             item.setItemMeta(meta);
             GUIOption.defineVariables(item, friend);
 

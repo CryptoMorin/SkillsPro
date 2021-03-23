@@ -286,6 +286,7 @@ public class SkilledPlayer extends DataContainer {
 
     /**
      * Silent is false as default.
+     *
      * @see #setXP(double, boolean)
      */
     public void setXP(double xp) {
@@ -295,6 +296,7 @@ public class SkilledPlayer extends DataContainer {
     /**
      * This method will run a level check as well.<br>
      * This should not be used to decrease XP, use {@link #decreaseXP(double)}
+     *
      * @param xp     the amount of XP to give.
      * @param silent if true, level will manually increase instead of using {@link #levelUp(int)}
      */
@@ -365,6 +367,7 @@ public class SkilledPlayer extends DataContainer {
     /**
      * Decreases your XP and levels down if needed.
      * Doesn't call {@link SkillLevelUpEvent}.
+     *
      * @param xp the amount of XP to remove.
      */
     private void decreaseXP(double xp) {
@@ -387,6 +390,7 @@ public class SkilledPlayer extends DataContainer {
 
     /**
      * Sets the XP from zero, and it will still levelup.
+     *
      * @param xp     the raw amount of XP to set.
      * @param silent if true, level will manually increase instead of using {@link #levelUp(int)}
      */
@@ -407,6 +411,7 @@ public class SkilledPlayer extends DataContainer {
 
     /**
      * Gets the current XP and the total XP gained to levelup for each level.
+     *
      * @return raw total XP.
      */
     public double getRawXP() {
@@ -514,7 +519,9 @@ public class SkilledPlayer extends DataContainer {
 
     /**
      * Increases the level and calls {@link SkillLevelUpEvent} for each increase.
+     *
      * @param levels the amount to increase the level.
+     *
      * @see #setXP(double, boolean)
      * @see #setRawXP(double, boolean)
      * @see #setLevel(int)

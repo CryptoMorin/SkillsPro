@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A whole class to create Guardian Beams by reflection </br>
  * Inspired by the API <a href="https://www.spigotmc.org/resources/guardianbeamapi.18329">GuardianBeamAPI</a></br>
  * <b>1.9 -> 1.16</b>
+ *
  * @author SkytAsul
  * @see <a href="https://github.com/SkytAsul/GuardianBeam">GitHub page</a>
  */
@@ -47,6 +48,7 @@ public final class Laser {
 
     /**
      * Create a Laser instance
+     *
      * @param start    Location where laser will starts
      * @param end      Location where laser will ends
      * @param duration Duration of laser in seconds (<i>-1 if infinite</i>)

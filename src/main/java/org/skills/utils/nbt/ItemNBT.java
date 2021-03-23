@@ -84,7 +84,9 @@ public class ItemNBT {
 
     /**
      * Only pass a NMS Itemstack!
+     *
      * @param nmsItem The NMS item to convert
+     *
      * @return The converted Item
      */
     private static ItemStack asBukkitCopy(Object nmsItem) {
@@ -98,8 +100,10 @@ public class ItemNBT {
 
     /**
      * Sets the NBT tag of an item
+     *
      * @param tag  The new tag
      * @param item The ItemStack
+     *
      * @return The modified itemStack
      */
     public static ItemStack setTag(ItemStack item, NBTWrappers.NBTTagCompound tag) {
@@ -117,7 +121,9 @@ public class ItemNBT {
 
     /**
      * Gets the NBTTag of an item. In case of any error it returns a blank one.
+     *
      * @param item The ItemStack to get the tag for
+     *
      * @return The NBTTagCompound of the ItemStack or a new one if it had none or an error occurred
      */
     public static NBTWrappers.NBTTagCompound getTag(ItemStack item) {

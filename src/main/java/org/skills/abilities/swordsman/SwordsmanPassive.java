@@ -146,7 +146,9 @@ public class SwordsmanPassive extends Ability {
         if (getExtra(info, "cooldown").getBoolean()) {
             cooldown = player.getCooldown(item.getType());
             if (cooldown != 0) damage /= cooldown;
-            player.setCooldown(item.getType(), (int) (20 - player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue()));
+
+            double attackSpeed = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue();
+            if (attackSpeed >= 20) player.setCooldown(item.getType(), (int) (20 - attackSpeed));
         }
 
         boolean sweep = cooldown == 0 && !player.isSprinting();

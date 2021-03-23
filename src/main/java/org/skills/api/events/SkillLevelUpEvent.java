@@ -33,6 +33,7 @@ public class SkillLevelUpEvent extends Event implements Cancellable {
 
     /**
      * Gets the sum of added level and the player's level.
+     *
      * @return the new level after leveling up.
      */
     public int getNewLevel() {

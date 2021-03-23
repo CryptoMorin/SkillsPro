@@ -115,6 +115,7 @@ public abstract class Mastery implements Listener {
      * A basic provided algorithm to determine whether this mastery's bonus should
      * even be given to the player by chance.<br>
      * If the player reached the max level, this will always return true.
+     *
      * @return true if a random number between 0 and the max lvl of this mastery is less than the player's mastery level.
      */
     public boolean hasChance(SkilledPlayer info) {

@@ -49,6 +49,7 @@ import java.util.zip.ZipOutputStream;
  * <p>
  * The simplest way of doing this is to use {@link #takeBackup()}.
  * You can also override the method and handle it yourself.
+ *
  * @author Crypto Morin
  * @version 1.0.0
  */
@@ -69,6 +70,7 @@ public abstract class BackupManager {
 
     /**
      * Same as {@link File#mkdirs()} but NIO.
+     *
      * @since 1.0.0
      */
     private void validateDir() {
@@ -82,6 +84,7 @@ public abstract class BackupManager {
 
     /**
      * Gets the concurrent date using {@link #TIME_PATTERN} format.
+     *
      * @return today's date.
      * @since 1.0.0
      */
@@ -91,8 +94,10 @@ public abstract class BackupManager {
 
     /**
      * Uncompresses all the files from the given path to the given directory asynchronous.
+     *
      * @param zip     the ZIP file path.
      * @param unzipTo the directory to copy the uncompressed files to.
+     *
      * @see #zipFiles()
      * @since 1.0.0
      */
@@ -132,6 +137,7 @@ public abstract class BackupManager {
     /**
      * The default method to take a clean backup.
      * You can override for a custom handler.
+     *
      * @since 1.0.0
      */
     public void takeBackup() {
@@ -142,6 +148,7 @@ public abstract class BackupManager {
 
     /**
      * Compresses all the files in the given directory of {@link #toBackup} asynchronous.
+     *
      * @return the amount of files that were successfully backed up.
      * @see #unzipFiles(Path, Path)
      * @since 1.0.0
@@ -205,6 +212,7 @@ public abstract class BackupManager {
      * Gets a new path with the format of {@link #getZipPath()} including an additional<br>
      * number with the format of <b>(x)</b> where <i>x</i> is starts from 1 only if<br>
      * {@link #getZipPath()} already exists.
+     *
      * @return a new path if {@link #getZipPath()} already exists, otherwise {@link #getZipPath()} with no additional number.
      * @since 1.0.0
      */
@@ -226,7 +234,9 @@ public abstract class BackupManager {
     /**
      * When taking a backup from the files in the directory, only the contents inside these<br>
      * directories will be checked and passed to {@link #isWhitelistedFile(Path)}
+     *
      * @param file the directory that we're about to enter.
+     *
      * @return true if the contents inside this directory should be accepted.
      * @since 1.0.0
      */
@@ -234,7 +244,9 @@ public abstract class BackupManager {
 
     /**
      * When taking a backup from the files in the directory, only these files are accepted.
+     *
      * @param file the file that we're about to backup.
+     *
      * @return true if the specified path should be accepted.
      * @since 1.0.0
      */
@@ -242,9 +254,11 @@ public abstract class BackupManager {
 
     /**
      * Checks if the specified backup file should be deleted if it's an old backup.
+     *
      * @param path     the backup file's path.
      * @param time     any files older than this time.
      * @param timeUnit the time unit for time parameter..
+     *
      * @return true if this backup should be deleted, otherwise false.
      * @since 1.0.0
      */
@@ -265,8 +279,10 @@ public abstract class BackupManager {
      * Note that {@link #getMultiZipName()} will replace the deleted files when<br>
      * checking through the files. It's recommended to change {@link #TIME_PATTERN} to use<br>
      * "yyyy-MM-dd hh" to display the hours as well. This task is asynchronous.
+     *
      * @param time     any files older than this time.
      * @param timeUnit the time unit for time parameter.
+     *
      * @since 1.0.0
      */
     @SuppressWarnings("UnusedReturnValue")
@@ -291,6 +307,7 @@ public abstract class BackupManager {
 
     /**
      * Gets the backup ZIP path for today.
+     *
      * @return a path including today's date with ZIP file extension.
      * @since 1.0.0
      */
@@ -300,6 +317,7 @@ public abstract class BackupManager {
 
     /**
      * Gets the final ZIP path.
+     *
      * @return default ZIP path or multi ZIP path if enabled.
      * @see #getZipPath()
      * @see #getMultiZipName()
@@ -313,6 +331,7 @@ public abstract class BackupManager {
      * Checks if the backup file for today exists considering<br>
      * multi backup files if enabled. So you shouldn't use this method<br>
      * when taking a backup if you enabled  multi backups.
+     *
      * @return true if the backup file exists, otherwise false.
      * @since 1.0.0
      */

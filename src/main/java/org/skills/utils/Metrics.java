@@ -55,6 +55,7 @@ public class Metrics {
 
     /**
      * Class constructor.
+     *
      * @param plugin   The plugin which stats should be submitted.
      * @param pluginId The id of the plugin.
      *                 It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
@@ -127,8 +128,10 @@ public class Metrics {
 
     /**
      * Sends the data to the bStats server.
+     *
      * @param plugin Any plugin. It's just used to get a logger instance.
      * @param data   The data to send.
+     *
      * @throws Exception If the request failed.
      */
     private static void sendData(Plugin plugin, JsonObject data) throws Exception {
@@ -176,7 +179,9 @@ public class Metrics {
 
     /**
      * Gzips the given String.
+     *
      * @param str The string to gzip.
+     *
      * @return The gzipped String.
      * @throws IOException If the compression failed.
      */
@@ -193,6 +198,7 @@ public class Metrics {
 
     /**
      * Checks if bStats is enabled.
+     *
      * @return Whether bStats is enabled or not.
      */
     public boolean isEnabled() {
@@ -201,6 +207,7 @@ public class Metrics {
 
     /**
      * Adds a custom chart.
+     *
      * @param chart The chart to add.
      */
     public void addCustomChart(CustomChart chart) {
@@ -235,6 +242,7 @@ public class Metrics {
     /**
      * Gets the plugin specific data.
      * This method is called using Reflection.
+     *
      * @return The plugin specific data.
      */
     public JsonObject getPluginData() {
@@ -262,6 +270,7 @@ public class Metrics {
 
     /**
      * Gets the server specific data.
+     *
      * @return The server specific data.
      */
     private JsonObject getServerData() {
@@ -373,6 +382,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId The id of the chart.
          */
         CustomChart(String chartId) {
@@ -413,6 +423,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -443,6 +454,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -486,6 +498,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -534,6 +547,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -565,6 +579,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -609,6 +624,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
@@ -646,6 +662,7 @@ public class Metrics {
 
         /**
          * Class constructor.
+         *
          * @param chartId  The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
