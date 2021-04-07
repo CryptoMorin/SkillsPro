@@ -63,7 +63,7 @@ public class CommandUserLevel extends SkillsCommand {
 
 
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
-            if (player != null) {
+            if (player.hasPlayedBefore()) {
                 if (HandleSimpleSetters.handleInvalidSetter(sender, args)) return;
 
                 try {
@@ -87,11 +87,14 @@ public class CommandUserLevel extends SkillsCommand {
 
                         if (!silent) {
                             int currentLvl = info.getLevel();
+                            LevelUp level = null;
+
                             for (int lvl = 0; lvl < currentLvl; lvl++) {
-                                LevelUp level = LevelUp.getProperties(request).evaluate(info, lvl);
+                                level = LevelUp.getProperties(request).evaluate(info, lvl);
                                 level.perform(info, "%next_maxxp%", info.getLevelXP(request));
-                                if (player.isOnline()) level.celebrate((Player) player, plugin, request);
                             }
+
+                            if (level != null && player.isOnline()) level.celebrate((Player) player, plugin, request);
                         }
                     }
 

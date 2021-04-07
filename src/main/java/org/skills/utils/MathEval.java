@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Math Evaluator. Provides the ability to evaluate a String math expression, with support for pureFunctions, variables and
- * standard math constants.
+ * Math Evaluator. Provides the ability to evaluate a String math expression, with support for functions, operators, variables, constants and ...
  * <p>
- * Supported Operators:
+ * Supported Operators: (outdated)
  * <pre>
  *     Operator  Precedence  Unary Binding  Description
  *     --------- ----------- -------------- ------------------------------------------------
@@ -27,38 +26,28 @@ import java.util.concurrent.ThreadLocalRandom;
  * </pre>
  * <p>Note that this class should be opened in UTF-8</p>
  *
- * @version 2020.3
+ * @author Crypto Morin
+ * @version 2020.4
  */
 public final class MathEval {
     /**
      * Special "non-operator" representing an operand.
      */
-    private static final Operator OPERAND = new Operator('\0', 0, 0, Side.NONE, false, null);
-    private static final Map<String, Double> CONSTANTS = new HashMap<>();
-    private static final Map<String, QuantumFunction> FUNCTIONS = new HashMap<>();
-    private static final Map<Character, Operator> OPERATORS = new HashMap<>();
-    private static Operator OPERATOR_EQUAL; // simple assignment, used as the final
+    private static final Map<String, Double> CONSTANTS = new HashMap<>(8);
+    private static final Map<String, QuantumFunction> FUNCTIONS = new HashMap<>(44);
+    private static final Operator[] OPERATORS = new Operator[127]; // 126 for ~
+    private static final Operator OPERAND = new Operator('\0', 0, 0, Side.NONE, null);
+    private static final Operator OPERATOR_EQUAL = new Operator('=', Byte.MAX_VALUE, Byte.MAX_VALUE, Side.RIGHT, (a, b) -> b); // simple assignment, used as the final
 
     static {
         registerOperators();
         registerFunctions();
-
-        CONSTANTS.put("E", Math.E);
-        CONSTANTS.put("Euler", 0.5772156649015328606065120900824024310421);
-        CONSTANTS.put("LN2", 0.693147180559945);
-        CONSTANTS.put("LN10", 2.302585092994046);
-        CONSTANTS.put("LOG2E", 1.442695040888963);
-        CONSTANTS.put("LOG10E", 0.434294481903252);
-        CONSTANTS.put("PHI", 1.6180339887498948482);
-        CONSTANTS.put("PI", Math.PI);
+        registerConstants();
     }
 
     //    private final Map<String, Double> variables = new HashMap<>();
     private final String expression;
 
-//*************************************************************************************************
-// Internals
-//*************************************************************************************************
     /**
      * Used when returning from a higher precedence sub-expression evaluation.
      */
@@ -72,9 +61,12 @@ public final class MathEval {
      * Set a custom operator, replacing any existing operator with the same symbol. Operators cannot be removed, only replaced.
      */
     public static void setOperator(Operator opr) {
-        OPERATORS.put(opr.symbol, opr);
+        if (opr.symbol >= OPERATORS.length) throw new IllegalArgumentException("Operator handler cannot handle char '" + opr.symbol + "' with char code: " + ((int) opr.symbol));
+        OPERATORS[opr.symbol] = opr;
+//        OPERATORS.put(opr.symbol, opr);
     }
 
+    @SuppressWarnings("unused")
     private static void validateName(String nam) {
         char ch = nam.charAt(0);
         if (!(ch >= 'A' && ch <= 'Z') && !(ch >= 'a' && ch <= 'z'))
@@ -83,36 +75,45 @@ public final class MathEval {
             throw new IllegalArgumentException("Names for constants, variables and functions may not contain a parenthesis");
     }
 
-    private static void registerOperators() {
-        Operator opt = new Operator('=', 99, 99, Side.RIGHT, true, (a, b) -> b);
-        OPERATOR_EQUAL = opt;
-        setOperator(opt);
-
-        setOperator(new Operator('^', 80, 81, Side.NONE, false, Math::pow));
-        setOperator(new Operator('±', 60, 60, Side.RIGHT, true, (a, b) -> -b));
-        setOperator(new Operator('*', 40, (a, b) -> a * b));
-        setOperator(new Operator('·', 40, (a, b) -> a * b));
-        setOperator(new Operator('(', 40, (a, b) -> a * b));
-        setOperator(new Operator('/', 40, (a, b) -> a / b));
-        setOperator(new Operator('÷', 40, (a, b) -> a / b));
-        setOperator(new Operator('%', 40, (a, b) -> a % b));
-        setOperator(new Operator('+', 20, Double::sum));
-        setOperator(new Operator('-', 20, (a, b) -> a - b));
-
-        // Bitwise Operators
-        setOperator(new Operator('|', 20, (a, b) -> (double) ((int) a | (int) b)));
-        setOperator(new Operator('&', 20, (a, b) -> (double) ((int) a & (int) b)));
-        setOperator(new Operator('>', 20, (a, b) -> (double) ((int) a >> (int) b)));
-        setOperator(new Operator('<', 20, (a, b) -> (double) ((int) a << (int) b)));
-        setOperator(new Operator('$', 20, (a, b) -> (double) ((int) a >>> (int) b)));
-        setOperator(new Operator('!', 20, (a, b) -> (double) ((int) a ^ (int) b)));
-        setOperator(new Operator('~', 20, (a, b) -> (double) (~(int) b)));
+    private static void registerConstants() {
+        CONSTANTS.put("E", Math.E);
+        CONSTANTS.put("Euler", 0.577215664901532860606512);
+        CONSTANTS.put("LN2", 0.693147180559945);
+        CONSTANTS.put("LN10", 2.302585092994046);
+        CONSTANTS.put("LOG2E", 1.442695040888963);
+        CONSTANTS.put("LOG10E", 0.434294481903252);
+        CONSTANTS.put("PHI", 1.6180339887498948482);
+        CONSTANTS.put("PI", Math.PI);
     }
 
-//*************************************************************************************************
-//INSTANCE METHODS - PRIVATE IMPLEMENTATION
-//*************************************************************************************************
+    private static void registerOperators() {
+        setOperator(OPERATOR_EQUAL);
 
+        // https://en.cppreference.com/w/c/language/operator_precedence
+        setOperator(new Operator('^', 12, 13, Side.NONE, Math::pow));
+        //setOperator(new Operator('±', 10, 10, Side.RIGHT, true, (a, b) -> -b));
+        setOperator(new Operator('*', 10, (a, b) -> a * b));
+        //setOperator(new Operator('·', 10, (a, b) -> a * b));
+        setOperator(new Operator('(', 10, (a, b) -> a * b));
+        setOperator(new Operator('/', 10, (a, b) -> a / b));
+        //setOperator(new Operator('÷', 10, (a, b) -> a / b));
+        setOperator(new Operator('%', 10, (a, b) -> a % b));
+        setOperator(new Operator('+', 9, Double::sum));
+        setOperator(new Operator('-', 9, (a, b) -> a - b));
+
+        // Bitwise Operators
+        setOperator(new Operator('~', 10, (a, b) -> ~(long) b));
+        setOperator(new Operator('@', 8, (a, b) -> Long.rotateLeft((long) a, (int) b)));  // Rotate Left
+        setOperator(new Operator('#', 8, (a, b) -> Long.rotateRight((long) a, (int) b))); // Rotate Right
+        setOperator(new Operator('>', 8, (a, b) -> (long) a >> (long) b));
+        setOperator(new Operator('<', 8, (a, b) -> (long) a << (long) b));
+        setOperator(new Operator('$', 8, (a, b) -> (long) a >>> (long) b));// NOT
+        setOperator(new Operator('&', 7, (a, b) -> (long) a & (long) b));
+        setOperator(new Operator('!', 6, (a, b) -> (long) a ^ (long) b));
+        setOperator(new Operator('|', 5, (a, b) -> (long) a | (long) b));// XOR
+    }
+
+    @SuppressWarnings("ManualMinMaxCalculation")
     private static void registerFunctions() {
         FUNCTIONS.put("abs", (p) -> Math.abs(p.next()));
         FUNCTIONS.put("acos", (p) -> Math.acos(p.next()));
@@ -129,8 +130,14 @@ public final class MathEval {
         FUNCTIONS.put("log", (p) -> Math.log(p.next()));
         FUNCTIONS.put("log10", (p) -> Math.log10(p.next()));
         FUNCTIONS.put("log1p", (p) -> Math.log1p(p.next()));
-        FUNCTIONS.put("max", (p) -> Math.max(p.next(), p.next()));
-        FUNCTIONS.put("min", (p) -> Math.min(p.next(), p.next()));
+        FUNCTIONS.put("max", (p) -> {
+            double a = p.next(), b = p.next();
+            return (a >= b) ? a : b;
+        });
+        FUNCTIONS.put("min", (p) -> {
+            double a = p.next(), b = p.next();
+            return (a <= b) ? a : b;
+        });
         FUNCTIONS.put("nextUp", (p) -> Math.nextUp(p.next()));
         FUNCTIONS.put("nextDown", (p) -> Math.nextDown(p.next()));
         FUNCTIONS.put("nextAfter", (p) -> Math.nextAfter(p.next(), p.next()));
@@ -143,6 +150,10 @@ public final class MathEval {
         FUNCTIONS.put("percentOf", (p) -> (p.next() / 100) * p.next());
         FUNCTIONS.put("sin", (p) -> Math.sin(p.next()));
         FUNCTIONS.put("sinh", (p) -> Math.sinh(p.next()));
+        FUNCTIONS.put("bits", (p) -> Double.doubleToRawLongBits(p.next()));
+        FUNCTIONS.put("hash", (p) -> Double.hashCode(p.next()));
+        FUNCTIONS.put("identityHash", (p) -> System.identityHashCode(p.next()));
+        FUNCTIONS.put("time", (p) -> System.currentTimeMillis());
         FUNCTIONS.put("sqrt", (p) -> Math.sqrt(p.next()));
         FUNCTIONS.put("tan", (p) -> Math.tan(p.next()));
         FUNCTIONS.put("tanh", (p) -> Math.tanh(p.next()));
@@ -157,10 +168,33 @@ public final class MathEval {
             int n = (int) p.next();
             return n * (n + 1) / 2.0;
         });
+        FUNCTIONS.put("reverse", (p) -> Long.reverse((long) p.next()));
+        FUNCTIONS.put("reverseBytes", (p) -> Long.reverseBytes((long) p.next()));
+
+        // https://www.tutorialspoint.com/unix/unix-relational-operators.htm
+//        FUNCTIONS.put("gt", (p) -> p.next() > p.next() ? p.next() : p.next(2));
+//        FUNCTIONS.put("lt", (p) -> p.next() < p.next() ? p.next() : p.next(2));
+//        FUNCTIONS.put("ge", (p) -> p.next() >= p.next() ? p.next() : p.next(2));
+//        FUNCTIONS.put("le", (p) -> p.next() <= p.next() ? p.next() : p.next(2));
     }
 
     public static double evaluate(String expression) throws NumberFormatException, ArithmeticException {
         return new MathEval(expression).evaluate(0, expression.length() - 1);
+    }
+
+    private static Operator getOperator(char chr) {
+        if (chr >= OPERATORS.length) return OPERAND;
+        Operator opr = OPERATORS[chr];
+        return opr == null ? OPERAND : opr;
+    }
+
+    private static boolean isHexDecimal(String str, int ofs) {
+        return str.length() > ofs + 2 && str.charAt(ofs) == '0' && str.charAt(ofs + 1) == 'x';
+    }
+
+    private static int skipWhitespace(String exp, int ofs, int end) {
+        while (ofs <= end && exp.charAt(ofs) == ' ') ofs++;
+        return ofs;
     }
 
     /**
@@ -170,7 +204,12 @@ public final class MathEval {
      * @param end Inclusive end offset for subexpression.
      */
     private double evaluate(int beg, int end) throws NumberFormatException, ArithmeticException {
-        return evaluate(beg, end, 0, MathEval.OPERAND, OPERATOR_EQUAL);
+        return evaluate(beg, end, 0, OPERAND, OPERATOR_EQUAL);
+    }
+
+    private boolean isScientificNotation(int index) {
+        char notation = expression.charAt(index);
+        return notation == 'E' || notation == 'e'; // Would be optimized to: (notation & ~32) == 'E'
     }
 
     /**
@@ -192,16 +231,20 @@ public final class MathEval {
 
             for (beg = ofs; ofs <= end; ofs++) {
                 char chr = expression.charAt(ofs);
+                boolean isSign = chr == '-' || chr == '+';
+
+                if (isSign && ofs != 0 && isScientificNotation(ofs - 1)) continue;
                 if (signCheck) {
-                    if (chr == '-' || chr == '+') {
+                    if (isSign) {
                         sign = sign ? chr == '+' : chr == '-';
                         signOffset++;
                         continue;
                     }
                     signCheck = false;
                 }
-                if ((nxt = getOperator(chr)) != MathEval.OPERAND) {
-                    if (nxt.internal) nxt = MathEval.OPERAND;
+
+                if ((nxt = getOperator(chr)) != OPERAND) {
+                    if (nxt == OPERATOR_EQUAL) nxt = OPERAND;
                     else break; // must kill operator to prevent spurious "Expression ends with a blank sub-expression" at end of function
                 } else if (chr == ')' || chr == ',' || chr == ';') break; // end of subexpression or function argument.
             }
@@ -214,12 +257,12 @@ public final class MathEval {
             } else if (ch == '(') {
                 rgt = evaluate(beg + 1, end);
                 ofs = skipWhitespace(expression, offset + 1, end);                                        // skip past ')' and any following whitespace
-                nxt = ofs <= end ? getOperator(expression.charAt(ofs)) : MathEval.OPERAND;                     // modify next operator
+                nxt = ofs <= end ? getOperator(expression.charAt(ofs)) : OPERAND;                     // modify next operator
             } else if (ch != '-' && !(ch >= '0' && ch <= '9')) {
                 if (nxt.symbol == '(') {
                     rgt = doFunction(beg, end);
                     ofs = skipWhitespace(expression, offset + 1, end);                                        // skip past ')' and any following whitespace
-                    nxt = ofs <= end ? getOperator(expression.charAt(ofs)) : MathEval.OPERAND;                     // modify next operator
+                    nxt = ofs <= end ? getOperator(expression.charAt(ofs)) : OPERAND;                     // modify next operator
                 } else {
                     rgt = getVariable(beg, ofs - 1);
                 }
@@ -232,10 +275,11 @@ public final class MathEval {
                         evaluated = expression.substring(offset, ofs).trim();
                         rgt = (double) Long.parseLong(evaluated, 16);
                     } else {
-                        evaluated = expression.substring(offset, ofs).trim();
+                        evaluated = expression.substring(offset, ofs);
                         rgt = Double.parseDouble(evaluated);
-                        if (!sign) rgt = -rgt;
                     }
+
+                    if (!sign) rgt = -rgt;
                 } catch (NumberFormatException thr) {
                     throw exception(beg, "Invalid numeric value \"" + evaluated + '"');
                 }
@@ -245,7 +289,7 @@ public final class MathEval {
                 // character, since non-operators have the artificial "precedence" zero
                 rgt = evaluate(ofs + 1, end, rgt, cur, nxt);       // from after operator to end of current subexpression
                 ofs = offset;           // modify offset to after subexpression
-                nxt = (ofs <= end ? getOperator(expression.charAt(ofs)) : MathEval.OPERAND);                         // modify next operator
+                nxt = ofs <= end ? getOperator(expression.charAt(ofs)) : OPERAND; // modify next operator
             }
 
             lft = doOperation(beg, lft, cur, rgt);
@@ -255,20 +299,16 @@ public final class MathEval {
             if (cur.symbol == '(') ofs--; // operator omitted for implicit multiplication of subexpression
         }
 
-        if (ofs > end && cur != MathEval.OPERAND) {
+        if (ofs > end && cur != OPERAND) {
             if (cur.unary == Side.LEFT) {
                 lft = doOperation(beg, lft, cur, Double.NaN);
             } else {
                 throw exception(ofs, "Expression ends with a blank operand after operator '" + nxt.symbol + '\'');
             }
         }
+
         this.offset = ofs;
         return lft;
-    }
-
-    private Operator getOperator(char chr) {
-        Operator opr = OPERATORS.get(chr);
-        return opr == null ? OPERAND : opr;
     }
 
     private double doOperation(int beg, double lft, Operator opr, double rgt) {
@@ -286,16 +326,9 @@ public final class MathEval {
         }
     }
 
-//*************************************************************************************************
-//STATIC NESTED CLASSES - OPERATOR
-//*************************************************************************************************
-
-    /**
-     * Instance Inner Classes - Function Argument Parser
-     */
     private double doFunction(int beg, int end) {
         int index = expression.indexOf('(', beg);
-        if (index == -1) throw exception(beg, "Could not find the end of parathensis ')' for function");
+        if (index == -1) throw exception(beg, "Could not find the start of parathensis '(' for function");
 
         // Function name and its arguments.
         String func = expression.substring(beg, index).trim();
@@ -322,12 +355,12 @@ public final class MathEval {
         while (beg < end && expression.charAt(end) == ' ') end--;
 
         // since a letter triggers a named value, this can never reduce to beg==end
-        String nam = expression.substring(beg, end + 1);
+        String name = expression.substring(beg, end + 1);
         Double val;
 
-        if ((val = CONSTANTS.get(nam)) != null) return val;
+        if ((val = CONSTANTS.get(name)) != null) return val;
 //        if ((val = variables.get(nam)) != null) return val;
-        throw exception(beg, "Unrecognized constant or variable \"" + nam + '"');
+        throw exception(beg, beg + " Unrecognized constant or variable \"" + name + '"');
     }
 
     private ArithmeticException exception(int ofs, String txt) {
@@ -339,18 +372,6 @@ public final class MathEval {
                 (thr.getMessage() != null ? thr.getMessage() : thr.toString()) + ')');
     }
 
-    private boolean isHexDecimal(String str, int ofs) {
-        return str.length() > ofs + 2 && str.charAt(ofs) == '0' && str.charAt(ofs + 1) == 'x';
-    }
-
-    private int skipWhitespace(String exp, int ofs, int end) {
-        while (ofs <= end && exp.charAt(ofs) == ' ') ofs++;
-        return ofs;
-    }
-
-    //*************************************************************************************************
-// Constants
-//*************************************************************************************************
     private enum Side {
         /**
          * Operator/operand on on the left.
@@ -376,6 +397,12 @@ public final class MathEval {
         double apply(double a, double b);
     }
 
+    @SuppressWarnings("unused")
+    @FunctionalInterface
+    public interface VariableFunction {
+        double apply(String variable);
+    }
+
     /**
      * Operator Structure.
      * <p>
@@ -384,25 +411,26 @@ public final class MathEval {
      */
     private static final class Operator {
         private final char symbol;
-        private final int precedenceL;   // precedence when on the left
-        private final int precedenceR;  // precedence when on the right
+        /**
+         * https://en.wikipedia.org/wiki/Order_of_operations
+         */
+        private final byte precedenceLeft;   // precedence when on the left
+        private final byte precedenceRight;  // precedence when on the right
         private final Side unary;
-        private final boolean internal; // internal pseudo operator
         private final TriFunction function;
 
         /**
          * Create a binary operator with the same precedence on the left and right.
          */
-        public Operator(char sym, int prc, TriFunction function) {
-            this(sym, prc, prc, Side.NONE, false, function);
+        protected Operator(char sym, int precedence, TriFunction function) {
+            this(sym, precedence, precedence, Side.NONE, function);
         }
 
-        Operator(char sym, int prclft, int prcrgt, Side side, boolean intern, TriFunction function) {
+        Operator(char sym, int precedenceL, int precedenceR, Side side, TriFunction function) {
             this.symbol = sym;
-            this.precedenceL = prclft;
-            this.precedenceR = prcrgt;
+            this.precedenceLeft = (byte) precedenceL;
+            this.precedenceRight = (byte) precedenceR;
             this.unary = side;
-            this.internal = intern;
             this.function = function;
         }
 
@@ -411,11 +439,11 @@ public final class MathEval {
             return ("MathOperator['" + symbol + "']");
         }
 
-        private int opPrecedence(Side sid) {
-            if (unary == Side.NONE || unary != sid) // Operator is binary or is unary and bound to the operand on the other side
-                return sid == Side.LEFT ? precedenceL : precedenceR;
+        private byte opPrecedence(Side side) {
+            if (unary == Side.NONE || unary != side) // Operator is binary or is unary and bound to the operand on the other side
+                return side == Side.LEFT ? precedenceLeft : precedenceRight;
             else // Operator is unary and associates with the operand on this side
-                return Integer.MAX_VALUE;
+                return Byte.MAX_VALUE;
         }
     }
 
@@ -439,11 +467,27 @@ public final class MathEval {
         public double next() {
             char chr = expression.charAt(index);
             if (chr == ')') throw exception(index, "Function has too few arguments");
-
             if (chr == ',' || chr == ';') index++;
+
+            /*
+            while (index <= end) {
+                if (chr == ',' || chr == ';') {
+                    index++;
+                    break;
+                }
+                chr = expression.charAt(index++);
+            }
+             */
+
             double evaluatedParam = evaluate(index, end);
             this.index = offset;
             return evaluatedParam;
+        }
+
+        public double next(int jump) {
+            double result = 0;
+            for (int i = 0; i < jump; i++) result = next();
+            return result;
         }
 
         /**

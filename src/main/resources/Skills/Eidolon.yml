@@ -64,7 +64,7 @@ abilities:
       cooldown: 17
       items: [ ]
     # Note the damage is done every quality ticks.
-    scaling: 0.3
+    scaling: int * 0.3
     # Pull the player every x tick.
     quality: 5
     # Duration of the blackhole in ticks.

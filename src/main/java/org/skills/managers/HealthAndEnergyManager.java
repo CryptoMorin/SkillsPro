@@ -170,7 +170,7 @@ public class HealthAndEnergyManager implements Listener {
             double maxMaxHp = skill.getScaling(info, SkillScaling.MAX_HEALTH);
             double maxHp = skill.getScaling(info, SkillScaling.HEALTH);
             double hp = Math.min(maxHp, maxMaxHp);
-            VersionSupport.setMaxHealth(player, hp);
+            Bukkit.getScheduler().runTask(SkillsPro.get(), () -> VersionSupport.setMaxHealth(player, hp));
         });
     }
 

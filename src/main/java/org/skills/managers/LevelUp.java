@@ -107,12 +107,12 @@ public class LevelUp {
         ParticleDisplay display = ParticleDisplay.simple(player.getLocation(), Particle.CRIT_MAGIC);
         int height = Math.min(Math.max(5, lvl / 2), 15);
         XParticle.dnaReplication(plugin, 1, 0.2, 3, 1, height, 2, display);
-        int lowLv = Math.max(1, lvl / 5);
+        int fireworks = MathUtils.randInt(2, 5);
         int lowLv2 = Math.max(1, lvl / 2);
         List<Color> colors = new ArrayList<>();
         for (int j = 0; j < lowLv2; j++) colors.add(Color.fromRGB(MathUtils.randInt(0, 255), MathUtils.randInt(0, 255), MathUtils.randInt(0, 255)));
 
-        for (int i = 0; i < Math.min(lowLv, 5); i++) {
+        for (int i = 0; i < fireworks; i++) {
             Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
             FireworkMeta meta = firework.getFireworkMeta();
             FireworkEffect effect =
