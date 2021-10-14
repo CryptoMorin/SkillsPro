@@ -9,8 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
 import org.skills.utils.MathUtils;
 
 public class DevourerConsume extends Ability {
@@ -20,7 +19,6 @@ public class DevourerConsume extends Ability {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSuckSoul(EntityDamageByEntityEvent event) {
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
         if (!(event.getDamager() instanceof Player)) return;
         if (!(event.getEntity() instanceof Player)) return;
 
@@ -28,19 +26,17 @@ public class DevourerConsume extends Ability {
         SkilledPlayer info = checkup(player);
         if (info == null) return;
 
-        if (MathUtils.hasChance((int) getExtraScaling(info, "chance", event))) {
+        if (MathUtils.hasChance((int) getScaling(info, "chance", event))) {
             Player victim = (Player) event.getEntity();
             SkilledPlayer victimInfo = SkilledPlayer.getSkilledPlayer(victim);
-            long take = (int) getScaling(info, "damage", event.getDamage(), "souls", victimInfo.getSouls());
+            long take = (int) getScaling(info, "souls", "damage", event.getDamage(), "souls", victimInfo.getSouls());
 
-            ParticleDisplay pdisplay = new ParticleDisplay(Particle.VILLAGER_HAPPY, player.getLocation(), 30, 1, 1, 1);
-            ParticleDisplay vdisplay = new ParticleDisplay(Particle.VILLAGER_ANGRY, victim.getLocation(), 30, 1, 1, 1);
-            pdisplay.spawn();
-            vdisplay.spawn();
+            ParticleDisplay.simple(player.getLocation(), Particle.VILLAGER_HAPPY).withCount(30).offset(1).spawn();
+            ParticleDisplay.simple(victim.getLocation(), Particle.VILLAGER_ANGRY).withCount(30).offset(1).spawn();
 
             if (victimInfo.getSouls() < 1) {
-                double damage = getExtraScaling(info, "damage", event);
-                LastHitManager.damage(victim, player, damage);
+                double damage = getScaling(info, "damage", event);
+                DamageManager.damage(victim, player, damage);
                 XSound.BLOCK_GLASS_BREAK.play(player);
             } else {
                 if (take > victimInfo.getSouls()) take = victimInfo.getSouls();
@@ -49,10 +45,5 @@ public class DevourerConsume extends Ability {
                 XSound.ENTITY_GENERIC_DRINK.play(player);
             }
         }
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%chance%", getScalingDescription(info, getExtra(info).getString("chance"))};
     }
 }

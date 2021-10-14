@@ -7,7 +7,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.abilities.ActiveAbility;
@@ -27,30 +26,27 @@ public class SwordsmanThousandCuts extends ActiveAbility {
     private static final Map<Integer, Location> activeLocation = new HashMap<>();
 
     public SwordsmanThousandCuts() {
-        super("Swordsman", "thousand_cuts", false);
+        super("Swordsman", "thousand_cuts");
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onSwordsmanAttack(EntityDamageByEntityEvent event) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
-        if (!(event.getDamager() instanceof Player)) return;
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-
+        if (commonDamageCheckup(event)) return;
         Player player = (Player) event.getDamager();
         SkilledPlayer info;
 
         Integer activeTarget = thousandcuts.get(player.getEntityId());
         if (activeTarget == null) {
-            info = this.activeCheckup(player);
+            info = this.checkup(player);
         } else {
             info = SkilledPlayer.getSkilledPlayer(player);
         }
         if (info == null) return;
         LivingEntity entity = (LivingEntity) event.getEntity();
-        int lvl = info.getImprovementLevel(this);
+        int lvl = info.getAbilityLevel(this);
 
         if (activeTarget != null && activeTarget == entity.getEntityId()) {
-            event.setDamage(event.getDamage() + this.getScaling(info));
+            event.setDamage(event.getDamage() + this.getScaling(info, "damage", event));
             Color color = lvl == 1 ? Color.CYAN : lvl == 2 ? Color.ORANGE : Color.RED;
             ParticleDisplay display = ParticleDisplay.colored(null, color.getRed(), color.getGreen(), color.getBlue(), 1.0f);
 
@@ -70,7 +66,7 @@ public class SwordsmanThousandCuts extends ActiveAbility {
             public void run() {
                 Integer i = activeTrapcount.getOrDefault(entity.getEntityId(), null);
                 if (i == null) return;
-                if (i < getExtraScaling(info, "cut-count") && entity.isValid()) {
+                if (i < getScaling(info, "cut-count") && entity.isValid()) {
                     activeTrapcount.put(entity.getEntityId(), i + 1);
 
                     //disorienter

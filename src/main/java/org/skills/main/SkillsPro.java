@@ -35,6 +35,8 @@ import org.skills.utils.Metrics;
 import org.skills.utils.OfflineNBT;
 import org.skills.utils.UpdateChecker;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
 public class SkillsPro extends JavaPlugin {
@@ -43,10 +45,17 @@ public class SkillsPro extends JavaPlugin {
     private PlayerDataManager playerDataManager;
     private PartyManager partyManager;
     private UpdateChecker updater;
-    private LevelManager levelManager;
 
     public static SkillsPro get() {
         return instance;
+    }
+
+    public static void main(String[] args) {
+        Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(null, "An unbelievable unexpected unhandled IndexOutOfBoundsException has occurred:\n" +
+                "The level is greater than the max value, resulting in an RException." +
+                "\n\nThis is a Minecraft plugin.\nPut it in the plugins folder. Don't just click on it.", "RException", JOptionPane.ERROR_MESSAGE);
+
     }
 
     public LanguageManager getLang() {
@@ -122,14 +131,13 @@ public class SkillsPro extends JavaPlugin {
         registerEvent(new EnchantmentManager());
         registerEvent(new SkillsEventManager());
         registerEvent(new DebugManager());
-        if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XMaterial.isNewVersion()) registerEvent(new LastBreath());
-        if (SkillsConfig.SMART_DAMAGE.getBoolean()) registerEvent(new LastHitManager());
+        registerEvent(new StatManager());
+        if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XMaterial.supports(13)) registerEvent(new LastBreath());
+        if (SkillsConfig.SMART_DAMAGE.getBoolean()) registerEvent(new DamageManager());
         if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean()) registerEvent(new RedScreenManager());
         if (SkillsConfig.BLOOD_ENABLED.getBoolean()) registerEvent(new BloodManager());
 
-        levelManager = new LevelManager(this);
-        registerEvent(levelManager);
-
+        registerEvent(new LevelManager(this));
         if (SkillsMasteryConfig.MASTERIES_ENABLED.getBoolean()) new MasteryManager();
         if (SkillsConfig.ARMOR_WEIGHTS_ENABLED.getBoolean()) registerEvent(new ArmorWeights());
         registerEvent(new DataHandlers(this));
@@ -146,9 +154,5 @@ public class SkillsPro extends JavaPlugin {
 
     public PartyManager getPartyManager() {
         return partyManager;
-    }
-
-    public LevelManager getLevelManager() {
-        return levelManager;
     }
 }

@@ -17,10 +17,10 @@ public class Energy {
     private final String color;
     private final String soundNotEnough;
     private final String soundFull;
-    private final Charging charging;
+    private final ChargingMethod charging;
     private final List<String> elements;
 
-    public Energy(String node, String name, String symbol, String color, Charging charging, String soundNotEnough, String soundFull, List<String> elements) {
+    public Energy(String node, String name, String symbol, String color, ChargingMethod charging, String soundNotEnough, String soundFull, List<String> elements) {
         this.node = node;
         this.name = name;
         this.symbol = symbol;
@@ -48,7 +48,7 @@ public class Energy {
             String soundNotEnough = energySection.getString("sounds.not-enough");
 
             Energy energy = new Energy(energyStr, energySection.getString("name"), energySection.getString("symbol"), energySection.getString("color"),
-                    Enums.getIfPresent(Charging.class, charging).or(Charging.AUTO),
+                    Enums.getIfPresent(ChargingMethod.class, charging).or(ChargingMethod.AUTO),
                     soundNotEnough, soundFull,
                     energySection.getStringList("elements"));
             ENERGY.add(energy);
@@ -71,7 +71,7 @@ public class Energy {
         return name;
     }
 
-    public Charging getCharging() {
+    public ChargingMethod getCharging() {
         return charging;
     }
 
@@ -83,7 +83,7 @@ public class Energy {
         return soundFull;
     }
 
-    public enum Charging {
+    public enum ChargingMethod {
         AUTO, AUTO_REVERSE, KILL, HIT, EAT;
     }
 }

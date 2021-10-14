@@ -24,7 +24,9 @@ public class CommandUserMastery extends SkillsCommand {
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
             if (player != null) {
                 SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-                if (HandleSimpleSetters.handleInvalidSetter(sender, args)) return;
+                AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
+                if (changeFactory == null) return;
+
                 Mastery mastery = MasteryManager.getMastery(args[2]);
                 if (mastery == null) {
                     SkillsLang.MASTERY_NOT_FOUND.sendMessage(sender, "%mastery%", args[2]);
@@ -33,7 +35,7 @@ public class CommandUserMastery extends SkillsCommand {
 
                 try {
                     int amount = Integer.parseInt(args[3]);
-                    int request = (int) HandleSimpleSetters.eval(args, info.getMasteryLevel(mastery), amount);
+                    int request = (int) changeFactory.withInitialAmount(info.getMasteryLevel(mastery)).getFinalAmount();
                     info.setMasteryLevel(mastery, request);
 
                     SkillsLang.Command_User_Mastery_Set_Success.sendMessage(sender,
@@ -53,7 +55,7 @@ public class CommandUserMastery extends SkillsCommand {
     @Override
     public String[] tabComplete(@NonNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) return null;
-        if (args.length == 2) return HandleSimpleSetters.tabComplete(args[1]);
+        if (args.length == 2) return AmountChangeFactory.tabComplete(args[1]);
         if (args.length == 3) return TabCompleteManager.getMasteries(args[2]);
         if (args.length == 4) return new String[]{"<amount>"};
         return new String[0];

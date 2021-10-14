@@ -5,6 +5,7 @@ import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,10 +16,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.SkillsLang;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
+import org.skills.utils.MathUtils;
 import org.skills.utils.versionsupport.VersionSupport;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
@@ -36,21 +37,18 @@ public class JuggernautThrow extends ActiveAbility {
     }
 
     public JuggernautThrow() {
-        super("Juggernaut", "throw", false);
+        super("Juggernaut", "throw");
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onJuggernautAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
-
+        if (commonDamageCheckup(event)) return;
         Player player = (Player) event.getDamager();
-        SkilledPlayer info = this.activeCheckup(player);
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
         boolean pass = false;
-        for (String mobs : getExtra(info, "whitelist").getStringList()) {
+        for (String mobs : getOptions(info, "whitelist").getStringList()) {
             if (mobs.equals("*")) {
                 pass = true;
                 break;
@@ -65,14 +63,20 @@ public class JuggernautThrow extends ActiveAbility {
         }
         if (!pass) return;
 
-        useSkill(player);
         carryEntity(player, info, (LivingEntity) event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityAttemptDamage(EntityDamageByEntityEvent event) {
-        if (THROW_PAIRS.containsKey(event.getEntity().getEntityId())) event.setDamage(event.getDamage() / 2);
-        if (THROW_PAIRS.containsKey(event.getDamager().getEntityId()) || THROW_PAIRS.containsValue(event.getDamager().getEntityId())) event.setCancelled(true);
+        Entity damager = event.getDamager();
+        Entity victim = event.getEntity();
+
+        if (victim instanceof Player && THROW_PAIRS.containsKey(victim.getEntityId())) {
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer((Player) victim);
+            double damage = event.getDamage();
+            event.setDamage(damage - MathUtils.percentOfAmount(getScaling(info, "shield-percent"), damage));
+        }
+        if (THROW_PAIRS.containsKey(damager.getEntityId()) || THROW_PAIRS.containsValue(damager.getEntityId())) event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -87,13 +91,15 @@ public class JuggernautThrow extends ActiveAbility {
         SkillsLang.Skill_Juggernaut_Active_Activated_Message.sendMessage(carrier);
 
         new BukkitRunnable() {
+            final int carrySeconds = (int) getScaling(info, "carry-time");
+
             public void run() {
                 int i = ACTIVE_CARRY_COUNT.getOrDefault(target.getEntityId(), 0);
-                if (target.isValid() && i < 3 && carrier.isValid()) {
+                if (target.isValid() && i < carrySeconds && carrier.isValid()) {
                     i++;
                     ACTIVE_CARRY_COUNT.put(target.getEntityId(), i);
                     if (!VersionSupport.isPassenger(carrier, target)) carrier.setPassenger(target);
-                    SkillsLang.Skill_Juggernaut_Active_Throw_Message_Countdown.sendMessage(carrier, "%countdown%", 3 - i);
+                    SkillsLang.Skill_Juggernaut_Active_Throw_Message_Countdown.sendMessage(carrier, "%countdown%", carrySeconds - i);
                     carrier.playNote(carrier.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
                 } else {
                     THROW_PAIRS.remove(carrier.getEntityId());
@@ -107,9 +113,9 @@ public class JuggernautThrow extends ActiveAbility {
 
                     Vector vector = carrier.getLocation().getDirection().multiply(2);
                     target.setVelocity(vector);
-                    double damage = getScaling(info);
-                    LastHitManager.damage(target, carrier, damage);
-                    XSound.ENTITY_EGG_THROW.play(carrier, 2, 0);
+                    double damage = getScaling(info, "damage");
+                    DamageManager.damage(target, carrier, damage);
+                    XSound.ENTITY_EGG_THROW.play(carrier.getLocation());
                 }
             }
         }.runTaskTimer(SkillsPro.get(), 0L, 20L);

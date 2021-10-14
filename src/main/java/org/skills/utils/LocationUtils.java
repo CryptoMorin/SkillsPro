@@ -37,11 +37,22 @@ public class LocationUtils {
     }
 
     public static double distanceSquared(Location start, Location end) {
-        return Math.sqrt(
-                NumberConversions.square(start.getX() - end.getX()) +
-                        NumberConversions.square(start.getY() - end.getY()) +
-                        NumberConversions.square(start.getZ() - end.getZ())
-        );
+        return Math.sqrt(distance(start, end));
+    }
+
+    public static double distance(Location start, Location end) {
+        return NumberConversions.square(start.getX() - end.getX()) +
+                NumberConversions.square(start.getY() - end.getY()) +
+                NumberConversions.square(start.getZ() - end.getZ());
+    }
+
+    public static Vector getDirection(Location location, double pitch, double plusYaw) {
+        Vector vector = new Vector();
+        double rotX = Math.toRadians(location.getYaw() + plusYaw);
+        double xz = Math.cos(Math.toRadians(pitch));
+        vector.setX(-xz * Math.sin(rotX));
+        vector.setZ(xz * Math.cos(rotX));
+        return vector;
     }
 
     public static String toReadableLocation(Location location) {

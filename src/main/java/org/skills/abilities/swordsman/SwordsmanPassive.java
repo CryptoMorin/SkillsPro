@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.utils.EntityUtil;
 import org.skills.utils.MathUtils;
@@ -70,36 +69,36 @@ public class SwordsmanPassive extends Ability {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onSwordsmanAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (commonDamageCheckup(event)) return;
 
         Player player = (Player) event.getDamager();
         if (!isSword(player)) return;
 
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
-        event.setDamage(event.getDamage() + this.getScaling(info));
+
+        event.setDamage(event.getDamage() + this.getScaling(info, "damage", event));
     }
 
     @EventHandler
     public void onDuelWieldInteract(PlayerInteractEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
-            if (event.getHand() != EquipmentSlot.OFF_HAND) return;
-            if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-            ItemStack item = event.getItem();
-            if (item == null) return;
+        if (event.getHand() != EquipmentSlot.OFF_HAND) return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
+        ItemStack item = event.getItem();
+        if (item == null) return;
+
+        Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
             Player player = event.getPlayer();
             SkilledPlayer info = this.checkup(player);
             if (info == null) return;
 
             XMaterial match = XMaterial.matchXMaterial(item);
-            if (!match.isOneOf(getExtra(info, "weapons").getStringList())) return;
+            if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
 
             NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-                if (getExtra(info, "cooldown").getBoolean()) {
+                if (getOptions(info, "cooldown").getBoolean()) {
                     int cooldown = (int) (1 / player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue() * 20);
                     Bukkit.getScheduler().runTask(SkillsPro.get(), () -> player.setCooldown(item.getType(), cooldown));
                 }
@@ -124,7 +123,7 @@ public class SwordsmanPassive extends Ability {
         if (info == null) return;
 
         XMaterial match = XMaterial.matchXMaterial(item);
-        if (!match.isOneOf(getExtra(info, "weapons").getStringList())) return;
+        if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
 
         double damage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
         int sharpness = item.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
@@ -143,7 +142,7 @@ public class SwordsmanPassive extends Ability {
         livingEntity.damage(damageEvent.getDamage());
 
         int cooldown = 0;
-        if (getExtra(info, "cooldown").getBoolean()) {
+        if (getOptions(info, "cooldown").getBoolean()) {
             cooldown = player.getCooldown(item.getType());
             if (cooldown != 0) damage /= cooldown;
 

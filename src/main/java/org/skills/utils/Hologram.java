@@ -31,7 +31,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Hologram implements Listener {
     private static final String HOLOGRAM = "HOLOGRAM";
     private static final Set<Entity> ARMORSTANDS = new HashSet<>();
-    private static double maxx, minx,
+    private static double
+            maxx, minx,
             maxy, miny,
             maxz, minz;
     private static JavaPlugin plugin;
@@ -61,7 +62,7 @@ public class Hologram implements Listener {
         maxz = NumberUtils.toDouble(offset[1], -0.7);
     }
 
-    public static List<ArmorStand> spawn(Location location, double compact, List<String> text, Object... edits) {
+    public static List<ArmorStand> spawn(Location location, List<String> text, Object... edits) {
         List<ArmorStand> stands = new ArrayList<>();
         ThreadLocalRandom rand = ThreadLocalRandom.current();
         boolean staticArmor = SkillsConfig.HOLOGRAM_STATIC.getBoolean();
@@ -93,14 +94,14 @@ public class Hologram implements Listener {
         return stands;
     }
 
-    public static void spawn(Location location, double compact, long stay, List<String> text, Object... edits) {
-        List<ArmorStand> stands = spawn(location, compact, text, edits);
+    public static void spawn(Location location, long stay, List<String> text, Object... edits) {
+        List<ArmorStand> stands = spawn(location, text, edits);
         ARMORSTANDS.addAll(stands);
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (ArmorStand armorStand : stands) armorStand.remove();
-                ARMORSTANDS.removeAll(stands);
+                stands.forEach(ARMORSTANDS::remove);
             }
         }.runTaskLater(plugin, stay);
     }

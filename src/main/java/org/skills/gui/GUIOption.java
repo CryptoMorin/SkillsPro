@@ -10,6 +10,7 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.BooleanEval;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +66,7 @@ public class GUIOption {
             return BooleanEval.evaluate(condition, expression -> {
                 expression = ServiceHandler.translatePlaceholders(player, MessageHandler.replaceVariables(expression, edits));
                 if (player instanceof Player) return PERMISSION_PATTERN.matcher(expression).replaceAll(Boolean.toString(((Player) player).hasPermission("$1".replace(',', '.'))));
-                else return PERMISSION_PATTERN.matcher(expression).replaceAll("true");
+                else return PERMISSION_PATTERN.matcher(expression).replaceAll("false");
             });
         } catch (IllegalArgumentException ex) {
             MessageHandler.sendConsolePluginMessage("&4Error while evaluating a conditional item &e" + name + " &c in GUI&8: &e" + gui.getName());
@@ -85,7 +86,7 @@ public class GUIOption {
         return option;
     }
 
-    public void defineVariables(InteractiveGUI inv, List<Object> edits) {
+    public void defineVariables(@Nonnull InteractiveGUI inv, List<Object> edits) {
         defineVariables(this.item, inv.getPlaceholder(), edits);
     }
 

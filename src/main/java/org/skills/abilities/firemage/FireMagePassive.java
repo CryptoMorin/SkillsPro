@@ -28,7 +28,7 @@ public class FireMagePassive extends Ability {
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        if (event.getCause() != EntityDamageEvent.DamageCause.FIRE) VersionSupport.heal(player, this.getScaling(info));
+        if (event.getCause() != EntityDamageEvent.DamageCause.FIRE) VersionSupport.heal(player, this.getScaling(info, "heal"));
         event.setCancelled(true);
     }
 }

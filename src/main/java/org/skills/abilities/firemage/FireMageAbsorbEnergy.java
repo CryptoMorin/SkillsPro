@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 
@@ -24,28 +23,29 @@ public class FireMageAbsorbEnergy extends Ability {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFireMageAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
 
         Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        int chance = (int) this.getScaling(info);
-        int lvl = info.getImprovementLevel(this);
-        if (MathUtils.hasChance(chance)) {
-            Entity entity = event.getEntity();
-            entity.setFireTicks((int) (entity.getFireTicks() + (getExtraScaling(info, "fire", event) * 20)));
+        int chance = (int) this.getScaling(info, "chance");
+        if (!MathUtils.hasChance(chance)) return;
 
-            Location loc = entity.getLocation();
-            if (lvl == 1) {
-                player.spawnParticle(Particle.FLAME, loc, chance / 2, 0.5, 0.5, 0.5, 0.2);
+        int lvl = info.getAbilityLevel(this);
+        Entity entity = event.getEntity();
+        Location loc = entity.getLocation();
+
+        entity.setFireTicks((int) (entity.getFireTicks() + (getScaling(info, "fire", event) * 20)));
+        ParticleDisplay display = ParticleDisplay.simple(loc, Particle.FLAME).withExtra(.2);
+
+        if (lvl == 1) {
+            display.withCount(chance / 2).offset(.5).spawn();
+        } else {
+            XSound.ITEM_FIRECHARGE_USE.play(entity);
+            if (lvl == 2) {
+                display.withCount((chance / 2) + 10).offset(.3).spawn();
             } else {
-                XSound.ITEM_FIRECHARGE_USE.play(entity);
-                if (lvl == 2) {
-                    player.spawnParticle(Particle.FLAME, loc, (chance / 2) + 10, 0.3, 0.3, 0.3, 0.3);
-                } else {
-                    XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
-                }
+                XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
             }
         }
     }

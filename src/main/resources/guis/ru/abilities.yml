@@ -40,7 +40,7 @@ options:
         - "%description%"
   ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
+      condition: "%level% == 3 && !%disabled%"
       name: "%title%"
       material: LIGHT_BLUE_DYE
       slots: [ 11, 20, 29, 38 ]
@@ -83,7 +83,7 @@ options:
   # Special placeholders:  %cooldown%, %energy%, %activation%
   active-ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
+      condition: "%level% == 3 && !%disabled%"
       name: "%title%"
       material: LIGHT_BLUE_DYE
       # Don't change the slot.

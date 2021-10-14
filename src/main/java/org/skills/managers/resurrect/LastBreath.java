@@ -1,6 +1,5 @@
 package org.skills.managers.resurrect;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -24,6 +23,8 @@ import java.lang.invoke.MethodType;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.cryptomorin.xseries.ReflectionUtils.*;
+
 public class LastBreath implements Listener {
     protected static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
     private static final Object ENTITY_POSE_SWIMMING, ENTITY_POSE_STANDING, DATA_WATCHER_REGISTRY;
@@ -31,16 +32,17 @@ public class LastBreath implements Listener {
     private static final Map<Integer, LastManStanding> LAST_MEN_STANDING = new HashMap<>(), REVIVERS = new HashMap<>();
 
     static {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
         Object entityPoseSwimming = null, entityPoseStanding = null, dataWatcherRegistry = null;
         MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null, getDataWatcher = null, dataWatcherSet = null;
-        Class<?> entityPose = ReflectionUtils.getNMSClass("EntityPose");
-        Class<?> dataWatcher = ReflectionUtils.getNMSClass("DataWatcher");
-        Class<?> entityPlayer = ReflectionUtils.getNMSClass("EntityPlayer");
-        Class<?> dataWatcherObjectClass = ReflectionUtils.getNMSClass("DataWatcherObject");
-        Class<?> dataWatcherRegistryClass = ReflectionUtils.getNMSClass("DataWatcherRegistry");
-        Class<?> dataWatcherSerializerClass = ReflectionUtils.getNMSClass("DataWatcherSerializer");
-        Class<?> packetPlayOutEntityMetadataClass = ReflectionUtils.getNMSClass("PacketPlayOutEntityMetadata");
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
+
+        Class<?> entityPose = getNMSClass("EntityPose");
+        Class<?> dataWatcher = getNMSClass("DataWatcher");
+        Class<?> entityPlayer = getNMSClass("EntityPlayer");
+        Class<?> dataWatcherObjectClass = getNMSClass("DataWatcherObject");
+        Class<?> dataWatcherRegistryClass = getNMSClass("DataWatcherRegistry");
+        Class<?> dataWatcherSerializerClass = getNMSClass("DataWatcherSerializer");
+        Class<?> packetPlayOutEntityMetadataClass = getNMSClass("PacketPlayOutEntityMetadata");
 
         try {
             dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, "s", dataWatcherSerializerClass).invoke();
@@ -74,7 +76,7 @@ public class LastBreath implements Listener {
                 Object metadata = registerDataWatcher(lastStanding.player, true);
                 for (Player player : lastStanding.player.getWorld().getPlayers()) {
                     if (player != lastStanding.player && LocationUtils.distanceSquared(location, player.getLocation()) < VIEW_DISTANCE) {
-                        ReflectionUtils.sendPacket(player, metadata);
+                        sendPacket(player, metadata);
                     }
                 }
             }
@@ -83,7 +85,7 @@ public class LastBreath implements Listener {
 
     protected static Object registerDataWatcher(Player player, boolean swimming) {
         try {
-            Object handle = ReflectionUtils.getHandle(player);
+            Object handle = getHandle(player);
             Object watcher = GET_DATA_WATCHER.invoke(handle);
             Object registry = CREATE_DATA_WATCHER.invoke(ENTITY_POSE_REGISTRY, DATA_WATCHER_REGISTRY);
 

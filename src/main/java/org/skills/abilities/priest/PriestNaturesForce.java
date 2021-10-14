@@ -31,21 +31,19 @@ public class PriestNaturesForce extends ActiveAbility {
     private static final ParticleDisplay DEATH = ParticleDisplay.simple(null, Particle.FLAME).withCount(100).offset(0.5, 0.5, 0.5);
 
     public PriestNaturesForce() {
-        super("Priest", "natures_force", false);
+        super("Priest", "natures_force");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onHit(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-
+        if (commonDamageCheckup(event)) return;
         Player player = (Player) event.getDamager();
-        SkilledPlayer info = activeCheckup(player);
+        SkilledPlayer info = checkup(player);
         if (info == null) return;
 
         Location loc = player.getEyeLocation();
-
         LivingEntity target = (LivingEntity) event.getEntity();
+
         Block beehive = target.getLocation().add(0, 2, 0).getBlock();
         Material material = beehive.getType();
         beehive.setType(Material.BEEHIVE);
@@ -56,12 +54,12 @@ public class PriestNaturesForce extends ActiveAbility {
         particle.offset(0.5, 0.5, 0.5);
 
         XSound.ENTITY_BEE_LOOP.play(loc, 3.0f, 0);
-        long interval = (long) getExtraScaling(info, "interval");
+        long interval = (long) getScaling(info, "interval");
         int id = new BukkitRunnable() {
             final ThreadLocalRandom random = ThreadLocalRandom.current();
-            final double damage = getScaling(info);
+            final double damage = getScaling(info, "damage");
             final Location hiveLoc = beehive.getLocation();
-            long duration = (long) getExtraScaling(info, "duration");
+            long duration = (long) getScaling(info, "duration");
             int repeat = 0;
             double rotation = 0;
 
@@ -152,10 +150,5 @@ public class PriestNaturesForce extends ActiveAbility {
         double damage = metadata.get(0).asDouble();
         event.setDamage(damage);
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> bee.setHasStung(false), 1L);
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%duration%", translate(info, "duration"), "%interval%", translate(info, "interval")};
     }
 }

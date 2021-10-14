@@ -9,17 +9,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
+import org.skills.utils.EntityUtil;
 import org.skills.utils.LocationUtils;
 import org.skills.utils.versionsupport.VersionSupport;
 
 import java.util.HashSet;
 
-public class MageEnergyFlux extends ActiveAbility {
+public class MageEnergyFlux extends InstantActiveAbility {
     public MageEnergyFlux() {
-        super("Mage", "energy_flux", true);
+        super("Mage", "energy_flux");
     }
 
     private static Color getColor(double level) {
@@ -41,21 +43,16 @@ public class MageEnergyFlux extends ActiveAbility {
     }
 
     @Override
-    public void useSkill(Player player) {
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
         Location start = LocationUtils.getHandLocation(player, false);
-        Location end = start.clone().add(player.getEyeLocation().getDirection().multiply(getExtraScaling(info, "range")));
-
-        fireEnergyFlux(player, info, start, end);
+        Location end = start.clone().add(player.getEyeLocation().getDirection().multiply(getScaling(info, "range")));
         XSound.ENTITY_FIREWORK_ROCKET_TWINKLE.play(start);
-    }
 
-    @SuppressWarnings("SameParameterValue")
-    private void fireEnergyFlux(Player player, SkilledPlayer info, Location start, Location end) {
-        double damage = this.getScaling(info);
-        int lvl = info.getImprovementLevel(this);
+        double damage = this.getScaling(info, "damage");
+        int lvl = info.getAbilityLevel(this);
         double distanceLvl = lvl * 0.5;
 
         World world = player.getWorld();
@@ -71,8 +68,8 @@ public class MageEnergyFlux extends ActiveAbility {
         double y = distance.getY();
         double z = distance.getZ();
 
-        boolean canPassable = XMaterial.isNewVersion();
-        boolean noPassThro = !getExtra(info, "pass-through").getBoolean();
+        boolean canPassable = XMaterial.supports(13);
+        boolean noPassThro = !getOptions(info, "pass-through").getBoolean();
 
         for (double i = 0.5D; i < length; i += 0.1) {
             Location loc = start.clone().add(x * i, y * i, z * i);
@@ -86,10 +83,9 @@ public class MageEnergyFlux extends ActiveAbility {
             }
 
             for (Entity entity : world.getNearbyEntities(loc, distanceLvl, distanceLvl, distanceLvl)) {
-                if (!(entity instanceof LivingEntity) || entity.isDead()) continue;
+                if (EntityUtil.filterEntity(player, entity)) continue;
                 if (!hits.add(entity.getEntityId())) continue;
-//                if (!ServiceHandler.canFight(entity, player)) continue;
-                LastHitManager.damage((LivingEntity) entity, player, damage);
+                DamageManager.damage((LivingEntity) entity, player, damage);
             }
         }
     }

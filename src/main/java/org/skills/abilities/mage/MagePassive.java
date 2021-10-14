@@ -16,11 +16,11 @@ public class MagePassive extends Ability {
         super("Mage", "passive");
     }
 
-    protected static boolean isHoe(ItemStack item) {
+    public static boolean isHoe(ItemStack item) {
         return isHoe(XMaterial.matchXMaterial(item));
     }
 
-    protected static boolean isHoe(XMaterial material) {
+    public static boolean isHoe(XMaterial material) {
         switch (material) {
             case NETHERITE_HOE:
             case DIAMOND_HOE:
@@ -35,21 +35,21 @@ public class MagePassive extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onMageAttack(EntityDamageByEntityEvent event) {
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player) event.getDamager();
-            if (!isHoe(player.getItemInHand())) return;
+        if (SkillsConfig.isInDisabledWorld(event.getEntity().getWorld())) return;
+        if (!(event.getDamager() instanceof Player)) return;
 
-            SkilledPlayer info = this.checkup(player);
-            if (info == null) return;
+        Player player = (Player) event.getDamager();
+        if (!isHoe(player.getItemInHand())) return;
 
-            ConfigurationSection chances = getExtra(info, "hoe-damage").getSection();
-            XMaterial material = XMaterial.matchXMaterial(player.getItemInHand());
-            double hoeDamage = getAbsoluteScaling(info, chances.getString(material.name()), "damage", event.getDamage());
+        SkilledPlayer info = this.checkup(player);
+        if (info == null) return;
 
-            int energy = (int) this.getScaling(info, "damage", event.getDamage());
-            info.setEnergy(Math.min(info.getEnergy() + energy, info.getScaling(SkillScaling.MAX_ENERGY)));
-            event.setDamage(event.getDamage() + hoeDamage);
-        }
+        ConfigurationSection chances = getOptions(info, "hoe-damage").getSection();
+        XMaterial material = XMaterial.matchXMaterial(player.getItemInHand());
+        double hoeDamage = getAbsoluteScaling(info, chances.getString(material.name()), "damage", event.getDamage());
+
+        int energy = (int) this.getScaling(info, "energy");
+        info.setEnergy(Math.min(info.getEnergy() + energy, info.getScaling(SkillScaling.MAX_ENERGY)));
+        event.setDamage(event.getDamage() + hoeDamage);
     }
 }

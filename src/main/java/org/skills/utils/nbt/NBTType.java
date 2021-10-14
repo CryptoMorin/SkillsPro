@@ -17,10 +17,10 @@ public class NBTType<T> {
     public static final NBTType<byte[]> BYTE_ARRAY;
     public static final NBTType<int[]> INTEGER_ARRAY;
     public static final NBTType<long[]> LONG_ARRAY;
-    public static final NBTType<NBTWrappers.NBTTagCompound> TAG_CONTAINER;
+    public static final NBTType<NBTTagCompound> TAG_COMPOUND;
 
     static {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             if (XMaterial.supports(14)) {
                 BYTE = new NBTType<>(ItemTagType.BYTE, PersistentDataType.BYTE);
                 BOOLEAN = new NBTType<>(ItemTagType.BYTE, PersistentDataType.BYTE);
@@ -33,7 +33,7 @@ public class NBTType<T> {
                 BYTE_ARRAY = new NBTType<>(ItemTagType.BYTE_ARRAY, PersistentDataType.BYTE_ARRAY);
                 INTEGER_ARRAY = new NBTType<>(ItemTagType.INTEGER_ARRAY, PersistentDataType.INTEGER_ARRAY);
                 LONG_ARRAY = new NBTType<>(ItemTagType.LONG_ARRAY, PersistentDataType.LONG_ARRAY);
-                TAG_CONTAINER = new NBTType<>(ItemTagType.TAG_CONTAINER, PersistentDataType.TAG_CONTAINER);
+                TAG_COMPOUND = new NBTType<>(ItemTagType.TAG_CONTAINER, PersistentDataType.TAG_CONTAINER);
             } else {
                 BYTE = new NBTType<>(ItemTagType.BYTE);
                 BOOLEAN = new NBTType<>(ItemTagType.BYTE);
@@ -46,7 +46,7 @@ public class NBTType<T> {
                 BYTE_ARRAY = new NBTType<>(ItemTagType.BYTE_ARRAY);
                 INTEGER_ARRAY = new NBTType<>(ItemTagType.INTEGER_ARRAY);
                 LONG_ARRAY = new NBTType<>(ItemTagType.LONG_ARRAY);
-                TAG_CONTAINER = new NBTType<>(ItemTagType.TAG_CONTAINER);
+                TAG_COMPOUND = new NBTType<>(ItemTagType.TAG_CONTAINER);
             }
         } else {
             BYTE = new NBTType<>();
@@ -60,12 +60,12 @@ public class NBTType<T> {
             BYTE_ARRAY = new NBTType<>();
             INTEGER_ARRAY = new NBTType<>();
             LONG_ARRAY = new NBTType<>();
-            TAG_CONTAINER = new NBTType<>();
+            TAG_COMPOUND = new NBTType<>();
         }
     }
 
-    private final PersistentDataType persistentDataType;
-    private final ItemTagType itemTagType;
+    private final PersistentDataType<T, T> persistentDataType;
+    private final ItemTagType<T, T> itemTagType;
 
     private NBTType(ItemTagType itemTagType, PersistentDataType persistentDataType) {
         this.itemTagType = itemTagType;
@@ -80,11 +80,11 @@ public class NBTType<T> {
         this(null);
     }
 
-    public ItemTagType getItemTagType() {
+    public ItemTagType<T, T> getItemTagType() {
         return itemTagType;
     }
 
-    public PersistentDataType getPersistentDataType() {
+    public PersistentDataType<T, T> getPersistentDataType() {
         return persistentDataType;
     }
 }

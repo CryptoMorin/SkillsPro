@@ -1,9 +1,8 @@
 name: "Arbalist"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + lvl/2
+max-health: min(20 + (lvl / 2), 60)
 max-level: 100
-max-health: 20 * 6
 required-level: 0
 cost: 0
 max-energy: lvl + 20
@@ -12,13 +11,13 @@ stats: [ DEF, INT ]
 energy: arrows
 abilities:
   arbalist-passive:
-    scaling: lvl
     chance: "min(60, %skills_level%)"
     arrows: 6
+    # Chance to set the arrow on fire.
     flame-chance: '%skills_level%'
   execute:
     required-level: 10
-    scaling: dex + (lvl * 10)
+    chance: dex + (lvl * 10)
     # Fire ticks to set the target on fire.
     fire: (lvl - 1) * 50
     effects:
@@ -26,8 +25,8 @@ abilities:
     cost: 100 * (lvl + 1)
   dual-arrows:
     required-level: 5
-    # The damage
-    scaling: def/20+lvl
+    # Damage in addition to the arrow's normal damage.
+    damage: def/20+lvl
     chance: lvl * 25
     # Speed of the arrow. This will be multiplied by the original velocity.
     # If the final velocity axis is higher than 4 or less than -4, it'll default back to 4 or -4
@@ -37,7 +36,6 @@ abilities:
     cost: 100 * (lvl + 1)
   minions:
     required-level: 20
-    scaling: str / 30 + lvl
     cost: 100 * (lvl + 1)
     # Time in seconds the minions are allowed to fight.
     time: lvl * 30
@@ -64,7 +62,9 @@ abilities:
       cooldown: 5
       # Includes CROSSBOW too.
       items: [ "CONTAINS:BOW" ]
-    scaling: 7-lvl*2
+
+    # The raw damage of the main arrow.
+    damage: 7-lvl*2
     cost: 100 * (lvl + 1)
     # Related to speed of the arrow and particles displayed.
     range: lvl * 2

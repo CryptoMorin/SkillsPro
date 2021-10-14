@@ -1,7 +1,6 @@
 package org.skills.data.managers;
 
 import com.cryptomorin.xseries.XSound;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,13 +43,11 @@ public class SkilledPlayer extends DataContainer {
         put(PlayerSkill.NONE, skill);
     }};
     private transient UUID id;
-    private transient ActiveAbility lastAbilityUsed;
-    private transient double energyBooster;
+    private transient double energyBooster, energy;
     private double healthScaling = SkillsConfig.DEFAULT_HEALTH_SCALING.getDouble();
-    private transient double energy;
     private long lastSkillChange;
     private transient EidolonForm form = EidolonForm.LIGHT;
-    private transient String activeReady;
+    private transient ActiveAbility lastAbilityUsed, activeReady;
     private boolean showActionBar = SkillsConfig.ACTIONBAR_DEFAULT.getBoolean();
     private Map<String, Integer> masteries = new HashMap<>();
     private Map<SkillsEventType, SkillsEvent> bonuses = new EnumMap<>(SkillsEventType.class);
@@ -59,14 +56,14 @@ public class SkilledPlayer extends DataContainer {
     private Set<UUID> friendRequests = new HashSet<>();
     private UUID party;
     private PartyRank rank;
+    private transient boolean isUsingAbility;
 
     public SkilledPlayer(UUID id) {
         this.id = Objects.requireNonNull(id, "Skilled Player's UUID cannot be null");
         SkillsPro.get().getPlayerDataManager().load(this);
     }
 
-    public SkilledPlayer() {
-    }
+    public SkilledPlayer() {}
 
     public static @NonNull
     SkilledPlayer getSkilledPlayer(@NonNull UUID id) {
@@ -124,12 +121,20 @@ public class SkilledPlayer extends DataContainer {
 
     @NonNull
     public Map<SkillsEventType, SkillsEvent> getBonuses() {
-        bonuses.values().removeIf(SkillsEvent::isActive);
+        bonuses.values().removeIf(event -> !event.isActive());
         return bonuses;
     }
 
     public void setBonuses(Map<SkillsEventType, SkillsEvent> bonuses) {
         this.bonuses = bonuses;
+    }
+
+    public boolean isUsingAbility() {
+        return isUsingAbility;
+    }
+
+    public void toggleUsingAbility() {
+        isUsingAbility = !isUsingAbility;
     }
 
     public Map<String, PlayerSkill> getSkills() {
@@ -155,7 +160,7 @@ public class SkilledPlayer extends DataContainer {
 
     public BukkitTask setEnergy(double amount) {
         Player player = getPlayer();
-        Validate.isTrue(player != null, "Cannot set energy of offline player");
+        if (player == null) throw new IllegalStateException("Cannot set energy of offline player: " + getOfflinePlayer().getName() + " - " + getOfflinePlayer().getLastPlayed());
 
         return new BukkitRunnable() {
             @Override
@@ -251,33 +256,17 @@ public class SkilledPlayer extends DataContainer {
         this.skill = Objects.requireNonNull(skill, "Active player skill cannot be null");
     }
 
-    public void setActiveSkill(@NonNull String skill) {
-        PlayerSkill activeSkill = skills.get(skill);
-        if (activeSkill == null) {
-            activeSkill = new PlayerSkill(skill);
-            skills.put(skill, activeSkill);
-        }
-        if (SkillsConfig.SKILLS_SHARED_DATA_SOULS.getBoolean()) activeSkill.setSouls(getSouls());
-        if (SkillsConfig.SKILLS_SHARED_DATA_STATS.getBoolean()) activeSkill.setStats(getStats());
-        if (SkillsConfig.SKILLS_SHARED_DATA_LEVELS.getBoolean()) {
-            activeSkill.setLevel(getLevel());
-            activeSkill.setAbsoluteXP(getXP());
-        }
-        skills.put(this.skill.skill, this.skill);
-        this.skill = activeSkill;
-    }
-
-    public void setActiveSkill(@NonNull Skill skill) {
-        setActiveSkill(skill.getName());
-        changedSkill();
-    }
-
     public int getLevel() {
-        return skill.getLevel();
+        return skill.level;
     }
 
     public void setLevel(int level) {
         skill.setLevel(level);
+    }
+
+    public void addLevel(int level) {
+        setLevel(skill.level + level);
+        skill.xp = Math.min(getXP(), getLevelXP());
     }
 
     public double getXP() {
@@ -301,24 +290,30 @@ public class SkilledPlayer extends DataContainer {
      * @param silent if true, level will manually increase instead of using {@link #levelUp(int)}
      */
     public void setXP(double xp, boolean silent) {
-        if (xp == 0) return;
-        Validate.isTrue(xp >= 0, "Cannot set negative XP");
-
-        while (true) {
-            double needed = getLevelXP(this.skill.getLevel());
-            if (xp >= needed) {
-                xp -= needed;
-                if (silent) this.skill.level++;
-                else levelUp(1);
-            } else {
-                this.skill.xp = xp;
-                break;
-            }
+        if (xp == 0) {
+            setAbsoluteXP(0);
+            return;
+        } else if (xp < 0) {
+            decreaseXP(Math.abs(xp));
+            return;
         }
+
+        int addedLevels = 0;
+
+        double needed;
+        int lvl = 0;
+        while (xp >= (needed = getLevelXP(getLevel() + lvl++))) {
+            xp -= needed;
+            addedLevels++;
+        }
+
+        if (silent) addLevel(addedLevels);
+        else levelUp(addedLevels);
+        setAbsoluteXP(xp);
     }
 
     public void setAbsoluteXP(double xp) {
-        this.skill.xp = xp;
+        skill.setAbsoluteXP(xp);
     }
 
     public void chargeEnergy() {
@@ -329,9 +324,8 @@ public class SkilledPlayer extends DataContainer {
         Skill skill = getSkill();
 
         if (!Cooldown.isInCooldown(this.id, "ENERGY_BOOSTER")) energyBooster = 0;
-        double booster = energyBooster;
         double maxEnergy = skill.getScaling(this, SkillScaling.MAX_ENERGY);
-        double energyRegen = skill.getScaling(this, SkillScaling.ENERGY_REGEN) + extra + booster;
+        double energyRegen = skill.getScaling(this, SkillScaling.ENERGY_REGEN) + extra + energyBooster;
         double finale = energy;
 
         if (finale >= maxEnergy) return;
@@ -372,18 +366,21 @@ public class SkilledPlayer extends DataContainer {
      */
     private void decreaseXP(double xp) {
         if (xp == 0) return;
+        xp = Math.abs(xp);
         while (true) {
-            if (this.skill.xp - xp < 0) {
-                xp -= this.skill.xp;
-                this.skill.level -= 1;
-                if (this.skill.level < 0) {
-                    this.skill.level = 0;
-                    break;
+            if (getXP() < xp) {
+                if (getLevel() <= 0) {
+                    setLevel(0);
+                    setAbsoluteXP(0);
+                    return;
                 }
-                this.skill.xp = getLevelXP(this.skill.level);
+
+                xp -= getXP();
+                addLevel(-1);
+                setAbsoluteXP(getLevelXP(getLevel()));
             } else {
-                this.skill.xp -= xp;
-                break;
+                setAbsoluteXP(getXP() - xp);
+                return;
             }
         }
     }
@@ -396,17 +393,7 @@ public class SkilledPlayer extends DataContainer {
      */
     public void setRawXP(double xp, boolean silent) {
         setLevel(0);
-        for (int i = 0; ; i++) {
-            double needed = getLevelXP(i);
-            if (xp >= needed) {
-                xp -= needed;
-                if (silent) this.skill.level++;
-                else levelUp(1);
-            } else {
-                this.skill.xp = xp;
-                break;
-            }
-        }
+        setXP(xp, silent);
     }
 
     /**
@@ -415,24 +402,24 @@ public class SkilledPlayer extends DataContainer {
      * @return raw total XP.
      */
     public double getRawXP() {
-        if (this.skill.level < 1) return this.skill.xp;
-        return this.skill.xp + getLevelXP(this.skill.level - 1);
+        if (getLevel() < 1) return getXP();
+        return getXP() + getLevelXP(getLevel() - 1);
     }
 
     public boolean willLevelUp(double xp) {
-        return this.skill.xp + xp >= getLevelXP(this.skill.level);
+        return getXP() + xp >= getLevelXP(getLevel());
     }
 
     public long getSouls() {
-        return this.skill.souls;
+        return skill.getSouls();
     }
 
     public void setSouls(long souls) {
-        this.skill.souls = souls;
+        skill.setSouls(souls);
     }
 
     public boolean hasSkill() {
-        return !skill.skill.equals("none");
+        return !skill.skill.equals(PlayerSkill.NONE);
     }
 
     public int getMasteryLevel(Mastery mastery) {
@@ -472,17 +459,8 @@ public class SkilledPlayer extends DataContainer {
         return getSkill().hasAbility(ability);
     }
 
-    public @NonNull
-    Set<String> getDisabledAbilities() {
-        return this.skill.disabledAbilities;
-    }
-
-    public void setDisabledAbilities(Set<String> disabledAbilities) {
-        this.skill.disabledAbilities = disabledAbilities;
-    }
-
     public boolean isActiveReady(ActiveAbility ability) {
-        return ability.getName().equals(this.activeReady);
+        return ability == this.activeReady;
     }
 
     public boolean setActiveReady(ActiveAbility ability, boolean isReady) {
@@ -497,7 +475,7 @@ public class SkilledPlayer extends DataContainer {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
 
-        this.activeReady = isReady ? ability.getName() : null;
+        this.activeReady = isReady ? ability : null;
         return true;
     }
 
@@ -505,7 +483,7 @@ public class SkilledPlayer extends DataContainer {
         this.activeReady = null;
     }
 
-    public String getActiveReady() {
+    public ActiveAbility getActiveReady() {
         return activeReady;
     }
 
@@ -532,7 +510,7 @@ public class SkilledPlayer extends DataContainer {
 
         if (player != null) {
             int maxLvl = (int) getScaling(SkillScaling.MAX_LEVEL);
-            int newLvl = this.skill.level + levels;
+            int newLvl = getLevel() + levels;
 
             if (this.skill.level >= maxLvl) {
                 SkillsLang.MAX_LEVEL.sendMessage(player);
@@ -544,9 +522,10 @@ public class SkilledPlayer extends DataContainer {
             if (event.isCancelled()) return;
 
             LevelManager.onLevelUp(event);
-            this.skill.level += event.getAddedLevel();
-        } else this.skill.level += 1;
+            levels = event.getAddedLevel();
+        }
 
+        setLevel(getLevel() + levels);
         this.skill.xp = 0;
     }
 
@@ -595,18 +574,16 @@ public class SkilledPlayer extends DataContainer {
     }
 
     public void toggleAbility(Ability ability) {
-        boolean disabled = false;
-        if (!this.skill.disabledAbilities.remove(ability.getName())) {
-            this.skill.disabledAbilities.add(ability.getName());
-            disabled = true;
-        }
+        PlayerAbilityData data = this.skill.getAbilityData(ability);
+        boolean disabled = !data.isDisabled();
+        data.setDisabled(disabled);
 
         SkillToggleAbilityEvent event = new SkillToggleAbilityEvent(getPlayer(), ability, disabled);
         Bukkit.getPluginManager().callEvent(event);
     }
 
     public boolean isAbilityDisabled(Ability ability) {
-        return this.skill.disabledAbilities.contains(ability.getName());
+        return this.skill.getAbilityData(ability).isDisabled();
     }
 
     public @Nullable
@@ -626,20 +603,10 @@ public class SkilledPlayer extends DataContainer {
         return this.bonuses.remove(type);
     }
 
-    public void purgeUnusedBonuses() {
-        for (SkillsEvent bonus : this.bonuses.values()) {
-            if (!bonus.isActive()) this.bonuses.remove(bonus.getType());
-        }
-    }
-
     public void upgradeAbility(@NonNull Ability ability) {
-        addImprovementLevel(ability, 1);
+        addAbilityLevel(ability, 1);
         SkillImproveEvent event = new SkillImproveEvent(this.getPlayer(), ability);
         Bukkit.getPluginManager().callEvent(event);
-    }
-
-    public void setAbilityLevel(@NonNull Ability ability, int lvl) {
-        skill.setImprovement(ability, lvl);
     }
 
     public int getStat(@NonNull String type) {
@@ -695,25 +662,24 @@ public class SkilledPlayer extends DataContainer {
         this.masteries = masteries;
     }
 
-    public @NonNull
-    Map<String, Map<String, Integer>> getImprovements() {
+    public Map<String, PlayerAbilityData> getAbilities() {
         return this.skill.abilities;
     }
 
-    public void setImprovements(@NonNull Map<String, Map<String, Integer>> improvements) {
-        this.skill.abilities = improvements;
+    public void setAbilityLevel(@NonNull Ability ability, int level) {
+        skill.setAbilityLevel(ability, level);
     }
 
-    public void setImprovement(@NonNull Ability ability, int level) {
-        skill.setImprovement(ability, level);
+    public void addAbilityLevel(@NonNull Ability ability, int level) {
+        skill.addAbilityLevel(ability, level);
     }
 
-    public void addImprovementLevel(@NonNull Ability ability, int level) {
-        skill.addImprovementLevel(ability, level);
+    public int getAbilityLevel(@NonNull Ability ability) {
+        return skill.getAbilityLevel(ability);
     }
 
-    public int getImprovementLevel(@NonNull Ability ability) {
-        return skill.getImprovementLevel(ability);
+    public PlayerAbilityData getAbilityData(Ability ability) {
+        return skill.getAbilityData(ability);
     }
 
     public long getLastSkillChange() {
@@ -727,10 +693,8 @@ public class SkilledPlayer extends DataContainer {
     public List<OfflinePlayer> getPlayerFriends() {
         List<OfflinePlayer> friends = new ArrayList<>(this.friends.size());
         for (UUID member : this.friends) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(member);
-            friends.add(player);
+            friends.add(Bukkit.getOfflinePlayer(member));
         }
-
         return friends;
     }
 
@@ -765,6 +729,36 @@ public class SkilledPlayer extends DataContainer {
         this.rank = PartyRank.MEMBER;
     }
 
+    public PlayerSkill getActiveSkill() {
+        return this.skill;
+    }
+
+    public void setActiveSkill(@NonNull String skill) {
+        PlayerSkill activeSkill = skills.get(skill);
+        if (activeSkill == null) {
+            activeSkill = new PlayerSkill(skill);
+            skills.put(skill, activeSkill);
+        }
+        if (SkillsConfig.SKILLS_SHARED_DATA_SOULS.getBoolean()) activeSkill.setSouls(getSouls());
+        if (SkillsConfig.SKILLS_SHARED_DATA_STATS.getBoolean()) activeSkill.setStats(getStats());
+        if (SkillsConfig.SKILLS_SHARED_DATA_LEVELS.getBoolean()) {
+            activeSkill.setLevel(getLevel());
+            activeSkill.setAbsoluteXP(getXP());
+        }
+        skills.put(this.skill.skill, this.skill);
+        this.skill = activeSkill;
+    }
+
+    public ClassChangeEvent setActiveSkill(@NonNull Skill skill) {
+        ClassChangeEvent classChangeEvent = new ClassChangeEvent(this, skill);
+        Bukkit.getPluginManager().callEvent(classChangeEvent);
+        if (classChangeEvent.isCancelled()) return classChangeEvent;
+        skill = classChangeEvent.getNewSkill();
+
+        setActiveSkill(skill.getName());
+        changedSkill();
+        return classChangeEvent;
+    }
 
     public void leaveParty() {
         getParty().getMembers().remove(this.id);

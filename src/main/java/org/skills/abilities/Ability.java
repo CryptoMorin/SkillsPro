@@ -1,9 +1,10 @@
 package org.skills.abilities;
 
 import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
@@ -15,10 +16,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsSkillConfig;
@@ -28,6 +31,7 @@ import org.skills.services.manager.ServiceHandler;
 import org.skills.types.SkillManager;
 import org.skills.types.Stat;
 import org.skills.utils.MathUtils;
+import org.skills.utils.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -92,9 +96,9 @@ public abstract class Ability implements Listener {
     public static String getScalingColor(String scaling) {
         scaling = scaling.toLowerCase(Locale.ENGLISH);
         for (Stat stat : Stat.STATS.values()) {
-            if (scaling.contains(stat.getNode())) return MessageHandler.colorize(stat.getColor());
+            if (scaling.contains(stat.getNode())) return stat.getColor();
         }
-        return "";
+        return "&e";
     }
 
     public static boolean addTask(BukkitTask task) {
@@ -113,12 +117,23 @@ public abstract class Ability implements Listener {
         ENTITIES.values().forEach(Entity::remove);
     }
 
+    public boolean commonDamageCheckup(EntityDamageByEntityEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return true;
+        if (!(event.getEntity() instanceof LivingEntity)) return true;
+        return !(event.getDamager() instanceof Player);
+    }
+
+    public boolean commonDamageCheckupReverse(EntityDamageByEntityEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return true;
+        return !(event.getEntity() instanceof Player);
+    }
+
     protected boolean isInvalidTarget(Entity entity) {
-        return !(entity instanceof LivingEntity) || entity.getType() == EntityType.ARMOR_STAND || entity.isDead();
+        return !(entity instanceof LivingEntity) || entity.getType() == EntityType.ARMOR_STAND;
     }
 
     public Set<EntityType> getEntityList(SkilledPlayer info, String list) {
-        List<String> blacklist = getExtra(info, list).getStringList();
+        List<String> blacklist = getOptions(info, list).getStringList();
         Set<EntityType> blacklisted = EnumSet.noneOf(EntityType.class);
         for (String type : blacklist) {
             EntityType entityType = Enums.getIfPresent(EntityType.class, type.toUpperCase(Locale.ENGLISH)).orNull();
@@ -137,35 +152,21 @@ public abstract class Ability implements Listener {
     }
 
     public String getScalingDescription(SkilledPlayer info, String scaling) {
-        return getScalingColor(scaling) + MathUtils.roundToDigits(getAbsoluteScaling(info, scaling), 2);
+        return getScalingColor(scaling) + StringUtils.toFancyNumber(getAbsoluteScaling(info, scaling));
     }
 
-    public void start() {
+    public void start() { }
+
+    public String translate(SkilledPlayer info, String scaling) {
+        return getScalingDescription(info, getOptions(info, scaling).getString());
     }
 
-    public String translate(SkilledPlayer info, String extra) {
-        return getScalingDescription(info, getExtra(info, extra).getString());
+    public void playSound(Player player, SkilledPlayer info, String option) {
+        XSound.play(player, getOptions(info, "sounds." + option).getString());
     }
 
-    public String getScalingEquation(SkilledPlayer info, String scaling) {
-        String equation = getExtra(info).getString(scaling);
-        if (equation == null) {
-            MessageHandler.sendConsolePluginMessage("&cMissing scaling for &e" + info.getSkillName() + " &cconfig&8: " +
-                    "&eabilities &7-> &e" + name + " &7-> &e" + scaling.replace(".", " &7-> &e"));
-            return "0";
-        }
-        return equation;
-    }
-
-    public double getScaling(SkilledPlayer info, Object... edits) {
-        String scaling = getScalingEquation(info, "scaling");
-        return getAbsoluteScaling(info, scaling, edits);
-    }
-
-    public double getScaling(SkilledPlayer info, EntityDamageByEntityEvent event) {
-        LivingEntity entity = (LivingEntity) event.getEntity();
-        return getScaling(info, "damage", event.getDamage(), "hp", entity.getHealth(),
-                "maxHp", entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+    public XSound.Record getSound(SkilledPlayer info, String option) {
+        return XSound.parse(getOptions(info, "sounds." + option).getString());
     }
 
     public PotionEffect parseEquationPotion(SkilledPlayer info, @Nullable String potion) {
@@ -194,9 +195,8 @@ public abstract class Ability implements Listener {
         return new PotionEffect(type, duration, amplifier);
     }
 
-
     public List<PotionEffect> getEffects(SkilledPlayer info, String option) {
-        List<String> effects = getExtra(info).getStringList(option);
+        List<String> effects = getOptions(info).getStringList(option);
         List<PotionEffect> effectsList = new ArrayList<>(effects.size());
 
         for (String effect : effects) {
@@ -218,9 +218,11 @@ public abstract class Ability implements Listener {
 
     public String getTranslatedScaling(SkilledPlayer info, String scaling, Object... edits) {
         Objects.requireNonNull(scaling, () -> "One of the scalings for " + info.getSkillName() + " -> " + name + " is missing");
+
         String equation = ServiceHandler.translatePlaceholders(info.getOfflinePlayer(), scaling);
-        equation = StringUtils.replace(equation, "lvl", String.valueOf(info.getImprovementLevel(this)));
+        equation = MessageHandler.replace(equation, "lvl", (Supplier<String>) () -> String.valueOf(info.getAbilityLevel(this)));
         equation = MessageHandler.replaceVariables(equation, edits);
+
         for (Stat stats : Stat.STATS.values()) {
             String stat = String.valueOf(info.getStat(stats));
             equation = MessageHandler.replace(equation, stats.getNode(), stat);
@@ -234,32 +236,51 @@ public abstract class Ability implements Listener {
         return MathUtils.evaluateEquation(getTranslatedScaling(info, scaling, edits));
     }
 
-    public ConfigurationSection getExtra(SkilledPlayer info) {
-        return info.getSkill().getAdapter().getConfig().getConfigurationSection("abilities." + this.name.replace('_', '-'));
+    public ConfigurationSection getOptions(SkilledPlayer info) {
+        return Objects.requireNonNull(
+                info.getSkill().getAdapter().getConfig().getConfigurationSection("abilities." + this.name.replace('_', '-')),
+                () -> "Could not find configuration options for " + this.name + " ability in " + info.getSkillName() + " class."
+        );
     }
 
-    public SkillsSkillConfig getExtra(String skill, String extra) {
-        return new SkillsSkillConfig(SkillManager.getSkill(skill).getAdapter().getConfig(), "abilities." + this.name.replace('_', '-') + '.' + extra);
+    public SkillsSkillConfig getOptions(String skill, String option) {
+        return new SkillsSkillConfig(SkillManager.getSkill(skill).getAdapter().getConfig(), "abilities." + this.name.replace('_', '-') + '.' + option);
     }
 
-    public SkillsSkillConfig getExtra(SkilledPlayer info, String extra) {
-        return new SkillsSkillConfig(info.getSkill().getAdapter().getConfig(), "abilities." + this.name.replace('_', '-') + '.' + extra);
+    public SkillsSkillConfig getOptions(SkilledPlayer info, String scaling) {
+        return new SkillsSkillConfig(info.getSkill().getAdapter().getConfig(), "abilities." + this.name.replace('_', '-') + '.' + scaling);
     }
 
-    public double getExtraScaling(SkilledPlayer info, String extra, EntityDamageByEntityEvent event) {
+    public double getScaling(SkilledPlayer info, String scaling, EntityDamageByEntityEvent event) {
         LivingEntity entity = (LivingEntity) event.getEntity();
-        return getExtraScaling(info, extra, "damage", event.getDamage(), "hp", entity.getHealth(),
-                "maxHp", entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        return getScaling(info, scaling,
+                "damage", event.getDamage(),
+                "hp", entity.getHealth(),
+                "maxHp", entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
+        );
     }
 
-    public double getExtraScaling(SkilledPlayer info, String extra, Object... edits) {
+    @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
+    public double getScaling(SkilledPlayer info, String option, Object... edits) {
         Objects.requireNonNull(info, "Player info cannot be null");
-        String scaling = getScalingEquation(info, extra);
-        return getAbsoluteScaling(info, scaling, edits);
+        Object value = getOptions(info).get(option);
+        if (value == null) {
+            MessageHandler.sendConsolePluginMessage("&cMissing scaling for &e" + info.getSkillName() + " &cconfig&8: " +
+                    "&eabilities &7-> &e" + name + " &7-> &e" + option.replace(".", " &7-> &e"));
+            return 0;
+        }
+
+        if (value instanceof ConfigurationSection) {
+            ConfigurationSection section = (ConfigurationSection) value;
+            int closest = SkillsConfig.getClosestLevelSection(section, info.getAbilityLevel(this));
+            return getAbsoluteScaling(info, section.getString(String.valueOf(closest)), edits);
+        }
+        if (value instanceof Number) return ((Number) value).doubleValue();
+        return getAbsoluteScaling(info, value.toString(), edits);
     }
 
     public int getCost(SkilledPlayer info) {
-        String cost = getExtra(info).getString("cost");
+        String cost = getOptions(info).getString("cost");
         if (cost == null) return 0;
         return (int) getAbsoluteScaling(info, cost);
     }
@@ -273,17 +294,24 @@ public abstract class Ability implements Listener {
         return this.name.equals(ability.name);
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     public SkilledPlayer checkup(Player player) {
         GameMode mode = player.getGameMode();
         if (mode == GameMode.SPECTATOR) return null;
         if (mode == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return null;
+
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+        if (info.isUsingAbility()) return null;
+        if (!isPassive() && !info.isActiveReady((ActiveAbility) this)) return null;
 
-        if (!info.getSkill().hasAbility(this)) return null;
-        if (info.isAbilityDisabled(this)) return null;
-
-        if (!this.name.endsWith("passive") && info.getImprovementLevel(this) < 1) return null;
-        if (!this.isPassive() && !((ActiveAbility) this).activateOnReady && !info.isActiveReady()) return null;
+        PlayerAbilityData data = info.getAbilityData(this);
+        if (data == null) return null; // The player's active skill doesn't have this ability
+        if (data.isDisabled()) return null;
+        if (data.getLevel() < 1 && !this.name.endsWith("passive")) return null;
 
         if (SkillsConfig.isInDisabledWorld(player.getWorld())) return null;
         if (ServiceHandler.isInRegion(player, getDisabledRegions(info))) return null;
@@ -291,22 +319,53 @@ public abstract class Ability implements Listener {
     }
 
     public List<String> getDisabledRegions(SkilledPlayer info) {
-        return getExtra(info).getStringList("disabled-regions");
+        return getOptions(info).getStringList("disabled-regions");
     }
 
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[0];
+    public List<Object> getEdits(List<Object> edits, ConfigurationSection options, String previousKeys, SkilledPlayer info) {
+        for (String option : options.getKeys(false)) {
+            if (option.equals("required-level") || option.equals("activation") || option.equals("cost")) continue;
+
+            Object value = options.get(option);
+            boolean isSection = value instanceof ConfigurationSection;
+            if (!isSection && !(value instanceof String) && !(value instanceof Number)) continue;
+            if (isSection) {
+                ConfigurationSection section = (ConfigurationSection) value;
+                if (!section.isSet("1")) {
+                    option = StringUtils.toLatinLowerCase(option, '*', '*');
+                    getEdits(
+                            edits, section,
+                            (previousKeys.isEmpty() ? "" : previousKeys + '_') + option + '_',
+                            info
+                    );
+                    continue;
+                }
+            }
+
+            Supplier<String> supplier = () -> {
+                if (isSection) {
+                    ConfigurationSection section = (ConfigurationSection) value;
+                    int closest = SkillsConfig.getClosestLevelSection(section, info.getAbilityLevel(this));
+                    return getScalingDescription(info, section.getString(String.valueOf(closest)));
+                }
+                if (value instanceof Number) return value.toString();
+                return getScalingDescription(info, value.toString());
+            };
+
+            edits.add('%' + previousKeys + StringUtils.toLatinLowerCase(option, '*', '*') + '%');
+            edits.add(supplier);
+        }
+
+        return edits;
     }
 
-    public Object[] copyEdits(SkilledPlayer info, Object[] edits) {
-        Object[] apply = applyEdits(info);
-        List<Object> masterEdit = new ArrayList<>(Arrays.asList(edits));
-        masterEdit.addAll(Arrays.asList(apply));
-        return masterEdit.toArray();
+    public List<Object> getEdits(SkilledPlayer info) {
+        List<Object> edits = new ArrayList<>((8 + 5) * 2); // The other 8 are for the edits that will be added soon.
+        return getEdits(edits, getOptions(info), "", info);
     }
 
     public int getRequiredLevel(SkilledPlayer info) {
-        String scaling = getExtra(info).getString("required-level");
+        String scaling = getOptions(info).getString("required-level");
         if (Strings.isNullOrEmpty(scaling)) return 0;
         return (int) getAbsoluteScaling(info, scaling);
     }

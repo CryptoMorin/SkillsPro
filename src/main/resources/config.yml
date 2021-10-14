@@ -49,6 +49,12 @@ skill-change-reset:
   stats: false
   masteries: false
 
+# These options require a restart to apply.
+skills-shared-data:
+  souls: true
+  levels: false
+  stats: false
+
 # Player's default data when they join.
 starter:
   enabled: false
@@ -62,11 +68,6 @@ starter:
     def: 0
     dex: 0
     int: 0
-
-skills-shared-data:
-  souls: true
-  levels: false
-  stats: false
 
 # Backups are taken every day, after server starts or the plugin is reloaded.
 backups:
@@ -412,11 +413,20 @@ hologram:
 # Important: The order of this list matters! For example:
 # "TYPE:WITHER_SKELETON": 30
 # "CUSTOM:SkeletonKing": 40
+# You can also use levels of mobs without using the "CUSTOM" placeholder if you're using a plugin that doesn't
+# have a way to identify mobs, but only has levels such as LevelledMobs.
+# If the mob doesn't have a level, the "lvl" placeholder will return 1
 # This will not work because the first entry is prioritized over the second one. And since SkeletonKing
 # is a wither skeleton (MythicMobs default), you'll get 30 instead of 40.
 xp:
   "TYPE:PLAYER": 20
   "TYPE:SKELETON": 30
+
+# As you know, the above list uses the Vanilla EXP of mobs if they're
+# not specified in the list, by changing the value of this option all the
+# mobs not that are not in the list above, will give the same amount of XP.
+# Set to -1 to use the Vanilla EXP.
+default-xp: -1
 
 # Custom souls for each mob.
 # It uses the same system as custom XP.
@@ -432,6 +442,8 @@ spawners:
   # Both of these support placeholders and their own special gained %xp% and %souls% placeholders.
   xp: "%xp% / 3"
   souls: 0
+
+default-souls: 1
 
 # Prevent activating skills.
 # Supports "CONTAINS" and "REGEX" prefixes
@@ -540,10 +552,10 @@ level-celebration: true
 levels:
   # Level 0 is necessary. It's the default level property.
   0:
-    message: "&8[&6%skills_maxxp%XP &7-> &6%next_maxxp%XP&8] &3You've leveled up to &e%lvl%&3! Gained &e%gained_souls% &3souls and &e%gained_stats% &3statpoints."
+    message: "&8[&6%skills_fancy_maxxp%XP &7-> &6%next_maxxp%XP&8] &3You've leveled up to &e%lvl%&3! Gained &e%gained_souls% &3souls and &e%gained_stats% &3statpoints."
     title:
       title: "&3Level Up!"
-      subtitle: "&8[&6%skills_maxxp%XP &7-> &6%next_maxxp%XP&8] &3Level %lvl%"
+      subtitle: "&8[&6%skills_fancy_maxxp%XP &7-> &6%next_maxxp%XP&8] &3Level %lvl%"
       fade-in: 20
       stay: 50
       fade-out: 20
@@ -616,6 +628,18 @@ stats:
   allow-reset: true
   # Cost to reset stats.
   reset-cost: 0
+
+  # Functional types are kinda like small abilities
+  # Thses give stats meaning on their own without being used as
+  # a variable for abilities.
+  # But technically speaking, stats will remain as variables.
+  # To disable any of these types just put "0"
+  functional-types:
+    damage: 0
+    defense: 0
+    speed: 0 # The value must be between 0 and 1.0
+    critical-damage: 'str / 3'
+    critical-chance: 'dex / 3'
 
   types:
     str:

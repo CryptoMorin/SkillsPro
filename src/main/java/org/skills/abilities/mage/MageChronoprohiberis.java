@@ -3,7 +3,6 @@ package org.skills.abilities.mage;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,50 +16,41 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.services.manager.ServiceHandler;
+import org.skills.utils.EntityUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MageChronoprohiberis extends ActiveAbility {
+public class MageChronoprohiberis extends InstantActiveAbility {
     private static final String META = "Chronoprohiberis";
 
     public MageChronoprohiberis() {
-        super("Mage", "chronoprohiberis", true);
+        super("Mage", "chronoprohiberis");
     }
 
     @Override
-    public void useSkill(Player player) {
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
         Set<LivingEntity> entities = new HashSet<>();
-        double range = getExtraScaling(info, "range");
-        int duration = (int) getExtraScaling(info, "duration") * 20;
-        double damage = getExtraScaling(info, "damage");
+        double range = getScaling(info, "range");
+        int duration = (int) getScaling(info, "duration") * 20;
+        double damage = getScaling(info, "damage");
         List<PotionEffect> effects = getEffects(info, "effects");
-        ParticleDisplay display = ParticleDisplay.simple(null, Particle.SMOKE_LARGE);
-        display.withCount(50).offset(0.5, 0.5, 0.5);
+        ParticleDisplay display = ParticleDisplay.of(Particle.SMOKE_LARGE).withCount(50).offset(.5);
         Set<EntityType> blacklisted = getEntityList(info, "blacklisted");
 
         for (Entity entity : player.getNearbyEntities(range, range, range)) {
-            if (!(entity instanceof LivingEntity)) continue;
-            if (entity.getType() == EntityType.ARMOR_STAND) continue;
+            if (EntityUtil.filterEntity(player, entity)) continue;
+            if (blacklisted.contains(entity.getType())) continue;
+
             LivingEntity livingEntity = (LivingEntity) entity;
-            if (livingEntity.isInvulnerable()) continue;
-            if (blacklisted.contains(livingEntity.getType())) continue;
-
-            if (livingEntity instanceof Player) {
-                Player entityPlayer = (Player) livingEntity;
-                GameMode mode = entityPlayer.getGameMode();
-                if (mode == GameMode.CREATIVE || mode == GameMode.SPECTATOR) continue;
-                if (!ServiceHandler.canFight(player, livingEntity)) continue;
-            }
-
             entities.add(livingEntity);
             livingEntity.setMetadata(META, new FixedMetadataValue(SkillsPro.get(), null));
             if (!(livingEntity instanceof Player)) livingEntity.setAI(false);
@@ -73,7 +63,7 @@ public class MageChronoprohiberis extends ActiveAbility {
 
         if (entities.isEmpty()) return;
 
-        display.particle = Particle.CLOUD;
+        display.withParticle(Particle.CLOUD);
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             for (LivingEntity entity : entities) {
                 entity.removeMetadata(META, SkillsPro.get());
@@ -82,11 +72,6 @@ public class MageChronoprohiberis extends ActiveAbility {
                 XSound.BLOCK_BEACON_DEACTIVATE.play(entity);
             }
         }, duration);
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%damage%", translate(info, "damage"), "%duration%", translate(info, "duration"), "%range%", translate(info, "range")};
     }
 
     @EventHandler(ignoreCancelled = true)

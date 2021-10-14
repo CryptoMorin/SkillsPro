@@ -14,14 +14,14 @@ public class VampireBloodWell extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onVampireEnergyChange(SkillEnergyChangeEvent event) {
-        Player p = event.getPlayer();
-        SkilledPlayer info = this.checkup(p);
+        Player player = event.getPlayer();
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
         double blood = info.getEnergy();
         if (blood < event.getAmount()) return;
 
-        double chance = this.getScaling(info);
-        if (MathUtils.hasChance((int) chance)) event.setCancelled(true);
+        double chance = this.getScaling(info, "chance");
+        if (!MathUtils.hasChance((int) chance)) event.setCancelled(true);
     }
 }

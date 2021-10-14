@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.skills.data.database.DataContainer;
 import org.skills.data.database.SkillsDatabase;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.events.SkillsEventType;
 import org.skills.party.SkillsParty;
@@ -27,6 +28,7 @@ public class JsonDatabase<T extends DataContainer> implements SkillsDatabase<T> 
             .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
             .registerTypeAdapter(UUID.class, new AdapterUUID())
             .registerTypeAdapter(SkilledPlayer.class, new AdapterSkilledPlayer())
+            .registerTypeAdapter(PlayerSkill.class, new AdapterPlayerSkill())
             .registerTypeAdapter(SkillsParty.class, new AdapterSkillsParty())
             .registerTypeHierarchyAdapter(SkillsEventType.class, new AdapterEventType())
             .enableComplexMapKeySerialization()

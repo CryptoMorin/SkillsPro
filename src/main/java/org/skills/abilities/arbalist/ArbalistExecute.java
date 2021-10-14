@@ -18,11 +18,12 @@ import org.skills.main.SkillsConfig;
 import org.skills.utils.MathUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ArbalistExecute extends Ability {
-    private static final HashMap<UUID, UUID> EXECUTOR = new HashMap<>();
-    private static final HashMap<UUID, Integer> EXECUTES = new HashMap<>();
+    private static final Map<UUID, UUID> EXECUTOR = new HashMap<>();
+    private static final Map<UUID, Integer> EXECUTES = new HashMap<>();
 
     public ArbalistExecute() {
         super("Arbalist", "execute");
@@ -63,8 +64,8 @@ public class ArbalistExecute extends Ability {
         int executer = EXECUTES.getOrDefault(oldTarget, 0);
         EXECUTES.put(oldTarget, executer + 1);
 
-        int lvl = info.getImprovementLevel(this);
-        int chance = (int) this.getScaling(info);
+        int lvl = info.getAbilityLevel(this);
+        int chance = (int) this.getScaling(info, "chance");
         int multiplier = executer * 2;
 
         if (MathUtils.hasChance(chance + multiplier)) {
@@ -77,7 +78,7 @@ public class ArbalistExecute extends Ability {
             target.getWorld().strikeLightning(target.getLocation());
         }
 
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             player.playNote(player.getLocation(), Instrument.CHIME, Note.natural(0, Note.Tone.values()
                     [(Math.min(executer, Note.Tone.values().length - 1))]));
         }

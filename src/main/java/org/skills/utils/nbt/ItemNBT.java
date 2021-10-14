@@ -3,18 +3,14 @@ package org.skills.utils.nbt;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.util.UUID;
 
-public class ItemNBT {
+public final class ItemNBT {
     public static final boolean CAN_ACCESS_UNBREAKABLE;
     private static final MethodHandle AS_NMS_COPY;
     private static final MethodHandle AS_BUKKIT_COPY;
@@ -30,12 +26,10 @@ public class ItemNBT {
         MethodHandle setTag = null;
         MethodHandle getTag = null;
 
-        //if (!XMaterial.isNewVersion()) {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         Class<?> crafItemStack = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
-        Class<?> nmsItemStack = ReflectionUtils.getNMSClass("ItemStack");
-        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("NBTTagCompound");
-        Class<?> nbtBase = ReflectionUtils.getNMSClass("NBTBase");
+        Class<?> nmsItemStack = ReflectionUtils.getNMSClass("world.item", "ItemStack");
+        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("nbt", "NBTTagCompound");
 
         try {
             asNmsCopy = lookup.findStatic(crafItemStack, "asNMSCopy", MethodType.methodType(nmsItemStack, ItemStack.class));
@@ -51,26 +45,6 @@ public class ItemNBT {
         AS_BUKKIT_COPY = asBukkitCopy;
         SET_TAG = setTag;
         GET_TAG = getTag;
-    }
-
-    public static ItemStack addSimpleTag(ItemStack item, String tag, String value) {
-//        if (XMaterial.isNewVersion()) {
-//            ItemMeta meta = item.getItemMeta();
-//            NamespacedKey key = new NamespacedKey(PLUGIN, tag);
-//
-//            if (XMaterial.supports(14)) {
-//                meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, value);
-//            } else {
-//                meta.getCustomTagContainer().setCustomTag(key, ItemTagType.STRING, value);
-//            }
-//            item.setItemMeta(meta);
-//
-//            return item;
-//        }
-
-        NBTWrappers.NBTTagCompound compound = ItemNBT.getTag(item);
-        compound.setString(tag, value);
-        return ItemNBT.setTag(item, compound);
     }
 
     private static Object asNMSCopy(ItemStack item) {
@@ -98,6 +72,12 @@ public class ItemNBT {
         }
     }
 
+    public static ItemStack addSimpleTag(ItemStack item, String tag, String value) {
+        NBTWrappers.NBTTagCompound compound = ItemNBT.getTag(item);
+        compound.setString(tag, value);
+        return ItemNBT.setTag(item, compound);
+    }
+
     /**
      * Sets the NBT tag of an item
      *
@@ -106,7 +86,8 @@ public class ItemNBT {
      *
      * @return The modified itemStack
      */
-    public static ItemStack setTag(ItemStack item, NBTWrappers.NBTTagCompound tag) {
+    @NonNull
+    public static ItemStack setTag(@NonNull ItemStack item, NBTWrappers.NBTTagCompound tag) {
         Object nbtTag = tag.toNBT();
         Object nmsItem = asNMSCopy(item);
 
@@ -126,18 +107,8 @@ public class ItemNBT {
      *
      * @return The NBTTagCompound of the ItemStack or a new one if it had none or an error occurred
      */
-    public static NBTWrappers.NBTTagCompound getTag(ItemStack item) {
-        if (XMaterial.isNewVersion()) {
-            ItemMeta meta = item.getItemMeta();
-            //NamespacedKey key = new NamespacedKey(PLUGIN, "");
-
-            if (XMaterial.supports(14)) {
-                //meta.getPersistentDataContainer().get(key, type.getPersistentDataType());
-            } else {
-                //meta.getCustomTagContainer().getCustomTag(key, type.getItemTagType());
-            }
-        }
-
+//    @NonNull
+    public static NBTWrappers.NBTTagCompound getTag(@NonNull ItemStack item) {
         Object nmsItem = asNMSCopy(item);
         Object tag = null;
         try {
@@ -147,49 +118,7 @@ public class ItemNBT {
         }
         if (tag == null) return new NBTWrappers.NBTTagCompound();
 
-        NBTWrappers.NBTBase base = NBTWrappers.NBTBase.fromNBT(tag);
-        if (base == null || base.getClass() != NBTWrappers.NBTTagCompound.class) return new NBTWrappers.NBTTagCompound();
-        return (NBTWrappers.NBTTagCompound) base;
-    }
-
-    public static ItemStack setUnbreakable(ItemStack item, boolean unbreakable) {
-        if (CAN_ACCESS_UNBREAKABLE) {
-            ItemMeta meta = item.getItemMeta();
-            meta.setUnbreakable(unbreakable);
-            item.setItemMeta(meta);
-            return item;
-        }
-
-        NBTWrappers.NBTTagCompound tag = getTag(item);
-        tag.set("Unbreakable", NBTType.BOOLEAN, unbreakable);
-        return setTag(item, tag);
-    }
-
-    protected static ItemStack setAttributes(ItemStack item, boolean unbreakable) {
-        if (XMaterial.supports(9)) {
-            ItemMeta meta = item.getItemMeta();
-            meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, new AttributeModifier("34", 343, AttributeModifier.Operation.ADD_NUMBER));
-            item.setItemMeta(meta);
-            return item;
-        }
-
-        NBTWrappers.NBTTagCompound tag = getTag(item);
-        NBTWrappers.NBTTagList modifiers = new NBTWrappers.NBTTagList();
-        NBTWrappers.NBTTagCompound attribute = new NBTWrappers.NBTTagCompound();
-
-        // https://minecraft.gamepedia.com/Attribute
-        UUID id = UUID.randomUUID();
-        attribute.set("AttributeName", NBTType.STRING, "generic.attackSpeed");
-        attribute.set("Name", NBTType.STRING, "generic.attackSpeed");
-        attribute.set("Amount", NBTType.INTEGER, 34);
-        attribute.set("Operation", NBTType.INTEGER, 3);
-        attribute.set("UUIDLeast", NBTType.INTEGER, (int) id.getLeastSignificantBits());
-        attribute.set("UUIDMost", NBTType.INTEGER, (int) id.getMostSignificantBits());
-        attribute.set("Slot", NBTType.STRING, EquipmentSlot.OFF_HAND.name().toLowerCase().replace("_", ""));
-        // "mainhand" "offhand"
-
-        modifiers.add(attribute);
-        tag.set("AttributeModifiers", modifiers);
-        return setTag(item, tag);
+        NBTWrappers.NBTTagCompound base = NBTWrappers.NBTTagCompound.fromNBT(tag);
+        return base == null ? new NBTWrappers.NBTTagCompound() : base;
     }
 }

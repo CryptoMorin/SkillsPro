@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.FileManager;
 import org.skills.main.SLogger;
@@ -39,13 +40,95 @@ public class OldSkillsConverter {
         this.plugin = plugin;
         this.dbFolder = dbFolder;
         if (!dbFolder.exists()) dbFolder.mkdirs();
-        this.conv = dbFolder.getParentFile().toPath().resolve("DONT DELETE ME V3.txt");
+        this.conv = dbFolder.getParentFile().toPath().resolve("DONT DELETE ME V4.txt");
 
         //validateConfigs();
         //convertData();
-//        convertDataV2();
-        convertDataV3();
+        //convertDataV2();
+        //convertDataV3();
+        convertDataV4();
     }
+
+    private void convertDataV4() {
+        if (Files.exists(this.conv)) return;
+        File[] files = dbFolder.listFiles();
+        if (files.length == 0) {
+            createConvFile(-1);
+            return;
+        }
+        if (!PlayerSkill.SHARED_LEVELS && !PlayerSkill.SHARED_SOULS && !PlayerSkill.SHARED_STATS) return;
+        int converted = 0;
+
+        MessageHandler.sendConsolePluginMessage("&4Converting players data... This may take a few seconds");
+        for (File datas : files) {
+            if (!datas.isFile()) continue;
+            MessageHandler.sendConsolePluginMessage("&cConverting player data for&8: &e" + datas.getName());
+            JSONParser jsonParser = new JSONParser();
+            Path path = Paths.get(datas.getPath());
+
+            try (BufferedReader reader = Files.newBufferedReader(path)) {
+                JSONObject json = (JSONObject) jsonParser.parse(reader);
+                String skill = (String) json.get("skill");
+                JSONObject skills = (JSONObject) json.get("skills");
+
+                Object lvl = 0;
+                Object xp = 0;
+                Object souls = 0;
+                Object stats = null;
+
+                for (Object entry : skills.entrySet()) {
+                    Map.Entry<String, JSONObject> pair = (Map.Entry<String, JSONObject>) entry;
+                    boolean master = pair.getKey().equals(skill);
+                    JSONObject data = pair.getValue();
+
+                    if (PlayerSkill.SHARED_LEVELS) {
+                        Object level = data.remove("level");
+                        Object exp = data.remove("xp");
+                        if (master) {
+                            lvl = level;
+                            xp = exp;
+                        }
+                    }
+                    if (PlayerSkill.SHARED_SOULS) {
+                        Object soul = data.remove("souls");
+                        if (master) souls = soul;
+                    }
+                    if (PlayerSkill.SHARED_STATS) {
+                        Object sts = data.remove("stats");
+                        if (master) stats = sts;
+                    }
+                }
+
+                if (PlayerSkill.SHARED_LEVELS) {
+                    json.put("level", lvl);
+                    json.put("xp", xp);
+                }
+                if (PlayerSkill.SHARED_SOULS) json.put("souls", souls);
+                if (PlayerSkill.SHARED_STATS) json.put("stats", stats);
+
+                try (BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+                    bw.write(json.toJSONString());
+                    bw.flush();
+                }
+
+                String uuid = datas.getName().replace(".json", "");
+                SkilledPlayer info = plugin.getPlayerDataManager().database.load(uuid);
+                plugin.getPlayerDataManager().save(info);
+                converted++;
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        createConvFile(converted);
+        if (converted != 0) {
+            MessageHandler.sendConsolePluginMessage(" ");
+            MessageHandler.sendConsolePluginMessage("&4A total of &e" + converted + " &4players data have been converted. V2");
+            MessageHandler.sendConsolePluginMessage("&4Note that this should only happen once. If this happened again make sure to report this issue.");
+            MessageHandler.sendConsolePluginMessage(" ");
+        }
+    }
+
 
     private void convertDataV3() {
         if (Files.exists(this.conv)) return;
@@ -245,7 +328,7 @@ public class OldSkillsConverter {
                     obj.remove("uuid");
 
                     String skill = (String) obj.get("skill");
-                    if (skill.equalsIgnoreCase("none")) skill = "none";
+                    if (skill.equalsIgnoreCase(PlayerSkill.NONE)) skill = PlayerSkill.NONE;
                     else skill = StringUtils.capitalize(skill);
 //                    obj.put("skill", skill);
 //                    convertStats(obj);

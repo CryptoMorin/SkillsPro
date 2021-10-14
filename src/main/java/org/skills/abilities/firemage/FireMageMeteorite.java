@@ -2,7 +2,6 @@ package org.skills.abilities.firemage;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -15,28 +14,30 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
 import org.skills.services.manager.ServiceHandler;
+import org.skills.utils.EntityUtil;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FireMageMeteorite extends ActiveAbility {
+public class FireMageMeteorite extends InstantActiveAbility {
     private static final String METEORITE = "METEORITE";
 
     public FireMageMeteorite() {
-        super("FireMage", "meteorite", true);
+        super("FireMage", "meteorite");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
         Block center;
         if (XMaterial.supports(13)) center = player.getTargetBlockExact(20);
@@ -56,8 +57,8 @@ public class FireMageMeteorite extends ActiveAbility {
         ParticleDisplay ex = ParticleDisplay.simple(null, Particle.EXPLOSION_NORMAL).withCount(10).offset(1, 1, 1);
 
         new BukkitRunnable() {
-            final float yield = (float) getExtraScaling(info, "yield");
-            int balls = (int) getExtraScaling(info, "fireballs");
+            final float yield = (float) getScaling(info, "yield");
+            int balls = (int) getScaling(info, "fireballs");
 
             @Override
             public void run() {
@@ -110,19 +111,12 @@ public class FireMageMeteorite extends ActiveAbility {
 
         Player player = (Player) fireBall.getMetadata(METEORITE).get(0).value();
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        double scaling = getScaling(info);
-        double range = getExtraScaling(info, "range");
+        double damage = getScaling(info, "damage");
+        double range = getScaling(info, "range");
 
         for (Entity entity : fireBall.getNearbyEntities(range, range, range)) {
-            if (!(entity instanceof LivingEntity)) continue;
-            if (entity.getType() == EntityType.ARMOR_STAND) continue;
-            if (entity.getUniqueId().equals(player.getUniqueId())) continue;
-            if (entity instanceof Player) {
-                Player player1 = (Player) entity;
-                if (player1.getGameMode() == GameMode.CREATIVE || player1.getGameMode() == GameMode.SPECTATOR) continue;
-            }
-
-            LastHitManager.damage((LivingEntity) entity, player, scaling);
+            if (EntityUtil.filterEntity(player, entity)) continue;
+            DamageManager.damage((LivingEntity) entity, player, damage);
         }
     }
 }

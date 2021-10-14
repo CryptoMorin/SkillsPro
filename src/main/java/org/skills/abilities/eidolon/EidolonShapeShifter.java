@@ -27,11 +27,12 @@ public class EidolonShapeShifter extends Ability {
             if (info != null) {
                 // 0-15
                 int lightLvl = player.getLocation().getBlock().getLightLevel();
-                if (lightLvl <= 7 && !getExtra(info, "reversed").getBoolean()) return;
+                if (lightLvl <= 7 && !getOptions(info, "reversed").getBoolean()) return;
                 if (lightLvl > 7) lightLvl -= 7;
                 else lightLvl = 7 - lightLvl;
 
-                event.setDamage(event.getDamage() - getScaling(info, "damage", event.getDamage(), "light", String.valueOf(lightLvl)));
+                event.setDamage(event.getDamage() - getScaling(info, "damage-shield",
+                        "damage", event.getDamage(), "light", String.valueOf(lightLvl)));
             }
         }
 
@@ -42,11 +43,12 @@ public class EidolonShapeShifter extends Ability {
             if (info == null) return;
             // 0-15
             int lightLvl = player.getLocation().getBlock().getLightLevel();
-            if (lightLvl >= 7 && !getExtra(info, "reversed").getBoolean()) return;
+            if (lightLvl >= 7 && !getOptions(info, "reversed").getBoolean()) return;
             if (lightLvl > 7) lightLvl -= 7;
             else lightLvl = 7 - lightLvl;
 
-            event.setDamage(event.getDamage() + getScaling(info, "damage", event.getDamage(), "light", String.valueOf(lightLvl)));
+            event.setDamage(event.getDamage() + getScaling(info, "damage-shield",
+                    "damage", event.getDamage(), "light", String.valueOf(lightLvl)));
         }
     }
 }

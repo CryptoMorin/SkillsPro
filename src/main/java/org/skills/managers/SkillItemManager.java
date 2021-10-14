@@ -31,7 +31,7 @@ import org.skills.utils.nbt.NBTWrappers;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SkillItemManager implements Listener {
+public final class SkillItemManager implements Listener {
     public static final String SKILL_ITEM = "Skill_Item";
     private static final String XP = "SKILLS_XP";
 
@@ -94,5 +94,6 @@ public class SkillItemManager implements Listener {
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         int xp = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, amt));
         info.addXP(xp);
+        HealthAndEnergyManager.updateStats(player);
     }
 }

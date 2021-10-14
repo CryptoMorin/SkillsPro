@@ -7,24 +7,27 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.managers.LastHitManager;
-import org.skills.services.manager.ServiceHandler;
+import org.skills.main.locale.SkillsLang;
+import org.skills.managers.DamageManager;
 import org.skills.utils.EntityUtil;
 import org.skills.utils.MathUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class JuggernautChainSmash extends ActiveAbility {
+public class JuggernautChainSmash extends InstantActiveAbility {
     private static final Set<Integer> PERFORMING = new HashSet<>();
     private static final String CHAIN_SMASH = "CHAIN_SMASH";
 
@@ -33,7 +36,7 @@ public class JuggernautChainSmash extends ActiveAbility {
     }
 
     public JuggernautChainSmash() {
-        super("Juggernaut", "chain_smash", true);
+        super("Juggernaut", "chain_smash");
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -81,21 +84,25 @@ public class JuggernautChainSmash extends ActiveAbility {
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
-        player.setVelocity(new Vector(0, 1, 0));
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
+        info.toggleUsingAbility();
+
+        double initialLaunch = getScaling(info, "initial-launch");
+        player.setVelocity(new Vector(0, initialLaunch, 0));
         XSound.ENTITY_HORSE_JUMP.play(player, 3, 0);
-        ParticleDisplay cloud = new ParticleDisplay(Particle.CLOUD, player.getLocation(), 100, 1, 1, 1);
+        ParticleDisplay cloud = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).withCount(100).offset(1);
         cloud.spawn();
         PERFORMING.add(player.getEntityId());
 
-        double scaling = getScaling(info);
-        double range = getExtraScaling(info, "range");
-        double launch = getExtraScaling(info, "launch");
+        double damage = getScaling(info, "damage");
+        double range = getScaling(info, "range");
+        double launch = getScaling(info, "launch");
+        double smashForce = getScaling(info, "smash-force");
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
-            player.setVelocity(new Vector(0, -3, 0));
+            player.setVelocity(new Vector(0, smashForce, 0));
 
             new BukkitRunnable() {
                 @Override
@@ -105,6 +112,7 @@ public class JuggernautChainSmash extends ActiveAbility {
 
                     // If they're not on the ground yet.
                     if (!MathUtils.isInteger(loc.getY())) return;
+                    info.toggleUsingAbility();
 
                     cancel();
                     cloud.spawn(loc);
@@ -113,22 +121,30 @@ public class JuggernautChainSmash extends ActiveAbility {
                     tnt.setFuseTicks(0);
 
                     XSound.ENTITY_GENERIC_EXPLODE.play(player, (float) range, XSound.DEFAULT_PITCH);
-                    ParticleDisplay display = new ParticleDisplay(Particle.EXPLOSION_LARGE, null, 10, 1, 1, 1);
+                    ParticleDisplay display = ParticleDisplay.of(Particle.EXPLOSION_LARGE).withCount(10).offset(1);
                     explosionWave(SkillsPro.get(), 20, ParticleDisplay.simple(loc, Particle.FIREWORKS_SPARK),
                             ParticleDisplay.simple(loc, Particle.SPELL_WITCH));
 
                     for (Entity entity : player.getNearbyEntities(range, range, range)) {
-                        if (EntityUtil.isInvalidEntity(entity)) continue;
-                        if (!ServiceHandler.canFight(entity, player)) continue;
+                        if (EntityUtil.filterEntity(player, entity)) continue;
 
-                        LastHitManager.damage((LivingEntity) entity, player, scaling);
+                        DamageManager.damage((LivingEntity) entity, player, damage);
                         entity.setVelocity(new Vector(0, launch, 0));
                         display.spawn(entity.getLocation());
                     }
 
                     PERFORMING.remove(player.getEntityId());
                 }
-            }.runTaskTimer(SkillsPro.get(), 1L, 1L);
+            }.runTaskTimer(SkillsPro.get(), 5L, 1L);
         }, 20L);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onTp(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+        SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+        if (info.isUsingAbility()) return;
+        if (info.getLastAbilityUsed() != this) return;
+        SkillsLang.COMMAND_BINDINGS_CHANGED.sendMessage(player);
     }
 }

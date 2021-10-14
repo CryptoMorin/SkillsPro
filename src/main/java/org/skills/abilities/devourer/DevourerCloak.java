@@ -20,7 +20,7 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.SkillsLang;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
 import org.skills.utils.Cooldown;
 
 import java.util.EnumSet;
@@ -35,12 +35,12 @@ public class DevourerCloak extends Ability {
         super("Devourer", "cloak");
     }
 
-    private static void activateInvisibility(SkilledPlayer info, Player p) {
-        if (!p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-            if (info.showReadyMessage()) p.sendMessage(SkillsLang.Skill_Devourer_Invis_Enabled.parse());
-            XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, true, false, new ParticleDisplay(Particle.CLOUD, p.getLocation()));
+    private static void activateInvisibility(SkilledPlayer info, Player player) {
+        if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            if (info.showReadyMessage()) player.sendMessage(SkillsLang.Skill_Devourer_Invis_Enabled.parse());
+            XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, true, false, ParticleDisplay.simple(player.getLocation(), Particle.CLOUD));
         }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 200, 1), true);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 200, 1), true);
     }
 
     @Override
@@ -65,29 +65,27 @@ public class DevourerCloak extends Ability {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDevourerAttack(EntityDamageByEntityEvent event) {
-        Player player = LastHitManager.getOwningPlayer(event.getDamager());
+        Player player = DamageManager.getOwningPlayer(event.getDamager());
         if (player == null) return;
 
         if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        int level = info.getImprovementLevel(this);
+        int level = info.getAbilityLevel(this);
         if (info.showReadyMessage()) SkillsLang.Skill_Devourer_Invis_Disabled.sendMessage(player);
-        if (level > 2) event.setDamage(event.getDamage() + this.getScaling(info));
+        if (level > 2) event.setDamage(event.getDamage() + this.getScaling(info, "damage", event));
 
         player.removePotionEffect(PotionEffectType.INVISIBILITY);
-        XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, true, false, new ParticleDisplay(Particle.CLOUD, player.getLocation()));
-        new Cooldown(player.getUniqueId(), INVIS, (long) this.getExtraScaling(info, "cooldown.invisibility"), TimeUnit.SECONDS);
+        XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, true, false, ParticleDisplay.simple(player.getLocation(), Particle.CLOUD));
+        new Cooldown(player.getUniqueId(), INVIS, (long) this.getScaling(info, "cooldown.invisibility"), TimeUnit.SECONDS);
 
-        if (getExtra(info).getBoolean("neutrality")) {
+        if (getOptions(info).getBoolean("neutrality")) {
             if (level > 1 && event.getEntityType() != EntityType.PLAYER) {
                 if (!Cooldown.isInCooldown(player.getUniqueId(), NEUTRAL)) {
                     SkillsLang.Skill_Devourer_Neutrality_Disabled.sendMessage(player);
                 }
-                new Cooldown(player.getUniqueId(), NEUTRAL, (long) this.getExtraScaling(info, "cooldown.neutrality"), TimeUnit.SECONDS);
+                new Cooldown(player.getUniqueId(), NEUTRAL, (long) this.getScaling(info, "cooldown.neutrality"), TimeUnit.SECONDS);
             }
         }
 
@@ -111,7 +109,6 @@ public class DevourerCloak extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onTarget(EntityTargetEvent event) {
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
         if (!(event.getTarget() instanceof Player)) return;
         if (TYPES.contains(event.getEntityType()) || event.getEntityType().name().equals("ELDER_GUARDIAN")) return;
 
@@ -119,8 +116,8 @@ public class DevourerCloak extends Ability {
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        if (!getExtra(info).getBoolean("neutrality")) return;
-        if (info.getImprovementLevel(this) < 2) return;
+        if (!getOptions(info).getBoolean("neutrality")) return;
+        if (info.getAbilityLevel(this) < 2) return;
         if (!Cooldown.isInCooldown(player.getUniqueId(), NEUTRAL)) event.setCancelled(true);
     }
 }

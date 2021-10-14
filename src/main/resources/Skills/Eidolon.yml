@@ -1,9 +1,8 @@
 name: "Eidolon"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + lvl/2
 max-level: 100
-max-health: 20 * 6
+max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
 energy-regen: 1 + 0.05 * lvl
 required-level: 30
@@ -12,35 +11,42 @@ stats: [ DEX, DEF ]
 energy: imbalance
 abilities:
   eidolon-passive:
-    scaling: int/10+1
+    heal: int/10+1
     sounds:
       imbalance:
         light: BLOCK_BEACON_ACTIVATE, 5, 2
         dark: BLOCK_BEACON_DEACTIVATE, 5, 2
   purify:
     required-level: 3
-    scaling: (str/15+lvl/2)
-    hp: hp / 5
-    max: int/6+lvl*4
-    energy-per-damage: 2
+    # Deals this damage
+    damage: str/15+lvl/2
+    # For every hp the opponent has
+    # which is basically "damage * hp"
+    hp: 5
+    max-damage: int/6+lvl*4
+    energy: lvl
+    energy-charge: 2
     cost: 100 * (lvl + 1)
   spirit-fire:
     required-level: 5
     # light scaling
-    scaling: str/7+lvl*3
+    light-damage-absorption-percent: max(str/7+lvl*3, 50)
+    max-damage-absorption: lvl * 30
     cost: 100 * (lvl + 1)
-    dark-scaling: 6-lvl
+    # Which is basically "absorbedDamage / darkDamageRelease"
+    # This is not the raw damage amount.
+    dark-damage-release: 6-lvl
   spectre:
     required-level: 5
-    scaling: 45-(lvl*5)
+    cooldown: 45-(lvl*5)
     cost: 100 * (lvl + 1)
-    dark-scaling: 45+(lvl*5)
+    dark-damage: 45+(lvl*5)
     speed: def/30
   shape-shifter:
     required-level: 10
     # Special Variables:
     # light = The light level of the block that the player is standing on. 0-15
-    scaling: light + 2
+    damage-shield: light + 2
     cost: 100 * (lvl + 1)
     reversed: false
   defile:
@@ -51,9 +57,10 @@ abilities:
       energy: 1
       cooldown: 17
       items: [ ]
-    scaling: lvl*8+(int/2)+5
-    damage: 1 + imbalance / 100
+    shield: lvl*8+(int/2)+5
+    damage: lvl * 2
     cost: 100 * (lvl + 1)
+    # Duration of the ability in seconds. Should be lower than the cooldown.
     time: lvl*3
   blackhole:
     required-level: 50
@@ -64,7 +71,7 @@ abilities:
       cooldown: 17
       items: [ ]
     # Note the damage is done every quality ticks.
-    scaling: int * 0.3
+    damage: int * 0.3
     # Pull the player every x tick.
     quality: 5
     # Duration of the blackhole in ticks.
@@ -81,6 +88,9 @@ abilities:
     # The distance to start damaging the player.
     distance: 2
     # Format: Type, Duration (in seconds), Amplifier (Level)
+    sounds:
+      start: ENTITY_ENDER_DRAGON_DEATH, 0.4, 1
+      blackhole: BLOCK_PORTAL_TRAVEL, 0.1, 2
     effects:
       - CONFUSION, 8, 2
     cost: 100 * (lvl + 1)
@@ -91,7 +101,8 @@ abilities:
       energy: 5
       cooldown: 3
       items: [ ]
-    scaling: lvl*8+(int/2)+5
-    # Fangs count for a straight line attack.
+    # The damage when fangs bite.
+    damage: lvl*8+(int/2)+5
+    # The amount of fangs for a straight line attack.
     fangs: lvl * 3
     cost: 100 * (lvl + 1)

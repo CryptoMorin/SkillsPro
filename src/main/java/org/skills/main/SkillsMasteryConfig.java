@@ -38,7 +38,7 @@ public enum SkillsMasteryConfig {
     }
 
     public boolean isSet() {
-        return XMaterial.isNewVersion() ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
+        return XMaterial.supports(13) ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
     }
 
     public String getOption() {

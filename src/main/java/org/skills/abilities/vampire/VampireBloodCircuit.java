@@ -16,36 +16,33 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
-import org.skills.managers.LastHitManager;
-import org.skills.utils.FastUUID;
+import org.skills.managers.DamageManager;
 import org.skills.utils.Laser;
 import org.skills.utils.versionsupport.VersionSupport;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class VampireBloodCircuit extends ActiveAbility {
     private static final String MINION = "VAMPIRE_VEX";
 
     public VampireBloodCircuit() {
-        super("vampire", "blood_circuit", false);
+        super("vampire", "blood_circuit");
     }
 
     private static void killMinion(LivingEntity livingMinion) {
-        livingMinion.getLocation().getWorld().spawnParticle(Particle.CLOUD, livingMinion.getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
+        ParticleDisplay.simple(livingMinion.getLocation(), Particle.CLOUD).withCount(100).offset(0.5).withExtra(0.05).spawn();
         livingMinion.setHealth(0);
     }
 
     private static Vex spawnMinion(Player player, LivingEntity entity) {
         Vex vex = (Vex) player.getWorld().spawnEntity(player.getLocation(), EntityType.VEX);
         vex.setTarget(entity);
-        if (XMaterial.isNewVersion()) vex.setCharging(true);
-        vex.setMetadata(MINION, new FixedMetadataValue(SkillsPro.get(), entity.getUniqueId()));
+        if (XMaterial.supports(13)) vex.setCharging(true);
+        vex.setMetadata(MINION, new FixedMetadataValue(SkillsPro.get(), entity));
         vex.setRemoveWhenFarAway(true);
         vex.setCustomName(MessageHandler.colorize("&c" + player.getName() + " Minion"));
         vex.setCustomNameVisible(true);
@@ -54,16 +51,14 @@ public class VampireBloodCircuit extends ActiveAbility {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onVampireCircuit(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (((LivingEntity) event.getEntity()).getHealth() - event.getFinalDamage() < 1) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (commonDamageCheckup(event)) return;
+        LivingEntity entity = (LivingEntity) event.getEntity();
+        if (entity.getHealth() - event.getFinalDamage() < 1) return;
 
         Player player = (Player) event.getDamager();
-        SkilledPlayer info = this.activeCheckup(player);
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        LivingEntity entity = (LivingEntity) event.getEntity();
         if (entity instanceof Player) {
             Player victim = (Player) entity;
             victim.playEffect(EntityEffect.GUARDIAN_TARGET);
@@ -73,7 +68,7 @@ public class VampireBloodCircuit extends ActiveAbility {
         crystal.setShowingBottom(false);
 
         XSound.ENTITY_ELDER_GUARDIAN_CURSE.play(crystal.getLocation());
-        boolean useLaser = getExtra(info, "use-laser").getBoolean();
+        boolean useLaser = false;//getOptions(info, "use-laser").getBoolean();
         Laser laser = null;
         if (useLaser) {
             try {
@@ -85,15 +80,15 @@ public class VampireBloodCircuit extends ActiveAbility {
         }
         Laser finalLaser = laser;
 
-        int lvl = info.getImprovementLevel(this);
+        int lvl = info.getAbilityLevel(this);
         new BukkitRunnable() {
-            final double damageMod = getExtraScaling(info, "damage-modifier", event);
-            final int inferno = (int) getExtraScaling(info, "inferno", event);
-            final double distance = getExtraScaling(info, "distance", event);
+            final double damageMod = getScaling(info, "damage-modifier", event);
+            final int inferno = (int) getScaling(info, "inferno", event);
+            final double distance = getScaling(info, "distance", event);
             final Set<LivingEntity> minions = new HashSet<>();
-            final ParticleDisplay particle = ParticleDisplay.simple(null, Particle.DRAGON_BREATH).withCount(10).offset(0.1, 0.1, 0.1);
-            double damage = getScaling(info, event);
-            int duration = (int) (getExtraScaling(info, "duration", event) * 20);
+            final ParticleDisplay particle = ParticleDisplay.simple(null, Particle.DRAGON_BREATH).withCount(10).offset(0.1);
+            double damage = getScaling(info, "damage", event);
+            int duration = (int) (getScaling(info, "duration", event) * 20);
             int repeat = 0;
             int particleTimer = 0;
 
@@ -102,7 +97,7 @@ public class VampireBloodCircuit extends ActiveAbility {
                 if (!entity.isValid() || !crystal.isValid() || duration-- <= 0) {
                     cancel();
                     if (useLaser) finalLaser.stop();
-                    crystal.getLocation().getWorld().spawnParticle(Particle.SPELL_WITCH, crystal.getLocation(), 200, 0.5, 0.5, 0.5, 0.05);
+                    ParticleDisplay.simple(crystal.getLocation(), Particle.SPELL_WITCH).withCount(200).offset(0.5).withExtra(0.5).spawn();
                     crystal.remove();
                     for (LivingEntity minion : minions) killMinion(minion);
                     return;
@@ -125,7 +120,7 @@ public class VampireBloodCircuit extends ActiveAbility {
                 }
                 if (repeat++ == inferno) {
                     repeat = 0;
-                    LastHitManager.damage(entity, player, damage);
+                    DamageManager.damage(entity, null, damage);
                     if (lvl > 1) VersionSupport.heal(player, damage);
 
                     damage += damageMod;
@@ -138,26 +133,14 @@ public class VampireBloodCircuit extends ActiveAbility {
 
     @EventHandler
     public void onTargetChange(EntityTargetEvent event) {
-        if (!XMaterial.supports(11) || event.getEntity().getType() != EntityType.VEX) return;
+        if (!XMaterial.supports(11)) return;
+        if (event.getEntity().getType() != EntityType.VEX) return;
+
         Entity minion = event.getEntity();
         List<MetadataValue> metas = minion.getMetadata(MINION);
         if (metas.isEmpty()) return;
-        UUID target = FastUUID.fromString(metas.get(0).asString());
+        Entity target = (Entity) metas.get(0).value();
 
-        if (event.getTarget() == null || !target.equals(event.getTarget().getUniqueId())) {
-            for (LivingEntity entity : minion.getLocation().getWorld().getLivingEntities()) {
-                if (target.equals(entity.getUniqueId())) {
-                    event.setTarget(entity);
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%damage-modifier%", translate(info, "damage-modifier"),
-                "%duration%", translate(info, "duration"), "%inferno%", translate(info, "inferno"),
-                "%distance%", translate(info, "distance")};
+        if (event.getTarget() != target) event.setTarget(target);
     }
 }

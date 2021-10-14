@@ -1,15 +1,13 @@
 package org.skills.data.database.json;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import org.skills.abilities.KeyBinding;
+import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.PlayerSkill;
-import org.skills.types.Stat;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class AdapterPlayerSkill implements JsonSerializer<PlayerSkill>, JsonDeserializer<PlayerSkill> {
     @Override
@@ -19,21 +17,33 @@ public class AdapterPlayerSkill implements JsonSerializer<PlayerSkill>, JsonDese
         String name = json.get("skill").getAsString();
         PlayerSkill skill = new PlayerSkill(name);
 
-        skill.setLevel(json.get("level").getAsInt());
-        skill.setAbsoluteXP(json.get("xp").getAsDouble());
-        skill.setSouls(json.get("souls").getAsLong());
+        AdapterSharedSkillsData.deserialize(jsonElement, skill, false);
         skill.setShowReadyMessage(json.get("showReadyMessage").getAsBoolean());
 
-        skill.setImprovements(context.deserialize(json.get("abilities"), new TypeToken<HashMap<String, HashMap<String, Integer>>>() {}.getType()));
+        JsonObject abilitiesJson = json.get("abilities").getAsJsonObject();
+        Map<String, PlayerAbilityData> abilities = new HashMap<>(abilitiesJson.size());
 
-        JsonObject stats = json.get("stats").getAsJsonObject();
-        for (Map.Entry<String, JsonElement> stat : stats.entrySet()) {
-            skill.setStat(stat.getKey(), stat.getValue().getAsInt());
+        for (Map.Entry<String, JsonElement> abEntry : abilitiesJson.entrySet()) {
+            PlayerAbilityData data = new PlayerAbilityData();
+            if (abEntry.getValue().isJsonObject()) {
+                JsonObject abElement = abEntry.getValue().getAsJsonObject();
+
+                JsonElement lvl = abElement.get("level");
+                if (lvl != null) data.setLevel(lvl.getAsInt());
+
+                JsonElement disabled = abElement.get("disabled");
+                if (disabled != null) data.setDisabled(disabled.getAsBoolean());
+
+                JsonElement binding = abElement.get("key-binding");
+                if (binding != null) data.setKeyBinding(binding.getAsString());
+            } else {
+                data.setLevel(abEntry.getValue().getAsInt());
+            }
+
+            abilities.put(abEntry.getKey(), data);
         }
 
-        Set<String> disabled = context.deserialize(json.get("disabledAbilities"), new TypeToken<Set<String>>() {}.getType());
-        if (disabled == null) disabled = new HashSet<>();
-        skill.setDisabledAbilities(disabled);
+        skill.setAbilities(abilities);
 
         return skill;
     }
@@ -43,22 +53,33 @@ public class AdapterPlayerSkill implements JsonSerializer<PlayerSkill>, JsonDese
         JsonObject json = new JsonObject();
 
         json.addProperty("skill", info.getSkillName());
-        json.addProperty("level", info.getLevel());
-        json.addProperty("xp", info.getXP());
-        json.addProperty("souls", info.getSouls());
+        AdapterSharedSkillsData.serialize(json, info, false);
         json.addProperty("showReadyMessage", info.showReadyMessage());
 
+        JsonObject abilitiesJson = new JsonObject();
+        Map<String, PlayerAbilityData> abilities = info.getAbilities();
 
-        json.add("abilities", context.serialize(info.getImprovements(), new TypeToken<HashMap<String, HashMap<String, Integer>>>() {
-        }.getType()));
+        for (Map.Entry<String, PlayerAbilityData> ability : abilities.entrySet()) {
+            JsonObject abilityJson = new JsonObject();
+            PlayerAbilityData data = ability.getValue();
 
-        JsonObject stats = new JsonObject();
-        for (Stat stat : Stat.STATS.values()) {
-            stats.addProperty(stat.getDataNode(), info.getStat(stat));
+            boolean changed = false;
+            if (data.isDisabled()) {
+                abilityJson.addProperty("disabled", true);
+                changed = true;
+            }
+            if (data.getKeyBinding() != null) {
+                abilityJson.addProperty("key-binding", KeyBinding.toString(data.getKeyBinding()));
+                changed = true;
+            }
+            if (data.getLevel() != 0) {
+                abilityJson.addProperty("level", data.getLevel());
+                changed = true;
+            }
+
+            if (changed) abilitiesJson.add(ability.getKey(), abilityJson);
         }
-        json.add("stats", stats);
-
-        json.add("disabledAbilities", context.serialize(info.getDisabledAbilities(), new TypeToken<Set<String>>() {}.getType()));
+        json.add("abilities", abilitiesJson);
 
         return json;
     }

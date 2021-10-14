@@ -9,46 +9,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
-import org.skills.utils.Cooldown;
+import org.skills.main.SkillsPro;
 
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.UUID;
 
 public class EidolonDefile extends ActiveAbility {
-    private static final String DEFILE = "DEFILE";
-    private static final HashMap<Integer, Double> IMBALANCED = new HashMap<>();
-
-    static {
-        addDisposableHandler(IMBALANCED);
-    }
+    private static final Map<UUID, UUID> IMBALANCED = new HashMap<>();
 
     public EidolonDefile() {
-        super("Eidolon", "defile", false);
+        super("Eidolon", "defile");
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onEidolonAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (!(event.getDamager() instanceof Player)) return;
-        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-
-        Player player = (Player) event.getDamager();
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
-
-        Entity entity = event.getEntity();
-        double amt = this.getScaling(info);
-        IMBALANCED.put(entity.getEntityId(), amt);
-        int time = (int) getExtraScaling(info, "time");
-        if (time <= 0) time = 2;
-
-        new Cooldown(event.getEntity().getUniqueId(), DEFILE, time, TimeUnit.SECONDS);
-        event.setDamage(event.getDamage() * getExtraScaling(info, "damage", "imbalance", amt));
-
+    private static void visuals(Entity entity) {
         Location loc = entity.getLocation();
         World world = entity.getWorld();
         world.playEffect(loc, Effect.STEP_SOUND, Material.LAPIS_BLOCK);
@@ -58,24 +35,46 @@ public class EidolonDefile extends ActiveAbility {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onDamageReceive(EntityDamageEvent event) {
-        Entity entity = event.getEntity();
-        World world = entity.getWorld();
-        if (SkillsConfig.isInDisabledWorld(world)) return;
-        boolean inCd = Cooldown.isInCooldown(entity.getUniqueId(), DEFILE);
-        Double amt = inCd ? IMBALANCED.get(entity.getEntityId()) : IMBALANCED.remove(entity.getEntityId());
-        if (amt == null) return;
+    public void onEidolonAttackOrDefend(EntityDamageByEntityEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
+        if (!(event.getEntity() instanceof LivingEntity)) return;
+        if (!(event.getDamager() instanceof LivingEntity)) return;
+        Entity victim = event.getEntity();
 
-        event.setDamage(event.getDamage() * (1 + (amt / 100f)));
+        if (victim instanceof Player) {
+            UUID defender = IMBALANCED.get(victim.getUniqueId());
+            if (defender != null && event.getDamager().getUniqueId().equals(defender)) {
+                Player player = (Player) victim;
+                SkilledPlayer info = this.checkup(player);
+                if (info != null) {
+                    double shield = this.getScaling(info, "shield");
+                    event.setDamage(event.getDamage() - shield);
+                }
+            }
+        }
+        if (!(event.getDamager() instanceof Player)) return;
 
-        Location location = entity.getLocation();
-        world.playEffect(location, Effect.STEP_SOUND, Material.LAPIS_BLOCK);
-        world.playEffect(location, Effect.STEP_SOUND, Material.COAL_BLOCK);
-        world.playEffect(location, Effect.STEP_SOUND, Material.IRON_BLOCK);
-    }
+        Player player = (Player) event.getDamager();
+        SkilledPlayer info = this.checkup(player);
+        if (info == null) return;
 
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%time%", getScalingDescription(info, getExtra(info, "time").getString())};
+        UUID target = IMBALANCED.get(player.getUniqueId());
+
+        if (target != null && victim.getUniqueId().equals(target)) {
+            double damage = getScaling(info, "damage", event);
+            event.setDamage(event.getDamage() + damage);
+            return;
+        }
+
+        int time = (int) getScaling(info, "time");
+
+        IMBALANCED.put(player.getUniqueId(), victim.getUniqueId());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                IMBALANCED.remove(player.getUniqueId());
+            }
+        }.runTaskLater(SkillsPro.get(), time * 20L);
+        visuals(victim);
     }
 }

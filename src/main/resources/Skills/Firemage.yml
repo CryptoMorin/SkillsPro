@@ -1,9 +1,8 @@
 name: "Fire Mage"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + lvl/2
 max-level: 100
-max-health: 20 * 6
+max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
 energy-regen: 1 + 0.05 * lvl
 required-level: 20
@@ -12,23 +11,71 @@ stats: [ DEX, STR ]
 energy: health
 abilities:
   firemage-passive:
-    scaling: int/20
+    heal: int/20
   absorb-energy:
     required-level: 5
-    scaling: lvl+int/10
+    chance: lvl+int/10
     # Set target on fire. In seconds.
     fire: lvl * 5
     cost: 100 * (lvl + 1)
   phoenix-essence:
     required-level: 5
-    # %fire% is the entity on fire duration in seconds.
-    fire-mod: min(%fire%, 5)
-    # damage + (scaling * fire-mod)
-    scaling: int/9+lvl*2
+
+    # Time in seconds. This must be lower than the skil cooldown.
+    duration: 50 + (lvl * 3)
+
+    knockback:
+      initial: 1.5 # In the opposite direction of the player
+      volcano: 1.5 # In the y axis
+
+    distance:
+      slash: 10
+      volcano: 20
+
+    # Damage for the sphere.
+    damage:
+      initial: 5 + lvl
+      slash: min(str + 2, 15)
+      volcano: min(dex + 2, 20)
+
+    # In seconds
+    cooldown:
+      # This cooldown is for after every 2 slash.
+      slash: 4 - lvl
+      volcano: 10 - lvl
+
+    # Ability levels that these sub abilities can be used.
+    levels:
+      slash: 1
+      volcano: 2
+      lightning: 3
+
+    radius:
+      initial: 10
+      volcano: 2
+      lightning: 5
+
+    horse-effects:
+      - "SPEED, 99999, lvl"
+
     cost: 100 * (lvl + 1)
+
+    sounds:
+      music: '~MUSIC_DISC_PIGSTEP, 50'
+      end: '~ENTITY_BLAZE_DEATH, 30'
+      slash: '~ENTITY_PLAYER_ATTACK_SWEEP, 10'
+      volcano: '~ITEM_FIRECHARGE_USE, 10, 0.1'
+
+    activation:
+      idle: 5
+      key: LLR
+      energy: 20
+      cooldown: 60
+      items:
+        - 'CONTAINS:HOE'
   black-fire:
     required-level: 5
-    scaling: lvl+str/20
+    damage: lvl+str/20
     cost: 100 * (lvl + 1)
   meteorite:
     required-level: 20
@@ -37,7 +84,7 @@ abilities:
       energy: 20
       cooldown: 10
       items: [ ]
-    scaling: lvl+str/5
+    damage: lvl+str/5
     fireballs: lvl * 2
     range: lvl * 2
     yield: 0.5 + (lvl / 3)
@@ -50,7 +97,8 @@ abilities:
       energy: 6
       cooldown: 6
       items: [ ]
-    scaling: lvl*2+int/5
+    damage: lvl*2+int/5
     # The fire range
+    per-fire-tick: 10
     range: (lvl * 2) - 1
     cost: 100 * (lvl + 1)

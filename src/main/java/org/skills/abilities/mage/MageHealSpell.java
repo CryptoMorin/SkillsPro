@@ -5,8 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
-import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.versionsupport.VersionSupport;
 
 public class MageHealSpell extends Ability {
@@ -18,18 +16,16 @@ public class MageHealSpell extends Ability {
     public void onMageAttack(EntityRegainHealthEvent event) {
         if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED &&
                 event.getRegainReason() != EntityRegainHealthEvent.RegainReason.REGEN) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (!(event.getEntity() instanceof Player)) return;
 
-        if (event.getEntity() instanceof Player) {
-            if (ServiceHandler.isNPC(event.getEntity())) return;
-            Player player = (Player) event.getEntity();
+        Player player = (Player) event.getEntity();
+        SkilledPlayer info = this.checkup(player);
+        if (info == null) return;
 
-            SkilledPlayer info = this.checkup(player);
-            if (info == null) return;
-
-            int percent = VersionSupport.getHealthPercent(player);
-            if (percent > getExtraScaling(info, "health")) return;
-            event.setAmount(event.getAmount() + this.getScaling(info, "regain", event.getAmount()));
-        }
+        int percent = VersionSupport.getHealthPercent(player);
+        if (percent > getScaling(info, "health-percent")) return;
+        event.setAmount(event.getAmount() +
+                this.getScaling(info, "regain",
+                        "regain", event.getAmount()));
     }
 }

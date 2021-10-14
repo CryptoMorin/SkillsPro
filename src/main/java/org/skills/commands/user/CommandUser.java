@@ -2,13 +2,21 @@ package org.skills.commands.user;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
 import org.skills.commands.TabCompleteManager;
+import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.SkillsLang;
+import org.skills.managers.HealthAndEnergyManager;
+import org.skills.types.SkillScaling;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class CommandUser extends SkillsCommand {
     public CommandUser() {
@@ -49,36 +57,54 @@ public class CommandUser extends SkillsCommand {
         XParticle.circle(size, size * 10, display);
     }
 
+    public static void handle(SkillsCommand cmd, @NotNull CommandSender sender, @NotNull String[] args, UserAmountHandler handler) {
+        if (args.length < 3) {
+            SkillsCommandHandler.sendUsage(sender, "user " + cmd.getName() + " <player> <add/decrease/set> <amount>");
+            return;
+        }
+
+        Collection<? extends OfflinePlayer> players;
+        if (args[0].equals("*")) players = Bukkit.getOnlinePlayers();
+        else {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+
+            if (!player.hasPlayedBefore()) {
+                SkillsLang.PLAYER_NOT_FOUND.sendMessage(sender, "%name%", args[0]);
+                return;
+            }
+
+            players = Collections.singletonList(player);
+        }
+
+        boolean silent = args.length > 3 &&
+                (args[3].equalsIgnoreCase("silent") || args[3].equalsIgnoreCase("true"));
+        AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
+        if (changeFactory == null) return;
+
+        for (OfflinePlayer player : players) {
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+            handler.handle(changeFactory, player, info, silent);
+            changeFactory.handleSuccess(sender, "COMMAND_USER_" + cmd.getName().toUpperCase(), player);
+            if (player.isOnline()) {
+                double maxEnergy = info.getScaling(SkillScaling.MAX_ENERGY);
+                if (info.getEnergy() > maxEnergy) info.setEnergy(maxEnergy);
+                HealthAndEnergyManager.updateStats(player.getPlayer());
+            }
+        }
+    }
+
     @Override
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-//        Player p = (Player) sender;
-//        Location loc = p.getLocation();
-//        ParticleDisplay dis = new ParticleDisplay(Particle.DRAGON_BREATH, loc, 1, 0, 0, 0, 0);
-//        dis.data = new float[]{0, 0, 0, 0.8f};
-//        circle(3, 3, 0.2, 30, dis);
-//        magicCircle(Integer.parseInt(args[0]), 3, dis);
-//        illuminati(Double.parseDouble(args[0]), Double.parseDouble(args[1]), dis);
-        // /skill user 4 3 0 10
-//        eye(3, 3, 30, 0.2, dis);
-//        circle(3, 3, 0.2, 30, 0, dis);
-//          circle(3, 3, 0.2, 40, 0, dis);
-
-//        tesseract(plugin, Double.parseDouble(args[0]), 3, Double.parseDouble(args[1]), 300, dis);
-//        dis.rotate(Math.PI / 2, Math.PI * Double.parseDouble(args[4]), 0);
-//        mandelbrot(5, Double.parseDouble(args[0]), 0.1, Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), dis);
-//        XParticle.displayRenderedImage(XParticle.renderImage(XParticle.stringToImage(new Font("Serif", Font.PLAIN, 30), Color.BLACK, "Nigga").join(), 0, 0, 0.2).join(),
-//                dis.location, 1, 0, 0.8f);
-//        flower(5, 8, dis, () -> mandelbrot(5, Double.parseDouble(args[0]), 0.2, Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), dis));
-//        julia(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), dis);
-
-//        eye(30, dis);
-//        diamond(0.03, 0.1, 5, dis);
-//        XParticle.ellipse(2, 8, 30, dis);
         SkillsCommandHandler.executeHelperForGroup(this, sender);
     }
 
     @Override
     public String[] tabComplete(@NonNull CommandSender sender, @NotNull String[] args) {
         return args.length < 2 ? TabCompleteManager.getSubCommand(sender, this, args).toArray(new String[0]) : new String[0];
+    }
+
+    @FunctionalInterface
+    protected interface UserAmountHandler {
+        boolean handle(AmountChangeFactory changeFactory, OfflinePlayer player, SkilledPlayer info, boolean silent);
     }
 }

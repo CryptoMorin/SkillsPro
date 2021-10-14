@@ -42,8 +42,7 @@ public class CommandBonusGive extends SkillsCommand {
                 }
 
                 String multiplier = args[3];
-                if ((!multiplier.contains("xp") && bonusType == SkillsEventType.XP) &&
-                        (!multiplier.contains("soul") && bonusType == SkillsEventType.SOUL)) {
+                if ((multiplier.contains("xp") && bonusType != SkillsEventType.XP) || (multiplier.contains("soul") && bonusType != SkillsEventType.SOUL)) {
                     SkillsLang.COMMAND_BONUS_GIVE_MULTIPLIER_ERROR.sendMessage(sender);
                     return;
                 }

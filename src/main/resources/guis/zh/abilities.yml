@@ -38,7 +38,7 @@ options:
         - "%description%"
   ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
+      condition: "%level% == 3 && !%disabled%"
       name: "%title%"
       material: LIGHT_BLUE_DYE
       slots: [ 11, 20, 29, 38 ]
@@ -81,7 +81,7 @@ options:
   # 特殊变量:  %cooldown%, %energy%, %activation%
   active-ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
+      condition: "%level% == 3 && !%disabled%"
       name: "%title%"
       material: LIGHT_BLUE_DYE
       # 不 要 更 改 槽 位

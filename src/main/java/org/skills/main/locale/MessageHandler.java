@@ -120,7 +120,7 @@ public class MessageHandler {
      * Replaces a variable in a string in the most efficient way possible that is
      * the most compatible with {@link #replaceVariables(String, Object...)} and {@link #replaceVariables(String, List)}
      * <p>
-     * Also supports {@link Replacer} as its replacement.
+     * Also supports {@link Supplier} as its replacement.
      * Supllied replacements have the ability to not be evaluated if the
      * specified string doesn't contain the variable.
      *
@@ -135,18 +135,18 @@ public class MessageHandler {
         int find = text.indexOf(variable);
         if (find == -1) return text;
 
-        String replacement;
-        if (replace instanceof Replacer) {
-            Replacer replacer = (Replacer) replace;
-            replacement = String.valueOf(replacer.get());
-        } else {
-            replacement = String.valueOf(replace);
-        }
-
         int start = 0;
         int len = text.length();
         int varLen = variable.length();
         StringBuilder builder = new StringBuilder(len);
+
+        String replacement;
+        if (replace instanceof Supplier) {
+            Supplier<?> replacer = (Supplier<?>) replace;
+            replacement = String.valueOf(replacer.get());
+        } else {
+            replacement = String.valueOf(replace);
+        }
 
         while (find != -1) {
             builder.append(text, start, find).append(replacement);
@@ -540,19 +540,5 @@ public class MessageHandler {
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (players.hasPermission("kingdoms.debug")) sendMessage(players, msg, true);
         }
-    }
-
-    /**
-     * A version of {@link Supplier} that's more convenient to use.
-     *
-     * @since 3.0.0
-     */
-    @FunctionalInterface
-    public interface Replacer {
-        static Replacer of(Replacer replacer) {
-            return replacer;
-        }
-
-        Object get();
     }
 }

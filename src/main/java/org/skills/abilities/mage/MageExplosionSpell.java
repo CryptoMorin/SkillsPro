@@ -27,12 +27,12 @@ public class MageExplosionSpell extends Ability {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onMageAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
+        if (commonDamageCheckup(event)) return;
         Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        ConfigurationSection chances = getExtra(info, "hoe-chance").getSection();
+        ConfigurationSection chances = getOptions(info, "hoe-chance").getSection();
         XMaterial material = XMaterial.matchXMaterial(player.getInventory().getItemInMainHand());
         String equation = chances.getString(material.name());
         if (equation == null) return;
@@ -40,8 +40,8 @@ public class MageExplosionSpell extends Ability {
 
         if (MathUtils.hasChance(hoeChance)) {
             Entity entity = event.getEntity();
-            int lvl = info.getImprovementLevel(this);
-            double damage = this.getScaling(info, event);
+            int lvl = info.getAbilityLevel(this);
+            double damage = this.getScaling(info, "damage", event);
 
             if (lvl > 2 && event.getEntity() instanceof Player && MathUtils.hasChance(1, 500)) {
                 MessageHandler.sendPlayerMessage(player, "&4Ｃrimson-&0black &6blaze&5, king of myriad worlds, though I promulgate the laws of nature, " +

@@ -1,9 +1,7 @@
 package org.skills.managers;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.ActionBar;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.boss.BossBar;
@@ -21,6 +19,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.api.events.SkillXPGainEvent;
 import org.skills.commands.general.CommandSelect;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
@@ -34,29 +33,12 @@ import org.skills.utils.Cooldown;
 import org.skills.utils.StringUtils;
 import org.skills.utils.versionsupport.VersionSupport;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class HealthAndEnergyManager implements Listener {
-    private static final MethodHandle EXP_PACKET;
+public final class HealthAndEnergyManager implements Listener {
     private static final Map<Integer, BossBar> LEVEL_BOSSBARS = new HashMap<>();
-
-    static {
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        MethodHandle expPacket = null;
-        try {
-            expPacket = lookup.findConstructor(ReflectionUtils.getNMSClass("PacketPlayOutExperience"), MethodType.methodType(void.class, float.class,
-                    int.class, int.class));
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        EXP_PACKET = expPacket;
-    }
 
     public HealthAndEnergyManager(SkillsPro plugin) {
         // HUD Change
@@ -94,8 +76,8 @@ public class HealthAndEnergyManager implements Listener {
                 if (!info.hasSkill()) continue;
 
                 Energy energy = info.getSkill().getEnergy();
-                boolean reverse = energy.getCharging() == Energy.Charging.AUTO_REVERSE;
-                if (energy.getCharging() == Energy.Charging.AUTO || reverse) {
+                boolean reverse = energy.getCharging() == Energy.ChargingMethod.AUTO_REVERSE;
+                if (energy.getCharging() == Energy.ChargingMethod.AUTO || reverse) {
                     double currEnergy = info.getEnergy();
                     double energyRegen = info.getScaling(SkillScaling.ENERGY_REGEN);
                     double finale = currEnergy;
@@ -130,7 +112,7 @@ public class HealthAndEnergyManager implements Listener {
             SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
 
             float percent = (float) (info.getXP() / info.getLevelXP(info.getLevel()));
-            Validate.isTrue(percent <= 1.0 && percent >= 0.0,
+            if (!(percent <= 1.0 && percent >= 0.0)) throw new IllegalArgumentException(
                     "Invalid BossBar percent for " + player.getName() + ": " + percent + " -> XP: " + info.getXP() +
                             ", Next Level XP: " + info.getLevelXP(info.getLevel()) + " for level " + info.getLevel());
             if (SkillsConfig.VANILLA_EXP_BAR_ENABLED.getBoolean()) {
@@ -167,20 +149,9 @@ public class HealthAndEnergyManager implements Listener {
             if (!info.hasSkill()) return;
             Skill skill = info.getSkill();
 
-            double maxMaxHp = skill.getScaling(info, SkillScaling.MAX_HEALTH);
-            double maxHp = skill.getScaling(info, SkillScaling.HEALTH);
-            double hp = Math.min(maxHp, maxMaxHp);
-            Bukkit.getScheduler().runTask(SkillsPro.get(), () -> VersionSupport.setMaxHealth(player, hp));
+            double maxHp = skill.getScaling(info, SkillScaling.MAX_HEALTH);
+            Bukkit.getScheduler().runTask(SkillsPro.get(), () -> VersionSupport.setMaxHealth(player, maxHp));
         });
-    }
-
-    public static void setExp(Player player, float bar, int lvl, int exp) {
-        try {
-            Object packet = EXP_PACKET.invoke(bar, lvl, exp);
-            ReflectionUtils.sendPacket(player, packet);
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -192,7 +163,7 @@ public class HealthAndEnergyManager implements Listener {
         if (!info.hasSkill()) return;
         Energy energy = info.getSkill().getEnergy();
 
-        if (energy.getCharging() == Energy.Charging.HIT) {
+        if (energy.getCharging() == Energy.ChargingMethod.HIT) {
             if (energy.getElements() == null || energy.getElements().isEmpty()) {
                 info.chargeEnergy();
                 return;
@@ -209,14 +180,14 @@ public class HealthAndEnergyManager implements Listener {
 
     @EventHandler
     public void onHitEnergyCharge(EntityDeathEvent event) {
-        Player damager = LastHitManager.getFinalHitMob(event.getEntity());
+        Player damager = DamageManager.getFinalHitMob(event.getEntity());
         if (damager == null) return;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(damager);
         if (!info.hasSkill()) return;
         Energy energy = info.getSkill().getEnergy();
 
-        if (energy.getCharging() == Energy.Charging.KILL) {
+        if (energy.getCharging() == Energy.ChargingMethod.KILL) {
             if (energy.getElements() == null || energy.getElements().isEmpty()) {
                 info.chargeEnergy();
                 return;
@@ -245,10 +216,11 @@ public class HealthAndEnergyManager implements Listener {
 
         if (!player.hasPlayedBefore()) {
             String skill = SkillsConfig.DEFAULT_SKILL.getString();
-            if (!skill.equalsIgnoreCase("none")) {
+            if (!skill.equalsIgnoreCase(PlayerSkill.NONE)) {
                 Skill defaultSkill = SkillManager.getSkill(skill);
                 if (defaultSkill == null) MessageHandler.sendConsolePluginMessage("&4Unknown default skill option&8: &e" + skill);
-                else info.setActiveSkill(defaultSkill);
+                else if (info.setActiveSkill(defaultSkill).isCancelled())
+                    throw new IllegalStateException("A plugin prevented setting default skill " + skill + " for player " + player.getName());
             }
             if (SkillsConfig.AUTO_SELECT_ON_JOIN.getBoolean()) {
                 Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> CommandSelect.openMenu(player, info), 20L);
@@ -306,7 +278,9 @@ public class HealthAndEnergyManager implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void hologramFire(EntityCombustEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        if (((Player) event.getEntity()).getGameMode() != GameMode.CREATIVE) return;
         if (!SkillsConfig.DISABLE_CREATIVE_FIRE.getBoolean()) return;
-        if (event.getEntity() instanceof Player && ((Player) event.getEntity()).getGameMode() == GameMode.CREATIVE) event.setCancelled(true);
+        event.setCancelled(true);
     }
 }

@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-public class EnchantmentManager implements Listener {
+public final class EnchantmentManager implements Listener {
     protected static final Map<UUID, Integer> EXPS = new HashMap<>();
 
     public static void onDisable() {

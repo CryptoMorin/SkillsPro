@@ -15,6 +15,7 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsMasteryConfig;
 import org.skills.main.locale.SkillsLang;
 import org.skills.managers.HealthAndEnergyManager;
+import org.skills.managers.LevelManager;
 import org.skills.masteries.managers.MasteryManager;
 import org.skills.types.Energy;
 import org.skills.types.SkillManager;
@@ -45,7 +46,7 @@ public class CommandReload extends SkillsCommand {
         Stat.init(plugin);
         Energy.init(plugin);
 
-        plugin.getLevelManager().load();
+        LevelManager.load(plugin);
         SkillManager.init(plugin);
         new GUIConfig(plugin);
 

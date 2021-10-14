@@ -14,22 +14,18 @@ import org.skills.main.SLogger;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.*;
-import org.skills.services.mobs.ServiceBoss;
-import org.skills.services.mobs.ServiceEliteMobs;
-import org.skills.services.mobs.ServiceLorinthsRpgMobs;
-import org.skills.services.mobs.ServiceMythicMobs;
+import org.skills.services.mobs.*;
 import org.skills.services.placeholders.ServicePlaceholderAPI;
 import org.skills.services.placeholders.SkillsPlaceholders;
 import org.skills.utils.Pair;
 import org.skills.utils.StringUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BiFunction;
 
 public class ServiceHandler {
     private static final Set<String> PRESENT = new HashSet<>();
+    private static final Map<Plugin, BiFunction<Player, Player, Boolean>> FRIENDLY_HANDLERS = new HashMap<>();
 
     public static void init(SkillsPro plugin) {
         for (String plugins : plugin.getDescription().getSoftDepend()) {
@@ -72,28 +68,41 @@ public class ServiceHandler {
     public static boolean areFriendly(Entity e1, Entity e2) {
         if (e1.getEntityId() == e2.getEntityId()) return true;
         if (isAvailable("Citizens")) if (ServiceCitizens.isNPC(e1) || ServiceCitizens.isNPC(e2)) return true;
+        if (!(e1 instanceof Player)) return false;
+        if (!(e2 instanceof Player)) return false;
 
-        if (e1 instanceof Player && e2 instanceof Player) {
-            SkilledPlayer info1 = SkilledPlayer.getSkilledPlayer((Player) e1);
-            SkilledPlayer info2 = SkilledPlayer.getSkilledPlayer((Player) e2);
-            if (info1.isFrendly(info2)) return true;
+        Player player1 = (Player) e1;
+        Player player2 = (Player) e2;
 
-            if (Bukkit.getPluginManager().getPlugin("Kingdoms") != null) {
-                return !ServiceKingdoms.canFight((Player) e1, (Player) e2);
-            } else {
-                Plugin factions = Bukkit.getPluginManager().getPlugin("Factions");
-                if (factions != null) {
-                    try {
-                        if (Bukkit.getPluginManager().getPlugin("MasiveCore") != null && !factions.getDescription().getWebsite().contains("factionsuuid")) {
-                            if (!ServiceMassiveFactions.canFight((Player) e1, (Player) e2)) return true;
-                        } else {
-                            if (!ServiceFactions.canFight((Player) e1, (Player) e2)) return true;
-                        }
-                    } catch (Throwable e) {
-                        SLogger.error("Factions support has encountered an error!");
-                        e.printStackTrace();
+        SkilledPlayer info1 = SkilledPlayer.getSkilledPlayer(player1);
+        SkilledPlayer info2 = SkilledPlayer.getSkilledPlayer(player2);
+        if (info1.isFrendly(info2)) return true;
+
+        if (Bukkit.getPluginManager().getPlugin("Kingdoms") != null) {
+            return !ServiceKingdoms.canFight(player1, player2);
+        } else {
+            Plugin factions = Bukkit.getPluginManager().getPlugin("Factions");
+            if (factions != null) {
+                try {
+                    if (Bukkit.getPluginManager().getPlugin("MasiveCore") != null && !factions.getDescription().getWebsite().contains("factionsuuid")) {
+                        if (!ServiceMassiveFactions.canFight(player1, player2)) return true;
+                    } else {
+                        if (!ServiceFactions.canFight(player1, player2)) return true;
                     }
+                } catch (Throwable e) {
+                    SLogger.error("Factions support has encountered an error!");
+                    e.printStackTrace();
                 }
+            }
+        }
+
+        for (Map.Entry<Plugin, BiFunction<Player, Player, Boolean>> handlers : FRIENDLY_HANDLERS.entrySet()) {
+            try {
+                Boolean result = handlers.getValue().apply(player1, player2);
+                if (result != null && result) return true;
+            } catch (Throwable err) {
+                MessageHandler.sendConsolePluginMessage("&4An error occurred while '&e" + handlers.getKey().getName() + "&4' plugin was handling friendly checks&8:");
+                err.printStackTrace();
             }
         }
         return false;
@@ -112,7 +121,7 @@ public class ServiceHandler {
         if (isAvailable("Residence")) return ServiceResidence.canFight(e1, e2);
         if (isAvailable("WorldGuard")) {
             try {
-                if (XMaterial.isNewVersion()) {
+                if (XMaterial.supports(13)) {
                     if (!ServiceWorldGuard.canFight(e1, e2)) return false;
                 } else {
                     if (!ServiceWorldGuard.canFightOld(e1, e2)) return false;
@@ -130,6 +139,10 @@ public class ServiceHandler {
 
     public static Pair<String, Number> getMobProperties(LivingEntity entity) {
         if (entity.hasMetadata("NPC")) return Pair.of(ServiceCitizens.getNPCName(entity), 0);
+        if (isAvailable("LevelledMobs")) {
+            Pair<String, Number> property = ServiceLevelledMobs.getMobProperties(entity);
+            if (property != null) return property;
+        }
         if (isAvailable("MythicMobs")) {
             Pair<String, Number> property = ServiceMythicMobs.getMobProperties(entity);
             if (property != null) return property;
@@ -150,7 +163,7 @@ public class ServiceHandler {
 
     public static boolean isPvPOff(Player player) {
         if (!isAvailable("WorldGuard")) return false;
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             return ServiceWorldGuard.isPvPOff(player);
         } else {
             return ServiceWorldGuard.isPvPOffOld(player);
@@ -169,5 +182,17 @@ public class ServiceHandler {
             if (registered) MessageHandler.sendConsolePluginMessage("&3Successfully registered placeholders.");
             else MessageHandler.sendConsolePluginMessage("&cCould not register placeholders!");
         }
+    }
+
+    public static void registerFriendlyHandler(Plugin plugin, BiFunction<Player, Player, Boolean> handler) {
+        if (plugin instanceof SkillsPro) throw new IllegalArgumentException("Friendly registrar cannot be SkillsPro plugin");
+        Objects.requireNonNull(handler, "Friendly handler function cannot be null");
+        if (FRIENDLY_HANDLERS.containsKey(plugin)) throw new IllegalArgumentException("Plugin has already registered a friendly handler: " + plugin.getName());
+        FRIENDLY_HANDLERS.put(plugin, handler);
+    }
+
+    public static void unregisterFriendlyHandler(Plugin plugin) {
+        Objects.requireNonNull(plugin, "Cannot unregister friendly handler for null plugin");
+        if (FRIENDLY_HANDLERS.remove(plugin) == null) throw new IllegalArgumentException("Plugin did not register any friendly handlers: " + plugin.getName());
     }
 }

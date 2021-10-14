@@ -53,7 +53,7 @@ public class PriestSealOfLife extends Ability {
 
         if (!Cooldown.isInCooldown(p.getUniqueId(), SEAL_OF_LIFE)) {
             int percent = VersionSupport.getHealthPercent(p, event);
-            if (percent > getExtraScaling(info, "health", event)) return;
+            if (percent > getScaling(info, "health", event)) return;
 
             event.setCancelled(true);
             if (XMaterial.supports(11)) p.playEffect(EntityEffect.TOTEM_RESURRECT);
@@ -68,7 +68,7 @@ public class PriestSealOfLife extends Ability {
                     if (--i == 0) cancel();
                 }
             }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);
-            new Cooldown(p.getUniqueId(), SEAL_OF_LIFE, (long) this.getScaling(info), TimeUnit.SECONDS);
+            new Cooldown(p.getUniqueId(), SEAL_OF_LIFE, (long) this.getScaling(info, "interval"), TimeUnit.SECONDS);
         }
     }
 }

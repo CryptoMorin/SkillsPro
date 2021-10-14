@@ -44,7 +44,7 @@ public class SkillsSkillConfig {
     }
 
     public boolean isSet() {
-        return XMaterial.isNewVersion() ? config.isSet(getDynamicOption()) : config.contains(getDynamicOption());
+        return XMaterial.supports(13) ? config.isSet(getDynamicOption()) : config.contains(getDynamicOption());
     }
 
     public String getString() {

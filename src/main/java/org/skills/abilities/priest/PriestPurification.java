@@ -2,7 +2,6 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,9 +26,11 @@ import java.util.*;
 
 public class PriestPurification extends Ability {
     private static final Map<UUID, Set<UUID>> BATERAYED = new HashMap<>();
-    private static final ImmutableList<XMaterial> FLOWERS = ImmutableList.of(XMaterial.BLUE_ORCHID, XMaterial.DANDELION,
+    private static final XMaterial[] FLOWERS = {
+            XMaterial.BLUE_ORCHID, XMaterial.DANDELION,
             XMaterial.ALLIUM, XMaterial.AZURE_BLUET, XMaterial.LILY_OF_THE_VALLEY, XMaterial.CORNFLOWER, XMaterial.LILAC,
-            XMaterial.OXEYE_DAISY);
+            XMaterial.OXEYE_DAISY
+    };
 
     private static final EnumSet<XMaterial> CROPS = EnumSet.of(
             XMaterial.WHEAT, XMaterial.POTATOES, XMaterial.CARROTS,
@@ -57,7 +58,7 @@ public class PriestPurification extends Ability {
             }
         }
 
-        int maxFlowers = FLOWERS.size() - 1;
+        int maxFlowers = FLOWERS.length - 1;
 
         Material grassBlock = XMaterial.GRASS_BLOCK.parseMaterial();
         Material grass = XMaterial.TALL_GRASS.parseMaterial();
@@ -71,7 +72,7 @@ public class PriestPurification extends Ability {
                     up.setType(grass);
                     player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
                 } else if (MathUtils.hasChance(chance)) {
-                    up.setType(FLOWERS.get(MathUtils.randInt(0, maxFlowers)).parseMaterial());
+                    up.setType(FLOWERS[MathUtils.randInt(0, maxFlowers)].parseMaterial());
                     player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
                 }
             }
@@ -80,8 +81,8 @@ public class PriestPurification extends Ability {
 
     @Override
     public void start() {
-        if (!XMaterial.isNewVersion()) return;
-        ParticleDisplay display = new ParticleDisplay(Particle.VILLAGER_HAPPY, null, 30, 1, 1, 1);
+        if (!XMaterial.supports(13)) return;
+        ParticleDisplay display = ParticleDisplay.of(Particle.VILLAGER_HAPPY).withCount(30).offset(1);
 
         addTask(new BukkitRunnable() {
 
@@ -90,9 +91,9 @@ public class PriestPurification extends Ability {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     SkilledPlayer info = PriestPurification.this.checkup(player);
                     if (info == null) continue;
-                    int lvl = info.getImprovementLevel(PriestPurification.this);
+                    int lvl = info.getAbilityLevel(PriestPurification.this);
                     if (lvl < 3) continue;
-                    int radius = (int) getScaling(info);
+                    int radius = (int) getScaling(info, "radius");
 
                     for (int x = -radius; x < radius; x++) {
                         for (int z = -radius; z < radius; z++) {
@@ -127,7 +128,7 @@ public class PriestPurification extends Ability {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(SkillsPro.get(), 60L, getExtra("Priest", "rate").getInt()));
+        }.runTaskTimerAsynchronously(SkillsPro.get(), 60L, getOptions("Priest", "rate").getInt()));
 
         /*
         BlockState state = block.getState();
@@ -175,7 +176,7 @@ public class PriestPurification extends Ability {
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        int lvl = info.getImprovementLevel(this);
+        int lvl = info.getAbilityLevel(this);
         if (lvl < 1) return;
 
         Entity mob = event.getEntity();

@@ -12,29 +12,36 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BlockIterator;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.managers.LastHitManager;
+import org.skills.main.locale.MessageHandler;
+import org.skills.managers.DamageManager;
 import org.skills.services.manager.ServiceHandler;
 
 import java.util.Iterator;
 
-public class EidolonFangs extends ActiveAbility {
+public class EidolonFangs extends InstantActiveAbility {
     private static final String FANGS = "EIDOLON_FANGS";
 
     public EidolonFangs() {
-        super("Eidolon", "fangs", true);
+        super("Eidolon", "fangs");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
-        int amount = (int) getExtraScaling(info, "fangs");
+    public void useSkill(AbilityContext context) {
+        if (!XMaterial.supports(11)) {
+            MessageHandler.sendPlayerPluginMessage(context.getPlayer(), "&cCannot use this ability in this version of Minecraft.");
+            return;
+        }
+
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
+        int amount = (int) getScaling(info, "fangs");
 
         EntityType type = XMaterial.supports(11) ? EntityType.EVOKER_FANGS : EntityType.FIREBALL;
-        ParticleDisplay display = new ParticleDisplay(Particle.DRAGON_BREATH, null, 20, 1, 1, 1);
+        ParticleDisplay display = ParticleDisplay.of(Particle.DRAGON_BREATH).withCount(20).offset(1);
 
         if (player.isSneaking()) {
             for (Entity entity : player.getNearbyEntities(5, 5, 5)) {
@@ -55,7 +62,7 @@ public class EidolonFangs extends ActiveAbility {
         }
 
         Iterator<Block> blocks = new BlockIterator(player, amount);
-        boolean isNew = XMaterial.isNewVersion();
+        boolean isNew = XMaterial.supports(13);
         while (blocks.hasNext()) {
             Block block = blocks.next();
             Block corrected = null;
@@ -111,9 +118,10 @@ public class EidolonFangs extends ActiveAbility {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFangsBite(EntityDamageByEntityEvent event) {
+        if (!XMaterial.supports(11)) return;
         if (!(event.getEntity() instanceof LivingEntity)) return;
         Entity damager = event.getDamager();
-        if (!damager.getType().name().endsWith("FANGS")) return;
+        if (damager.getType() != EntityType.EVOKER_FANGS) return;
         if (!damager.hasMetadata(FANGS)) return;
         EvokerFangs fangs = (EvokerFangs) damager;
 
@@ -125,6 +133,6 @@ public class EidolonFangs extends ActiveAbility {
         ParticleDisplay display = ParticleDisplay.colored(damager.getLocation(), 255, 0, 0, 1);
 
         display.spawn();
-        LastHitManager.damage((LivingEntity) event.getEntity(), player, getScaling(info));
+        DamageManager.damage((LivingEntity) event.getEntity(), player, getScaling(info, "damage", event));
     }
 }

@@ -1,9 +1,8 @@
 name: "Vampire"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + lvl/2
 max-level: 100
-max-health: 20 * 6
+max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
 required-level: 20
 cost: 5000
@@ -13,14 +12,14 @@ stats: [ STR, DEX ]
 energy: blood
 abilities:
   vampire-passive:
-    scaling: str/5+1
+    damage: str/5+1
     blood: 2
     light-level:
       # Set to 0 to ignore.
       burn-activation: 50
       burn: 10
       effects: [ ]
-      prevents: [ DIAMOND_HELMET, GOLDEN_HELMET, CARVED_PUMPKIN ]
+      prevents: [ IRON_HELMET, GOLDEN_HELMET, DIAMOND_HELMET, CARVED_PUMPKIN ]
   blood-lust:
     required-level: 5
     # percent
@@ -29,17 +28,17 @@ abilities:
     chance: lvl * 10
     heal: 2
     regain: 5
-    scaling: str/7+lvl*2
+    damage: str/7+lvl*2
     cost: 100 * (lvl + 1)
   blood-well:
     required-level: 5
     # Chance
-    scaling: (int + (lvl * 10)) / 4
+    chance: (int + (lvl * 10)) / 4
     cost: 100 * (lvl + 1)
   blood-circuit:
     required-level: 30
     # Initial damage and healing amount.
-    scaling: int/4+lvl*2
+    damage: int/4+lvl*2
     # Duration of the whole event in seconds.
     # This is not affected by the inferno interval.
     duration: lvl * 10
@@ -64,7 +63,7 @@ abilities:
   bleed:
     required-level: 10
     chance: lvl * 5
-    scaling: (str/10) + lvl
+    damage-heal: (str/10) + lvl
     # x times in 10 ticks.
     duration: 10
     cost: 100 * (lvl + 1)
@@ -76,5 +75,5 @@ abilities:
       energy: 10
       cooldown: 15
       items: [ ]
-    scaling: 1+lvl+int/20
+    duration: 1+lvl+int/20
     cost: 100 * (lvl + 1)

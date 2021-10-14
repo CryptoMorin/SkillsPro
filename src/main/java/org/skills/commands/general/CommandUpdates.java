@@ -15,10 +15,10 @@ public class CommandUpdates extends SkillsCommand {
 
     @Override
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (sender instanceof Player) org.kingdoms.main.locale.MessageHandler.sendPluginMessage(sender, "&2Checking for updates...");
+        if (sender instanceof Player) MessageHandler.sendPluginMessage(sender, "&2Checking for updates...");
         plugin.getUpdater().checkForUpdates().thenRunAsync(() -> {
             if (plugin.getUpdater().canUpdate()) {
-                org.kingdoms.main.locale.MessageHandler.sendPluginMessage(sender, plugin.getUpdater().updateText());
+                MessageHandler.sendPluginMessage(sender, plugin.getUpdater().updateText());
             } else MessageHandler.sendPluginMessage(sender, "&2No updates found &8- &8(&6v" + plugin.getUpdater().currentVersion + "&8)");
         });
     }

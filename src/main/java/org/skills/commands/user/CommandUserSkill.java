@@ -28,7 +28,7 @@ public class CommandUserSkill extends SkillsCommand {
         String skill = args[1].toLowerCase();
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 
-        if (player == null || !player.hasPlayedBefore()) {
+        if (!player.hasPlayedBefore()) {
             SkillsLang.PLAYER_NOT_FOUND.sendMessage(sender, "%name%", args[0]);
             return;
         }
@@ -39,7 +39,7 @@ public class CommandUserSkill extends SkillsCommand {
             return;
         }
 
-        info.setActiveSkill(SkillManager.getSkill(skill));
+        if (info.setActiveSkill(SkillManager.getSkill(skill)).isCancelled()) return;
         SkillsLang.COMMAND_USER_SKILL_SUCCESS.sendMessage(sender, "%player%", name, "%skill%", skill);
     }
 

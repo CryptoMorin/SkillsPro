@@ -4,6 +4,8 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.google.common.base.Enums;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -22,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.skills.api.events.CustomHudChangeEvent;
+import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
@@ -34,11 +37,23 @@ import org.skills.utils.nbt.ItemNBT;
 import org.skills.utils.nbt.NBTType;
 import org.skills.utils.nbt.NBTWrappers;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class AbilityListener implements Listener {
-    private static boolean activate(Player player, AbilityActivation.ActivationAction action) {
+    protected static final Cache<UUID, List<KeyBinding>> ACTIVATIONS = CacheBuilder.newBuilder()
+            .expireAfterAccess(SkillsConfig.SKILL_ACTIVATION_TIME.getInt(), TimeUnit.MILLISECONDS).build();
+
+    private static boolean keyBindingMatches(KeyBinding[] original, List<KeyBinding> current) {
+        // Arrays.equals is redundant
+        if (original.length < current.size()) return false;
+        for (int i = 0; i < current.size(); i++) {
+            if (original[i] != current.get(i)) return false;
+        }
+        return true;
+    }
+
+    private static boolean activate(Player player, KeyBinding action) {
         if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return false;
         if (SkillsConfig.isInDisabledWorld(player.getLocation())) return false;
         if (SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) return false;
@@ -48,45 +63,38 @@ public class AbilityListener implements Listener {
         if (info.isActiveReady()) return false;
 
         ActiveAbility ability = null;
-        String keys = AbilityActivation.ACTIVATIONS.getIfPresent(player.getUniqueId());
-        if (keys == null) keys = String.valueOf(action.shortName);
-        else keys += String.valueOf(action.shortName);
-
-        int index = keys.length();
-        String ws = keys.substring(0, index - 1) + 'C';
+        List<KeyBinding> keys = ACTIVATIONS.getIfPresent(player.getUniqueId());
+        if (keys == null) {
+            ACTIVATIONS.put(player.getUniqueId(), keys = new ArrayList<>(4));
+        }
+        if (action != KeyBinding.SNEAK && player.isSneaking()) keys.add(KeyBinding.WHILE_SNEAK);
+        keys.add(action);
 
         ItemStack item = player.getItemInHand();
         for (Ability abs : info.getSkill().getAbilities()) {
-            if (!abs.isPassive() && info.getImprovementLevel(abs) > 0 && !info.isAbilityDisabled(abs)) {
-                ActiveAbility activeAb = (ActiveAbility) abs;
-                if (activeAb.isWeaponAllowed(info, item)) {
-                    String activation = activeAb.getActivationKey(info);
+            if (abs.isPassive()) continue;
 
-                    boolean whileSneak = activation.startsWith(ws);
-                    if (activation.startsWith(keys) || whileSneak) {
-                        if (whileSneak) {
-                            if (!player.isSneaking()) {
-                                AbilityActivation.ACTIVATIONS.invalidate(player.getUniqueId());
-                                return false;
-                            }
+            ActiveAbility activeAb = (ActiveAbility) abs;
+            PlayerAbilityData data = info.getAbilityData(activeAb);
 
-                            index++;
-                            keys = ws + action.shortName;
-                        }
+            if (data.isDisabled()) continue;
+            if (data.getLevel() <= 0) continue;
+            if (!activeAb.isWeaponAllowed(info, item)) continue;
+            KeyBinding[] activation = data.getKeyBinding() != null ?
+                    data.getKeyBinding() : activeAb.getActivationKey(info);
 
-                        if (index == activation.length()) {
-                            AbilityActivation.ACTIVATIONS.invalidate(player.getUniqueId());
-                            ability = activeAb;
-                            break;
-                        }
+            if (!keyBindingMatches(activation, keys)) continue;
 
-                        AbilityActivation.ACTIVATIONS.put(player.getUniqueId(), keys);
-                        return true;
-                    }
-                }
+            // That's the ability we're looking for.
+            if (keys.size() == activation.length) {
+                ability = activeAb;
+                break;
             }
+
+            return true;
         }
 
+        ACTIVATIONS.invalidate(player.getUniqueId());
         if (ability == null) return false;
 
         // Cooldown
@@ -109,8 +117,11 @@ public class AbilityListener implements Listener {
         info.setLastAbilityUsed(ability);
 
         // Activate instantly if that's what the active requires
-        if (ability.activateOnReady) {
-            ability.useSkill(player);
+        if (ability instanceof InstantActiveAbility) {
+            if (ability.checkup(player) != null) {
+                AbilityContext context = new AbilityContext(player, info);
+                ((InstantActiveAbility) ability).useSkill(context);
+            }
             return true;
         }
 
@@ -145,7 +156,7 @@ public class AbilityListener implements Listener {
     @EventHandler
     public void onSneakActivate(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (player.isSneaking()) activate(player, AbilityActivation.ActivationAction.SNEAK);
+        if (player.isSneaking()) activate(player, KeyBinding.SNEAK);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -155,12 +166,12 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onQ(PlayerDropItemEvent event) {
-        if (activate(event.getPlayer(), AbilityActivation.ActivationAction.DROP)) event.setCancelled(true);
+        if (activate(event.getPlayer(), KeyBinding.DROP)) event.setCancelled(true);
     }
 
     @EventHandler
     public void onF(PlayerSwapHandItemsEvent event) {
-        if (activate(event.getPlayer(), AbilityActivation.ActivationAction.SWITCH)) event.setCancelled(true);
+        if (activate(event.getPlayer(), KeyBinding.SWITCH)) event.setCancelled(true);
     }
 
     @EventHandler
@@ -215,10 +226,9 @@ public class AbilityListener implements Listener {
                 if (XMaterial.matchXMaterial(clicked.getType()).isOneOf(SkillsConfig.PREVENT_ACTIVATION_BLOCKS.getStringList())) return;
             }
 
-            AbilityActivation.ActivationAction activationAction =
-                    action.name().startsWith("LEFT") ?
-                            AbilityActivation.ActivationAction.LEFT_CLICK :
-                            AbilityActivation.ActivationAction.RIGHT_CLICK;
+            KeyBinding activationAction = action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK ?
+                    KeyBinding.LEFT_CLICK :
+                    KeyBinding.RIGHT_CLICK;
             activate(player, activationAction);
         }
     }

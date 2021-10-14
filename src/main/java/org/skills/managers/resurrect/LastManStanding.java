@@ -33,7 +33,7 @@ final class LastManStanding {
                 public void run() {
                     player.setInvulnerable(false);
                 }
-            }.runTaskLater(SkillsPro.get(), invulnerable * 20);
+            }.runTaskLater(SkillsPro.get(), invulnerable * 20L);
         } else invulnerability = null;
 
         int bleed = SkillsConfig.LAST_BREATH_BLEED_OUT.getInt();

@@ -27,11 +27,11 @@ public class DevourerBlink extends ActiveAbility {
     private static final Map<UUID, Integer> HITS = new HashMap<>();
 
     public DevourerBlink() {
-        super("Devourer", "blink", false);
+        super("Devourer", "blink");
     }
 
     private static boolean safeTp(Entity entity, Location location) {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             if (location.getBlock().isPassable() && location.getBlock().getRelative(BlockFace.UP).isPassable()) {
                 entity.teleport(location);
                 return true;
@@ -66,20 +66,18 @@ public class DevourerBlink extends ActiveAbility {
         }
 
         SkilledPlayer info;
-        if (hits == 0) info = this.activeCheckup(player);
+        if (hits == 0) info = this.checkup(player);
         else info = SkilledPlayer.getSkilledPlayer(player);
         if (info == null) return;
 
         hits++;
-        int lvl = info.getImprovementLevel(this);
+        int lvl = info.getAbilityLevel(this);
         Entity entity = event.getEntity();
-        ParticleDisplay dis = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).offset(1, 1, 1);
-        dis.count = 100;
-        dis.spawn();
+        ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).offset(1).withCount(100).spawn();
 
         player.addPotionEffect(XPotion.SPEED.parsePotion(20 * 10, 1));
         XSound.ENTITY_ENDERMAN_TELEPORT.play(player);
-        int maxHits = (int) getExtraScaling(info, "hits");
+        int maxHits = (int) getScaling(info, "hits");
 
         if (lvl == 1) {
             safeTp(player, getBack(entity.getLocation()));

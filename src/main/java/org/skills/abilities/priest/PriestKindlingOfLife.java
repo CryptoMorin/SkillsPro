@@ -11,35 +11,31 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.utils.versionsupport.VersionSupport;
 
 import java.util.List;
 
-public class PriestKindlingOfLife extends ActiveAbility {
+public class PriestKindlingOfLife extends InstantActiveAbility {
     private static final String SPELL = "PRIEST_SPELL";
 
     public PriestKindlingOfLife() {
-        super("Priest", "kindling_of_life", true);
+        super("Priest", "kindling_of_life");
     }
 
     @Override
-    public void useSkill(Player player) {
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
-        int lvl = info.getImprovementLevel(this);
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
+        int lvl = info.getAbilityLevel(this);
 
         if (player.isSneaking()) {
             XSound.ENTITY_GENERIC_DRINK.play(player.getLocation());
             ParticleDisplay.simple(player.getLocation(), Particle.HEART).withCount(lvl * 20).offset(0.5, 0.5, 0.5).spawn();
-
-            double amount = player.getHealth() + this.getScaling(info);
-            double max = VersionSupport.getMaxHealth(player);
-            if (amount > max) amount = max;
-            player.setHealth(amount);
-
+            VersionSupport.heal(player, this.getScaling(info, "heal"));
             return;
         }
 
@@ -93,9 +89,6 @@ public class PriestKindlingOfLife extends ActiveAbility {
         else effects = getEffects(info, "debuffs");
         ((LivingEntity) hit).addPotionEffects(effects);
 
-        double amount = livingEntity.getHealth() + this.getScaling(info);
-        double max = VersionSupport.getMaxHealth(livingEntity);
-        if (amount > max) amount = max;
-        livingEntity.setHealth(amount);
+        VersionSupport.heal(livingEntity, this.getScaling(info, "heal"));
     }
 }

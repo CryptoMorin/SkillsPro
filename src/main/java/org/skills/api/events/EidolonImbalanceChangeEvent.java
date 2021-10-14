@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.skills.abilities.eidolon.EidolonForm;
-import org.skills.data.managers.SkilledPlayer;
 
 public class EidolonImbalanceChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
@@ -37,9 +36,5 @@ public class EidolonImbalanceChangeEvent extends Event {
 
     public void setNewForm(EidolonForm newForm) {
         this.newForm = newForm;
-    }
-
-    public SkilledPlayer getPlayerInfo() {
-        return SkilledPlayer.getSkilledPlayer(player);
     }
 }

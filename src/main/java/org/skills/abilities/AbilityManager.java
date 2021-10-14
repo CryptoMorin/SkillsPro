@@ -12,15 +12,18 @@ import org.skills.abilities.swordsman.*;
 import org.skills.abilities.vampire.*;
 import org.skills.main.SkillsPro;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
-public class AbilityManager {
-    private static final HashMap<String, Ability> ABILITIES = new HashMap<>();
+public final class AbilityManager {
+    private static final Map<String, Ability> ABILITIES = new HashMap<>();
 
+    /**
+     * There's no need to clear the map when re-registering
+     * abilities as their original name is static and will replace the previous one.
+     */
     public static void registerAll() {
-        List<Ability> abilities = Arrays.asList(
+        Ability[] abilities = {
                 new SwordsmanPassive(),
                 new SwordsmanParry(),
                 new SwordsmanPierce(),
@@ -42,6 +45,7 @@ public class AbilityManager {
                 new DevourerHook(),
                 new DevourerDisarm(),
                 new DevourerConsume(),
+                new DevourerLocate(),
 
                 new MagePassive(),
                 new MageReflect(),
@@ -89,12 +93,13 @@ public class AbilityManager {
                 new PriestNaturesForce(),
                 new PriestNaturesCall(),
                 new PriestBarrier(),
-                new PriestPurification());
+                new PriestPurification()
+        };
 
         for (Ability ability : abilities) register(ability);
     }
 
-    public static HashMap<String, Ability> getAbilities() {
+    public static Map<String, Ability> getAbilities() {
         return ABILITIES;
     }
 

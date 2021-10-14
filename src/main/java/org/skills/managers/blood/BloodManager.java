@@ -18,7 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.skills.main.SkillsConfig;
 import org.skills.main.locale.MessageHandler;
 
-public class BloodManager implements Listener {
+public final class BloodManager implements Listener {
     private static void playEffect(LivingEntity entity, String key) {
         String[] split = StringUtils.split(StringUtils.deleteWhitespace(key), ',');
 

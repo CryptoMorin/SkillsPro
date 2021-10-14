@@ -26,10 +26,10 @@ public class FireMageBlackFire extends Ability {
 
             Player player = (Player) entity;
             SkilledPlayer info = this.checkup(player);
-            if (info == null) return;
+            if (info == null) continue;
 
-            double chance = this.getScaling(info);
-            event.setDamage(event.getDamage() + chance);
+            double damage = this.getScaling(info, "damage");
+            event.setDamage(event.getDamage() + damage);
             Location location = event.getEntity().getLocation();
             player.getWorld().playEffect(location, Effect.STEP_SOUND, Material.COAL_BLOCK);
         }

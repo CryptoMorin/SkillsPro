@@ -1,10 +1,13 @@
 package org.skills.main;
 
+import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.skills.abilities.Ability;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.LanguageManager;
 import org.skills.main.locale.MessageHandler;
@@ -12,6 +15,7 @@ import org.skills.utils.MathUtils;
 import org.skills.utils.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +77,7 @@ public enum SkillsConfig {
     BOSSBAR_BONUSES_ENABLED(true, 1, 2),
     BOSSBAR_BONUSES(null, 1),
     AUTO_SELECT_ON_JOIN(false),
-    DEFAULT_SKILL("none"),
+    DEFAULT_SKILL(PlayerSkill.NONE),
     VANILLA_EXP_BAR_ENABLED(true, 3),
     VANILLA_EXP_BAR_SHOWN_NUMBER(true, 3),
     VANILLA_EXP_BAR_REAL_SYNC(false, 3),
@@ -94,6 +98,8 @@ public enum SkillsConfig {
     DISABLED_WORLDS_XP_LOSS(new String[0], 2),
     SKILL_ACTIVATION_TIME(500),
     XP(new String[0]),
+    DEFAULT_XP(-1),
+    DEFAULT_SOULS(1),
     SOULS(new String[0]),
     DISABLE_CREATIVE_FIRE(true),
 
@@ -183,7 +189,6 @@ public enum SkillsConfig {
     PARTY_SPY_FORMAT("&7[&5SPY&7] &7[&5%skills_party_name%&7]&8|7[&5%skills_party_name%&7]&8|&7[&5%skills_party_rank%&7] %displayname% &8» &d", 1),
     KILL_MESSAGE(false),
     HOLOGRAM_ENABLED(true, 1),
-    HOLOGRAM_COMPACT(0.2, 1),
     HOLOGRAM_EFFECT("LEVITATION, 1, 2", 1),
     HOLOGRAM_STAY(40, 1),
     HOLOGRAM_OFFSET(null, 1),
@@ -216,6 +221,30 @@ public enum SkillsConfig {
 
     public static boolean isInDisabledWorld(World world) {
         return SkillsConfig.DISABLED_WORLDS_PLUGIN.getStringList().contains(world.getName());
+    }
+
+    public static int getClosestLevelSection(ConfigurationSection masterSection, int level) {
+        Validate.isTrue(level >= 0, "No level properties for levels lower than 1");
+        Objects.requireNonNull(masterSection, "Cannot get closest level section from null master section");
+
+        ConfigurationSection section = masterSection.getConfigurationSection(String.valueOf(level));
+        int lvl = -1;
+        if (section == null) {
+            Set<String> keys = masterSection.getKeys(false);
+            int i = 0;
+
+            for (String key : keys) {
+                int k = NumberUtils.toInt(key, i);
+                if (k > level && i <= level) {
+                    lvl = i;
+                    break;
+                }
+
+                i = k;
+            }
+            if (lvl == -1) lvl = i;
+        } else return level;
+        return lvl;
     }
 
     public boolean isSet() {

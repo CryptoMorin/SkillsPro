@@ -25,17 +25,16 @@ public class ArbalistDualArrows extends Ability {
         if (isInvalidTarget(event.getEntity())) return;
         Entity arrow = event.getDamager();
 
-        if (arrow instanceof Arrow) {
-            if (arrow.hasMetadata(ArbalistPassive.ARBALIST_ARROW)) return;
-            if (((Arrow) arrow).getShooter() instanceof Player) {
-                Player player = (Player) ((Arrow) event.getDamager()).getShooter();
-                SkilledPlayer info = this.checkup(player);
-                if (info == null) return;
+        if (!(arrow instanceof Arrow)) return;
+        if (arrow.hasMetadata(ArbalistPassive.ARBALIST_ARROW)) return;
+        if (!(((Arrow) arrow).getShooter() instanceof Player)) return;
 
-                double damage = this.getScaling(info, event);
-                event.setDamage(event.getDamage() + damage);
-            }
-        }
+        Player player = (Player) ((Arrow) event.getDamager()).getShooter();
+        SkilledPlayer info = this.checkup(player);
+        if (info == null) return;
+
+        double damage = this.getScaling(info, "damage", event);
+        event.setDamage(event.getDamage() + damage);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -48,7 +47,7 @@ public class ArbalistDualArrows extends Ability {
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        if (!MathUtils.hasChance((int) getExtraScaling(info, "chance"))) return;
+        if (!MathUtils.hasChance((int) getScaling(info, "chance"))) return;
 
         Vector velocity = arrow.getVelocity();
         velocity.add(new Vector(MathUtils.rand(-0.5, 0.5), MathUtils.rand(-0.5, 0.5), MathUtils.rand(-0.5, 0.5)));
@@ -59,12 +58,7 @@ public class ArbalistDualArrows extends Ability {
 //        velocity = new Vector(x > 0 ? Math.min(x, 4) : Math.max(x, -4), y > 0 ? Math.min(y, 4) : Math.max(y, -4), z > 0 ? Math.min(z, 4) : Math.max(z, -4));
 
         Arrow extraArrow = player.launchProjectile(Arrow.class, velocity);
-        extraArrow.setFireTicks((int) getExtraScaling(info, "fire"));
+        extraArrow.setFireTicks((int) getScaling(info, "fire"));
         extraArrow.setMetadata(ArbalistPassive.ARBALIST_ARROW, new FixedMetadataValue(SkillsPro.get(), null));
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%chance%", getScalingDescription(info, getExtra(info, "chance").getString())};
     }
 }

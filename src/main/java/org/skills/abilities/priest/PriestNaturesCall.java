@@ -16,7 +16,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.MathUtils;
@@ -30,7 +29,7 @@ public class PriestNaturesCall extends ActiveAbility {
     private static final Map<UUID, Set<Entity>> MINIONS = new HashMap<>();
 
     public PriestNaturesCall() {
-        super("Arbalist", "natures_call", false);
+        super("Arbalist", "natures_call");
     }
 
     private static void killMinion(LivingEntity livingMinion) {
@@ -78,15 +77,12 @@ public class PriestNaturesCall extends ActiveAbility {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        Entity entity = event.getEntity();
-        if (!(entity instanceof LivingEntity)) return;
-
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-
+        if (commonDamageCheckup(event)) return;
         Player player = (Player) event.getDamager();
-        SkilledPlayer info = this.activeCheckup(player);
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
+
+        Entity entity = event.getEntity();
         Location center = player.getLocation();
 
         new BukkitRunnable() {
@@ -101,8 +97,8 @@ public class PriestNaturesCall extends ActiveAbility {
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);
 
         Set<Entity> minions = new HashSet<>();
-        double damage = getScaling(info);
-        for (int i = (int) getExtraScaling(info, "amount"); i > 0; i--) {
+        double damage = getScaling(info, "damage");
+        for (int i = (int) getScaling(info, "minions"); i > 0; i--) {
             int x = MathUtils.randInt(1, 3);
             int z = MathUtils.randInt(1, 3);
 
@@ -139,11 +135,6 @@ public class PriestNaturesCall extends ActiveAbility {
                     killMinion(livingMinion);
                 }
             }
-        }, (long) (getExtraScaling(info, "time") * 20L));
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%minions%", translate(info, "amount")};
+        }, (long) (getScaling(info, "time") * 20L));
     }
 }

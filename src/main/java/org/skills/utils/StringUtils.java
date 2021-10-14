@@ -34,6 +34,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.skills.main.locale.LanguageManager;
+import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 
 import javax.annotation.Nonnull;
@@ -105,6 +106,19 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
         return new String(chars);
     }
 
+    public static String toLatinLowerCase(@Nullable String str, char replace, char with) {
+        if (Strings.isNullOrEmpty(str)) return str;
+        char[] chars = str.toCharArray();
+        int len = str.length();
+
+        for (int i = 0; i < len; i++) {
+            char ch = chars[i];
+            if (ch == replace) chars[i] = with;
+            else chars[i] = ((char) (ch | 0x20));
+        }
+        return new String(chars);
+    }
+
     /**
      * Checks if every single character in a string is English.
      * English characters consists of whitespaces, alphabets and numbers
@@ -122,6 +136,22 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
             if (chr != '_' && chr != ' ' && !isEnglishLetterOrDigit(chr)) return false;
         }
         return true;
+    }
+
+    public static void printStackTrace() {
+        MessageHandler.sendConsolePluginMessage("&f--------------------------------------------");
+        Arrays.stream(Thread.currentThread().getStackTrace()).skip(2).forEach(stack -> {
+            String color;
+            String clazz = stack.getClassName();
+            if (clazz.startsWith("net.minecraft")) color = "&6";
+            else if (clazz.startsWith("org.bukkit")) color = "&d";
+            else if (clazz.startsWith("co.aikar") || clazz.startsWith("io.papermc") || clazz.startsWith("com.destroystokyo")) color = "&d";
+            else if (clazz.startsWith("java")) color = "&c";
+            else color = "&2";
+
+            MessageHandler.sendConsolePluginMessage(color + stack.getClassName() + "&8.&9" + stack.getMethodName() + "&8: &5" + stack.getLineNumber());
+        });
+        MessageHandler.sendConsolePluginMessage("&f--------------------------------------------");
     }
 
     public static boolean hasSymbol(@Nullable String str) {
@@ -196,18 +226,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     public static boolean isEnglishLetterOrDigit(char ch) {
         return isEnglishDigit(ch) || isEnglishLetter(ch);
-    }
-
-    public static void printStacktrace() {
-        int skip = 0;
-        for (StackTraceElement stack : Thread.currentThread().getStackTrace()) {
-            if (skip < 2) {
-                skip++;
-                continue;
-            }
-            System.err.println("at  " + stack.getClass().getPackage().getName() + '-' + stack.getClassName() +
-                    '.' + stack.getMethodName() + "   " + stack.getClassName() + ':' + stack.getLineNumber());
-        }
     }
 
     /**

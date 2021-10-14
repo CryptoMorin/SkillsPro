@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
@@ -13,6 +14,7 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.gui.GUIOption;
 import org.skills.gui.GUIParser;
 import org.skills.gui.InteractiveGUI;
+import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 import org.skills.party.PartyRank;
@@ -26,8 +28,11 @@ public class CommandPartyList extends SkillsCommand {
 
     public static void openMember(Player player, OfflinePlayer member) {
         SkilledPlayer memberInfo = SkilledPlayer.getSkilledPlayer(member);
-        InteractiveGUI memberGUI = GUIParser.parseOption(player, player, "party-member", "%name%", member.getName(),
-                "%online%", MessageHandler.colorize(member.isOnline() ? "&2Online" : "&cOffline"), "%mod%", memberInfo.getRank() == PartyRank.MODERATOR);
+        InteractiveGUI memberGUI = GUIParser.parseOption(player, player, "party-member",
+                "%name%", member.getName(),
+                "%online%", MessageHandler.colorize(member.isOnline() ? "&2Online" : "&cOffline"),
+                "%mod%", memberInfo.getRank() == PartyRank.MODERATOR
+        );
         if (memberGUI == null) return;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
 
@@ -83,22 +88,28 @@ public class CommandPartyList extends SkillsCommand {
         InteractiveGUI gui = GUIParser.parseOption(player, "party");
         List<Integer> slots = gui.getHolder("member").getSlots();
 
-        for (OfflinePlayer member : info.getParty().getPlayerMembers()) {
-            GUIOption holder = gui.getHolder("member");
-            ItemStack item = holder.getItem();
-            ItemMeta meta = item.getItemMeta();
-            SkullUtils.applySkin(meta, member);
-            item.setItemMeta(meta);
-            GUIOption.defineVariables(item, member);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (OfflinePlayer member : info.getParty().getPlayerMembers()) {
+                    GUIOption holder = gui.getHolder("member");
+                    ItemStack item = holder.getItem();
+                    ItemMeta meta = item.getItemMeta();
+                    SkullUtils.applySkin(meta, member);
+                    item.setItemMeta(meta);
+                    GUIOption.defineVariables(item, member);
 
-            int slot = slots.remove(0);
-            gui.push(holder, item, slot, () -> openMember(player, member),
-                    "%name%", member.getName(), "%online%", MessageHandler.colorize(member.isOnline() ? "&2Online" : "&cOffline"));
-        }
+                    int slot = slots.remove(0);
+                    gui.push(holder, item, slot, () -> openMember(player, member),
+                            "%name%", member.getName(),
+                            "%online%", MessageHandler.colorize(member.isOnline() ? "&2Online" : "&cOffline"));
+                }
 
-        gui.dispose("member");
-        gui.setRest();
-        gui.openInventory(player);
+                gui.dispose("member");
+                gui.setRest();
+                gui.openInventory(player);
+            }
+        }.runTaskAsynchronously(SkillsPro.get());
     }
 
     @Override

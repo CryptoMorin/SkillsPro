@@ -1,6 +1,5 @@
 package org.skills.abilities.priest;
 
-import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
@@ -11,7 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.services.manager.ServiceHandler;
@@ -19,24 +19,23 @@ import org.skills.utils.EntityUtil;
 
 import java.util.List;
 
-public class PriestBarrier extends ActiveAbility {
+public class PriestBarrier extends InstantActiveAbility {
     public PriestBarrier() {
-        super("Priest", "barrier", true);
+        super("Priest", "barrier");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
-        double duration = getExtraScaling(info, "duration");
-        int frequency = (int) getExtraScaling(info, "frequency");
+        double duration = getScaling(info, "duration");
+        int frequency = (int) getScaling(info, "frequency");
         double decreamentFactor = 1D / (20D / frequency);
 
-        double radius = getExtraScaling(info, "radius");
-        float soundRadius = (float) (3 + radius);
+        double radius = getScaling(info, "radius");
+        playSound(player, info, "start");
 
-        XSound.BLOCK_BEACON_ACTIVATE.play(player.getLocation(), (float) radius, XSound.DEFAULT_PITCH);
         new BukkitRunnable() {
             final Location location = player.getLocation();
             final ParticleDisplay barrier = ParticleDisplay.simple(location, Particle.PORTAL);
@@ -46,7 +45,7 @@ public class PriestBarrier extends ActiveAbility {
             @Override
             public void run() {
                 XParticle.sphere(radius, count, barrier);
-                XSound.BLOCK_PORTAL_AMBIENT.play(location, (float) radius, 1.0f);
+                playSound(player, info, "end");
                 if ((repeat -= decreamentFactor) <= 0) cancel();
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 10L);
@@ -54,8 +53,8 @@ public class PriestBarrier extends ActiveAbility {
         new BukkitRunnable() {
             final List<PotionEffect> effects = getEffects(info, "effects");
             final List<PotionEffect> friendlyEffects = getEffects(info, "friendly-effects");
-            final double kb = getExtraScaling(info, "knockback");
-            final double damage = getExtraScaling(info, "damage");
+            final double kb = getScaling(info, "knockback");
+            final double damage = getScaling(info, "damage");
             final Vector velocity = player.getVelocity();
             double repeat = duration;
 
@@ -71,8 +70,8 @@ public class PriestBarrier extends ActiveAbility {
 
                     if (damage != 0) livingEntity.damage(damage, player);
                     livingEntity.addPotionEffects(effects);
-                    if (kb >= 0) livingEntity.setVelocity(livingEntity.getVelocity().subtract(velocity).multiply(kb));
-                    XSound.ENTITY_ENDERMAN_SCREAM.play(livingEntity.getLocation(), soundRadius, 1f);
+                    if (kb >= 0) livingEntity.setVelocity(EntityUtil.validateExcessiveVelocity(livingEntity.getVelocity().subtract(velocity).multiply(kb)));
+                    playSound(player, info, "barrier");
                 }
                 if ((repeat -= decreamentFactor) <= 0) cancel();
             }

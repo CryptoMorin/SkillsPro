@@ -26,7 +26,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.utils.Cooldown;
@@ -38,7 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SwordsmanAnnihilation extends ActiveAbility {
+public class SwordsmanAnnihilation extends InstantActiveAbility {
     private static final String META = "Annihilation";
     private static final XMaterial[] SWORDS;
     private static final Map<Integer, Runnable> CANCELS = new HashMap<>();
@@ -51,7 +52,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
     }
 
     public SwordsmanAnnihilation() {
-        super("Swordsman", "annihilation", true);
+        super("Swordsman", "annihilation");
     }
 
     private static double distance(Location i, Location o) {
@@ -77,9 +78,9 @@ public class SwordsmanAnnihilation extends ActiveAbility {
         if (Cooldown.isInCooldown(player.getUniqueId(), META)) return;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        new Cooldown(player.getUniqueId(), META, (long) getExtraScaling(info, "throw.cooldown"), TimeUnit.SECONDS);
+        new Cooldown(player.getUniqueId(), META, (long) getScaling(info, "throw.cooldown"), TimeUnit.SECONDS);
 
-        ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1, 0.1, 0.1).withCount(10);
+        ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1).withCount(10);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Set<Item> items = ConcurrentHashMap.newKeySet();
         XSound.ENTITY_WITHER_SHOOT.play(player.getLocation(), 3.0f, 0.5f);
@@ -114,8 +115,8 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                 Vector middle = direction.clone().multiply(rate);
                 Location mid = from.clone().add(middle);
                 new BukkitRunnable() {
-                    final double damage = getExtraScaling(info, "throw.damage");
-                    final ParticleDisplay sweep = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
+                    final double damage = getScaling(info, "throw.damage");
+                    final ParticleDisplay sweep = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).offset(0.3).withCount(5);
 
                     @Override
                     public void run() {
@@ -139,7 +140,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                     double y = radius * Math.sin(theta + sep);
 
                     Vector vector = new Vector(x, 0, y);
-                    XParticle.rotateAround(vector, xDir, yDir, 0);
+                    ParticleDisplay.rotateAround(vector, xDir, yDir, 0);
                     vector = middle.clone().add(vector);
                     Vector finale = from.toVector().add(vector);
                     sword.setVelocity(finale.subtract(sword.getLocation().toVector()));
@@ -159,19 +160,23 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                 rate += 0.5;
                 if (rate > 20) {
                     cancel();
-                    for (Item item : items) {
-                        item.remove();
-                        removeEntity(item);
-                    }
+                    info.toggleUsingAbility();
+                    Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
+                        for (Item item : items) {
+                            item.remove();
+                            removeEntity(item);
+                        }
+                    });
                 }
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 1L);
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
+        info.toggleUsingAbility();
 
         ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1, 0.1, 0.1).withCount(10);
         Set<Entity> items = ConcurrentHashMap.newKeySet();
@@ -197,7 +202,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
         addAllEntities(items);
         player.setMetadata(META, new FixedMetadataValue(SkillsPro.get(), items));
 
-        long duration = (long) getExtraScaling(info, "duration") * 20L;
+        long duration = (long) getScaling(info, "duration") * 20L;
         XSound.MUSIC_DISC_FAR.play(player, 10f, 0.5f);
         BukkitTask curl = XParticle.blackhole(SkillsPro.get(), 5, 2, 30, 1, (int) duration, ParticleDisplay.simple(player.getLocation(), Particle.FLAME).withEntity(player));
         Map<Integer, Integer> fighting = new HashMap<>();
@@ -230,7 +235,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                     double z = radius * Math.sin(theta);
                     Vector vector = new Vector(x, 0, z);
 
-                    XParticle.rotateAround(vector, displayer[1], displayer[2], displayer[3]);
+                    ParticleDisplay.rotateAround(vector, displayer[1], displayer[2], displayer[3]);
                     item.setVelocity(player.getEyeLocation().toVector().add(vector).subtract(item.getLocation().toVector()));
 
                     display.spawn(item.getLocation());
@@ -248,12 +253,14 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                     CANCELS.remove(player.getEntityId());
                     player.stopSound(XSound.MUSIC_DISC_FAR.parseSound());
 
-                    for (Entity item : items) {
-                        item.remove();
-                        remove.spawn(item.getLocation());
-                        player.removeMetadata(META, SkillsPro.get());
-                        removeEntity(item);
-                    }
+                    Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
+                        for (Entity item : items) {
+                            item.remove();
+                            remove.spawn(item.getLocation());
+                            player.removeMetadata(META, SkillsPro.get());
+                            removeEntity(item);
+                        }
+                    });
                     XSound.BLOCK_BEACON_DEACTIVATE.play(player.getLocation(), 10f, 0.5f);
                 }
             }
@@ -276,13 +283,12 @@ public class SwordsmanAnnihilation extends ActiveAbility {
         CANCELS.put(player.getEntityId(), canceller);
 
         new BukkitRunnable() {
-            final double range = getExtraScaling(info, "range");
-            final double damage = getExtraScaling(info, "damage");
+            final double range = getScaling(info, "range");
+            final double damage = getScaling(info, "damage");
             final double rateDiv = Math.PI / 20;
-            final double distance = getExtraScaling(info, "distance");
 
-            final ParticleDisplay display = ParticleDisplay.simple(null, XMaterial.supports(16) ? Particle.SOUL_FIRE_FLAME : Particle.SPELL_WITCH);
-            final ParticleDisplay sweep = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
+            final ParticleDisplay display = ParticleDisplay.of(XMaterial.supports(16) ? Particle.SOUL_FIRE_FLAME : Particle.SPELL_WITCH);
+            final ParticleDisplay sweep = ParticleDisplay.of(Particle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
 
             @Override
             public void run() {
@@ -304,7 +310,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
 
                         @Override
                         public void run() {
-                            if (!livingEntity.isValid() || cancel.get() || distance(player.getLocation(), livingEntity.getLocation()) > distance) {
+                            if (!livingEntity.isValid() || cancel.get() || distance(player.getLocation(), livingEntity.getLocation()) > range) {
                                 fighting.remove(this.getTaskId());
                                 mobs.remove(entity.getEntityId());
                                 cancel();
@@ -331,7 +337,7 @@ public class SwordsmanAnnihilation extends ActiveAbility {
                                 }
 
                                 Vector clone = original.clone();
-                                XParticle.rotateAroundX(vector, random.nextDouble(-Math.PI, Math.PI));
+                                ParticleDisplay.rotateAround(vector, ParticleDisplay.Axis.X, random.nextDouble(-Math.PI, Math.PI));
                                 item.setVelocity(clone.add(vector).subtract(item.getLocation().toVector()));
                                 display.spawn(item.getLocation());
                                 break;
@@ -369,12 +375,5 @@ public class SwordsmanAnnihilation extends ActiveAbility {
     @EventHandler(ignoreCancelled = true)
     public void onHoppeerSwordPickup(InventoryPickupItemEvent event) {
         if (event.getItem().hasMetadata(META)) event.setCancelled(true);
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%damage%", translate(info, "damage"), "%duration%", translate(info, "duration"),
-                "%range%", translate(info, "range"), "%distance%", translate(info, "distance"),
-                "%throw_damage%", translate(info, "throw.damage"), "%throw_cooldown%", translate(info, "throw.damage")};
     }
 }

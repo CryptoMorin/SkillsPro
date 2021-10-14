@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class LastHitManager implements Listener {
+public final class DamageManager implements Listener {
     public static final String LAST_DAMAGE = "SKILLS_ATTACK";
     private static final Cache<Integer, Map<UUID, Double>> DAMAGES = CacheHandler.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 //    private static final Map<UUID, UUID> LAST_DAMAGES = new HashMap<>();
@@ -68,7 +68,21 @@ public class LastHitManager implements Listener {
 //        }
 
         if (entity instanceof Player) return (Player) entity;
-        else return null;
+        return null;
+    }
+
+    public static LivingEntity getDamager(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (damager instanceof Projectile) {
+            ProjectileSource shooter = ((Projectile) damager).getShooter();
+            if (shooter instanceof LivingEntity) {
+                LivingEntity entityShooter = (LivingEntity) shooter;
+                if (ServiceHandler.isMyPet(entityShooter)) return ServiceHandler.getPetOwner(entityShooter);
+                return entityShooter;
+            }
+        }
+        if (!(damager instanceof LivingEntity)) return null;
+        return (LivingEntity) damager;
     }
 
     public static LivingEntity getKiller(EntityDeathEvent event) {

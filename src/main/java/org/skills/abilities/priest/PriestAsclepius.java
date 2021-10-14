@@ -8,32 +8,28 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.services.manager.ServiceHandler;
 
-import java.util.EnumSet;
 import java.util.List;
 
-public class PriestAsclepius extends ActiveAbility {
-    public static final EnumSet<XPotion> DEBUFFS = EnumSet.of(XPotion.BAD_OMEN, XPotion.BLINDNESS, XPotion.CONFUSION, XPotion.HARM, XPotion.HUNGER,
-            XPotion.LEVITATION, XPotion.POISON, XPotion.SATURATION,
-            XPotion.SLOW, XPotion.SLOW_DIGGING, XPotion.SLOW_FALLING, XPotion.UNLUCK, XPotion.WEAKNESS, XPotion.WITHER);
-
+public class PriestAsclepius extends InstantActiveAbility {
     public PriestAsclepius() {
-        super("Priest", "asclepius", true);
+        super("Priest", "asclepius");
     }
 
     @Override
-    public void useSkill(Player player) {
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
-        int lvl = info.getImprovementLevel(this);
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
+        int lvl = info.getAbilityLevel(this);
 
-        PriestPurification.spreadFlower(player, (int) getExtraScaling(info, "spread-flower-chance"), 3);
-        double damage = getExtraScaling(info, "damage");
-        double range = getExtraScaling(info, "range");
+        PriestPurification.spreadFlower(player, (int) getScaling(info, "spread-flower-chance"), 3);
+        double damage = getScaling(info, "damage");
+        double range = getScaling(info, "range");
 
         List<Entity> entities = player.getNearbyEntities(range, range, range);
         entities.add(player);
@@ -48,7 +44,7 @@ public class PriestAsclepius extends ActiveAbility {
 
                 if (lvl > 2) {
                     for (PotionEffect debuff : target.getActivePotionEffects()) {
-                        if (DEBUFFS.contains(XPotion.matchXPotion(debuff.getType()))) target.removePotionEffect(debuff.getType());
+                        if (XPotion.DEBUFFS.contains(XPotion.matchXPotion(debuff.getType()))) target.removePotionEffect(debuff.getType());
                     }
                 }
             } else if (damage > 0) {
@@ -61,6 +57,6 @@ public class PriestAsclepius extends ActiveAbility {
         XSound.ENTITY_BAT_TAKEOFF.play(player);
 
         XParticle.circle(range * 2, range * 8, ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE));
-        if (lvl > 1) XParticle.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, true, false, new ParticleDisplay(Particle.ENCHANTMENT_TABLE, player.getLocation(), 1));
+        if (lvl > 1) XParticle.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, true, false, ParticleDisplay.simple(player.getLocation(), Particle.ENCHANTMENT_TABLE));
     }
 }

@@ -83,7 +83,7 @@ public class CommandShop extends SkillsCommand {
         InteractiveGUI gui = GUIParser.parseOption(player, "shop");
 
         for (String sell : gui.getHolders()) {
-            if (!sell.startsWith("sell-")) continue;
+            if (!sell.startsWith("sell")) continue;
             gui.push(sell, () -> {
                 ConfigurationSection guiSection = gui.getOptionsSection().getConfigurationSection(sell);
                 String type = guiSection.getString("skills-item");

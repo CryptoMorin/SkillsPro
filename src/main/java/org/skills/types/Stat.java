@@ -1,8 +1,11 @@
 package org.skills.types;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import org.bukkit.configuration.ConfigurationSection;
+import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
+import org.skills.main.locale.MessageHandler;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,6 +28,13 @@ public class Stat {
         this.maxLevel = maxLevel;
     }
 
+    public static String replaceStats(SkilledPlayer info, String str) {
+        for (Stat stats : STATS.values()) {
+            str = MessageHandler.replace(str, stats.node, (Supplier<String>) () -> String.valueOf(info.getStat(stats)));
+        }
+        return str;
+    }
+
     public static void init(SkillsPro plugin) {
         STATS.clear();
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("stats.types");
@@ -36,6 +46,7 @@ public class Stat {
             if (stats.equalsIgnoreCase("pts")) POINTS = stat;
             STATS.put(stats, stat);
         }
+        StatType.init(plugin);
     }
 
     public static Stat getStat(String node) {
@@ -43,7 +54,7 @@ public class Stat {
     }
 
     public static boolean isPoints(String node) {
-        return node.equals(POINTS.getDataNode());
+        return node.equals(POINTS.upperNode);
     }
 
     public String getDataNode() {

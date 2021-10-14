@@ -2,34 +2,33 @@ package org.skills.abilities.swordsman;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.services.manager.ServiceHandler;
+import org.skills.utils.EntityUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SwordsmanDash extends ActiveAbility {
+public class SwordsmanDash extends InstantActiveAbility {
     public SwordsmanDash() {
-        super("Swordsman", "dash", true);
+        super("Swordsman", "dash");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
         new BukkitRunnable() {
             final ParticleDisplay display = ParticleDisplay.simple(null, Particle.CLOUD).withCount(10).offset(0.5, 0.2, 0.5);
@@ -42,34 +41,23 @@ public class SwordsmanDash extends ActiveAbility {
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0, 1);
 
-        int lvl = info.getImprovementLevel(SwordsmanDash.this);
-        int kbLvl = (int) getExtraScaling(info, "charge.level");
-
-        if (lvl >= kbLvl) {
+        int lvl = info.getAbilityLevel(SwordsmanDash.this);
+        if (lvl >= 3) {
             new BukkitRunnable() {
                 final List<PotionEffect> effects = getEffects(info, "effects");
-                final double range = getExtraScaling(info, "range");
-                final double kb = getExtraScaling(info, "charge.knockback");
-                final double damage = getExtraScaling(info, "charge.damage");
-                final ParticleDisplay masterDisplay = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).withCount(10).offset(1, 1, 1);
+                final double range = getScaling(info, "range");
+                final double kb = getScaling(info, "knockback");
+                final double damage = getScaling(info, "damage");
+                final ParticleDisplay masterDisplay = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).withCount(10).offset(1);
                 final Set<Integer> targets = new HashSet<>();
                 int repeat = 20;
 
                 @Override
                 public void run() {
                     for (Entity entity : player.getNearbyEntities(range, range, range)) {
-                        if (!(entity instanceof LivingEntity)) continue;
-                        if (entity.getType() == EntityType.ARMOR_STAND) continue;
+                        if (EntityUtil.filterEntity(player, entity)) continue;
                         LivingEntity livingEntity = (LivingEntity) entity;
-                        if (livingEntity.isInvulnerable() || livingEntity.isDead()) continue;
                         if (!targets.add(entity.getEntityId())) continue;
-
-                        if (livingEntity instanceof Player) {
-                            Player targetPlayer = (Player) livingEntity;
-                            GameMode mode = targetPlayer.getGameMode();
-                            if (mode == GameMode.CREATIVE || mode == GameMode.SPECTATOR) continue;
-                            if (!ServiceHandler.canFight(player, targetPlayer)) continue;
-                        }
 
                         livingEntity.addPotionEffects(effects);
                         livingEntity.setVelocity(livingEntity.getVelocity().subtract(player.getVelocity()).multiply(kb));
@@ -84,16 +72,10 @@ public class SwordsmanDash extends ActiveAbility {
             }.runTaskTimer(SkillsPro.get(), 0, 2);
         }
 
-        int verticalSlashLvl = (int) getExtraScaling(info, "vertical-slash-level");
+        int verticalSlashLvl = (int) getScaling(info, "vertical-slash-level");
         Vector dir = player.getLocation().getDirection();
         Vector direction = new Vector(dir.getX(), (lvl >= verticalSlashLvl ? dir.getY() : 0), dir.getZ()).normalize();
-        double mod = getScaling(info);
+        double mod = getScaling(info, "velocity");
         player.setVelocity(direction.multiply(mod));
-    }
-
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%damage%", translate(info, "charge.damage"), "%knockback%", translate(info, "charge.knockback"), "%range%", translate(info, "range")};
     }
 }

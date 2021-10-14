@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.abilities.Ability;
+import org.skills.api.events.ClassChangeEvent;
 import org.skills.api.events.SkillToggleAbilityEvent;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
@@ -32,6 +34,13 @@ public class PriestPassive extends Ability {
 
     public PriestPassive() {
         super("Priest", "passive");
+    }
+
+    private static void disableFly(Player player) {
+        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
+        if (!JESUS.remove(player.getEntityId())) return;
+        player.setAllowFlight(false);
+        player.setFlying(false);
     }
 
     @Override
@@ -54,7 +63,7 @@ public class PriestPassive extends Ability {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(SkillsPro.get(), 100, getExtra("Priest", "interval").getInt() * 20L));
+        }.runTaskTimerAsynchronously(SkillsPro.get(), 100, getOptions("Priest", "interval").getInt() * 20L));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -66,7 +75,7 @@ public class PriestPassive extends Ability {
 
             SkilledPlayer info = this.checkup(player);
             if (info == null) return;
-            if (!getExtra(info, "jesus").getBoolean()) return;
+            if (!getOptions(info, "jesus").getBoolean()) return;
 
             Block block = player.getLocation().getBlock();
             String standing = block.getType().name();
@@ -113,23 +122,28 @@ public class PriestPassive extends Ability {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPassiveDisable(SkillToggleAbilityEvent event) {
         if (!event.isDisabled()) return;
         if (!event.getAbility().getName().endsWith("passive")) return;
         if (!event.getInfo().getSkillName().equalsIgnoreCase("priest")) return;
 
-        Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
-        if (!JESUS.remove(player.getEntityId())) return;
-        player.setAllowFlight(false);
-        player.setFlying(false);
+        disableFly(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onPassiveDisable(ClassChangeEvent event) {
+        if (!event.getInfo().getSkillName().equals(this.getSkill())) return;
+
+        Player player = event.getInfo().getPlayer();
+        if (player == null) return;
+        disableFly(player);
     }
 
     @EventHandler
     public void lavaEscape(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
         if (event.getCause() != EntityDamageEvent.DamageCause.LAVA) return;
+        if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();
         SkilledPlayer info = this.checkup(player);

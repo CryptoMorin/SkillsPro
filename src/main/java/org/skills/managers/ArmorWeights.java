@@ -26,7 +26,7 @@ import org.skills.main.locale.MessageHandler;
 
 import java.util.Optional;
 
-public class ArmorWeights implements Listener {
+public final class ArmorWeights implements Listener {
     public static void trigger(Player player, ItemStack armor, boolean put) {
         ConfigurationSection section = SkillsConfig.ARMOR_WEIGHTS_CUSTOM.getSection();
         if (section == null) return;

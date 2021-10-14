@@ -5,6 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.skills.abilities.Ability;
 import org.skills.abilities.AbilityManager;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
@@ -24,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class SkillManager {
-    private static final HashMap<String, Skill> SKILLS = new HashMap<>();
+public final class SkillManager {
+    private static final Map<String, Skill> SKILLS = new HashMap<>();
 
     public static void init(SkillsPro plugin) {
         Ability.reload();
@@ -101,7 +102,7 @@ public class SkillManager {
         SKILLS.put(skill.getName().toLowerCase(Locale.ENGLISH), skill);
     }
 
-    public static HashMap<String, Skill> getSkills() {
+    public static Map<String, Skill> getSkills() {
         return SKILLS;
     }
 
@@ -109,15 +110,13 @@ public class SkillManager {
         skill.getAdapter().loadDefaults();
         FileConfiguration config = skill.getAdapter().getConfig();
 
-        skill.addScaling(SkillScaling.HEALTH, config.getString("health"));
-        skill.addScaling(SkillScaling.MAX_HEALTH, config.getString("max-health"));
-        skill.addScaling(SkillScaling.MAX_ENERGY, config.getString("max-energy"));
-        skill.addScaling(SkillScaling.ENERGY_REGEN, config.getString("energy-regen"));
-        skill.addScaling(SkillScaling.MAX_LEVEL, config.getString("max-level"));
-        String damageCap = config.getString("damage-cap");
-        skill.addScaling(SkillScaling.DAMAGE_CAP, damageCap == null || damageCap.isEmpty() ? "0" : damageCap);
-        skill.addScaling(SkillScaling.REQUIRED_LEVEL, config.getString("required-level"));
-        skill.addScaling(SkillScaling.COST, config.getString("cost"));
+        skill.addScaling(SkillScaling.MAX_HEALTH, config.getString("max-health", "0"));
+        skill.addScaling(SkillScaling.MAX_ENERGY, config.getString("max-energy", "0"));
+        skill.addScaling(SkillScaling.ENERGY_REGEN, config.getString("energy-regen", "0"));
+        skill.addScaling(SkillScaling.MAX_LEVEL, config.getString("max-level", "0"));
+        skill.addScaling(SkillScaling.DAMAGE_CAP, config.getString("damage-cap", "0"));
+        skill.addScaling(SkillScaling.REQUIRED_LEVEL, config.getString("required-level", "0"));
+        skill.addScaling(SkillScaling.COST, config.getString("cost", "0"));
         skill.setDisplayName(MessageHandler.colorize(config.getString("name")));
 
         //skill.setDisplayName(SkillsLang.valueOf("SKILL_" + skill.getName().toUpperCase(Locale.ENGLISH) + "_NAME").parse());
@@ -145,7 +144,7 @@ public class SkillManager {
 
     private static void registerNone() {
         MessageHandler.sendConsolePluginMessage("&3Setting up Skill&8: &eNone (Default)");
-        Skill none = new Skill("none");
+        Skill none = new Skill(PlayerSkill.NONE);
         none.addScaling(SkillScaling.MAX_LEVEL, SkillsConfig.DEFAULT_MAX_LEVEL.getString());
         none.setDisplayName(SkillsLang.NO_SKILL_DISPLAYNAME.parse());
         register(none);

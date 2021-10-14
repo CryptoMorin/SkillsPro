@@ -60,7 +60,7 @@ public class DevourerGliders extends Ability {
                 SkilledPlayer info = DevourerGliders.this.checkup(player);
                 if (info == null) return;
                 UUID id = player.getUniqueId();
-                int lvl = info.getImprovementLevel(DevourerGliders.this);
+                int lvl = info.getAbilityLevel(DevourerGliders.this);
 
                 boolean onGround = MathUtils.isInteger(event.getTo().getY());
                 if (onGround) {
@@ -73,7 +73,7 @@ public class DevourerGliders extends Ability {
                     }
                 }
 
-                if (lvl >= getExtraScaling(info, "double-jump-level") && player.getGameMode() != GameMode.CREATIVE && !JUMPING.contains(id)) {
+                if (lvl >= getScaling(info, "double-jump-level") && player.getGameMode() != GameMode.CREATIVE && !JUMPING.contains(id)) {
                     if (!onGround) {
                         if (!player.getAllowFlight()) {
                             TEMP_FLY.add(id);
@@ -102,12 +102,9 @@ public class DevourerGliders extends Ability {
 
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
-        if (info.getImprovementLevel(this) < getExtraScaling(info, "double-jump-level")) return;
+        if (info.getAbilityLevel(this) < getScaling(info, "double-jump-level")) return;
 
-        ParticleDisplay dis = ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE);
-        dis.count = 70;
-        dis.offset(0.5, 0, 0.5);
-        dis.spawn();
+        ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE).withCount(70).offset(0.5, 0, 0.5).spawn();
         event.setCancelled(true);
     }
 
@@ -119,23 +116,18 @@ public class DevourerGliders extends Ability {
 
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
-        if (info.getImprovementLevel(this) < 3) return;
+        if (info.getAbilityLevel(this) < 3) return;
 
         if (TEMP_FLY.remove(player.getUniqueId())) {
             player.setAllowFlight(false);
             player.setFlying(false);
             event.setCancelled(true);
         }
-        player.setVelocity(player.getLocation().getDirection().multiply(1.3).setY(getScaling(info)));
+        player.setVelocity(player.getLocation().getDirection().multiply(1.3).setY(getScaling(info, "height")));
 
         ParticleDisplay dis = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD);
         dis.count = 70;
         dis.offset(0.5, 0.5, 0.5);
         dis.spawn();
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
-
     }
 }

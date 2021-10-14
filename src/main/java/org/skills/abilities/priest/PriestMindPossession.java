@@ -10,7 +10,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.utils.MathUtils;
 
 import java.util.ArrayList;
@@ -23,19 +22,18 @@ public class PriestMindPossession extends Ability {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamageParalyze(EntityDamageByEntityEvent event) {
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-        if (!(event.getDamager() instanceof Player)) return;
-        if (!(event.getEntity() instanceof LivingEntity)) return;
-        Player player = (Player) event.getDamager();
+        if (commonDamageCheckup(event)) return;
 
+        Player player = (Player) event.getDamager();
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
-        int lvl = info.getImprovementLevel(this);
 
-        if (MathUtils.hasChance((int) this.getScaling(info))) return;
+        if (MathUtils.hasChance((int) this.getScaling(info, "chance", event))) return;
         LivingEntity victim = (LivingEntity) event.getEntity();
 
-        List<PotionEffect> effects = new ArrayList<>();
+        List<PotionEffect> effects = new ArrayList<>(3);
+        int lvl = info.getAbilityLevel(this);
+
         effects.add(new PotionEffect(PotionEffectType.BLINDNESS, (lvl * 5) * 20, 0));
         if (lvl > 1) {
             effects.add(new PotionEffect(PotionEffectType.SLOW, (lvl * 10) * 20, 0));

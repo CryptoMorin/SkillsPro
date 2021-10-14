@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.skills.abilities.Ability;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.api.events.SkillLevelUpEvent;
@@ -42,11 +43,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LevelManager implements Listener {
+public final class LevelManager implements Listener {
     protected static final String SPAWNER = "SPAWNER";
     private static final ScriptEngine ENGINE;
-    private static final List<CustomAmount> CUSTOM_XP = new ArrayList<>();
-    private static final List<CustomAmount> CUSTOM_SOULS = new ArrayList<>();
+    private static final List<CustomAmount> CUSTOM_XP = new ArrayList<>(), CUSTOM_SOULS = new ArrayList<>();
 
     static {
         ScriptEngine engine;
@@ -65,7 +65,7 @@ public class LevelManager implements Listener {
     public LevelManager(SkillsPro plugin) {
         this.plugin = plugin;
         MessageHandler.sendConsolePluginMessage("&3Setting up Level Manager...");
-        load();
+        load(plugin);
     }
 
     public static boolean evaluate(Player player, double level, List<String> conditions) {
@@ -102,18 +102,16 @@ public class LevelManager implements Listener {
     }
 
     public static void onLevelUp(SkillLevelUpEvent event) {
-        SkilledPlayer info = event.getInfo();
         Player player = event.getPlayer();
         int newLevel = event.getNewLevel();
 
         PlayerDataManager.addLevel(player, newLevel);
-        LevelUp level = event.getLevelProperties().evaluate(info, newLevel);
-        level.perform(info, "%next_maxxp%", info.getLevelXP(newLevel));
-        if (SkillsConfig.LEVEL_CELEBRATION.getBoolean()) level.celebrate(player, SkillsPro.get(), newLevel);
+        LevelUp level = event.getLevelProperties().level(newLevel).forPlayer(player).evaluateRewards().performMessages().performRewards();
+        if (SkillsConfig.LEVEL_CELEBRATION.getBoolean()) level.celebrate(player, SkillsPro.get());
         HealthAndEnergyManager.updateStats(player);
     }
 
-    public void load() {
+    public static void load(JavaPlugin plugin) {
         CUSTOM_XP.clear();
         ConfigurationSection xp = SkillsConfig.XP.getSection();
         if (xp == null) {
@@ -186,12 +184,14 @@ public class LevelManager implements Listener {
     public void onKillGains(EntityDeathEvent event) {
         LivingEntity killed = event.getEntity();
         if (killed.getType() == EntityType.ARMOR_STAND) return;
+
+        Entity killerOpt = DamageManager.getKiller(event);
+        if (!(killerOpt instanceof Player)) return;
+
         if (Ability.isSkillEntity(killed)) return;
         if (ServiceHandler.isKingdomMob(killed)) return;
         if (SkillsConfig.isInDisabledWorld(killed.getWorld())) return;
 
-        Entity killerOpt = LastHitManager.getKiller(event);
-        if (!(killerOpt instanceof Player)) return;
         Player killer = (Player) killerOpt;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(killer);
         Pair<String, Number> property = ServiceHandler.getMobProperties(killed);
@@ -199,7 +199,10 @@ public class LevelManager implements Listener {
         /// XP ///
         double gainedXp = 0;
         if (killer.hasPermission("skills.xp") && !SkillsConfig.DISABLED_WORLDS_XP_GAIN.getStringList().contains(killer.getWorld().getName())) {
-            double xp = -1;
+            double xp = MathUtils.evaluateEquation(
+                    MessageHandler.replace(SkillsConfig.DEFAULT_XP.getString(), "lvl",
+                            property == null ? 1 : property.getValue().doubleValue()));
+
             boolean debug = SkillsConfig.DEBUG.getBoolean();
             if (debug) SLogger.debug("&6Checking XP properties for mob &2" + killed.getName() + " &8(&2" + killed.getCustomName() + "&7-&2"
                     + killed.getType() + "&8) &6with custom property &2" + property + " &6and vanilla EXP of &2" + event.getDroppedExp() + "&8: ");
@@ -232,7 +235,11 @@ public class LevelManager implements Listener {
                 if (SkillsConfig.PARTY_DISTRIBUTE.getBoolean()) {
                     for (Player player : inRange) {
                         SkilledPlayer member = SkilledPlayer.getSkilledPlayer(player);
-                        member.addXP(evaled);
+                        SkillXPGainEvent expGainEvent = new SkillXPGainEvent(player, killed, evaled);
+                        Bukkit.getPluginManager().callEvent(expGainEvent);
+                        if (!expGainEvent.isCancelled()) {
+                            member.addXP(evaled);
+                        }
                     }
                 } else xp += evaled;
             }
@@ -270,7 +277,10 @@ public class LevelManager implements Listener {
         //// Souls ////
         int gainedSouls = 0;
         if (killer.hasPermission("skills.souls") && !SkillsConfig.DISABLED_WORLDS_XP_GAIN.getStringList().contains(killer.getWorld().getName())) {
-            int souls = 1;
+            int souls = (int) MathUtils.evaluateEquation(
+                    MessageHandler.replace(SkillsConfig.DEFAULT_SOULS.getString(), "lvl",
+                            property == null ? 1 : property.getValue().doubleValue()));
+
             for (CustomAmount custom : CUSTOM_SOULS) {
                 if (custom.matches(killed, property)) {
                     souls = (int) custom.evaluate(killer, property);
@@ -292,7 +302,9 @@ public class LevelManager implements Listener {
                 if (SkillsConfig.PARTY_DISTRIBUTE.getBoolean()) {
                     for (Player player : inRange) {
                         SkilledPlayer member = SkilledPlayer.getSkilledPlayer(player);
-                        member.addSouls(evaled);
+                        SkillSoulGainEvent soulEvent = new SkillSoulGainEvent(player, killed, souls);
+                        Bukkit.getPluginManager().callEvent(soulEvent);
+                        if (!soulEvent.isCancelled()) member.addSouls(soulEvent.getGained());
                     }
                 } else souls += evaled;
             }
@@ -333,7 +345,7 @@ public class LevelManager implements Listener {
 
         StringBuilder list = new StringBuilder();
         for (Ability ability : info.getSkill().getAbilities()) {
-            int abilityLvl = info.getImprovementLevel(ability);
+            int abilityLvl = info.getAbilityLevel(ability);
             if (ability.getName().equals("passive") || abilityLvl == 3) continue;
             int cost = ability.getCost(info);
 
@@ -346,7 +358,7 @@ public class LevelManager implements Listener {
         gainedXp = MathUtils.roundToDigits(gainedXp, 2);
         if (SkillsConfig.HOLOGRAM_ENABLED.getBoolean()) {
             if (!SkillsConfig.HOLOGRAM_DISABLED_MOBS.getStringList().contains(killed.getType().name())) {
-                Hologram.spawn(killed.getLocation().clone().add(0, -2, 0), SkillsConfig.HOLOGRAM_COMPACT.getDouble(),
+                Hologram.spawn(killed.getLocation().clone().add(0, -2, 0),
                         SkillsConfig.HOLOGRAM_STAY.getLong(),
                         SkillsConfig.HOLOGRAM_LINES.getStringList(), "%xp%", gainedXp, "%souls%", gainedSouls);
             }
@@ -366,7 +378,7 @@ public class LevelManager implements Listener {
         } else if (event.getDamager() instanceof Player) {
             if (SkillsConfig.HOLOGRAM_ENABLED.getBoolean()) {
                 if (!SkillsConfig.HOLOGRAM_DISABLED_MOBS.getStringList().contains(event.getEntity().getType().name())) {
-                    Hologram.spawn(event.getEntity().getLocation().add(0, -2, 0), SkillsConfig.HOLOGRAM_COMPACT.getDouble(),
+                    Hologram.spawn(event.getEntity().getLocation().add(0, -2, 0),
                             SkillsConfig.HOLOGRAM_STAY.getLong(),
                             SkillsConfig.HOLOGRAM_DAMAGE_INDICATOR.getStringList(),
 
@@ -385,7 +397,7 @@ public class LevelManager implements Listener {
         long soulsLost = 0;
         double xpLost = 0;
 
-        LivingEntity killer = LastHitManager.getKiller(event);
+        LivingEntity killer = DamageManager.getKiller(event);
         Pair<String, Number> property;
         if (killer != null) property = ServiceHandler.getMobProperties(killer);
         else property = null;
@@ -436,7 +448,7 @@ public class LevelManager implements Listener {
         public String equation;
 
         public CustomAmount(String expression, String equation, EntityType type, CustomAmounType customAmounType) {
-            this.expression = expression;
+            this.expression = customAmounType == CustomAmounType.CONTAINS ? expression.toLowerCase() : expression;
             this.type = type;
             this.customAmounType = customAmounType;
             this.equation = equation;
@@ -445,15 +457,15 @@ public class LevelManager implements Listener {
         public boolean matches(LivingEntity entity, Pair<String, Number> customMob) {
             switch (customAmounType) {
                 case CONTAINS:
-                    return entity.getCustomName() != null && entity.getCustomName().contains(expression);
+                    return entity.getCustomName() != null && entity.getCustomName().toLowerCase().contains(expression);
                 case CUSTOM_MOB:
-                    return customMob != null && expression.equalsIgnoreCase(customMob.getKey());
+                    return customMob != null && customMob.getKey() != null && expression.equalsIgnoreCase(customMob.getKey());
                 case NAME:
                     return entity.getCustomName() != null && entity.getCustomName().equalsIgnoreCase(expression);
                 case TYPE:
                     return entity.getType() == type;
                 default:
-                    throw new AssertionError();
+                    throw new AssertionError("Unknown custom amount type: " + customAmounType);
             }
         }
 
@@ -464,9 +476,7 @@ public class LevelManager implements Listener {
 
         public double evaluate(Player player, Pair<String, Number> customMob) {
             String translated = ServiceHandler.translatePlaceholders(player, equation);
-            if (customAmounType == CustomAmounType.CUSTOM_MOB && customMob != null) {
-                translated = MessageHandler.replace(translated, "lvl", customMob.getValue().doubleValue());
-            }
+            translated = MessageHandler.replace(translated, "lvl", customMob == null ? 1 : customMob.getValue().doubleValue());
             return MathUtils.evaluateEquation(translated);
         }
 

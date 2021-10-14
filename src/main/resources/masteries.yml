@@ -121,6 +121,7 @@ masteries:
     scaling: 10
   logging:
     enabled: true
+    name: "Logging"
     max-level: 100
     cost: (lvl + 1) * 50
     chance: 100

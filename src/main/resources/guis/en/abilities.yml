@@ -10,36 +10,44 @@ options:
     skull: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxYWZlOTczYzU0ODJmZGM3MWU2YWExMDY5ODgzM2M3OWM0MzdmMjEzMDhlYTlhMWEwOTU3NDZlYzI3NGEwZiJ9fX0="
     lore:
       - "&2Activation keys can be&8:"
-      - "&eL = Left-click&7, &eR = Right-click&7,"
-      - "&eS = Shift&7, &eQ = Drop Item&7,"
-      - "&eF = Switch Item&7, &eC<key> = While Sneaking"
+      - "&eL = Left-click  &7| &eR = Right-click"
+      - "&eS = Sneak       &7| &eC<key> = While Sneaking"
+      - "&eF = Switch Item &7| &eQ = Drop Item"
       - ''
       - "&2In order to activate an"
       - "active ability you have to press"
       - "these keys one after another quickly."
       - "Note that some active abilities require"
       - "a specific item type in hand to activate."
+      - ''
+      - "&2You can improve certain abilities by"
+      - "upgrading your stats. The color that"
+      - "numbers are shown with in the ability's"
+      - "description determine the stat that"
+      - "affects this number. &eYellow &2means that"
+      - "the ability doesn't depend on any stats&8:"
+      - "%skills_stat_color_str%STR &8| %skills_stat_color_def%DEF &8| %skills_stat_color_dex%DEX &8| %skills_stat_color_int%INT"
     posx: 5
     posy: 1
   passive:
     enabled:
       condition: "!%disabled%"
-      name: "%title%"
+      name: "&8[&2Enabled&8] %title%"
       material: PURPLE_DYE
       slots: [ 49 ]
       lore:
         - "%description%"
     disabled:
       condition: "%disabled%"
-      name: "%title%"
+      name: "&8[&4Disabled&8] %title%"
       material: MAGENTA_DYE
       slots: [ 49 ]
       lore:
         - "%description%"
   ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
-      name: "%title%"
+      condition: "%level% == 3 && !%disabled%"
+      name: "&8[&2Enabled&8] %title%"
       material: LIGHT_BLUE_DYE
       slots: [ 11, 20, 29, 38 ]
       lore:
@@ -48,8 +56,8 @@ options:
         - "&2Level&8: &e%level%"
     enabled:
       condition: "%skills_level% >= %required-level% && !%disabled%"
-      # Placeholders: %title%, %description%, %cost%, %level%, %required-level%
-      name: "%title%"
+      # Placeholders: %title%, %description%, %level%
+      name: "&8[&2Enabled&8] %title%"
       material: LIME_DYE
       # Do not change the slots unless you know what you're doing.
       # The slot specified here needs 4 free slots on its right side.
@@ -60,29 +68,28 @@ options:
         - ""
         - "&2Cost&8: &e%cost%"
         - "&2Level&8: &e%level%"
-    disabled:
-      condition: "%disabled%"
-      name: "%title%"
-      material: GRAY_DYE
-      slots: [ 11, 20, 29, 38 ]
-      lore:
-        - "%description%"
-        - ""
-        - "&2Level&8: &e%level%"
     cant-access:
       condition: "%skills_level% < %required-level%"
-      name: "%title%"
+      name: "&8[&cInsufficient Level&8] %title%"
       material: BARRIER
       slots: [ 11, 20, 29, 38 ]
       lore:
         - "%description%"
         - ""
         - "&2Required Level&8: &e%required-level%"
-  # Special placeholders:  %cooldown%, %energy%, %activation%
+    disabled:
+      condition: "%disabled%"
+      name: "&8[&4Disabled&8] %title%"
+      material: GRAY_DYE
+      slots: [ 11, 20, 29, 38 ]
+      lore:
+        - "%description%"
+        - ""
+        - "&2Level&8: &e%level%"
   active-ability:
     maxxed:
-      condition: "%level% === 3 && !%disabled%"
-      name: "%title%"
+      condition: "%level% == 3 && !%disabled%"
+      name: "&8[&2Enabled&8] %title%"
       material: LIGHT_BLUE_DYE
       # Don't change the slot.
       slots: [ -1 ]
@@ -93,10 +100,10 @@ options:
         - "%description%"
         - ""
         - "&2Level&8: &e%level%"
-        - "&2Activation&8: &e%activation%"
+        - "&2Activation&8: &e%activation_key%"
     enabled:
       condition: "%skills_level% >= %required-level% && !%disabled%"
-      name: "%title%"
+      name: "&8[&2Enabled&8] %title%"
       material: LIME_DYE
       # Don't change the slot.
       slots: [ -1 ]
@@ -108,24 +115,10 @@ options:
         - ""
         - "&2Cost&8: &e%cost%"
         - "&2Level&8: &e%level%"
-        - "&2Activation&8: &e%activation%"
-    disabled:
-      condition: "%disabled%"
-      name: "%title%"
-      material: GRAY_DYE
-      # Don't change the slot.
-      slots: [ -1 ]
-      flags: [ HIDE_ENCHANTS ]
-      enchants:
-        DURABILITY: 1
-      lore:
-        - "%description%"
-        - ""
-        - "&2Level&8: &e%level%"
-        - "&2Activation&8: &e%activation%"
+        - "&2Activation&8: &e%activation_key%"
     cant-access:
       condition: "%skills_level% < %required-level%"
-      name: "%title%"
+      name: "&8[&cInsufficient Level&8] %title%"
       material: BARRIER
       # Don't change the slot.
       slots: [ -1 ]
@@ -136,6 +129,20 @@ options:
         - "%description%"
         - ""
         - "&2Required Level&8: &e%required-level%"
+    disabled:
+      condition: "%disabled%"
+      name: "&8[&4Disabled&8] %title%"
+      material: GRAY_DYE
+      # Don't change the slot.
+      slots: [ -1 ]
+      flags: [ HIDE_ENCHANTS ]
+      enchants:
+        DURABILITY: 1
+      lore:
+        - "%description%"
+        - ""
+        - "&2Level&8: &e%level%"
+        - "&2Activation&8: &e%activation_key%"
   red-glass:
     name: ''
     material: RED_STAINED_GLASS_PANE

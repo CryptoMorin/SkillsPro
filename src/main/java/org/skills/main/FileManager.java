@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.skills.gui.GUIConfig;
 import org.skills.main.locale.MessageHandler;
+import org.skills.managers.LevelManager;
 import org.skills.masteries.managers.MasteryManager;
 import org.skills.types.Energy;
 import org.skills.types.Skill;
@@ -93,10 +94,10 @@ public class FileManager {
 
                     if (file.equalsIgnoreCase("config.yml")) {
                         MessageHandler.sendConsolePluginMessage("&2Detected changes for config, reloading...");
+                        plugin.reloadConfig();
                         Stat.init(plugin);
                         Energy.init(plugin);
-                        plugin.getLevelManager().load();
-                        plugin.reloadConfig();
+                        LevelManager.load(plugin);
                     } else if (file.equalsIgnoreCase("masteries.yml")) {
                         MessageHandler.sendConsolePluginMessage("&2Detected changes for masteries, reloading...");
                         SkillsMasteryConfig.getAdapter().register();

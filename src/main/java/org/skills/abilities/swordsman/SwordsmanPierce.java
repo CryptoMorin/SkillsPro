@@ -28,14 +28,14 @@ public class SwordsmanPierce extends Ability {
         if (info == null) return;
 
         if (event.getEntity() instanceof Player) {
-            String stat = getExtra(info, "stat").getString();
+            String stat = getOptions(info, "stat").getString();
             int attacker = info.getStat(stat);
             SkilledPlayer defenderInfo = SkilledPlayer.getSkilledPlayer((Player) event.getEntity());
             int defdefender = defenderInfo.getStat(stat);
             if (attacker <= defdefender) return;
         } else if (!(event.getEntity() instanceof LivingEntity)) return;
 
-        double extra = MathUtils.percentOfAmount(this.getScaling(info, event), event.getDamage());
+        double extra = MathUtils.percentOfAmount(this.getScaling(info, "damage-percent", event), event.getDamage());
         if (extra == 0) return;
         event.setDamage(event.getDamage() + extra);
     }

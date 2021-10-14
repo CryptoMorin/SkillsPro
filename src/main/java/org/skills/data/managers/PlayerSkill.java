@@ -3,23 +3,32 @@ package org.skills.data.managers;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.skills.abilities.Ability;
+import org.skills.abilities.KeyBinding;
 import org.skills.data.database.DataContainer;
+import org.skills.main.SkillsConfig;
 import org.skills.types.Skill;
 import org.skills.types.SkillManager;
 import org.skills.types.Stat;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class PlayerSkill extends DataContainer {
     public static final String NONE = "none";
+    public static final boolean
+            SHARED_LEVELS = SkillsConfig.SKILLS_SHARED_DATA_LEVELS.getBoolean(),
+            SHARED_SOULS = SkillsConfig.SKILLS_SHARED_DATA_SOULS.getBoolean(),
+            SHARED_STATS = SkillsConfig.SKILLS_SHARED_DATA_STATS.getBoolean();
+
     protected final String skill;
     protected int level;
     protected double xp;
     protected long souls;
     protected boolean showReadyMessage = true;
-    protected Set<String> disabledAbilities = new HashSet<>();
-    protected Map<String, Map<String, Integer>> abilities = new HashMap<>();
+    protected Map<String, PlayerAbilityData> abilities = new HashMap<>();
     protected Map<String, Integer> stats = new HashMap<>();
 
     public PlayerSkill(String skill) {
@@ -30,8 +39,8 @@ public class PlayerSkill extends DataContainer {
     public @NonNull
     String getCompressedData() {
         return level + xp + souls + compressBoolean(showReadyMessage)
-                + compressCollecton(disabledAbilities, x -> x)
-                + compressCollecton(abilities.values(), x -> x)
+                + compressCollecton(abilities.values(), x -> compressBoolean(x.isDisabled()) + x.getLevel() +
+                (x.getKeyBinding() == null ? "" : KeyBinding.toString(x.getKeyBinding())))
                 + compressCollecton(stats.values(), x -> x);
     }
 
@@ -80,34 +89,19 @@ public class PlayerSkill extends DataContainer {
         this.souls = souls;
     }
 
-    public @NonNull
-    Set<String> getDisabledAbilities() {
-        return disabledAbilities;
-    }
-
-    public void setDisabledAbilities(Set<String> disabledAbilities) {
-        this.disabledAbilities = disabledAbilities;
-    }
-
-    public boolean isAbilityDisabled(Ability ability) {
-        return disabledAbilities.contains(ability.getName());
-    }
-
     @Override
     public int hashCode() {
-        return skill.hashCode();
+        throw new UnsupportedOperationException("PlayerSkill doesn't have a hashcode");
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PlayerSkill)) return false;
-        PlayerSkill skill = (PlayerSkill) obj;
-        return this.skill.equals(skill.skill);
+        throw new UnsupportedOperationException("PlayerSkill equals() should not be called");
     }
 
     @Override
     public String toString() {
-        return skill + abilities + souls + xp + level + stats + showReadyMessage + disabledAbilities;
+        return skill + abilities + souls + xp + level + stats + showReadyMessage;
     }
 
     public int getStat(@NonNull String type) {
@@ -158,54 +152,44 @@ public class PlayerSkill extends DataContainer {
         this.stats = stats;
     }
 
-    public @NonNull
-    Map<String, Map<String, Integer>> getImprovements() {
+    public Map<String, PlayerAbilityData> getAbilities() {
         return abilities;
     }
 
-    public void setImprovements(@NonNull Map<String, Map<String, Integer>> improvements) {
-        this.abilities = improvements;
+    public void setAbilities(@NonNull Map<String, PlayerAbilityData> abilities) {
+        this.abilities = abilities;
     }
 
-    public void setImprovement(@NonNull Ability ability, int level) {
-        String type = skill.toLowerCase(Locale.ENGLISH);
-        Map<String, Integer> abilities = this.abilities.get(type);
-
-        if (abilities == null) {
-            Map<String, Integer> newAbilities = new HashMap<>();
-            newAbilities.put(ability.getName().toLowerCase(), level);
-            this.abilities.put(type, newAbilities);
-            return;
-        }
-
-        abilities.put(ability.getName().toLowerCase(), level);
-        this.abilities.put(type, abilities);
+    public void setAbilityLevel(@NonNull Ability ability, int level) {
+        PlayerAbilityData data = abilities.get(ability.getName());
+        if (data == null) data = getDataOrDefault(ability);
+        data.setLevel(level);
+        abilities.put(ability.getName(), data);
     }
 
-    public void addImprovementLevel(@NonNull Ability ability, int level) {
-        if (level == 0) return;
-        String type = skill.toLowerCase(Locale.ENGLISH);
-        String abilityStr = ability.getName().toLowerCase();
-        Map<String, Integer> abilities = this.abilities.get(type);
+    public void addAbilityLevel(@NonNull Ability ability, int level) {
+        PlayerAbilityData data = abilities.get(ability.getName());
+        if (data == null) data = getDataOrDefault(ability);
+        data.addLevel(level);
 
-        if (abilities == null) {
-            Map<String, Integer> newAbilities = new HashMap<>();
-            newAbilities.put(abilityStr, level);
-            this.abilities.put(type, newAbilities);
-            return;
-        }
-
-        Integer num = abilities.putIfAbsent(abilityStr, level);
-        if (num == null) return;
-
-        abilities.put(abilityStr, num + level);
-        this.abilities.put(type, abilities);
+        abilities.put(ability.getName(), data);
     }
 
-    public int getImprovementLevel(@NonNull Ability ability) {
-        String type = skill.toLowerCase(Locale.ENGLISH);
-        Map<String, Integer> imp = this.abilities.get(type);
-        return imp != null ? imp.getOrDefault(ability.getName().toLowerCase(), 0) : 0;
+    public PlayerAbilityData getAbilityData(@NonNull Ability ability) {
+        PlayerAbilityData data = abilities.get(ability.getName());
+        if (data == null) data = getDataOrDefault(ability);
+        return data;
+    }
+
+    public PlayerAbilityData getDataOrDefault(Ability ability) {
+        PlayerAbilityData data = null;
+        if (getSkill().hasAbility(ability)) abilities.put(ability.getName(), data = new PlayerAbilityData());
+        return data;
+    }
+
+    public int getAbilityLevel(@NonNull Ability ability) {
+        PlayerAbilityData data = getAbilityData(ability);
+        return data == null ? 0 : data.getLevel();
     }
 
     @Override

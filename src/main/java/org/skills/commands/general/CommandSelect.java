@@ -75,9 +75,9 @@ public class CommandSelect extends SkillsCommand {
             }
         }
 
+        if (info.setActiveSkill(skill).isCancelled()) return;
         boolean changed = info.hasSkill();
         if (cost != 0) info.addSouls(-cost);
-        info.setActiveSkill(skill);
         info.setEnergy(0);
         performCommands(info, changed);
 
@@ -96,10 +96,7 @@ public class CommandSelect extends SkillsCommand {
                 info.setLevel(0);
             }
             if (SkillsConfig.SKILL_CHANGE_RESET_SOULS.getBoolean()) info.setSouls(0);
-            if (SkillsConfig.SKILL_CHANGE_RESET_ABILITIES.getBoolean()) {
-                info.getImprovements().clear();
-                info.getDisabledAbilities().clear();
-            }
+            if (SkillsConfig.SKILL_CHANGE_RESET_ABILITIES.getBoolean()) info.getAbilities().clear();
             if (SkillsConfig.SKILL_CHANGE_RESET_STATS.getBoolean()) info.getStats().clear();
             if (SkillsConfig.SKILL_CHANGE_RESET_MASTERIES.getBoolean()) info.getMasteries().clear();
         }

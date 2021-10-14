@@ -3,6 +3,7 @@ package org.skills.commands.general;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.abilities.Ability;
 import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.KeyBinding;
 import org.skills.commands.SkillsCommand;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.gui.GUIOption;
@@ -21,11 +23,10 @@ import org.skills.gui.GUIParser;
 import org.skills.gui.InteractiveGUI;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
-import org.skills.utils.MathUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,21 +35,27 @@ public class CommandImprove extends SkillsCommand {
         super("improve", SkillsLang.COMMAND_IMPROVE_DESCRIPTION, "improvement", "improvements", "upgrade", "upgrades", "ability", "abilities");
     }
 
+    @SuppressWarnings({"UseBulkOperation", "ManualArrayToCollectionCopy"})
     public static void openMenu(Player player, SkilledPlayer info, int page, boolean refresh) {
         Collection<Ability> abilities = info.getSkill().getAbilities();
-        int size = abilities.size();
-        int pages = size % 4 != 0 ? (size / 4) + 1 : size / 4;
+        int size = abilities.size() - 1; // -1 for the passive ability
+        int pages = size / 4;
+        if (size % 4 != 0) pages++;
 
         // Pages
-        if (size > 5) {
-            abilities = abilities.stream().filter(x -> !x.getName().endsWith("passive")).skip(page * 4).limit(4).collect(Collectors.toList());
-            abilities.add(info.getSkill().getAbilities().stream().filter(x -> x.getName().endsWith("passive")).findFirst().orElse(null));
+        if (size > 4) {
+            abilities = abilities.stream()
+                    .filter(x -> !x.getName().endsWith("passive"))
+                    .sorted(Comparator.comparingInt(x -> x.getRequiredLevel(info)))
+                    .skip(page * 4L).limit(4)
+                    .collect(Collectors.toList());
+            abilities.add(info.getSkill().getAbilities().stream().filter(x -> x.getName().endsWith("passive")).findFirst()
+                    .orElseThrow(() -> new IllegalStateException(info.getSkillName() + " skill has no passive ability.")));
         } else pages = 1;
 
         int finalPages = pages;
-        Object[] masterEdits = {"%page%", page + 1, "%pages%", pages};
-
-        InteractiveGUI gui = GUIParser.parseOption(player, "abilities", masterEdits);
+        InteractiveGUI gui = GUIParser.parseOption(player, "abilities",
+                "%page%", page + 1, "%pages%", pages);
 
         gui.push("previous-page", () -> {
             if (page == 0) {
@@ -68,46 +75,44 @@ public class CommandImprove extends SkillsCommand {
         });
 
         ArrayList<Integer> slots = null;
+        int passiveSlot = -1;
+
         for (Ability ability : abilities) {
             boolean isSuper = ability.getName().endsWith("passive");
             boolean isPassive = ability.isPassive();
-            int lvl = info.getImprovementLevel(ability);
+            int lvl = info.getAbilityLevel(ability);
+            ActiveAbility activeAbs = isPassive ? null : (ActiveAbility) ability;
+            KeyBinding[] binding = info.getAbilityData(ability).getKeyBinding();
 
-            String scaling = ability.getExtra(info).getString("scaling");
-            if (scaling != null) {
-                try {
-                    scaling = String.valueOf(MathUtils.roundToDigits(ability.getScaling(info), 2));
-                } catch (ArithmeticException ex) {
-                    scaling = ability.getTranslatedScaling(info, ability.getScalingEquation(info, "scaling"));
-                }
-                scaling = Ability.getScalingColor(ability.getExtra(info.getSkillName(), "scaling").getString()) + scaling;
-            }
-            if (scaling == null) scaling = "";
-
-            ActiveAbility activeAbility = isPassive ? null : (ActiveAbility) ability;
-            Object[] edits = {"%title%", ability.getTitle(info),
+            Object[] manualEdits = {
                     "%required-level%", ability.getRequiredLevel(info),
-                    "%level%", lvl, "%cost%", isSuper ? "" : ability.getCost(info),
-                    "%activation%", isPassive ? "" : activeAbility.getActivationKey(info),
-                    "%cooldown%", isPassive ? 0 : activeAbility.getCooldown(info),
-                    "%energy%", isPassive ? 0 : activeAbility.getEnergy(info),
+                    "%title%", ability.getTitle(info),
+                    "%level%", lvl,
                     "%disabled%", info.isAbilityDisabled(ability),
-                    "%amount%", scaling};
+                    "%cost%", ability.getCost(info),
+                    "%activation_cooldown%", activeAbs == null ? "" : activeAbs.getCooldown(info),
+                    "%activation_energy%", activeAbs == null ? "" : activeAbs.getEnergy(info),
+                    "%activation_key%", KeyBinding.toString(binding == null ?
+                    (activeAbs == null ? new KeyBinding[0] : activeAbs.getActivationKey(info)) : binding),
+            };
+            if (slots == null) {
+                slots = new ArrayList<>(gui.getHolder("ability", manualEdits).getSlots());
+                passiveSlot = gui.getHolder("passive", manualEdits).getSlots().get(0);
+            }
 
-            GUIOption pass = gui.getHolder("passive", edits);
-            GUIOption abs = gui.getHolder("ability", edits);
-            int passiveSlot = pass.getSlots().get(0);
-            if (slots == null) slots = new ArrayList<>(abs.getSlots());
-            GUIOption option = isPassive ? isSuper ? pass : abs : gui.getHolder("active-ability", edits);
-            option = option.clone();
-
+            String optionName;
+            if (isPassive) {
+                if (isSuper) optionName = "passive";
+                else optionName = "ability";
+            } else optionName = "active-ability";
+            GUIOption option = gui.getHolder(optionName, manualEdits);
             ItemStack clone = option.getItem();
             ItemMeta meta = option.getItem().getItemMeta();
 
             List<String> translatedLore = new ArrayList<>();
             for (String lore : meta.getLore()) {
                 if (!Strings.isNullOrEmpty(lore)) {
-                    lore = MessageHandler.replace(lore, "%description%", ability.getDescription(info));
+                    lore = MessageHandler.replace(lore, "%description%", (Supplier<String>) () -> ability.getDescription(info));
                     String lastColors = "";
 
                     for (String singleLore : StringUtils.splitPreserveAllTokens(lore, '\n')) {
@@ -124,13 +129,14 @@ public class CommandImprove extends SkillsCommand {
             }
             meta.setLore(translatedLore);
             option.getItem().setItemMeta(meta);
-
-            edits = ability.copyEdits(info, edits);
-            option.defineVariables(gui, Arrays.asList(edits));
+            List<Object> edits = ability.getEdits(info);
+            for (Object edit : manualEdits) edits.add(edit);
+            Object[] arrayEdits = edits.toArray();
+            option.defineVariables(gui, edits);
 
             int slot = isSuper ? passiveSlot : slots.remove(0);
-            gui.push(option, clone, slot, edits, null, new InteractiveGUI.ActionRunnable(ClickType.LEFT, () -> {
-                if (isSuper || info.getImprovementLevel(ability) >= 3) {
+            gui.push(option, clone, slot, arrayEdits, null, new InteractiveGUI.ActionRunnable(ClickType.LEFT, () -> {
+                if (isSuper || info.getAbilityLevel(ability) >= 3) {
                     info.toggleAbility(ability);
                     openMenu(player, info, page, true);
                     XSound.BLOCK_END_PORTAL_FRAME_FILL.play(player);
@@ -148,7 +154,7 @@ public class CommandImprove extends SkillsCommand {
                 long souls = info.getSouls();
 
                 if (souls >= cost) {
-                    info.addImprovementLevel(ability, 1);
+                    info.addAbilityLevel(ability, 1);
                     info.setSouls(souls - cost);
 
                     SkillsLang.ABILITY_UPGRADED.sendMessage(player);
@@ -159,7 +165,7 @@ public class CommandImprove extends SkillsCommand {
                     XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
                 }
             }), new InteractiveGUI.ActionRunnable(ClickType.RIGHT, () -> {
-                if (info.getImprovementLevel(ability) == 0) {
+                if (info.getAbilityLevel(ability) == 0) {
                     int required = ability.getRequiredLevel(info);
                     if (required > info.getLevel()) {
                         SkillsLang.ABILITY_REQUIRED_LEVEL.sendMessage(player, "%level%", required);

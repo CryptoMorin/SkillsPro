@@ -16,33 +16,34 @@ import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ArbalistFireCrossbow extends ActiveAbility {
+public class ArbalistFireCrossbow extends InstantActiveAbility {
     public static final String ARBALIST_FIRECROSSBOW = "ARBALIST_CROSS";
 
     public ArbalistFireCrossbow() {
-        super("Arbalist", "fire_crossbow", true);
+        super("Arbalist", "fire_crossbow");
         if (!XMaterial.supports(14)) Bukkit.getPluginManager().registerEvents(new Old(), SkillsPro.get());
     }
 
     @Override
-    public void useSkill(Player p) {
-        SkilledPlayer info = this.activeCheckup(p);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
-        Vector vector = p.getEyeLocation().getDirection();
-        double extraScaling = getExtraScaling(info, "range");
-        int kb = (int) getExtraScaling(info, "knockback");
-        int fire = (int) getExtraScaling(info, "fire");
+        Vector vector = player.getEyeLocation().getDirection();
+        double extraScaling = getScaling(info, "range");
+        int kb = (int) getScaling(info, "knockback");
+        int fire = (int) getScaling(info, "fire");
         vector.multiply(extraScaling);
 
-        Arrow arrow = p.launchProjectile(Arrow.class, vector);
+        Arrow arrow = player.launchProjectile(Arrow.class, vector);
         arrow.setInvulnerable(true);
         arrow.setBounce(false);
         arrow.setFireTicks(fire);
@@ -50,25 +51,24 @@ public class ArbalistFireCrossbow extends ActiveAbility {
         arrow.setMetadata(ARBALIST_FIRECROSSBOW, new FixedMetadataValue(SkillsPro.get(), null));
         if (XMaterial.supports(14)) arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
-
-        int shotgunChance = (int) getExtraScaling(info, "shotgun.chance");
+        int shotgunChance = (int) getScaling(info, "shotgun.chance");
         if (MathUtils.hasChance(shotgunChance)) {
-            int min = (int) getExtraScaling(info, "shotgun.amount.min");
-            int max = (int) getExtraScaling(info, "shotgun.amount.max");
-            double offset = (int) getExtraScaling(info, "shotgun.offset");
+            int min = (int) getScaling(info, "shotgun.amount.min");
+            int max = (int) getScaling(info, "shotgun.amount.max");
+            double offset = (int) getScaling(info, "shotgun.offset");
             ThreadLocalRandom random = ThreadLocalRandom.current();
             for (int i = 0; i < random.nextInt(min, max); i++) {
-                Arrow extra = p.launchProjectile(Arrow.class, vector.clone().add(new Vector(
+                Arrow extra = player.launchProjectile(Arrow.class, vector.clone().add(new Vector(
                         random.nextDouble(-offset, offset), random.nextDouble(-offset, offset), random.nextDouble(-offset, offset))));
                 if (XMaterial.supports(14)) extra.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
             }
         }
 
         arrow.setGlowing(true);
-        if (MathUtils.hasChance((int) getExtraScaling(info, "critical-chance"))) arrow.setCritical(true);
-        XSound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR.play(p);
+        if (MathUtils.hasChance((int) getScaling(info, "critical-chance"))) arrow.setCritical(true);
+        XSound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR.play(player);
 
-        p.spawnParticle(Particle.LAVA, p.getLocation(), (int) (extraScaling * 2) + 10, 0.1, 0.1, 0.1, 1);
+        player.spawnParticle(Particle.LAVA, player.getLocation(), (int) (extraScaling * 2) + 10, 0.1, 0.1, 0.1, 1);
         new BukkitRunnable() {
             int i = 0;
 
@@ -78,8 +78,8 @@ public class ArbalistFireCrossbow extends ActiveAbility {
                 if (i > 4) cancel();
                 if (arrow.isOnGround()) cancel();
 
-                if (XMaterial.isNewVersion()) p.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
-                p.spawnParticle(Particle.FLAME, arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
+                if (XMaterial.supports(13)) player.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
+                player.spawnParticle(Particle.FLAME, arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
             }
         }.runTaskTimer(SkillsPro.get(), 5L, 5L);
     }
@@ -94,7 +94,7 @@ public class ArbalistFireCrossbow extends ActiveAbility {
         if (shooter == null) return;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(shooter);
 
-        event.setDamage((int) this.getScaling(info));
+        event.setDamage((int) this.getScaling(info, "damage"));
         XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(shooter, 2, 0);
         shooter.spawnParticle(Particle.LAVA, event.getEntity().getLocation(), 30, 0.1, 0.1, 0.1, 0.1);
     }
@@ -109,7 +109,7 @@ public class ArbalistFireCrossbow extends ActiveAbility {
         Player shooter = (Player) arrow.getShooter();
         if (shooter == null) return;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(shooter);
-        if (MathUtils.hasChance((int) getExtraScaling(info, "explosion-chance"))) {
+        if (MathUtils.hasChance((int) getScaling(info, "explosion-chance"))) {
             TNTPrimed TNT = (TNTPrimed) shooter.getLocation().getWorld().spawnEntity(event.getHitBlock().getLocation(), EntityType.PRIMED_TNT);
             TNT.setFuseTicks(1);
         }

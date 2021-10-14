@@ -1,8 +1,7 @@
 name: "Mage"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + lvl/2
-max-health: 20 * 6
+max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
 energy-regen: 1 + 0.04 * lvl
 max-level: 100
@@ -12,7 +11,7 @@ stats: [ DEX, INT ]
 energy: mana
 abilities:
   mage-passive:
-    scaling: int/10
+    energy: int/10
     hoe-damage:
       NETHERITE_HOE: 9
       DIAMOND_HOE: 8
@@ -21,12 +20,12 @@ abilities:
       STONE_HOE: 5
       WOODEN_HOE: 4
   reflect:
-    scaling: lvl
     required-level: 5
+    damage: lvl
     chance: lvl * 10
     cost: 100 * (lvl + 1)
   neptune:
-    scaling: lvl + (str / 2)
+    damage: lvl + (str / 2)
     required-level: 20
     cost: 100 * (lvl + 1)
     multiply: min(5, (str + 6) / 3)
@@ -34,7 +33,7 @@ abilities:
       lightning: lvl * (int + 5)
       multiply: lvl * (dex + 5)
   explosion-spell:
-    scaling: int + str / 2
+    damage: int + str / 2
     required-level: 10
     hoe-chance:
       NETHERITE_HOE: 60
@@ -47,9 +46,9 @@ abilities:
     cost: 100 * (lvl + 1)
   heal-spell:
     required-level: 20
-    # "regain" placeholder is the amount of health from natural regen or satiation.
-    scaling: (%skills_precise_energy% / 10) * lvl
-    health: 30
+    # Special Placeholders: "regain" placeholder is the amount of health from natural regen or satiation.
+    regain: (%skills_precise_energy% / 10) * lvl
+    health-percent: lvl * 10
     cost: 100 * (lvl + 1)
   energy-flux:
     required-level: 1
@@ -58,7 +57,7 @@ abilities:
       energy: 3
       cooldown: 2
       items: [ "CONTAINS:HOE" ]
-    scaling: 1+lvl*2+int/10
+    damage: 1+lvl*2+int/10
     # The range of fire. How long the player can shoot the beam.
     range: lvl * 12
     # Level 3 pass through blocks?

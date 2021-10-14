@@ -1,10 +1,10 @@
 package org.skills.abilities.eidolon;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,55 +14,54 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.managers.LastHitManager;
+import org.skills.managers.DamageManager;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.EntityUtil;
 
 import java.util.List;
 import java.util.Set;
 
-public class EidolonBlackhole extends ActiveAbility {
+public class EidolonBlackhole extends InstantActiveAbility {
     private static final String BLACKHOLE = "BLACKHOLE";
 
     public EidolonBlackhole() {
-        super("Eidolon", "blackhole", true);
+        super("Eidolon", "blackhole");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = activeCheckup(player);
-        if (info == null) return;
-        Location loc = player.getEyeLocation();
-        ParticleDisplay particle = ParticleDisplay.simple(loc, Particle.PORTAL);
-        particle.count = 100;
-        particle.extra = 3;
-        particle.offset(0, 0, 0);
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
+        Location loc = player.getEyeLocation();
+        ParticleDisplay particle = ParticleDisplay.simple(loc, Particle.PORTAL).withCount(100).withExtra(3);
         ArmorStand blackhole = (ArmorStand) player.getWorld().spawnEntity(loc.clone().add(0, -1.5, 0), EntityType.ARMOR_STAND);
         blackhole.setVisible(false);
         blackhole.setMarker(true);
         blackhole.getEquipment().setHelmet(XMaterial.DRAGON_EGG.parseItem());
         addEntity(blackhole);
-        Set<EntityType> blacklisted = getEntityList(info, "blacklisted");
 
-        XSound.ENTITY_ENDER_DRAGON_DEATH.play(loc, 0.4f, XSound.DEFAULT_PITCH);
-        long quality = (long) getExtraScaling(info, "quality");
+        playSound(player, info, "start");
+        long quality = (long) getScaling(info, "quality");
 
         new BukkitRunnable() {
-            final double range = getExtraScaling(info, "range");
-            final double gravity = getExtraScaling(info, "gravity");
-            final double distance = getExtraScaling(info, "distance");
-            final double damage = getScaling(info);
-            long duration = (long) getExtraScaling(info, "duration");
+            final double range = getScaling(info, "range");
+            final double gravity = getScaling(info, "gravity");
+            final double distance = getScaling(info, "distance");
+            final double damage = getScaling(info, "damage");
+            final World world = loc.getWorld();
+            final Set<EntityType> blacklisted = getEntityList(info, "blacklisted");
+            long duration = (long) getScaling(info, "duration");
             int repeat = 0;
             double rotation = 0;
 
             @Override
             public void run() {
-                for (Entity entity : player.getWorld().getNearbyEntities(loc, range, range, range)) {
+                for (Entity entity : world.getNearbyEntities(loc, range, range, range)) {
                     if (player == entity) continue;
                     if (!blacklisted.contains(entity.getType())) {
                         Vector direction = loc.toVector().subtract(entity.getLocation().toVector()).normalize();
@@ -72,7 +71,7 @@ public class EidolonBlackhole extends ActiveAbility {
                     if (EntityUtil.filterEntity(player, entity)) continue;
 
                     if (entity.getLocation().distance(loc) < distance) {
-                        LastHitManager.damage((LivingEntity) entity, player, damage);
+                        DamageManager.damage((LivingEntity) entity, player, damage);
                         if (entity instanceof Player) applyEffects(info, (LivingEntity) entity);
                     }
                 }
@@ -85,7 +84,7 @@ public class EidolonBlackhole extends ActiveAbility {
                 repeat += quality;
                 if (repeat >= 20) {
                     repeat = 0;
-                    XSound.BLOCK_PORTAL_TRAVEL.play(loc, 0.1f, 2f);
+                    playSound(player, info, "blackhole");
                 }
                 duration -= quality;
                 if (duration <= 0) {
@@ -95,7 +94,7 @@ public class EidolonBlackhole extends ActiveAbility {
 
                     TNTPrimed tnt = (TNTPrimed) loc.getWorld().spawnEntity(loc, EntityType.PRIMED_TNT);
                     tnt.setMetadata(BLACKHOLE, new FixedMetadataValue(SkillsPro.get(), player));
-                    tnt.setYield((float) getExtraScaling(info, "yield"));
+                    tnt.setYield((float) getScaling(info, "yield"));
                     tnt.setFuseTicks(0);
                 }
             }

@@ -141,11 +141,6 @@ public class MathUtils {
 
     /**
      * Gets the percentage of the given number with a max value.
-     * <p>
-     * <b>Examples</b>
-     * <p><blockquote>
-     * tet
-     * </blockquote>
      *
      * @see #getPercent(double, double)
      */
@@ -155,9 +150,6 @@ public class MathUtils {
 
     /**
      * What is P percent of X?
-     *
-     * @param percent
-     * @param amount
      *
      * @return
      */

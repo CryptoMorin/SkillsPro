@@ -78,9 +78,8 @@
 name: "Swordsman"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
-health: 20 + (lvl / 2)
 max-level: 100
-max-health: 20 * 10
+max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
 energy-regen: 1 + 0.05 * lvl
 damage-cap: 100
@@ -90,44 +89,41 @@ stats: [ STR, DEX ]
 energy: mana
 abilities:
   swordsman-passive:
-    scaling: str/2
+    damage: max(str/2, 30)
     # Type of weapons Swordsman are allowed to use for duel wielding.
     weapons: [ "CONTAINS:SWORD" ]
     cooldown: true
   parry:
-    # Percent of the damage
-    required-level: 5 * (lvl + 1)
-    scaling: dex/5+lvl*2
+    required-level: 5
+    damage-percent: dex/5+lvl*2
     # The stat to compare to other player.
     stat: str
     chance: lvl * 10
     cost: 100 * (lvl + 1)
   pierce:
-    required-level: 10 * (lvl + 1)
+    required-level: 10
     # Get x percent of the current damage.
-    scaling: 100 * lvl / 2
+    damage-percent: 100 * lvl / 2
     cost: 100 * (lvl + 1)
     # The stat to compare to other player.
     # The attacker's DEF points needs to be greater than the defender's DEF points. If it's equal or less, then it won't work.
     stat: def
   dodge:
-    required-level: 10 * (lvl + 1)
-    scaling: dex/7+(lvl*5)
+    required-level: 10
+    chance: dex/7+(lvl*5)
     cost: 100 * (lvl + 1)
     weapons:
       - "CONTAINS:SWORD"
   dash:
-    required-level: 10 * (lvl + 1)
-    scaling: lvl
+    required-level: 10
+    velocity: lvl
     cost: 100 * (lvl + 1)
     # The radius used for knockback and charge.
     range: 2
     vertical-slash-level: 3
     effects: [ ]
-    charge:
-      level: 3
-      knockback: 2
-      damage: lvl + (str / 2)
+    knockback: 2
+    damage: lvl + (str / 2)
     activation:
       key: LR
       energy: 5
@@ -135,7 +131,7 @@ abilities:
       items:
         - 'CONTAINS:SWORD'
   thousand-cuts:
-    required-level: 1 * (lvl + 1)
+    required-level: 1
     activation:
       idle: 5
       key: R
@@ -143,20 +139,19 @@ abilities:
       cooldown: 10
       items:
         - 'CONTAINS:SWORD'
-    scaling: (lvl * 2) + (STR / 10)
+    damage: (lvl * 2) + (STR / 10)
     cut-count: lvl * 3
     cost: 100 * (lvl + 1)
   annihilation:
-    required-level: 30 * (lvl + 1)
-    damage: str + (lvl * 3)
+    required-level: 30
+    damage: max(str, 5)
     throw:
-      damage: (str / 2) + lvl
+      damage: max((str / 2) + lvl, 15)
       cooldown: 7 - lvl
     # The duration of the summons in seconds.
     # Please change the cooldown if you're going to change this option.
     duration: 20 + (lvl * 5)
     range: 7 + lvl
-    distance: 10 + (lvl * 5)
     activation:
       idle: 5
       key: LLR

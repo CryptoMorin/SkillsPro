@@ -1,7 +1,6 @@
 package org.skills.types;
 
 public enum SkillScaling {
-    HEALTH,
     MAX_LEVEL,
     MAX_HEALTH,
     MAX_ENERGY,

@@ -18,18 +18,17 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FireMageInferno extends ActiveAbility {
     private static final String NO_SPREAD = "NO_SPREAD";
 
     public FireMageInferno() {
-        super("FireMage", "inferno", false);
+        super("FireMage", "inferno");
     }
 
     private static void spreadFire(Location location, int range) {
@@ -37,7 +36,7 @@ public class FireMageInferno extends ActiveAbility {
         Block floor = location.getBlock().getRelative(BlockFace.DOWN);
         Material fire = XMaterial.FIRE.parseMaterial();
 
-        Set<Block> blocks = new HashSet<>();
+        List<Block> blocks = new ArrayList<>();
         for (int i = -range; i < range; i++) {
             for (int j = -range; j < range; j++) {
                 Block block = floor.getRelative(i, 0, j);
@@ -77,16 +76,16 @@ public class FireMageInferno extends ActiveAbility {
     @EventHandler(ignoreCancelled = true)
     public void onFireMageAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
 
         Player player = (Player) event.getDamager();
-        SkilledPlayer info = this.activeCheckup(player);
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
         Entity entity = event.getEntity();
 
-        int lvl = info.getImprovementLevel(this);
-        double scaling = this.getScaling(info);
-        double damage = scaling + event.getEntity().getFireTicks() / 20D;
+        int lvl = info.getAbilityLevel(this);
+        double damageScaling = this.getScaling(info, "damage");
+        double perFireTick = this.getScaling(info, "per-fire-tick");
+        double damage = event.getEntity().getFireTicks() / perFireTick;
 
         event.setDamage(event.getDamage() + damage);
         player.getWorld().playEffect(entity.getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
@@ -94,9 +93,31 @@ public class FireMageInferno extends ActiveAbility {
         XSound.BLOCK_LAVA_POP.play(entity);
 
         if (lvl > 1) {
-            player.setFireTicks((int) (player.getFireTicks() + (scaling * 20)));
-            spreadFire(player.getLocation(), (int) getExtraScaling(info, "range"));
+            player.setFireTicks((int) (player.getFireTicks() + (damageScaling * 20)));
+            spreadFire(player.getLocation(), (int) getScaling(info, "range"));
             if (lvl > 2) XParticle.helix(SkillsPro.get(), lvl, 1, 0.1, 1, 3, 1, false, true, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME));
+        }
+    }
+
+    private static final class SimpleBlockPosition {
+        public final int x, y, z;
+
+        private SimpleBlockPosition(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public int hashCode() {
+            return (y + z * 31) * 31 + x;
+        }
+
+        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            SimpleBlockPosition that = (SimpleBlockPosition) o;
+            return x == that.x && y == that.y && z == that.z;
         }
     }
 }

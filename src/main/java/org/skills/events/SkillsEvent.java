@@ -30,9 +30,7 @@ public class SkillsEvent implements Cloneable {
     public SkillsEvent(UUID id, SkillsEventType type, String multiplier, long time, TimeUnit timeUnit, long start) {
         this.id = id;
         this.type = Objects.requireNonNull(type, "Event type cannot be null");
-        ;
         this.multiplier = Objects.requireNonNull(multiplier, "Event multiplier cannot be null");
-        ;
         this.time = timeUnit.toMillis(time);
         this.start = start;
     }
@@ -131,7 +129,7 @@ public class SkillsEvent implements Cloneable {
     public double calcMultiplier(OfflinePlayer player) {
         String placeholded = this.multiplier;
         if (player != null)
-            placeholded = ServiceHandler.translatePlaceholders(player, this.getMultiplier());
+            placeholded = ServiceHandler.translatePlaceholders(player, this.multiplier);
         return MathUtils.evaluateEquation(placeholded);
     }
 

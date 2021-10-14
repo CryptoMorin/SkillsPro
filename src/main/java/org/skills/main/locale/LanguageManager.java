@@ -38,7 +38,7 @@ public class LanguageManager extends YamlAdapter {
     }
 
     public boolean isSet(String option) {
-        return XMaterial.isNewVersion() ? getConfig().isSet(option) : getConfig().contains(option);
+        return XMaterial.supports(13) ? getConfig().isSet(option) : getConfig().contains(option);
     }
 
     private boolean saveDefaultLang() {

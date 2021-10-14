@@ -14,58 +14,51 @@ import org.skills.services.manager.ServiceHandler;
 import java.util.List;
 
 public abstract class ActiveAbility extends Ability {
-    public boolean activateOnReady;
-
-    public ActiveAbility(String skill, String name, boolean activateOnReady) {
+    public ActiveAbility(String skill, String name) {
         super(skill, name);
-        this.activateOnReady = activateOnReady;
     }
 
     public String getAbilityReady(SkilledPlayer info) {
-        return getExtra(info).getString("activation.messages.ready");
+        return getOptions(info).getString("activation.messages.ready");
     }
 
     public String getAbilityIdle(SkilledPlayer info) {
-        return getExtra(info).getString("activation.messages.idle");
+        return getOptions(info).getString("activation.messages.idle");
     }
 
     public String getAbilityActivated(SkilledPlayer info) {
-        return getExtra(info).getString("activation.messages.activated");
+        return getOptions(info).getString("activation.messages.activated");
     }
 
     public String getAbilityFinished(SkilledPlayer info) {
-        return getExtra(info).getString("activation.messages.finished");
+        return getOptions(info).getString("activation.messages.finished");
     }
 
     public int getIdle(SkilledPlayer info) {
-        return getExtra(info).getInt("activation.idle");
+        return getOptions(info).getInt("activation.idle");
     }
 
     public boolean isAbilityReady(Player p) {
         return SkilledPlayer.getSkilledPlayer(p).isActiveReady();
     }
 
-    public String getActivationKey(SkilledPlayer info) {
-        return getExtra(info).getString("activation.key");
-    }
-
-    protected void useSkill(Player player) {
-        activeCheckup(player);
+    public KeyBinding[] getActivationKey(SkilledPlayer info) {
+        return KeyBinding.parseBinding(getOptions(info).getString("activation.key"));
     }
 
     public double getEnergy(SkilledPlayer info) {
-        String energy = getExtra(info).getString("activation.energy");
+        String energy = getOptions(info).getString("activation.energy");
         return super.getAbsoluteScaling(info, energy);
     }
 
     public boolean isWeaponAllowed(SkilledPlayer info, ItemStack item) {
-        List<String> list = getExtra(info).getStringList("activation.items");
+        List<String> list = getOptions(info).getStringList("activation.items");
         if (list.isEmpty()) return true;
         return XMaterial.matchXMaterial(item).isOneOf(list);
     }
 
     public double getCooldown(SkilledPlayer info) {
-        String cooldown = getExtra(info).getString("activation.cooldown");
+        String cooldown = getOptions(info).getString("activation.cooldown");
         return super.getAbsoluteScaling(info, cooldown);
     }
 
@@ -75,15 +68,15 @@ public abstract class ActiveAbility extends Ability {
         MessageHandler.sendMessage(player, msg, SkillsConfig.PREFIX.getBoolean());
     }
 
-    public SkilledPlayer activeCheckup(Player player) {
+    public SkilledPlayer checkup(Player player) {
         SkilledPlayer info = super.checkup(player);
         if (info == null) return null;
-        if (!info.isActiveReady(this)) return null;
 
         SkillActiveStateChangeEvent event = new SkillActiveStateChangeEvent(player, this, false);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return null;
         info.deactivateReady();
+        // isActiveReady is checked in Ability class for performance reasons.
 
         info.setEnergy(info.getEnergy() - getEnergy(info));
         info.setCooldown((long) getCooldown(info) * 1000L);

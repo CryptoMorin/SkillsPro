@@ -39,7 +39,7 @@ public class ServiceWorldGuard {
         MethodHandle queryState = null;
         Object pvp = null;
 
-        if (!XMaterial.isNewVersion()) {
+        if (!XMaterial.supports(13)) {
             try {
                 Class<?> container = Class.forName("com.sk89q.worldguard.bukkit.RegionContainer");
                 Class<?> regionQuery = Class.forName("com.sk89q.worldguard.bukkit.RegionQuery");
@@ -68,7 +68,7 @@ public class ServiceWorldGuard {
         // https://worldguard.enginehub.org/en/latest/developer/regions/custom-flags/
         StateFlag flag = null;
 
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             String name = "abilities";
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
 

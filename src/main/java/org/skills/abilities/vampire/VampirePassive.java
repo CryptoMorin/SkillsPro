@@ -49,10 +49,10 @@ public class VampirePassive extends Ability {
                     ItemStack helment = player.getInventory().getHelmet();
                     if (helment != null) {
                         XMaterial xmat = XMaterial.matchXMaterial(helment);
-                        if (xmat.isOneOf(getExtra(info, "light-level.prevents").getStringList())) return;
+                        if (xmat.isOneOf(getOptions(info, "light-level.prevents").getStringList())) return;
                     }
 
-                    int burnLevel = (int) getExtraScaling(info, "light-level.burn-activation");
+                    int burnLevel = (int) getScaling(info, "light-level.burn-activation");
                     if (burnLevel <= 0) continue;
                     int lightning = player.getEyeLocation().getBlock().getLightFromSky();
                     lightning -= 7;
@@ -62,7 +62,7 @@ public class VampirePassive extends Ability {
 
                     if (max >= burnLevel) {
                         Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
-                            int burn = (int) getExtraScaling(info, "light-level.burn");
+                            int burn = (int) getScaling(info, "light-level.burn");
                             player.setFireTicks(burn * 20);
                             applyEffects(info, "light-level.burn", player);
                         });
@@ -82,14 +82,9 @@ public class VampirePassive extends Ability {
         if (info == null) return;
 
         double blood = info.getEnergy();
-        int damage = (int) ((blood / getExtraScaling(info, "blood", event)) * this.getScaling(info, event));
+        int damage = (int) ((blood / getScaling(info, "blood", event)) * this.getScaling(info, "damage", event));
 
         event.setDamage(event.getDamage() + damage);
         info.chargeEnergy(info.getScaling(SkillScaling.ENERGY_REGEN) / 2);
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%blood%", translate(info, "blood")};
     }
 }

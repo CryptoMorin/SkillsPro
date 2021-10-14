@@ -19,7 +19,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.MathUtils;
@@ -32,7 +31,7 @@ public class ArbalistMinions extends ActiveAbility {
     private static final Map<UUID, Set<Entity>> MINIONS = new HashMap<>();
 
     public ArbalistMinions() {
-        super("Arbalist", "minions", false);
+        super("Arbalist", "minions");
     }
 
     private static void killMinion(LivingEntity livingMinion) {
@@ -78,12 +77,10 @@ public class ArbalistMinions extends ActiveAbility {
         Entity entity = event.getEntity();
         if (!(entity instanceof LivingEntity)) return;
 
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
-
         Player player = (Player) arrow.getShooter();
-        SkilledPlayer info = this.activeCheckup(player);
+        SkilledPlayer info = this.checkup(player);
         if (info == null) return;
-        int lvl = info.getImprovementLevel(this);
+        int lvl = info.getAbilityLevel(this);
 
         boolean shouldMax = XMaterial.supports(14) && lvl > 2;
         Location center = player.getLocation();
@@ -91,9 +88,9 @@ public class ArbalistMinions extends ActiveAbility {
         ItemStack bow = shouldMax ? XMaterial.CROSSBOW.parseItem() : XMaterial.BOW.parseItem();
         XSound sound = shouldMax ? XSound.ENTITY_PILLAGER_AMBIENT : XSound.ENTITY_SKELETON_STEP;
 
-        int dmg = (int) getExtraScaling(info, "enchants.arrow-damage");
+        int dmg = (int) getScaling(info, "enchants.arrow-damage");
         if (dmg > 0) bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, dmg);
-        int flame = (int) getExtraScaling(info, "enchants.flame");
+        int flame = (int) getScaling(info, "enchants.flame");
         if (flame > 0) bow.addUnsafeEnchantment(Enchantment.ARROW_FIRE, flame);
 
         new BukkitRunnable() {
@@ -108,7 +105,7 @@ public class ArbalistMinions extends ActiveAbility {
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);
 
         Set<Entity> minions = new HashSet<>();
-        for (int i = (int) getExtraScaling(info, "amount"); i > 0; i--) {
+        for (int i = (int) getScaling(info, "amount"); i > 0; i--) {
             int x = MathUtils.randInt(1, 3);
             int z = MathUtils.randInt(1, 3);
 
@@ -151,6 +148,6 @@ public class ArbalistMinions extends ActiveAbility {
                     killMinion(livingMinion);
                 }
             }
-        }, (long) (getExtraScaling(info, "time") * 20L));
+        }, (long) (getScaling(info, "time") * 20L));
     }
 }

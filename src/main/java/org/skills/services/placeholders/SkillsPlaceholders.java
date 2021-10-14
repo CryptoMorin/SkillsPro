@@ -26,7 +26,7 @@ public enum SkillsPlaceholders {
     // General
     SKILL, SKILL_DISPLAYNAME, LEVEL, SOUL, XP, MAXXP, RAWXP,
     ENERGY, PRECISE_ENERGY, ENERGY_REGEN, MAX_PRECISE_ENERGY, MAX_ENERGY, ENERGY_TYPE, ENERGY_SYMBOL, ENERGY_STRING, ENERGY_COLOR,
-    HEALTH, MAX_HEALTH, STATUS, ACTIVE_COOLDOWN,
+    HEALTH, MAX_HEALTH, STATUS, ACTIVE_COOLDOWN, LAST_ABILITY_COOLDOWN,
     PARTY_NAME, PARTY_MEMBERS, PARTY_ONLINE_MEMBERS, PARTY_OFFLINE_MEMBERS, PARTY_RANK, LAST_ABILITY,
 
     // Events
@@ -43,34 +43,6 @@ public enum SkillsPlaceholders {
     public static @NonNull
     String translatePlaceholders(@NonNull OfflinePlayer player, @NonNull String str) {
         return evaluatePlaceholders(SkilledPlayer.getSkilledPlayer(player), str, IDENTIFIER);
-//        if (!str.contains(IDENTIFY)) return str;
-//        SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-//
-//        for (Stat stat : Stat.STATS) {
-//            str = StringUtils.replace(str, IDENTIFY + "stat_" + stat.getNode().toLowerCase(Locale.ENGLISH) + '%', String.valueOf(info.getStat(stat.getDataNode())));
-//        }
-//
-//        for (SkillsPlaceholders holder : values()) {
-//            String placeholder = IDENTIFY + holder.name().toLowerCase() + '%';
-//            String shortPlaceholder = IDENTIFY + "short_" + holder.name().toLowerCase() + '%';
-//            boolean shortie = str.contains(shortPlaceholder);
-//
-//            if (shortie || str.contains(placeholder)) {
-//                String finalHolder = placeholder;
-//                Object transed = translate(holder, info);
-//                String translated = transed == null ? "null" : transed.toString();
-//
-//                if (shortie) {
-//                    finalHolder = shortPlaceholder;
-//                    Double number = MathUtils.getIfNumber(translated);
-//                    if (number != null) translated = MathUtils.getShortNumber(number);
-//                }
-//
-//                str = StringUtils.replace(str, finalHolder, translated);
-//            }
-//        }
-//
-//        return str;
     }
 
     public static String evaluatePlaceholders(SkilledPlayer info, String str, String identifier) {
@@ -153,8 +125,26 @@ public enum SkillsPlaceholders {
 
         Object placeholdedObj;
         if (identifier.startsWith("stat_")) {
-            Stat stat = Stat.getStat(identifier.substring(5));
-            placeholdedObj = info.getStat(stat);
+            String rest = identifier.substring(5);
+            int index = rest.indexOf('_');
+            Stat stat = Stat.getStat(index == -1 ? rest : rest.substring(index + 1));
+            if (index == -1) placeholdedObj = info.getStat(stat);
+            else {
+                String param = rest.substring(0, index).toLowerCase(Locale.ENGLISH);
+                switch (param) {
+                    case "color":
+                        placeholdedObj = stat.getColor();
+                        break;
+                    case "maxlvl":
+                        placeholdedObj = stat.getMaxLevel();
+                        break;
+                    case "name":
+                        placeholdedObj = stat.getName();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown stat placeholder parameter: '" + param + "' in " + identifier);
+                }
+            }
         } else if (identifier.startsWith("cosmetic_")) {
             int index = identifier.indexOf('_', 10);
             if (index == -1) {
@@ -183,8 +173,6 @@ public enum SkillsPlaceholders {
         }
 
         if (placeholdedObj != null) {
-            if (placeholdedObj == null) return null;
-
             if (shortie || fancy) {
                 if (placeholdedObj instanceof Number) {
                     double number = ((Number) placeholdedObj).doubleValue();
@@ -214,6 +202,9 @@ public enum SkillsPlaceholders {
 
                 if (timeLeft <= 0) return SkillsConfig.ACTIONBAR_COOLDOWN_READY.parse(info.getOfflinePlayer());
                 return SkillsConfig.ACTIONBAR_COOLDOWN_NOT_READY.parse(info.getOfflinePlayer(), "%time%", (int) Math.ceil(timeLeft / 1000D));
+            case LAST_ABILITY_COOLDOWN:
+                if (info.getLastAbilityUsed() == null) return 0;
+                return (int) info.getLastAbilityUsed().getCooldown(info);
             case HEALTH:
                 Player player = info.getPlayer();
                 if (player == null) return 0;
@@ -287,7 +278,7 @@ public enum SkillsPlaceholders {
             case LEVEL:
                 return info.getLevel();
             case MAXXP:
-                return info.getLevelXP();
+                return MathUtils.roundToDigits(info.getLevelXP(), 2);
             case RAWXP:
                 return MathUtils.roundToDigits(info.getRawXP(), 2);
             case SKILL:

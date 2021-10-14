@@ -14,7 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 import org.spigotmc.event.entity.EntityDismountEvent;
@@ -28,7 +27,7 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onTridentLaunch(ProjectileLaunchEvent event) {
-        if (!XMaterial.isNewVersion()) return;
+        if (!XMaterial.supports(13)) return;
         Entity entity = event.getEntity();
         if (!(entity instanceof Trident)) return;
         Trident trident = (Trident) entity;
@@ -39,7 +38,7 @@ public class MageNeptune extends Ability {
 
         SkilledPlayer info = checkup(player);
         if (info == null) return;
-        if (info.getImprovementLevel(this) < 3) return;
+        if (info.getAbilityLevel(this) < 3) return;
 
         if (player.getInventory().getItemInOffHand().getType() == Material.TRIDENT && player.isSneaking()) {
             trident.addPassenger(player);
@@ -57,26 +56,26 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onTrident(EntityDamageByEntityEvent event) {
-        if (!XMaterial.isNewVersion()) return;
+        if (!XMaterial.supports(13)) return;
         if (!(event.getDamager() instanceof Trident)) return;
+
         ProjectileSource shooter = ((Trident) event.getDamager()).getShooter();
         if (!(shooter instanceof Player)) return;
         if (!(event.getEntity() instanceof LivingEntity)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
 
         Player player = (Player) shooter;
         SkilledPlayer info = checkup(player);
         if (info == null) return;
 
-        event.setDamage(event.getDamage() + getScaling(info, event));
+        event.setDamage(event.getDamage() + getScaling(info, "damage", event));
         LivingEntity entity = (LivingEntity) event.getEntity();
 
-        if (MathUtils.hasChance((int) getExtraScaling(info, "chances.lightning", event))) {
+        if (MathUtils.hasChance((int) getScaling(info, "chances.lightning", event))) {
             player.getWorld().strikeLightning(entity.getLocation());
         }
-        if (MathUtils.hasChance((int) getExtraScaling(info, "chances.multiply", event))) {
+        if (MathUtils.hasChance((int) getScaling(info, "chances.multiply", event))) {
             new BukkitRunnable() {
-                int repeat = (int) getExtraScaling(info, "multiply");
+                int repeat = (int) getScaling(info, "multiply");
 
                 @Override
                 public void run() {
@@ -98,10 +97,11 @@ public class MageNeptune extends Ability {
         }
     }
 
-    @Override
+    // TODO What to do?
     public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%chances_lightning%", getScalingDescription(info, getExtra(info).getString("chances.lightning")),
-                "%chances_multiply%", getScalingDescription(info, getExtra(info).getString("chances.multiply")),
-                "%multiply%", getScalingDescription(info, getExtra(info).getString("multiply"))};
+        return new Object[]{
+                "%chances_lightning%", getScalingDescription(info, getOptions(info).getString("chances.lightning")),
+                "%chances_multiply%", getScalingDescription(info, getOptions(info).getString("chances.multiply")),
+                "%multiply%", getScalingDescription(info, getOptions(info).getString("multiply"))};
     }
 }

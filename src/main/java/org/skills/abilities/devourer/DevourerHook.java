@@ -18,7 +18,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.skills.abilities.ActiveAbility;
+import org.skills.abilities.AbilityContext;
+import org.skills.abilities.InstantActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.utils.Cooldown;
@@ -28,7 +29,7 @@ import org.skills.utils.MathUtils;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class DevourerHook extends ActiveAbility {
+public class DevourerHook extends InstantActiveAbility {
     private static final String COOLDOWN = "DEVOURER_HOOK";
     private static final Map<Integer, Player> HOOKS = new HashMap<>();
     private static final Set<Integer> HOOKED = new HashSet<>();
@@ -39,16 +40,16 @@ public class DevourerHook extends ActiveAbility {
     }
 
     public DevourerHook() {
-        super("Devourer", "hook", true);
+        super("Devourer", "hook");
     }
 
     @Override
-    protected void useSkill(Player player) {
-        SkilledPlayer info = this.activeCheckup(player);
-        if (info == null) return;
+    public void useSkill(AbilityContext context) {
+        Player player = context.getPlayer();
+        SkilledPlayer info = context.getInfo();
 
-        Entity arrow = player.getWorld().spawnEntity(player.getEyeLocation(), Enums.getIfPresent(EntityType.class, getExtra(info, "hook").getString()).orNull());
-        arrow.setVelocity(player.getLocation().getDirection().multiply(info.getImprovementLevel(this) + 1));
+        Entity arrow = player.getWorld().spawnEntity(player.getEyeLocation(), Enums.getIfPresent(EntityType.class, getOptions(info, "hook").getString()).orNull());
+        arrow.setVelocity(player.getLocation().getDirection().multiply(info.getAbilityLevel(this) + 1));
         HOOKS.put(arrow.getEntityId(), player);
     }
 
@@ -84,12 +85,12 @@ public class DevourerHook extends ActiveAbility {
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         Location location = player.getLocation();
         Location arrowLoc = arrow.getLocation();
-        if (location.distance(arrowLoc) > getExtraScaling(info, "range")) return;
+        if (location.distance(arrowLoc) > getScaling(info, "range")) return;
 
         Block hitBlock = event.getHitBlock();
         if (hitBlock != null) {
             XMaterial mat = XMaterial.matchXMaterial(hitBlock.getType());
-            List<String> untargetable = getExtra(info, "untargetable-blocks").getStringList();
+            List<String> untargetable = getOptions(info, "untargetable-blocks").getStringList();
             if (untargetable.contains(mat.name())) return;
         }
 
@@ -100,7 +101,7 @@ public class DevourerHook extends ActiveAbility {
         } catch (IllegalArgumentException ignored) {
         }
 
-        if (info.getImprovementLevel(this) > 1) {
+        if (info.getAbilityLevel(this) > 1) {
             HOOKED.add(player.getEntityId());
             new Cooldown(player.getUniqueId(), COOLDOWN, 2, TimeUnit.SECONDS);
         }

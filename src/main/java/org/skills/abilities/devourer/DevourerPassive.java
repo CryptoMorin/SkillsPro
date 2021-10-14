@@ -38,14 +38,14 @@ public class DevourerPassive extends Ability {
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
-        if (MathUtils.hasChance((int) getExtraScaling(info, "chance", event))) {
+        if (MathUtils.hasChance((int) getScaling(info, "chance", event))) {
             LivingEntity entity = (LivingEntity) event.getEntity();
-            Optional<XPotion> potion = XPotion.matchXPotion(getExtra(info).getString("effect"));
+            Optional<XPotion> potion = XPotion.matchXPotion(getOptions(info).getString("effect"));
 
             if (potion.isPresent()) {
-                double damage = getScaling(info, event);
-                int duration = (int) getExtraScaling(info, "duration", event) * 20;
-                int amplifier = (int) (getExtraScaling(info, "amplifier", event) - 1);
+                double damage = getScaling(info, "damage", event);
+                int duration = (int) getScaling(info, "duration", event) * 20;
+                int amplifier = (int) (getScaling(info, "amplifier", event) - 1);
 
                 entity.addPotionEffect(new PotionEffect(potion.get().parsePotionEffectType(), duration, amplifier));
                 entity.setMetadata(PASSIVE, new FixedMetadataValue(SkillsPro.get(), damage));
@@ -63,12 +63,5 @@ public class DevourerPassive extends Ability {
 
         double damage = meta.get(0).asDouble();
         event.setDamage(event.getDamage() + damage);
-    }
-
-    @Override
-    public Object[] applyEdits(SkilledPlayer info) {
-        return new Object[]{"%chance%", getScalingDescription(info, getExtra(info).getString("chance")),
-                "%duration%", getScalingDescription(info, getExtra(info).getString("duration")),
-                "%amplifier%", getScalingDescription(info, getExtra(info).getString("amplifier"))};
     }
 }

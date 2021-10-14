@@ -12,7 +12,7 @@ import org.skills.main.locale.SkillsLang;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DebugManager implements Listener {
+public final class DebugManager implements Listener {
     public static final Map<Integer, Player> ACTIVE = new HashMap<>();
 
     private static void debug(EntityDamageByEntityEvent event, String priority) {

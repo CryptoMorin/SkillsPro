@@ -44,28 +44,27 @@ public class ArbalistPassive extends Ability {
         event.setDamage(event.getDamage() + (distance / 5));
         World world = entity.getWorld();
 
-        if (MathUtils.hasChance((int) getExtraScaling(info, "chance"))) {
-            Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
-                Location center = entity.getLocation().add(0, 10, 0);
-                world.spawnParticle(Particle.CLOUD, center, 200, 1, 0, 1, 0);
+        if (!MathUtils.hasChance((int) getScaling(info, "chance"))) return;
+        Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
+            Location center = entity.getLocation().add(0, 10, 0);
+            world.spawnParticle(Particle.CLOUD, center, 200, 1, 0, 1, 0);
 
-                for (int i = 0; i < getExtraScaling(info, "arrows"); i++) {
-                    int x = MathUtils.randInt(0, i);
-                    int z = MathUtils.randInt(0, i);
+            for (int i = 0; i < getScaling(info, "arrows"); i++) {
+                int x = MathUtils.randInt(0, i);
+                int z = MathUtils.randInt(0, i);
 
-                    Location fire = center.clone().add(x, 0, z);
-                    Location to = entity.getLocation().add(x, 0, z);
+                Location fire = center.clone().add(x, 0, z);
+                Location to = entity.getLocation().add(x, 0, z);
 
-                    Vector vector = to.toVector().subtract(fire.toVector());
-                    Arrow rain = (Arrow) world.spawnEntity(fire, EntityType.ARROW);
-                    rain.setShooter(shooter);
-                    rain.setMetadata(ARBALIST_ARROW, new FixedMetadataValue(SkillsPro.get(), null));
-                    if (MathUtils.hasChance((int) getExtraScaling(info, "chance"))) rain.setFireTicks(200);
-                    rain.setVelocity(vector.multiply(0.1));
+                Vector vector = to.toVector().subtract(fire.toVector());
+                Arrow rain = (Arrow) world.spawnEntity(fire, EntityType.ARROW);
+                rain.setShooter(shooter);
+                rain.setMetadata(ARBALIST_ARROW, new FixedMetadataValue(SkillsPro.get(), null));
+                if (MathUtils.hasChance((int) getScaling(info, "flame-chance"))) rain.setFireTicks(200);
+                rain.setVelocity(vector.multiply(0.1));
 
-                    if (XMaterial.supports(14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
-                }
-            }, 10L);
-        }
+                if (XMaterial.supports(14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+            }
+        }, 10L);
     }
 }

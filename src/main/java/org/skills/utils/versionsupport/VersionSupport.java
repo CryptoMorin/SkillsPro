@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.skills.utils.MathUtils;
@@ -32,11 +31,11 @@ public class VersionSupport {
         return (int) MathUtils.getPercent(entity.getHealth() - offset, VersionSupport.getMaxHealth(entity));
     }
 
-    public static void heal(Player player, double amount) {
-        EntityRegainHealthEvent regain = new EntityRegainHealthEvent(player, amount, EntityRegainHealthEvent.RegainReason.CUSTOM);
+    public static void heal(LivingEntity entity, double amount) {
+        EntityRegainHealthEvent regain = new EntityRegainHealthEvent(entity, amount, EntityRegainHealthEvent.RegainReason.CUSTOM);
         Bukkit.getPluginManager().callEvent(regain);
-        amount = Math.min(player.getHealth() + regain.getAmount(), VersionSupport.getMaxHealth(player));
-        player.setHealth(amount);
+        amount = Math.min(entity.getHealth() + regain.getAmount(), VersionSupport.getMaxHealth(entity));
+        entity.setHealth(amount);
     }
 
     public static void spawnColouredDust(Location loc) {
@@ -44,7 +43,7 @@ public class VersionSupport {
     }
 
     public static void spawnColouredDust(Location loc, Color color) {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             VersionSupportFuture.spawnColouredDust(loc, color);
         } else {
             VersionSupportOld.spawnColouredDust(loc, color.asRGB());
@@ -52,7 +51,7 @@ public class VersionSupport {
     }
 
     public static boolean isPassenger(Entity e, Entity pass) {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             return VersionSupportFuture.isPassenger(e, pass);
         } else {
             return VersionSupportOld.isPassenger(e, pass);
@@ -60,7 +59,7 @@ public class VersionSupport {
     }
 
     public static double getMaxHealth(LivingEntity e) {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             return VersionSupportFuture.getMaxHealth(e);
         } else {
             return VersionSupportOld.getMaxHealth(e);
@@ -69,19 +68,19 @@ public class VersionSupport {
 
     public static void addHealth(LivingEntity entity, double amount) {
         if (amount == 0) return;
-        if (XMaterial.isNewVersion()) VersionSupportFuture.setMaxHealth(entity, entity.getHealth() + amount);
+        if (XMaterial.supports(13)) VersionSupportFuture.setMaxHealth(entity, entity.getHealth() + amount);
         else VersionSupportOld.setMaxHealth(entity, entity.getHealth() + amount);
     }
 
     public static void setMaxHealth(LivingEntity entity, double amount) {
         if (amount == 0) return;
         if (amount < 0) throw new IllegalArgumentException("Invalid max health for player: " + amount);
-        if (XMaterial.isNewVersion()) VersionSupportFuture.setMaxHealth(entity, amount);
+        if (XMaterial.supports(13)) VersionSupportFuture.setMaxHealth(entity, amount);
         else VersionSupportOld.setMaxHealth(entity, amount);
     }
 
     public static boolean isCropFullyGrown(Block crop) {
-        if (XMaterial.isNewVersion()) {
+        if (XMaterial.supports(13)) {
             return VersionSupportFuture.isCropFullyGrown(crop);
         } else {
             return VersionSupportOld.isCropFullyGrown(crop);

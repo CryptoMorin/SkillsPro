@@ -6,7 +6,7 @@ authors: [ Hex_27 ]
 version: ${project.version}
 api-version: "1.13"
 softdepend: [ Citizens, MyPet, PlaceholderAPI, MVdWPlaceholderAPI, WorldGuard, Residence, Factions, Vault, Kingdoms, DiscordSRV,
-              MythicMobs, Boss, EliteMobs, LorinthsRpgMobs ]
+              MythicMobs, Boss, EliteMobs, LorinthsRpgMobs, LevelledMobs ]
 
 commands:
   skills:

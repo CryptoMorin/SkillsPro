@@ -129,11 +129,12 @@ public final class BooleanEval {
                     double second = MathUtils.evaluateEquation(right);
                     return first == second;
                 } catch (Exception ex) {
-                    return !left.equals(right);
+                    ex.printStackTrace();
+                    return false;
                 }
             }
         },
-        EQUALS("=", "==") {
+        EQUALS("==", "=") {
             @Override
             boolean evaluate(String left, String right) {
                 try {
@@ -141,7 +142,8 @@ public final class BooleanEval {
                     double second = MathUtils.evaluateEquation(right);
                     return first == second;
                 } catch (Exception ex) {
-                    return left.equals(right);
+                    ex.printStackTrace();
+                    return false;
                 }
             }
         },

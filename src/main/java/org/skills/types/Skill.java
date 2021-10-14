@@ -3,6 +3,7 @@ package org.skills.types;
 import org.apache.commons.lang.Validate;
 import org.skills.abilities.Ability;
 import org.skills.abilities.AbilityManager;
+import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SLogger;
 import org.skills.main.locale.MessageHandler;
@@ -12,6 +13,7 @@ import org.skills.utils.StringUtils;
 import org.skills.utils.YamlAdapter;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class Skill {
     private final Map<SkillScaling, String> scaling = new EnumMap<>(SkillScaling.class);
@@ -44,11 +46,15 @@ public class Skill {
     }
 
     public boolean isNone() {
-        return this.name.equals("none");
+        return this.name.equals(PlayerSkill.NONE);
     }
 
     public boolean hasAbility(Ability ability) {
-        return abilities.containsKey(ability.getName());
+        return hasAbility(ability.getName());
+    }
+
+    public boolean hasAbility(String name) {
+        return abilities.containsKey(name);
     }
 
     public void unregister() {
@@ -65,11 +71,11 @@ public class Skill {
         String equation = StringUtils.replace(StringUtils.replace(
                 ServiceHandler.translatePlaceholders(info.getOfflinePlayer(), scaling.toLowerCase(Locale.ENGLISH)),
                 "lvl", String.valueOf(info.getLevel())),
-                "bloodwell", String.valueOf(info.getImprovementLevel(AbilityManager.getAbility("blood_well"))));
+                "bloodwell", String.valueOf(info.getAbilityLevel(AbilityManager.getAbility("blood_well"))));
 
         for (Stat stats : Stat.STATS.values()) {
             equation = MessageHandler.replace(equation, '%' + stats.getNode() + '%',
-                    MessageHandler.Replacer.of(() -> String.valueOf(info.getStat(stats))));
+                    (Supplier<String>) (() -> String.valueOf(info.getStat(stats))));
         }
 
         return MathUtils.evaluateEquation(equation);

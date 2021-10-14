@@ -29,34 +29,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LevelUp {
-    private final String message;
-    private final ConfigurationSection title;
-    private final String xp;
-    private final String souls;
-    private final String statPoints;
-    private final List<String> commands;
-
-    private Title titleEval;
-    private String messageEval;
-    private int xpEval;
-    private int soulsEval;
-    private int statPointsEval;
-    private List<String> commandsEval;
+    private final ConfigurationSection section;
+    private int xp, souls, statPoints;
+    private List<String> commands;
+    private OfflinePlayer player;
+    private SkilledPlayer info;
+    private int lvl;
 
     private LevelUp(ConfigurationSection section) {
-        this.message = section.getString("message");
-        this.title = section.getConfigurationSection("title");
-        this.xp = section.getString("xp");
-        this.souls = section.getString("souls");
-        this.statPoints = section.getString("statpoints");
+        this.section = section;
         this.commands = section.getStringList("commands");
-
-        Validate.isTrue(xp != null, "Could not find XP property for level: " + section.getName());
     }
 
     public static int getLevel(SkilledPlayer info, int lvl) {
-        return (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(
-                info.getOfflinePlayer(), StringUtils.replace(getProperties(lvl).getXp(), "lvl", String.valueOf(lvl))));
+        return getProperties(lvl).forPlayer(info.getOfflinePlayer()).evaluateRewards().xp;
     }
 
     public static LevelUp getProperties(int level) {
@@ -78,35 +64,82 @@ public class LevelUp {
             }
             if (section == null) section = lvlSection.getConfigurationSection(String.valueOf(i));
         }
-        return new LevelUp(section);
+        return new LevelUp(section).level(level);
     }
 
-    public void perform(SkilledPlayer info, Object... edits) {
-        OfflinePlayer offPlayer = info.getOfflinePlayer();
-        if (offPlayer.isOnline()) {
-            Player player = (Player) offPlayer;
-            if (messageEval != null) player.sendMessage(MessageHandler.replaceVariables(this.messageEval, edits));
-            if (titleEval != null) Titles.sendTitle(player, titleEval.fadeIn, titleEval.stay, titleEval.fadeOut,
-                    MessageHandler.replaceVariables(titleEval.title, edits),
-                    MessageHandler.replaceVariables(titleEval.subtitle, edits));
-        }
-        info.addSouls(this.soulsEval);
-        info.addStat(Stat.POINTS, this.statPointsEval);
+    public LevelUp forPlayer(OfflinePlayer player) {
+        this.player = player;
+        this.info = SkilledPlayer.getSkilledPlayer(player);
+        return this;
+    }
 
-        Player player = offPlayer.getPlayer();
-        for (String command : this.commandsEval) {
+    public LevelUp level(int lvl) {
+        this.lvl = lvl;
+        return this;
+    }
+
+    public LevelUp performRewards() {
+        info.addSouls(this.souls);
+        info.addStat(Stat.POINTS, this.statPoints);
+
+        Player player = info.getPlayer();
+        for (String command : this.commands) {
             CommandSender executor = command.toUpperCase().startsWith("CONSOLE:") ? Bukkit.getConsoleSender() : player;
             if (executor == player && player == null) continue;
             int index = command.indexOf(':');
-            String cmd = MessageHandler.replaceVariables(command.substring(index + 1), edits);
+            String cmd = command.substring(index + 1);
             Bukkit.dispatchCommand(executor, cmd);
         }
+        return this;
     }
 
-    public void celebrate(Player player, JavaPlugin plugin, int lvl) {
+    public LevelUp performMessages() {
+        OfflinePlayer offPlayer = info.getOfflinePlayer();
+        if (offPlayer.isOnline()) {
+            Player player = (Player) offPlayer;
+
+            Object[] edits = {
+                    "%lvl%", lvl,
+                    "%xp_required%", StringUtils.toFancyNumber(xp),
+                    "%gained_stats%", StringUtils.toFancyNumber(statPoints),
+                    "%gained_souls%", StringUtils.toFancyNumber(souls),
+                    "%next_maxxp%", StringUtils.toFancyNumber(info.getLevelXP(lvl))
+            };
+            String message = section.getString("message");
+            if (!Strings.isNullOrEmpty(message)) {
+                player.sendMessage(translateMessage(message, edits));
+            }
+            ConfigurationSection titleSection = section.getConfigurationSection("title");
+            if (titleSection != null) {
+                String title = titleSection.getString("title");
+                if (!Strings.isNullOrEmpty(title)) title = translateMessage(title, edits);
+
+                String subtitle = titleSection.getString("subtitle");
+                if (!Strings.isNullOrEmpty(subtitle)) subtitle = translateMessage(subtitle, edits);
+
+                Titles.sendTitle(player,
+                        titleSection.getInt("fade-in"), titleSection.getInt("stay"), titleSection.getInt("fade-out"),
+                        title, subtitle
+                );
+            }
+        }
+        return this;
+    }
+
+    private String translateMessage(String msg, Object... edits) {
+        return MessageHandler.colorize(MessageHandler.replaceVariables(ServiceHandler.translatePlaceholders(player, msg), edits));
+    }
+
+    private int eval(String expression) {
+        if (Strings.isNullOrEmpty(expression)) return 0;
+        return (int) Math.round(MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, StringUtils.replace(expression, "lvl", String.valueOf(lvl)))));
+    }
+
+    public void celebrate(Player player, JavaPlugin plugin) {
         ParticleDisplay display = ParticleDisplay.simple(player.getLocation(), Particle.CRIT_MAGIC);
         int height = Math.min(Math.max(5, lvl / 2), 15);
         XParticle.dnaReplication(plugin, 1, 0.2, 3, 1, height, 2, display);
+
         int fireworks = MathUtils.randInt(2, 5);
         int lowLv2 = Math.max(1, lvl / 2);
         List<Color> colors = new ArrayList<>();
@@ -126,89 +159,26 @@ public class LevelUp {
         }
     }
 
-    public LevelUp evaluate(SkilledPlayer info, int lvl) {
-        OfflinePlayer player = info.getOfflinePlayer();
-        this.xpEval = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, StringUtils.replace(xp, "lvl", String.valueOf(lvl))));
-        this.soulsEval = Strings.isNullOrEmpty(this.souls) ? 0 :
-                (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, StringUtils.replace(souls, "lvl", String.valueOf(lvl))));
-        this.statPointsEval = Strings.isNullOrEmpty(this.statPoints) ? 0 :
-                (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, StringUtils.replace(statPoints, "lvl", String.valueOf(lvl))));
-        this.messageEval = Strings.isNullOrEmpty(this.message) ? null :
-                MessageHandler.colorize(MessageHandler.replaceVariables(ServiceHandler.translatePlaceholders(player, message),
-                        "%lvl%", lvl, "%xp_required%", xpEval, "%gained_stats%", statPointsEval, "%gained_souls%", soulsEval));
+    public LevelUp add(LevelUp other) {
+        this.xp += other.xp;
+        this.souls += other.souls;
+        this.statPoints += other.statPoints;
+        this.commands.addAll(other.commands);
+        return this;
+    }
 
-        if (this.title != null) {
-            String ttile = title.getString("title");
-            String tttile = Strings.isNullOrEmpty(ttile) ? "" :
-                    MessageHandler.colorize(MessageHandler.replaceVariables(ServiceHandler.translatePlaceholders(player, ttile),
-                            "%lvl%", lvl, "%xp_required%", xpEval, "%gained_stats%", statPointsEval, "%gained_souls%", soulsEval));
-
-            String subtitle = title.getString("subtitle");
-            String subttitle = Strings.isNullOrEmpty(subtitle) ? "" :
-                    MessageHandler.colorize(MessageHandler.replaceVariables(ServiceHandler.translatePlaceholders(player, subtitle),
-                            "%lvl%", lvl, "%xp_required%", xpEval, "%gained_stats%", statPointsEval, "%gained_souls%", soulsEval));
-            this.titleEval = new Title(tttile, subttitle, title.getInt("fade-in"), title.getInt("stay"), title.getInt("fade-out"));
-        }
+    public LevelUp evaluateRewards() {
+        this.xp = eval(section.getString("xp"));
+        this.souls = eval(section.getString("souls"));
+        this.statPoints = eval(section.getString("statpoints"));
 
         List<String> evaledCommands = new ArrayList<>();
         if (this.commands != null) {
             for (String cmd : this.commands) {
-                evaledCommands.add(MessageHandler.colorize(ServiceHandler.translatePlaceholders(player, cmd)));
+                evaledCommands.add(translateMessage(cmd));
             }
         }
-        this.commandsEval = evaledCommands;
+        this.commands = evaledCommands;
         return this;
-    }
-
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    public String getStatPoints() {
-        return statPoints;
-    }
-
-    public String getSouls() {
-        return souls;
-    }
-
-    public String getXp() {
-        return xp;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getXpEval() {
-        return xpEval;
-    }
-
-    public void setXpEval(int xpEval) {
-        this.xpEval = xpEval;
-    }
-
-    public int getSoulsEval() {
-        return soulsEval;
-    }
-
-    public void setSoulsEval(int soulsEval) {
-        this.soulsEval = soulsEval;
-    }
-
-    public int getStatPointsEval() {
-        return statPointsEval;
-    }
-
-    public void setStatPointsEval(int statPointsEval) {
-        this.statPointsEval = statPointsEval;
-    }
-
-    public List<String> getCommandsEval() {
-        return commandsEval;
-    }
-
-    public void setCommandsEval(List<String> commandsEval) {
-        this.commandsEval = commandsEval;
     }
 }

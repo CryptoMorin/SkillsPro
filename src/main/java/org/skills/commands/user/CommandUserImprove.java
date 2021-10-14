@@ -21,7 +21,9 @@ public class CommandUserImprove extends SkillsCommand {
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
             if (player != null) {
                 SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-                if (HandleSimpleSetters.handleInvalidSetter(sender, args)) return;
+                AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
+                if (changeFactory == null) return;
+
                 Ability ability = info.getSkill().getAbility(args[2]);
                 if (ability == null) {
                     SkillsLang.ABILITY_NOT_FOUND.sendMessage(sender, "%ability%", args[2]);
@@ -30,16 +32,16 @@ public class CommandUserImprove extends SkillsCommand {
 
                 try {
                     int amount = Integer.parseInt(args[3]);
-                    int request = (int) HandleSimpleSetters.eval(args, info.getImprovementLevel(ability), amount);
+                    int request = (int) changeFactory.withInitialAmount(info.getAbilityLevel(ability)).getFinalAmount();
                     if (request < 0 || request > 3) {
                         SkillsLang.ABILITY_INVALID_LEVEL.sendMessage(sender);
                         return;
                     }
-                    info.setImprovement(ability, request);
+                    info.setAbilityLevel(ability, request);
 
                     SkillsLang.COMMAND_USER_IMPROVEMENT_SUCCESS.sendMessage(sender,
                             "%player%", player.getName(), "%amount%", amount,
-                            "%ability%", ability.getName(), "%new%", info.getImprovementLevel(ability));
+                            "%ability%", ability.getName(), "%new%", info.getAbilityLevel(ability));
                 } catch (NumberFormatException ignored) {
                     SkillsCommandHandler.sendNotNumber(sender, ability.getName() + "'s level", args[3]);
                 }
@@ -54,7 +56,7 @@ public class CommandUserImprove extends SkillsCommand {
     @Override
     public String[] tabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length == 1) return null;
-        if (args.length == 2) return HandleSimpleSetters.tabComplete(args[1]);
+        if (args.length == 2) return AmountChangeFactory.tabComplete(args[1]);
         if (args.length == 3) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
             if (player == null || !player.hasPlayedBefore()) return new String[0];

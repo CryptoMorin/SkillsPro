@@ -52,6 +52,7 @@ public class SkillsCommandHandler implements CommandExecutor {
         new CommandRefresh();
         new CommandMastery();
         new CommandImprove();
+        new CommandKeyBinding();
 
         new CommandBonus();
         new CommandEvent();

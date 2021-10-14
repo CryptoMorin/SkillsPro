@@ -6,23 +6,24 @@ import com.cryptomorin.xseries.XMaterial;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
-/**
- * Provides wrapper objects to abstract the NBT versions. Probably way too complicated...
- */
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class NBTWrappers {
-    private static Object findNBTData(Object nbt) {
-        try {
-            Field field = nbt.getClass().getDeclaredField("data");
-            field.setAccessible(true);
-            return field.get(nbt);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+public final class NBTWrappers {
+    private static Class<?> getNBTClass(String clazz) {
+        return ReflectionUtils.getNMSClass("nbt", clazz);
+    }
+
+    private static Field getDeclaredField(Class<?> clazz, String... names) {
+        int i = 0;
+        for (String name : names) {
+            i++;
+            try {
+                return clazz.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                if (i == names.length) e.printStackTrace();
+            }
         }
         return null;
     }
@@ -64,50 +65,111 @@ public class NBTWrappers {
                     return NBTTagByteArray.fromNBT(nbtObject);
                 case "NBTTagIntArray":
                     return NBTTagIntArray.fromNBT(nbtObject);
+                case "NBTTagLongArray":
+                    return NBTTagLongArray.fromNBT(nbtObject);
                 case "NBTTagList":
                     return NBTTagList.fromNBT(nbtObject);
+                case "NBTTagEnd":
+                    return NBTTagEnd.fromNBT(nbtObject);
                 default:
-                    return null;
+                    throw new UnsupportedOperationException("Unknown NBT type: " + nbtObject.getClass().getSimpleName());
             }
         }
 
-        public T getValue() {
+        public final T getValue() {
             return value;
         }
 
-        abstract Object toNBT();
+        public abstract Object toNBT();
     }
 
-    public static class NBTTagString extends NBTBase<String> {
-        private static final MethodHandle NBT_TAG_STRING_CONSTRUCTOR;
+    public static final class NBTTagEnd extends NBTBase<Void> {
+        private static final MethodHandle NBT_CONSTRUCTOR;
 
         static {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> stringClass = ReflectionUtils.getNMSClass("NBTTagString");
+            Class<?> stringClass = getNBTClass("NBTTagEnd");
             MethodHandle handler = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(stringClass, "a", MethodType.methodType(stringClass, String.class));
-                else handler = lookup.findConstructor(stringClass, MethodType.methodType(void.class, String.class));
+                lookup.findConstructor(stringClass, MethodType.methodType(void.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_STRING_CONSTRUCTOR = handler;
+            NBT_CONSTRUCTOR = handler;
+        }
+
+        public NBTTagEnd() {
+            super(null);
+        }
+
+        @SuppressWarnings("unused")
+        public static NBTBase<Void> fromNBT(Object nbtObject) {
+            return null;
+        }
+
+        @Override
+        public Object toNBT() {
+            try {
+                return NBT_CONSTRUCTOR.invoke();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "NBTTagEnd";
+        }
+    }
+
+    public static final class NBTTagString extends NBTBase<String> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
+
+        static {
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            Class<?> clazz = getNBTClass("NBTTagString");
+            MethodHandle handler = null, data = null;
+
+            try {
+                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, String.class));
+                else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, String.class));
+
+                Field field = getDeclaredField(clazz, "A", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagString(String value) {
             super(value);
         }
 
-        public static NBTBase<String> fromNBT(Object nbtObject) {
-            return new NBTTagString((String) findNBTData(nbtObject));
+        public static NBTTagString fromNBT(Object nbtObject) {
+            try {
+                return new NBTTagString((String) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        public NBTType<String> getNBTType() {
+            return NBTType.STRING;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_STRING_CONSTRUCTOR.invoke(getValue());
+                return CONSTRUCTOR.invoke(value == null ? "" : value);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -120,38 +182,45 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagCompound extends NBTBase<Map<String, NBTBase<?>>> {
+    public static final class NBTTagCompound extends NBTBase<Map<String, NBTBase<?>>> implements org.skills.utils.nbt.NBTTagCompound {
         private static final MethodHandle NBT_TAG_COMPOUND_CONSTRUCTOR;
-        private static final MethodHandle SET_TAG_METHOD;
-        private static final MethodHandle GET_COMPOUND_MAP;
+        private static final MethodHandle GET_COMPOUND_MAP, SET_COMPOUND_MAP;
 
         static {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> nbtCompound = ReflectionUtils.getNMSClass("NBTTagCompound");
-            Class<?> nbtBase = ReflectionUtils.getNMSClass("NBTBase");
-            MethodHandle handler = null;
-            MethodHandle handlerSet = null;
-            MethodHandle compoundMap = null;
+            Class<?> nbtCompound = getNBTClass("NBTTagCompound");
+            MethodHandle handler = null,
+                    getMap = null,
+                    setMap = null;
 
             try {
-                handler = lookup.findConstructor(nbtCompound, MethodType.methodType(void.class));
-                if (XMaterial.supports(14)) handlerSet = lookup.findVirtual(nbtCompound, "set", MethodType.methodType(nbtBase, String.class, nbtBase));
-                else handlerSet = lookup.findVirtual(nbtCompound, "set", MethodType.methodType(void.class, String.class, nbtBase));
-
-                Field field = nbtCompound.getDeclaredField("map");
+                Field field = getDeclaredField(nbtCompound, "x", "map");
                 field.setAccessible(true);
-                compoundMap = lookup.unreflectGetter(field);
-            } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException e) {
+                getMap = lookup.unreflectGetter(field);
+
+                if (XMaterial.supports(15)) {
+                    Constructor<?> ctor = nbtCompound.getDeclaredConstructor(Map.class);
+                    ctor.setAccessible(true);
+                    handler = lookup.unreflectConstructor(ctor);
+                } else {
+                    handler = lookup.findConstructor(nbtCompound, MethodType.methodType(void.class));
+                    setMap = lookup.unreflectSetter(field);
+                }
+            } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
             NBT_TAG_COMPOUND_CONSTRUCTOR = handler;
-            SET_TAG_METHOD = handlerSet;
-            GET_COMPOUND_MAP = compoundMap;
+            GET_COMPOUND_MAP = getMap;
+            SET_COMPOUND_MAP = setMap;
         }
 
         public NBTTagCompound(Map<String, NBTBase<?>> value) {
             super(value);
+        }
+
+        public NBTTagCompound(int capacity) {
+            this(new HashMap<>(capacity));
         }
 
         public NBTTagCompound() {
@@ -159,21 +228,32 @@ public class NBTWrappers {
         }
 
         @SuppressWarnings("unchecked")
-        public static NBTTagCompound fromNBT(Object nbtObject) {
-            Map<String, Object> baseMap = null;
+        public static Map<String, Object> getRawMap(Object nbtObject) {
             try {
-                baseMap = (Map<String, Object>) GET_COMPOUND_MAP.invoke(nbtObject);
+                return (Map<String, Object>) GET_COMPOUND_MAP.invoke(nbtObject);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
+                return null;
             }
+        }
 
-            NBTTagCompound compound = new NBTTagCompound();
-            for (Map.Entry<String, Object> base : baseMap.entrySet()) {
-                NBTBase<?> nbtBase = NBTBase.fromNBT(base.getValue());
-                if (nbtBase != null) compound.set(base.getKey(), nbtBase);
+        public static NBTTagCompound fromNBT(Object nbtObject) {
+            try {
+                Map<String, Object> baseMap = getRawMap(nbtObject);
+                NBTTagCompound compound = new NBTTagCompound(baseMap.size());
+                for (Map.Entry<String, Object> base : baseMap.entrySet()) {
+                    NBTBase<?> nbtBase = NBTBase.fromNBT(base.getValue());
+                    if (nbtBase != null) compound.set(base.getKey(), nbtBase);
+                }
+                return compound;
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
             }
+        }
 
-            return compound;
+        public NBTType<org.skills.utils.nbt.NBTTagCompound> getNBTType() {
+            return NBTType.TAG_COMPOUND;
         }
 
         public <T> void set(String key, NBTType<T> type, T value) {
@@ -190,20 +270,42 @@ public class NBTWrappers {
             else if (type == NBTType.BYTE_ARRAY) base = new NBTWrappers.NBTTagByteArray((byte[]) value);
             else if (type == NBTType.INTEGER_ARRAY) base = new NBTWrappers.NBTTagIntArray((int[]) value);
             else if (type == NBTType.LONG_ARRAY) base = new NBTWrappers.NBTTagLong((long) value);
-            else if (type == NBTType.TAG_CONTAINER) base = (NBTTagCompound) value;
+            else if (type == NBTType.TAG_COMPOUND) base = (NBTTagCompound) value;
 
-            getValue().put(key, base);
+            this.value.put(key, base);
         }
 
         @SuppressWarnings("unchecked")
         public <T> T get(String key, NBTType<T> type) {
-            NBTBase<T> base = (NBTBase<T>) getValue().get(key);
-            if (base == null) return null;
-            return base.value;
+            NBTBase<T> base = (NBTBase<T>) value.get(key);
+            return base == null ? null : base.value;
         }
 
-        public void set(String key, NBTBase<?> value) {
-            getValue().put(key, value);
+        @Override
+        public <T> boolean has(String key, NBTType<T> type) {
+            return has(key);
+        }
+
+        public boolean has(String key) {
+            return this.value.containsKey(key);
+        }
+
+        @Override
+        public Object getContainer() {
+            return this;
+        }
+
+        public void set(String key, NBTBase<?> nbt) {
+            this.value.put(key, nbt);
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T extends NBTBase<?>> T remove(String key) {
+            return (T) value.remove(key);
+        }
+
+        public NBTBase<?> removeUnchecked(String key) {
+            return value.remove(key);
         }
 
         public void setByte(String key, byte value) {
@@ -234,8 +336,8 @@ public class NBTWrappers {
             getValue().put(key, new NBTTagString(value));
         }
 
-        public void setCompound(String key, NBTTagCompound value) {
-            getValue().put(key, value);
+        public void setCompound(String key, NBTTagCompound compound) {
+            this.value.put(key, compound);
         }
 
         public void setByteArray(String key, byte[] value) {
@@ -320,44 +422,177 @@ public class NBTWrappers {
 
         @Override
         public Object toNBT() {
-            Object compound = null;
             try {
-                compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke();
+                Map<String, Object> map = new HashMap<>(value.size());
+                for (Map.Entry<String, NBTBase<?>> entry : value.entrySet()) {
+                    map.put(entry.getKey(), entry.getValue().toNBT());
+                }
+
+                Object compound;
+                if (XMaterial.supports(15)) compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke(map);
+                else {
+                    compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke();
+                    SET_COMPOUND_MAP.invoke(compound, map);
+                }
+                return compound;
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
+                return null;
             }
-
-            for (Map.Entry<String, NBTBase<?>> entry : getValue().entrySet()) {
-                try {
-                    SET_TAG_METHOD.invoke(compound, entry.getKey(), entry.getValue().toNBT());
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-            return compound;
         }
 
         @Override
         public String toString() {
-            return "NBTTagCompound{" + value + '}';
+            StringBuilder builder = new StringBuilder(10 + (value.size() * 50));
+            builder.append("NBTTagCompound{");
+
+            for (Map.Entry<String, NBTBase<?>> entry : value.entrySet()) {
+                builder.append('\n').append("  ").append(entry.getKey()).append(": ").append(entry.getValue());
+            }
+
+            return builder.append('\n').append('}').toString();
         }
     }
 
-    public static class NBTTagList<T> extends NBTBase<List<NBTBase<T>>> {
-        private static final MethodHandle NBT_TAG_LIST_CONSTRUCTOR;
+    public static final class NBTTagLongArray extends NBTArray<long[]> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagLongArray");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            MethodHandle handler = null;
+            MethodHandle handler = null, data = null;
 
             try {
-                handler = lookup.findConstructor(ReflectionUtils.getNMSClass("NBTTagList"),
-                        MethodType.methodType(void.class));
+                handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, long[].class));
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_LIST_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
+        }
+
+        public NBTTagLongArray(long[] value) {
+            super(value);
+        }
+
+        public static NBTTagLongArray fromNBT(Object nbtObject) {
+            try {
+                return new NBTTagLongArray((long[]) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public Object toNBT() {
+            try {
+                return CONSTRUCTOR.invoke(value);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "NBTTagLongArray{" + Arrays.toString(value) + '}';
+        }
+    }
+
+
+    public static final class NBTTagIntArray extends NBTArray<int[]> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
+
+        static {
+            Class<?> clazz = getNBTClass("NBTTagIntArray");
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            MethodHandle handler = null, data = null;
+
+            try {
+                handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, int[].class));
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
+        }
+
+        public NBTTagIntArray(int[] value) {
+            super(value);
+        }
+
+        public static NBTTagIntArray fromNBT(Object nbtObject) {
+            try {
+                return new NBTTagIntArray((int[]) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public Object toNBT() {
+            try {
+                return CONSTRUCTOR.invoke(value);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "NBTTagIntArray{" + Arrays.toString(value) + '}';
+        }
+    }
+
+    public static final class NBTTagList<T> extends NBTBase<List<NBTBase<T>>> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle GET_DATA, SET_DATA;
+        private static final MethodHandle GET_TYPE_ID;
+
+        static {
+            Class<?> clazz = getNBTClass("NBTTagList");
+            Class<?> nbtBase = getNBTClass("NBTBase");
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            MethodHandle handler = null, getData = null, setData = null, getTypeId = null;
+
+            try {
+                Field field = getDeclaredField(clazz, "c", "list");
+                field.setAccessible(true);
+                getData = lookup.unreflectGetter(field);
+
+                if (XMaterial.supports(15)) {
+                    Constructor<?> ctor = clazz.getDeclaredConstructor(List.class, byte.class);
+                    ctor.setAccessible(true);
+                    handler = lookup.unreflectConstructor(ctor);
+                } else {
+                    handler = lookup.findConstructor(clazz, MethodType.methodType(void.class));
+                    setData = lookup.unreflectSetter(field);
+                }
+
+                getTypeId = lookup.findVirtual(nbtBase, "getTypeId", MethodType.methodType(byte.class));
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            CONSTRUCTOR = handler;
+            GET_DATA = getData;
+            SET_DATA = setData;
+            GET_TYPE_ID = getTypeId;
         }
 
         public NBTTagList(List<NBTBase<T>> value) {
@@ -368,22 +603,19 @@ public class NBTWrappers {
             super(new ArrayList<>());
         }
 
-
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public static NBTTagList<?> fromNBT(Object nbtObject) {
-            NBTTagList<?> list = new NBTTagList<>();
-            List<?> nbtList = null;
-
+            List<?> nbtList;
             try {
-                Field field = nbtObject.getClass().getDeclaredField("list");
-                field.setAccessible(true);
-                nbtList = (List<?>) field.get(nbtObject);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+                nbtList = (List<?>) GET_DATA.invoke(nbtObject);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return new NBTTagList<>();
             }
 
-            if (nbtList == null) return list;
+            List<NBTBase<?>> list = new ArrayList<>(nbtList.size());
             for (Object entry : nbtList) list.add(NBTBase.fromNBT(entry));
-            return list;
+            return new NBTTagList(list);
         }
 
         /**
@@ -393,9 +625,9 @@ public class NBTWrappers {
          *
          * @return True if it was added.
          */
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        public boolean add(NBTBase base) {
-            return isType(base.getClass()) && getValue().add(base);
+        public boolean add(NBTBase<T> base) {
+            value.add(base);
+            return true;
         }
 
         /**
@@ -403,38 +635,28 @@ public class NBTWrappers {
          *
          * @return True if the list is empty or this type
          */
-        @SuppressWarnings("rawtypes")
-        public boolean isType(Class<? extends NBTBase> type) {
-            return getValue().isEmpty() || getValue().get(0).getClass() == type;
+        public boolean isType(NBTBase<?> type) {
+            return value.isEmpty() || value.get(0).getClass().isInstance(type);
         }
 
         @Override
         public Object toNBT() {
-            Object nbtList = null;
             try {
-                nbtList = NBT_TAG_LIST_CONSTRUCTOR.invoke();
+                List<Object> array = new ArrayList<>(value.size());
+                for (NBTBase<T> base : value) array.add(base.toNBT());
+
+                if (XMaterial.supports(15)) {
+                    byte typeId = array.isEmpty() ? 0 : (byte) GET_TYPE_ID.invoke(array.get(0));
+                    return CONSTRUCTOR.invoke(array, typeId);
+                } else {
+                    Object nbtList = CONSTRUCTOR.invoke();
+                    SET_DATA.invoke(nbtList, array);
+                    return nbtList;
+                }
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
+                return null;
             }
-            Method add = null;
-            try {
-                if (XMaterial.supports(14)) add = nbtList.getClass().getMethod("add", int.class, ReflectionUtils.getNMSClass("NBTBase"));
-                else add = nbtList.getClass().getMethod("add", ReflectionUtils.getNMSClass("NBTBase"));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-            int i = 0;
-            for (NBTBase<T> NBTBase : getValue()) {
-                try {
-                    if (XMaterial.supports(14)) add.invoke(nbtList, i, NBTBase.toNBT());
-                    else add.invoke(nbtList, NBTBase.toNBT());
-                    i++;
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-            return nbtList;
         }
 
         @Override
@@ -443,8 +665,14 @@ public class NBTWrappers {
         }
     }
 
-    public abstract static class INBTNumber<T extends Number> extends NBTBase<T> {
-        public INBTNumber(T value) {
+    public abstract static class NBTArray<T> extends NBTBase<T> {
+        public NBTArray(T value) {
+            super(value);
+        }
+    }
+
+    public abstract static class NBTNumber<T extends Number> extends NBTBase<T> {
+        public NBTNumber(T value) {
             super(value);
         }
 
@@ -471,25 +699,28 @@ public class NBTWrappers {
         }
     }
 
-    /**
-     * A NBTTagDouble
-     */
-    public static class NBTTagDouble extends INBTNumber<Double> {
-        private static final MethodHandle NBT_TAG_DOUBLE_CONSTRUCTOR;
+    public static final class NBTTagDouble extends NBTNumber<Double> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagDouble");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> doubleNBT = ReflectionUtils.getNMSClass("NBTTagDouble");
-            MethodHandle handler = null;
+            MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(doubleNBT, "a", MethodType.methodType(doubleNBT, double.class));
-                else handler = lookup.findConstructor(doubleNBT, MethodType.methodType(void.class, double.class));
+                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, double.class));
+                else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, double.class));
+
+                Field field = getDeclaredField(clazz, "w", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_DOUBLE_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagDouble(double value) {
@@ -497,16 +728,18 @@ public class NBTWrappers {
         }
 
         public static NBTTagDouble fromNBT(Object nbtObject) {
-            Double value;
-            value = (Double) findNBTData(nbtObject);
-            //value = (Double) findNBTNumberGetMethod(ReflectionUtils.getNMSClass("NBTTagDouble"), double.class).invoke(nbtObject);
-            return value == null ? new NBTTagDouble(-1) : new NBTTagDouble(value);
+            try {
+                return new NBTTagDouble((double) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_DOUBLE_CONSTRUCTOR.invoke(getAsDouble());
+                return CONSTRUCTOR.invoke(getAsDouble());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -520,29 +753,35 @@ public class NBTWrappers {
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
         }
     }
 
-    public static class NBTTagInt extends INBTNumber<Integer> {
-        private static final MethodHandle NBT_TAG_INT_CONSTRUCTOR;
+    public static final class NBTTagInt extends NBTNumber<Integer> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagInt");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> nbtInt = ReflectionUtils.getNMSClass("NBTTagInt");
-            MethodHandle handler = null;
+            MethodHandle handler = null, data = null;
 
             try {
                 if (XMaterial.supports(15)) {
-                    handler = lookup.findStatic(nbtInt, "a", MethodType.methodType(nbtInt, int.class));
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, int.class));
                 } else {
-                    handler = lookup.findConstructor(nbtInt, MethodType.methodType(void.class, int.class));
+                    handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, int.class));
                 }
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_INT_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagInt(int value) {
@@ -550,19 +789,23 @@ public class NBTWrappers {
         }
 
         public static NBTTagInt fromNBT(Object nbtObject) {
-            Integer value = (Integer) findNBTData(nbtObject);
-            return new NBTTagInt(value == null ? 0 : value);
+            try {
+                return new NBTTagInt((int) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_INT_CONSTRUCTOR.invoke(getAsInt());
+                return CONSTRUCTOR.invoke(value);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -575,76 +818,31 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagIntArray extends NBTBase<int[]> {
-        private static final MethodHandle NBT_TAG_INT_ARRAY_CONSTRUCTOR;
+    public static final class NBTTagByte extends NBTNumber<Byte> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagByte");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            MethodHandle handler = null;
-
-            try {
-                handler = lookup.findConstructor(ReflectionUtils.getNMSClass("NBTTagIntArray"),
-                        MethodType.methodType(void.class, int[].class));
-            } catch (NoSuchMethodException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            NBT_TAG_INT_ARRAY_CONSTRUCTOR = handler;
-        }
-
-        public NBTTagIntArray(int[] value) {
-            super(value);
-        }
-
-        public static NBTTagIntArray fromNBT(Object nbtObject) {
-            int[] data = null;
-            for (Method method : nbtObject.getClass().getMethods()) {
-                if (method.getReturnType() == int[].class) {
-                    try {
-                        data = (int[]) method.invoke(nbtObject);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return new NBTTagIntArray(data);
-        }
-
-        @Override
-        public Object toNBT() {
-            try {
-                return NBT_TAG_INT_ARRAY_CONSTRUCTOR.invoke(getValue());
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "NBTTagIntArray{" + Arrays.toString(value) + '}';
-        }
-    }
-
-    public static class NBTTagByte extends INBTNumber<Byte> {
-        private static final MethodHandle NBT_TAG_BYTE_CONSTRUCTOR;
-
-        static {
-            MethodHandles.Lookup lookup = MethodHandles.lookup();
-            MethodHandle handler = null;
-            Class<?> nbtTagByte = ReflectionUtils.getNMSClass("NBTTagByte");
+            MethodHandle handler = null, data = null;
 
             try {
                 if (XMaterial.supports(15)) {
-                    handler = lookup.findStatic(nbtTagByte, "a", MethodType.methodType(nbtTagByte, byte.class));
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, byte.class));
                 } else {
-                    handler = lookup.findConstructor(nbtTagByte, MethodType.methodType(void.class, byte.class));
+                    handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, byte.class));
                 }
+
+                Field field = getDeclaredField(clazz, "x", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_BYTE_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagByte(byte value) {
@@ -652,19 +850,23 @@ public class NBTWrappers {
         }
 
         public static NBTBase<Byte> fromNBT(Object nbtObject) {
-            Byte value = (Byte) findNBTData(nbtObject);
-            return new NBTTagByte(value == null ? 0 : value);
+            try {
+                return new NBTTagByte((byte) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_BYTE_CONSTRUCTOR.invoke(getAsByte());
+                return CONSTRUCTOR.invoke(getAsByte());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -677,20 +879,27 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagByteArray extends NBTBase<byte[]> {
-        private static final MethodHandle NBT_TAG_BYTE_ARRAY_CONSTRUCTOR;
+    public static final class NBTTagByteArray extends NBTArray<byte[]> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagByteArray");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            MethodHandle handler = null;
+            MethodHandle handler = null, data = null;
 
             try {
-                handler = lookup.findConstructor(ReflectionUtils.getNMSClass("NBTTagByteArray"),
-                        MethodType.methodType(void.class, byte[].class));
+                handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, byte[].class));
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            NBT_TAG_BYTE_ARRAY_CONSTRUCTOR = handler;
+
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagByteArray(byte[] value) {
@@ -698,23 +907,20 @@ public class NBTWrappers {
         }
 
         public static NBTTagByteArray fromNBT(Object nbtObject) {
-            byte[] data = null;
-            for (Method method : nbtObject.getClass().getMethods()) {
-                if (method.getReturnType() == byte[].class) {
-                    try {
-                        data = (byte[]) method.invoke(nbtObject);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
+            try {
+                return nbtObject == null ?
+                        new NBTTagByteArray(new byte[0]) :
+                        new NBTTagByteArray((byte[]) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
             }
-            return new NBTTagByteArray(data);
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_BYTE_ARRAY_CONSTRUCTOR.invoke(getValue());
+                return CONSTRUCTOR.invoke(value);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -727,25 +933,31 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagShort extends INBTNumber<Short> {
-        private static final MethodHandle NBT_TAG_SHORT_CONSTRUCTOR;
+    public static final class NBTTagShort extends NBTNumber<Short> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> shortNbt = ReflectionUtils.getNMSClass("NBTTagShort");
-            MethodHandle handler = null;
+            Class<?> clazz = getNBTClass("NBTTagShort");
+            MethodHandle handler = null, data = null;
 
             try {
                 if (XMaterial.supports(15)) {
-                    handler = lookup.findStatic(shortNbt, "a", MethodType.methodType(shortNbt, short.class));
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, short.class));
                 } else {
-                    handler = lookup.findConstructor(shortNbt, MethodType.methodType(void.class, short.class));
+                    handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, short.class));
                 }
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_SHORT_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagShort(short value) {
@@ -753,19 +965,28 @@ public class NBTWrappers {
         }
 
         public static NBTTagShort fromNBT(Object nbtObject) {
-            Short value = (Short) findNBTData(nbtObject);
-            return new NBTTagShort(value == null ? 0 : value);
+            try {
+                return new NBTTagShort((short) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public short getAsShort() {
+            return value;
         }
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_SHORT_CONSTRUCTOR.invoke(getAsShort());
+                return CONSTRUCTOR.invoke(getAsShort());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -778,24 +999,28 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagLong extends INBTNumber<Long> {
-        private static final MethodHandle NBT_TAG_LONG_CONSTRUCTOR;
+    public static final class NBTTagLong extends NBTNumber<Long> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> nbtTagLong = ReflectionUtils.getNMSClass("NBTTagLong");
-            MethodHandle handler = null;
+            Class<?> clazz = getNBTClass("NBTTagLong");
+            MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(nbtTagLong, "a",
-                        MethodType.methodType(nbtTagLong, long.class));
-                else handler = lookup.findConstructor(nbtTagLong,
-                        MethodType.methodType(void.class, long.class));
+                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, long.class));
+                else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, long.class));
+
+                Field field = getDeclaredField(clazz, "c", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
-            NBT_TAG_LONG_CONSTRUCTOR = handler;
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagLong(long value) {
@@ -803,19 +1028,28 @@ public class NBTWrappers {
         }
 
         public static NBTTagLong fromNBT(Object nbtObject) {
-            Long value = (Long) findNBTData(nbtObject);
-            return new NBTTagLong(value == null ? 0 : value);
+            try {
+                return new NBTTagLong((long) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
+        }
+
+        @Override
+        public long getAsLong() {
+            return value;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_LONG_CONSTRUCTOR.invoke(getAsLong());
+                return CONSTRUCTOR.invoke(getAsLong());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
@@ -828,21 +1062,28 @@ public class NBTWrappers {
         }
     }
 
-    public static class NBTTagFloat extends INBTNumber<Float> {
-        private static final MethodHandle NBT_TAG_LONG_CONSTRUCTOR;
+    public static final class NBTTagFloat extends NBTNumber<Float> {
+        private static final MethodHandle CONSTRUCTOR;
+        private static final MethodHandle NBT_DATA;
 
         static {
+            Class<?> clazz = getNBTClass("NBTTagFloat");
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> nbtFloat = ReflectionUtils.getNMSClass("NBTTagFloat");
-            MethodHandle handler = null;
+            MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(nbtFloat, "a", MethodType.methodType(nbtFloat, float.class));
-                else handler = lookup.findConstructor(nbtFloat, MethodType.methodType(void.class, float.class));
+                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, float.class));
+                else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, float.class));
+
+                Field field = getDeclaredField(clazz, "w", "data");
+                field.setAccessible(true);
+                data = lookup.unreflectGetter(field);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            NBT_TAG_LONG_CONSTRUCTOR = handler;
+
+            CONSTRUCTOR = handler;
+            NBT_DATA = data;
         }
 
         public NBTTagFloat(float value) {
@@ -850,19 +1091,28 @@ public class NBTWrappers {
         }
 
         public static NBTTagFloat fromNBT(Object nbtObject) {
-            Float value = (Float) findNBTData(nbtObject);
-            return new NBTTagFloat(value == null ? 0 : value);
+            try {
+                return new NBTTagFloat((float) NBT_DATA.invoke(nbtObject));
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public double getAsDouble() {
-            return getValue();
+            return value;
+        }
+
+        @Override
+        public float getAsFloat() {
+            return value;
         }
 
         @Override
         public Object toNBT() {
             try {
-                return NBT_TAG_LONG_CONSTRUCTOR.invoke(getAsFloat());
+                return CONSTRUCTOR.invoke(getAsFloat());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
