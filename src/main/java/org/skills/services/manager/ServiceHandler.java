@@ -14,7 +14,10 @@ import org.skills.main.SLogger;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.*;
-import org.skills.services.mobs.*;
+import org.skills.services.mobs.ServiceEliteMobs;
+import org.skills.services.mobs.ServiceLevelledMobs;
+import org.skills.services.mobs.ServiceLorinthsRpgMobs;
+import org.skills.services.mobs.ServiceMythicMobs;
 import org.skills.services.placeholders.ServicePlaceholderAPI;
 import org.skills.services.placeholders.SkillsPlaceholders;
 import org.skills.utils.Pair;
@@ -147,10 +150,10 @@ public class ServiceHandler {
             Pair<String, Number> property = ServiceMythicMobs.getMobProperties(entity);
             if (property != null) return property;
         }
-        if (isAvailable("Boss")) {
-            Pair<String, Number> property = ServiceBoss.getMobProperties(entity);
-            if (property != null) return property;
-        }
+//        if (isAvailable("Boss")) {
+//            Pair<String, Number> property = ServiceBoss.getMobProperties(entity);
+//            if (property != null) return property;
+//        }
         if (isAvailable("EliteMobs")) {
             Pair<String, Number> proeprty = ServiceEliteMobs.getMobProperties(entity);
             if (proeprty != null) return proeprty;

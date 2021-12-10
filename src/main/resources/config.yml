@@ -152,7 +152,7 @@ blood:
 # NOTE: THIS IS AN EXPERIMENTAL FEATURE.
 last-breath:
   # Only takes effect after a restart.
-  enabled: false
+  enabled: true
 
   # The amount of damage the player can handle before
   # going into Last Breath mode.
@@ -160,15 +160,42 @@ last-breath:
   # is higher than this, the player will die instantly.
   intensity-resistance: 10
 
-  # In seconds after the player is about to die.
+  # Seconds the player is invulnerable to damage.
   invulnerability: 15
 
-  # In seconds
-  bleed-out: 60
+  # Seconds the player has for someone to revive them before they die.
+  bleed-out: 30
+
+  # Should mobs ignore fallen players?
+  mobs-ignore: false
+
+  # Cooldown that players can be given last breath chance.
+  cooldown: 1min
+
+  sounds:
+    # The music that only plays to the player who's being last-breath'd.
+    # The sound determines the distance which the player can hear the sound from. Usually they can't get away more than
+    # 10 blocks during this process.
+    # The only other music that fits this "situation" is MUSIC_DISC_WARD you might want to check out.
+    music: "MUSIC_DISC_13, 10"
+    start: "BLOCK_CONDUIT_DEACTIVATE, 10, 0"
+    bleed-out: "none"
+    revive: "UI_TOAST_CHALLENGE_COMPLETE, 0.5, 2"
+
+  bossbar:
+    enabled: true
+    title: "&4Bleed"
+    color: RED
+    style: SEGMENTED_20
+    flags: [ CREATE_FOG, DARKEN_SKY ]
 
   # The damage that the player can do while in
   # their Last Breath mode.
   damage: 0.001
+
+  # Players are slowed down during this phase.
+  # Normal player speed is 1.0
+  speed: 0.1
 
   revive:
     # The amount of time in seconds that the reviving

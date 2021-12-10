@@ -1,5 +1,6 @@
 package org.skills.main;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -21,7 +22,7 @@ import org.skills.gui.InteractiveGUIManager;
 import org.skills.main.locale.LanguageManager;
 import org.skills.managers.*;
 import org.skills.managers.blood.BloodManager;
-import org.skills.managers.blood.RedScreenManager;
+import org.skills.managers.blood.DamageAestheticsManager;
 import org.skills.managers.resurrect.LastBreath;
 import org.skills.masteries.managers.MasteryManager;
 import org.skills.party.PartyManager;
@@ -102,7 +103,11 @@ public class SkillsPro extends JavaPlugin {
 
         updater.checkForUpdates().thenRun(updater::sendUpdates);
         new Metrics(this, 6224); // https://bstats.org/plugin/bukkit/SkillsPro/6224
-        if (SkillsConfig.ARMOR_WEIGHTS_RESET_SPEEDS_ENABLED.getBoolean()) OfflineNBT.perform();
+        if (SkillsConfig.ARMOR_WEIGHTS_RESET_SPEEDS_ENABLED.getBoolean()) {
+            // This prevents dangerous data losses.
+            if (ReflectionUtils.VER > 17) throw new IllegalStateException("Armor weight reset option is currently not supported on " + Bukkit.getVersion());
+            OfflineNBT.perform();
+        }
     }
 
     @Override
@@ -134,7 +139,7 @@ public class SkillsPro extends JavaPlugin {
         registerEvent(new StatManager());
         if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XMaterial.supports(13)) registerEvent(new LastBreath());
         if (SkillsConfig.SMART_DAMAGE.getBoolean()) registerEvent(new DamageManager());
-        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean()) registerEvent(new RedScreenManager());
+        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean()) registerEvent(new DamageAestheticsManager());
         if (SkillsConfig.BLOOD_ENABLED.getBoolean()) registerEvent(new BloodManager());
 
         registerEvent(new LevelManager(this));

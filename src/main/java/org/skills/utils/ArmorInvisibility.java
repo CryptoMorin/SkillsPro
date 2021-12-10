@@ -16,15 +16,12 @@ import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Currently not used. Supposed to be used to hide Devourer's armor using {@link org.skills.abilities.devourer.DevourerCloak} ability.
+ */
 public final class ArmorInvisibility {
-    public static final Object AIR_ARMOR;
-    public static final Object SLOT_HEAD;
-    public static final Object SLOT_CHEST;
-    public static final Object SLOT_LEGS;
-    public static final Object SLOT_FEET;
-
-    public static final MethodHandle PACKET;
-    public static final MethodHandle AS_NMS_COPY;
+    private static final Object AIR_ARMOR, SLOT_HEAD, SLOT_CHEST, SLOT_LEGS, SLOT_FEET;
+    private static final MethodHandle PACKET, AS_NMS_COPY;
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();

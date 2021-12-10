@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public final class NBTWrappers {
+    private NBTWrappers() {}
+
     private static Class<?> getNBTClass(String clazz) {
         return ReflectionUtils.getNMSClass("nbt", clazz);
     }
@@ -182,7 +184,7 @@ public final class NBTWrappers {
         }
     }
 
-    public static final class NBTTagCompound extends NBTBase<Map<String, NBTBase<?>>> implements org.skills.utils.nbt.NBTTagCompound {
+    public static final class NBTTagCompound extends NBTBase<Map<String, NBTBase<?>>> {
         private static final MethodHandle NBT_TAG_COMPOUND_CONSTRUCTOR;
         private static final MethodHandle GET_COMPOUND_MAP, SET_COMPOUND_MAP;
 
@@ -252,10 +254,6 @@ public final class NBTWrappers {
             }
         }
 
-        public NBTType<org.skills.utils.nbt.NBTTagCompound> getNBTType() {
-            return NBTType.TAG_COMPOUND;
-        }
-
         public <T> void set(String key, NBTType<T> type, T value) {
             NBTBase<?> base = null;
 
@@ -270,7 +268,6 @@ public final class NBTWrappers {
             else if (type == NBTType.BYTE_ARRAY) base = new NBTWrappers.NBTTagByteArray((byte[]) value);
             else if (type == NBTType.INTEGER_ARRAY) base = new NBTWrappers.NBTTagIntArray((int[]) value);
             else if (type == NBTType.LONG_ARRAY) base = new NBTWrappers.NBTTagLong((long) value);
-            else if (type == NBTType.TAG_COMPOUND) base = (NBTTagCompound) value;
 
             this.value.put(key, base);
         }
@@ -281,7 +278,6 @@ public final class NBTWrappers {
             return base == null ? null : base.value;
         }
 
-        @Override
         public <T> boolean has(String key, NBTType<T> type) {
             return has(key);
         }
@@ -290,7 +286,6 @@ public final class NBTWrappers {
             return this.value.containsKey(key);
         }
 
-        @Override
         public Object getContainer() {
             return this;
         }
@@ -584,7 +579,9 @@ public final class NBTWrappers {
                     setData = lookup.unreflectSetter(field);
                 }
 
-                getTypeId = lookup.findVirtual(nbtBase, "getTypeId", MethodType.methodType(byte.class));
+                getTypeId = lookup.findVirtual(nbtBase,
+                        ReflectionUtils.supports(18) ? "a" : "getTypeId",
+                        MethodType.methodType(byte.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }

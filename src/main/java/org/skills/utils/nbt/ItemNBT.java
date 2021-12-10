@@ -1,26 +1,22 @@
 package org.skills.utils.nbt;
 
 import com.cryptomorin.xseries.ReflectionUtils;
-import com.cryptomorin.xseries.XMaterial;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+import static com.cryptomorin.xseries.ReflectionUtils.supports;
+
 public final class ItemNBT {
-    public static final boolean CAN_ACCESS_UNBREAKABLE;
+    public static final boolean CAN_ACCESS_UNBREAKABLE = supports(11);
     private static final MethodHandle AS_NMS_COPY;
     private static final MethodHandle AS_BUKKIT_COPY;
     private static final MethodHandle SET_TAG;
     private static final MethodHandle GET_TAG;
 
     static {
-        String majorVersion = XMaterial.getMajorVersion(Bukkit.getVersion());
-        CAN_ACCESS_UNBREAKABLE = majorVersion.startsWith("1.1") && Integer.parseInt(majorVersion.substring(3, 4)) != 0;
-
         MethodHandle asNmsCopy = null;
         MethodHandle asBukkitCopy = null;
         MethodHandle setTag = null;
@@ -35,8 +31,10 @@ public final class ItemNBT {
             asNmsCopy = lookup.findStatic(crafItemStack, "asNMSCopy", MethodType.methodType(nmsItemStack, ItemStack.class));
             asBukkitCopy = lookup.findStatic(crafItemStack, "asBukkitCopy", MethodType.methodType(ItemStack.class, nmsItemStack));
 
-            setTag = lookup.findVirtual(nmsItemStack, "setTag", MethodType.methodType(void.class, nbtTagCompound));
-            getTag = lookup.findVirtual(nmsItemStack, "getTag", MethodType.methodType(nbtTagCompound));
+            setTag = lookup.findVirtual(nmsItemStack,
+                    supports(18) ? "c" : "setTag", MethodType.methodType(void.class, nbtTagCompound));
+            getTag = lookup.findVirtual(nmsItemStack,
+                    supports(18) ? "s" : "getTag", MethodType.methodType(nbtTagCompound));
         } catch (NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -46,6 +44,8 @@ public final class ItemNBT {
         SET_TAG = setTag;
         GET_TAG = getTag;
     }
+
+    private ItemNBT() {}
 
     private static Object asNMSCopy(ItemStack item) {
         try {
@@ -72,12 +72,6 @@ public final class ItemNBT {
         }
     }
 
-    public static ItemStack addSimpleTag(ItemStack item, String tag, String value) {
-        NBTWrappers.NBTTagCompound compound = ItemNBT.getTag(item);
-        compound.setString(tag, value);
-        return ItemNBT.setTag(item, compound);
-    }
-
     /**
      * Sets the NBT tag of an item
      *
@@ -86,8 +80,7 @@ public final class ItemNBT {
      *
      * @return The modified itemStack
      */
-    @NonNull
-    public static ItemStack setTag(@NonNull ItemStack item, NBTWrappers.NBTTagCompound tag) {
+    public static ItemStack setTag(ItemStack item, NBTWrappers.NBTTagCompound tag) {
         Object nbtTag = tag.toNBT();
         Object nmsItem = asNMSCopy(item);
 
@@ -107,8 +100,7 @@ public final class ItemNBT {
      *
      * @return The NBTTagCompound of the ItemStack or a new one if it had none or an error occurred
      */
-//    @NonNull
-    public static NBTWrappers.NBTTagCompound getTag(@NonNull ItemStack item) {
+    public static NBTWrappers.NBTTagCompound getTag(ItemStack item) {
         Object nmsItem = asNMSCopy(item);
         Object tag = null;
         try {
@@ -120,5 +112,11 @@ public final class ItemNBT {
 
         NBTWrappers.NBTTagCompound base = NBTWrappers.NBTTagCompound.fromNBT(tag);
         return base == null ? new NBTWrappers.NBTTagCompound() : base;
+    }
+
+    public static ItemStack addSimpleTag(ItemStack item, String tag, String value) {
+        NBTWrappers.NBTTagCompound compound = ItemNBT.getTag(item);
+        compound.setString(tag, value);
+        return ItemNBT.setTag(item, compound);
     }
 }

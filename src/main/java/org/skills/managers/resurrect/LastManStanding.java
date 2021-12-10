@@ -1,33 +1,44 @@
 package org.skills.managers.resurrect;
 
 import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.boss.BossBar;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
+import org.skills.managers.blood.DamageAestheticsManager;
+import org.skills.managers.blood.HeartPulse;
+import org.skills.managers.blood.WorldBorderAPI;
 import org.skills.utils.LocationUtils;
+import org.skills.utils.StringUtils;
 
 final class LastManStanding {
     protected final float speed;
     protected final GameMode gameMode;
     protected final Player player;
-    private final BukkitTask invulnerability, bleedOut;
+    protected final Object dataWatcher;
+    private final BukkitTask invulnerability, bleedOut, bossBarUpdate;
+    private final BossBar bossBar;
     protected Player reviver;
     protected int progress;
     protected BukkitTask reviveTask;
 
     public LastManStanding(Player player) {
         this.player = player;
-        speed = player.getWalkSpeed();
-        gameMode = player.getGameMode();
+        this.dataWatcher = LastBreath.registerDataWatcher(player, true);
+        this.speed = player.getWalkSpeed();
+        this.gameMode = player.getGameMode();
+        this.bossBar = initBossBar();
 
         int invulnerable = SkillsConfig.LAST_BREATH_INVULNERABILITY.getInt();
         if (invulnerable > 0) {
-            player.setInvulnerable(true);
+            player.setInvulnerable(true); // Note: This doesn't fucking work for creative mode players.
             invulnerability = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -41,15 +52,66 @@ final class LastManStanding {
             bleedOut = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    player.setHealth(0);
+                    die();
+                    XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_BLEED_OUT.getString());
                 }
             }.runTaskLater(SkillsPro.get(), bleed * 20L);
-        } else bleedOut = null;
+
+            if (bossBar != null) {
+                bossBarUpdate = new BukkitRunnable() {
+                    float seconds = bleed;
+
+                    @Override
+                    public void run() {
+                        bossBar.setProgress(seconds / (bleed + 1)); // For the sake of lags
+                        seconds -= 0.05f;
+                    }
+                }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 1L);
+            } else bossBarUpdate = null;
+        } else {
+            bleedOut = null;
+            bossBarUpdate = null;
+        }
+
+        aesthetics();
+        DamageAestheticsManager.MANAGED_PLAYERS.add(player.getUniqueId());
+    }
+
+    public BossBar initBossBar() {
+        ConfigurationSection bossConfig = SkillsConfig.LAST_BREATH_BOSSBAR.getSection();
+        if (!bossConfig.getBoolean("enabled")) return null;
+
+        BossBar bossBar = StringUtils.parseBossBarFromConfig(player, bossConfig);
+        bossBar.addPlayer(player);
+        return bossBar;
+    }
+
+    public void die() {
+        player.setHealth(0);
+        resetState();
+        LastBreath.LAST_MEN_STANDING.remove(player.getEntityId());
+    }
+
+    public void aesthetics() {
+        player.setSwimming(true);
+        player.setSprinting(true);
+        player.setGameMode(GameMode.ADVENTURE);
+        player.setWalkSpeed((float) SkillsConfig.LAST_BREATH_SPEED.getDouble());
+        player.setFoodLevel(0);
+
+        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_START.getString());
+        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_MUSIC.getString());
+
+        Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
+            if (SkillsConfig.PULSE_ENABLED.getBoolean()) HeartPulse.pulse(player, 0, 0);
+            if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) WorldBorderAPI.send(player, 0, 0);
+        }, 1L);
     }
 
     public void resetProgress() {
         this.progress = 0;
         this.reviver = null;
+        player.setFoodLevel(0);
         if (this.reviveTask != null) this.reviveTask.cancel();
     }
 
@@ -57,16 +119,25 @@ final class LastManStanding {
         return ++this.progress;
     }
 
-    public void recover() {
-        end();
-        player.setWalkSpeed(speed);
-        if (gameMode != null) player.setGameMode(gameMode);
-        player.setSwimming(false);
-        player.setSprinting(false);
+    public void revive() {
+        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_REVIVE.getString());
+        resetState();
         standWouldYouKindly();
 
         Location location = player.getLocation().add(0, 1, 0);
         player.sendBlockChange(location, location.getBlock().getBlockData());
+
+        HeartPulse.remove(player);
+        WorldBorderAPI.remove(player);
+    }
+
+    public void resetState() {
+        end();
+        player.setWalkSpeed(speed);
+        player.setGameMode(gameMode);
+        player.setSwimming(false);
+        player.setSprinting(false);
+        XSound.stopMusic(player);
     }
 
     private void standWouldYouKindly() {
@@ -85,5 +156,10 @@ final class LastManStanding {
         if (invulnerability != null) invulnerability.cancel();
         if (bleedOut != null) bleedOut.cancel();
         if (reviveTask != null) reviveTask.cancel();
+        if (bossBar != null) {
+            bossBar.removeAll();
+            bossBarUpdate.cancel();
+        }
+        DamageAestheticsManager.MANAGED_PLAYERS.remove(player.getUniqueId());
     }
 }

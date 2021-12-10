@@ -25,8 +25,8 @@ public final class OfflineNBT {
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Class<?> compressor = ReflectionUtils.getNMSClass("NBTCompressedStreamTools");
-        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("NBTTagCompound");
+        Class<?> compressor = ReflectionUtils.getNMSClass("nbt", "NBTCompressedStreamTools");
+        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("nbt", "NBTTagCompound");
         MethodHandle getCompound = null;
         MethodHandle setFloat = null;
         MethodHandle getFloat = null;

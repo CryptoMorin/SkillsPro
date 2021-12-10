@@ -9,10 +9,18 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.skills.main.SkillsConfig;
 import org.skills.utils.versionsupport.VersionSupport;
 
-public class RedScreenManager implements Listener {
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+public class DamageAestheticsManager implements Listener {
+    public static final Set<UUID> MANAGED_PLAYERS = new HashSet<>();
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
+        if (MANAGED_PLAYERS.contains(event.getEntity().getUniqueId())) return;
+
         double damage = event.getFinalDamage();
         if (damage <= 0) return;
         Player player = (Player) event.getEntity();
@@ -20,7 +28,7 @@ public class RedScreenManager implements Listener {
         int percent = VersionSupport.getHealthPercent(player, event);
 
         if (SkillsConfig.PULSE_ENABLED.getBoolean() && percent < SkillsConfig.PULSE_HEALTH.getInt()) HeartPulse.pulse(player, percent);
-        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) WorldBorderAPI.send(player, percent);
+        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) WorldBorderAPI.send(player, SkillsConfig.RED_SCREEN_DURATION.getInt(), percent);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -252,11 +252,14 @@ public abstract class Ability implements Listener {
     }
 
     public double getScaling(SkilledPlayer info, String scaling, EntityDamageByEntityEvent event) {
-        LivingEntity entity = (LivingEntity) event.getEntity();
+        LivingEntity entity;
+        if (event.getEntity() instanceof LivingEntity) entity = (LivingEntity) event.getEntity();
+        else entity = null;
+
         return getScaling(info, scaling,
                 "damage", event.getDamage(),
-                "hp", entity.getHealth(),
-                "maxHp", entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
+                "hp", entity == null ? 0 : entity.getHealth(),
+                "maxHp", entity == null ? 0 : entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
         );
     }
 
