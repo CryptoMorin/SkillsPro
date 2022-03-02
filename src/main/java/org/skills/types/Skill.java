@@ -69,8 +69,8 @@ public class Skill {
         }
 
         String equation = StringUtils.replace(StringUtils.replace(
-                ServiceHandler.translatePlaceholders(info.getOfflinePlayer(), scaling.toLowerCase(Locale.ENGLISH)),
-                "lvl", String.valueOf(info.getLevel())),
+                        ServiceHandler.translatePlaceholders(info.getOfflinePlayer(), scaling.toLowerCase(Locale.ENGLISH)),
+                        "lvl", String.valueOf(info.getLevel())),
                 "bloodwell", String.valueOf(info.getAbilityLevel(AbilityManager.getAbility("blood_well"))));
 
         for (Stat stats : Stat.STATS.values()) {

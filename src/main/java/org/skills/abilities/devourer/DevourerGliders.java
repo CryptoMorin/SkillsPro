@@ -84,7 +84,7 @@ public class DevourerGliders extends Ability {
                 }
 
                 if (!player.isSprinting()) return;
-                if (!player.hasPotionEffect(XPotion.SPEED.parsePotionEffectType()))
+                if (!player.hasPotionEffect(XPotion.SPEED.getPotionEffectType()))
                     Bukkit.getScheduler().runTask(SkillsPro.get(), () -> applyEffects(info, player));
 
             }

@@ -31,34 +31,15 @@ import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 import org.skills.services.manager.ServiceHandler;
-import org.skills.utils.Hologram;
-import org.skills.utils.MathUtils;
-import org.skills.utils.Pair;
-import org.skills.utils.StringUtils;
+import org.skills.utils.*;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public final class LevelManager implements Listener {
     protected static final String SPAWNER = "SPAWNER";
-    private static final ScriptEngine ENGINE;
     private static final List<CustomAmount> CUSTOM_XP = new ArrayList<>(), CUSTOM_SOULS = new ArrayList<>();
-
-    static {
-        ScriptEngine engine;
-        try {
-            engine = new ScriptEngineManager().getEngineByName("JavaScript");
-        } catch (Throwable ex) {
-            MessageHandler.sendConsolePluginMessage("&4Unable to load JavaScript evaluator. Looks like your Java version has some bugs.");
-            ex.printStackTrace();
-            engine = null;
-        }
-        ENGINE = engine;
-    }
 
     private final SkillsPro plugin;
 
@@ -72,15 +53,7 @@ public final class LevelManager implements Listener {
         for (String condition : conditions) {
             String equation = ServiceHandler.translatePlaceholders(player, condition);
             equation = StringUtils.replace(equation, "%level%", String.valueOf(level));
-
-            try {
-                boolean denied = (boolean) ENGINE.eval(equation);
-                if (denied) return true;
-            } catch (ScriptException ex) {
-                MessageHandler.sendConsolePluginMessage("&4Unable to parse condition for level margin&8: &e" + condition + " &7-> &e" + equation);
-                MessageHandler.sendConsolePluginMessage("&c" + ex.getMessage());
-                return false;
-            }
+            if (BooleanEval.evaluate(equation, null)) return true;
         }
         return false;
     }
@@ -227,8 +200,8 @@ public final class LevelManager implements Listener {
             if (info.hasParty()) {
                 List<Player> inRange = partyMembersInRange(killer, info);
                 String equation = StringUtils.replace(StringUtils.replace(
-                        ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_XP_PER_MEMBER.getString()),
-                        "xp", String.valueOf(xp)),
+                                ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_XP_PER_MEMBER.getString()),
+                                "xp", String.valueOf(xp)),
                         "members-in-range", String.valueOf(inRange.size()));
                 double evaled = MathUtils.evaluateEquation(equation);
 
@@ -294,8 +267,8 @@ public final class LevelManager implements Listener {
             if (info.hasParty()) {
                 List<Player> inRange = partyMembersInRange(killer, info);
                 String equation = StringUtils.replace(StringUtils.replace(
-                        ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_SOULS_PER_MEMBER.getString()),
-                        "souls", String.valueOf(souls)),
+                                ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_SOULS_PER_MEMBER.getString()),
+                                "souls", String.valueOf(souls)),
                         "members-in-range", String.valueOf(inRange.size()));
                 int evaled = (int) MathUtils.evaluateEquation(equation);
 

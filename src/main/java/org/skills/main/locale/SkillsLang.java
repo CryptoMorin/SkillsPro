@@ -38,6 +38,7 @@ public enum SkillsLang {
     Command_Usage("&cUsage&7: &e/Skills ", 1, 2),
     Command_Unknown("&cUnknown command!", 1, 2),
     Command_Not_Number("&e%arg% &cis not a number! &e%needed% &cmust be a number.", 1, 2),
+    COMMAND_AT_LEAST_ONE("&e%needed% &camount must be at least 1", 1, 2),
 
     COMMAND_SELECT_DESCRIPTION("&eUse to select a skill", 1, 2),
     COMMAND_SELECT_ALREADY_CHOSEN("&cYou're already a &e%skill%", 1, 2),

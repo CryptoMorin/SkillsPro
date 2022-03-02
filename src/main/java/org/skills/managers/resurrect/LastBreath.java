@@ -214,7 +214,7 @@ public final class LastBreath implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        LastManStanding lastManSuicidal = LAST_MEN_STANDING.get(player.getEntityId());
+        LastManStanding lastManSuicidal = LAST_MEN_STANDING.get(player.getEntityId()); // removed in die()
         if (lastManSuicidal != null) {
             lastManSuicidal.die();
             return;

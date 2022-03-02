@@ -73,7 +73,7 @@ public class PriestNaturesForce extends ActiveAbility {
                 bee.setHasNectar(false);
                 bee.setHasStung(false);
                 bee.setAnger(Integer.MAX_VALUE);
-                bee.addPotionEffect(XPotion.SPEED.parsePotion(1000000, 6));
+                bee.addPotionEffect(XPotion.SPEED.buildPotionEffect(1000000, 6));
                 bee.setMetadata(NATURES_FORCE, new FixedMetadataValue(SkillsPro.get(), damage));
                 bee.setMetadata(NATURES_FORCE_TARGET, new FixedMetadataValue(SkillsPro.get(), target));
                 bee.setTarget(target);

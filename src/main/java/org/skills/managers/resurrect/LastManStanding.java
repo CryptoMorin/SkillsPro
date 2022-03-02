@@ -137,6 +137,7 @@ final class LastManStanding {
         player.setGameMode(gameMode);
         player.setSwimming(false);
         player.setSprinting(false);
+        player.setInvulnerable(false);
         XSound.stopMusic(player);
     }
 

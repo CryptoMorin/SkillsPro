@@ -1,4 +1,4 @@
-package org.skills;
+package org.skills.abilities;
 
 import com.google.common.base.Strings;
 

@@ -75,7 +75,7 @@ public class DevourerBlink extends ActiveAbility {
         Entity entity = event.getEntity();
         ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).offset(1).withCount(100).spawn();
 
-        player.addPotionEffect(XPotion.SPEED.parsePotion(20 * 10, 1));
+        player.addPotionEffect(XPotion.SPEED.getPotionEffectType().createEffect(20 * 10, 1));
         XSound.ENTITY_ENDERMAN_TELEPORT.play(player);
         int maxHits = (int) getScaling(info, "hits");
 

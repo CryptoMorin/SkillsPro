@@ -47,7 +47,7 @@ public class DevourerPassive extends Ability {
                 int duration = (int) getScaling(info, "duration", event) * 20;
                 int amplifier = (int) (getScaling(info, "amplifier", event) - 1);
 
-                entity.addPotionEffect(new PotionEffect(potion.get().parsePotionEffectType(), duration, amplifier));
+                entity.addPotionEffect(new PotionEffect(potion.get().getPotionEffectType(), duration, amplifier));
                 entity.setMetadata(PASSIVE, new FixedMetadataValue(SkillsPro.get(), damage));
                 Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> entity.removeMetadata(PASSIVE, SkillsPro.get()), duration);
             }

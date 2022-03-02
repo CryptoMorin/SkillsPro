@@ -1,6 +1,5 @@
 package org.skills.abilities;
 
-import org.skills.KeyBindingException;
 import org.skills.utils.StringUtils;
 
 import java.util.HashMap;

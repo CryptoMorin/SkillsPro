@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.2.0</version>
+    <version>19.2.0.1</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -19,8 +19,12 @@
 
     <repositories>
         <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>ender-zone</id>
-            <url>http://ci.ender.zone/plugin/repository/everything/</url>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
             <id>nms-repo</id>
@@ -35,11 +39,11 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
-        <repository>
-            <id>mvdw-software</id>
-            <name>MVdW Public Repositories</name>
-            <url>http://repo.mvdw-software.be/content/groups/public/</url>
-        </repository>
+<!-- DOESNT WORK       <repository>-->
+<!--            <id>mvdw-software</id>-->
+<!--            <name>MVdW Public Repositories</name>-->
+<!--            <url>https://repo.mvdw-software.be/content/groups/public/</url>-->
+<!--        </repository>-->
 
         <repository>
             <id>Scarsz-Nexus</id>
@@ -53,22 +57,17 @@
 
         <repository>
             <id>everything</id>
-            <url>http://repo.citizensnpcs.co/</url>
+            <url>https://repo.citizensnpcs.co/</url>
         </repository>
 
         <repository>
             <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
 
         <repository>
             <id>enginehub-maven</id>
-            <url>http://maven.enginehub.org/repo/</url>
-        </repository>
-
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
     </repositories>
 
@@ -76,7 +75,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18-rc3-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -109,7 +108,7 @@
         <dependency>
             <groupId>me.lorinth</groupId>
             <artifactId>lorinthsrpgmobs</artifactId>
-            <version>1.0.0</version>
+            <version>1.10.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -120,35 +119,29 @@
         </dependency>
 
         <dependency>
-            <groupId>me.lokka30</groupId>
+            <groupId>com.github.lokka30</groupId>
             <artifactId>levelledmobs</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>3.3.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mineacademy</groupId>
-            <artifactId>boss</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--         It's not free and I don't know where to find the jar anymore. -->
+<!--            <groupId>org.mineacademy</groupId>-->
+<!--            <artifactId>boss</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--            <scope>provided</scope>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>*</groupId>-->
+<!--                    <artifactId>*</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.magmaguy</groupId>
             <artifactId>elitemobs</artifactId>
-            <version>7.3.5</version>
+            <version>7.3.12</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -161,7 +154,7 @@
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>massivecore</artifactId>
-            <version>1.0.0</version>
+            <version>2.14.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -171,11 +164,11 @@
             </exclusions>
         </dependency>
 
-        <!-- https://factions.support/developers/ -->
+        <!-- FactionsUUID https://factions.support/developers/ -->
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>1.6.9.5-U0.5.16</version>
+            <version>1.6.9.5-U0.6.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -200,8 +193,8 @@
 
         <dependency>
             <groupId>com.massivecraft</groupId>
-            <artifactId>factions</artifactId>
-            <version>1.0.0</version>
+            <artifactId>massivefactions</artifactId>
+            <version>2.14.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -214,7 +207,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>kingdoms</artifactId>
-            <version>1.10.13.2</version>
+            <version>1.11.16</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -224,10 +217,11 @@
             </exclusions>
         </dependency>
 
+        <!-- https://mvn.lumine.io/#browse/browse:maven-public:io%2Flumine%2Fxikage%2FMythicMobs -->
         <dependency>
             <groupId>io.lumine.xikage</groupId>
             <artifactId>MythicMobs</artifactId>
-            <version>4.10.0</version>
+            <version>4.12.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -331,18 +325,13 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.5.0.1</version>
+            <version>8.6.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations-java5</artifactId>
-            <version>20.1.0</version>
         </dependency>
     </dependencies>
 

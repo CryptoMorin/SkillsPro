@@ -155,7 +155,7 @@ public abstract class Ability implements Listener {
         return getScalingColor(scaling) + StringUtils.toFancyNumber(getAbsoluteScaling(info, scaling));
     }
 
-    public void start() { }
+    public void start() {}
 
     public String translate(SkilledPlayer info, String scaling) {
         return getScalingDescription(info, getOptions(info, scaling).getString());
@@ -175,7 +175,7 @@ public abstract class Ability implements Listener {
 
         Optional<XPotion> typeOpt = XPotion.matchXPotion(split[0]);
         if (!typeOpt.isPresent()) return null;
-        PotionEffectType type = typeOpt.get().parsePotionEffectType();
+        PotionEffectType type = typeOpt.get().getPotionEffectType();
         if (type == null) return null;
 
         int duration = 2400; // 20 ticks * 60 seconds * 2 minutes

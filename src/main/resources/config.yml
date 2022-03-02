@@ -855,7 +855,7 @@ mythicmobs:
   # Level margin compares the level of the MythicMob to the player.
   # The worlds enabled here will go thro this check.
   worlds-with-level-margin: [ ]
-  # The conditions below are evaluated from JavaScript.
+  # The conditions below are evaluated with basic common logical operators.
   # The final result must be a boolean, so only player placeholders
   # that can return a number to compare with are supported.
   # Special placeholder: %level% - the level of the MythicMob.

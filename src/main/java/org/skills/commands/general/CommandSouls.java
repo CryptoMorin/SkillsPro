@@ -40,6 +40,10 @@ public class CommandSouls extends SkillsCommand {
             SkillsLang.Command_Not_Number.sendMessage(sender, "%arg%", args[1], "%needed%", "souls");
             return;
         }
+        if (amount <= 0) {
+            SkillsLang.COMMAND_AT_LEAST_ONE.sendMessage(sender, "%arg%", args[1], "%needed%", "souls");
+            return;
+        }
 
         Player player = (Player) sender;
         String type = args[0].toLowerCase(Locale.ENGLISH);

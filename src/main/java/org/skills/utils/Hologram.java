@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.main.SkillsConfig;
@@ -66,7 +65,7 @@ public class Hologram implements Listener {
         List<ArmorStand> stands = new ArrayList<>();
         ThreadLocalRandom rand = ThreadLocalRandom.current();
         boolean staticArmor = SkillsConfig.HOLOGRAM_STATIC.getBoolean();
-        PotionEffect effect = XPotion.parsePotionEffectFromString(SkillsConfig.HOLOGRAM_EFFECT.getString());
+        XPotion.Effect effect = XPotion.parseEffect(SkillsConfig.HOLOGRAM_EFFECT.getString());
 
         for (String str : text) {
             Location spawn = staticArmor ?
@@ -80,7 +79,7 @@ public class Hologram implements Listener {
             armorStand.setCustomNameVisible(true);
             if (staticArmor) armorStand.setMarker(true);
             else armorStand.setVelocity(new Vector(rand.nextDouble(minx, maxx), rand.nextDouble(miny, maxy), rand.nextDouble(minz, maxz)));
-            if (effect != null) armorStand.addPotionEffect(effect);
+            if (effect != null && effect.hasChance()) armorStand.addPotionEffect(effect.getEffect());
 
             for (int i = edits.length; i > 0; i -= 2) {
                 String variable = String.valueOf(edits[i - 2]);
