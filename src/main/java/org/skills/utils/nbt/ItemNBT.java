@@ -32,9 +32,9 @@ public final class ItemNBT {
             asBukkitCopy = lookup.findStatic(crafItemStack, "asBukkitCopy", MethodType.methodType(ItemStack.class, nmsItemStack));
 
             setTag = lookup.findVirtual(nmsItemStack,
-                    supports(18) ? "c" : "setTag", MethodType.methodType(void.class, nbtTagCompound));
+                    ReflectionUtils.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
             getTag = lookup.findVirtual(nmsItemStack,
-                    supports(18) ? "s" : "getTag", MethodType.methodType(nbtTagCompound));
+                    ReflectionUtils.v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
         } catch (NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
         }

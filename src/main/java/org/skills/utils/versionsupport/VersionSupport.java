@@ -73,7 +73,7 @@ public class VersionSupport {
     }
 
     public static void setMaxHealth(LivingEntity entity, double amount) {
-        if (amount == 0) return;
+        if (amount == 0) return; // Disables a feature
         if (amount < 0) throw new IllegalArgumentException("Invalid max health for player: " + amount);
         if (XMaterial.supports(13)) VersionSupportFuture.setMaxHealth(entity, amount);
         else VersionSupportOld.setMaxHealth(entity, amount);

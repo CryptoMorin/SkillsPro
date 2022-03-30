@@ -1,12 +1,11 @@
 package org.skills.abilities.priest;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,6 +65,27 @@ public class PriestPassive extends Ability {
         }.runTaskTimerAsynchronously(SkillsPro.get(), 100, getOptions("Priest", "interval").getInt() * 20L));
     }
 
+    private static boolean isWaterLogged(Block block) {
+        if (ReflectionUtils.supports(13)) {
+            if (block.getBlockData() instanceof Waterlogged) {
+                Waterlogged wl = (Waterlogged) block.getBlockData();
+                return wl.isWaterlogged();
+            }
+
+            Material mat = block.getType();
+            switch (mat) {
+                case SEA_PICKLE:
+                case SEAGRASS:
+                case TALL_SEAGRASS:
+                    return true;
+            }
+
+            if (mat.name().contains("CORAL")) return true;
+        }
+
+        return block.getType().name().endsWith("WATER");
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void jesus(PlayerMoveEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
@@ -78,20 +98,22 @@ public class PriestPassive extends Ability {
             if (!getOptions(info, "jesus").getBoolean()) return;
 
             Block block = player.getLocation().getBlock();
-            String standing = block.getType().name();
-            String under = block.getRelative(BlockFace.DOWN).getType().name();
-
-            if (standing.endsWith("WATER") || under.endsWith("WATER")) {
+            if ((ReflectionUtils.supports(16) && player.isInWater()) ||
+                    isWaterLogged(block) || isWaterLogged(block.getRelative(BlockFace.DOWN))) {
                 if (player.getAllowFlight()) {
                     player.spawnParticle(Particle.CLOUD, player.getLocation(), 5, 0.1, 0.1, 0.1, 0.1);
                     return;
                 }
 
-                Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
-                    player.setAllowFlight(true);
-                    player.setFlying(true);
-                    JESUS.add(player.getEntityId());
-                });
+                if (!player.isFlying()) {
+                    Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
+                        player.setAllowFlight(true);
+                        player.setFlying(true);
+                        JESUS.add(player.getEntityId());
+
+                        player.setVelocity(player.getLocation().getDirection().setY(0.1));
+                    });
+                }
                 player.spawnParticle(Particle.CLOUD, player.getLocation(), 30, 0.3, 0, 0.3, 0.3);
             } else {
                 if (!player.getAllowFlight()) return;

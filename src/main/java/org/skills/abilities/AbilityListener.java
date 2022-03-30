@@ -65,9 +65,12 @@ public class AbilityListener implements Listener {
         ActiveAbility ability = null;
         List<KeyBinding> keys = ACTIVATIONS.getIfPresent(player.getUniqueId());
         if (keys == null) {
+            // Sneaking at the beginning doesn't work for abilities that need it internally.
+            if (action == KeyBinding.SNEAK) return false;
             ACTIVATIONS.put(player.getUniqueId(), keys = new ArrayList<>(4));
         }
-        if (action != KeyBinding.SNEAK && player.isSneaking()) keys.add(KeyBinding.WHILE_SNEAK);
+
+        //if (action != KeyBinding.SNEAK && player.isSneaking()) keys.add(KeyBinding.WHILE_SNEAK);
         keys.add(action);
 
         ItemStack item = player.getItemInHand();

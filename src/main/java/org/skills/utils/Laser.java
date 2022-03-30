@@ -243,54 +243,54 @@ public final class Laser {
             packetMetadata = getNMSClass("network.protocol.game", "PacketPlayOutEntityMetadata");
 
             try {
-                String watcherName1, watcherName2, watcherName3;
+                String watcherInvis, watcherSpikes, watcherAttacker;
                 if (ReflectionUtils.VER < 13) {
-                    watcherName1 = "Z";
-                    watcherName2 = "bA";
-                    watcherName3 = "bB";
+                    watcherInvis = "Z";
+                    watcherSpikes = "bA";
+                    watcherAttacker = "bB";
                     SQUID_TYPE = 94;
                     GUARDIAN_TYPE = 68;
                 } else if (ReflectionUtils.VER == 13) {
-                    watcherName1 = "ac";
-                    watcherName2 = "bF";
-                    watcherName3 = "bG";
+                    watcherInvis = "ac";
+                    watcherSpikes = "bF";
+                    watcherAttacker = "bG";
                     SQUID_TYPE = 70;
                     GUARDIAN_TYPE = 28;
                 } else if (ReflectionUtils.VER == 14) {
-                    watcherName1 = "W";
-                    watcherName2 = "b";
-                    watcherName3 = "bD";
+                    watcherInvis = "W";
+                    watcherSpikes = "b";
+                    watcherAttacker = "bD";
                     SQUID_TYPE = 73;
                     GUARDIAN_TYPE = 30;
                 } else if (ReflectionUtils.VER == 15) {
-                    watcherName1 = "T";
-                    watcherName2 = "b";
-                    watcherName3 = "bA";
+                    watcherInvis = "T";
+                    watcherSpikes = "b";
+                    watcherAttacker = "bA";
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
                 } else if (ReflectionUtils.VER == 16) {
-                    watcherName1 = "S"; // protected static final DataWatcherObject<Byte>    S;
-                    watcherName2 = "b"; // private   static final DataWatcherObject<Boolean> b;
-                    watcherName3 = "d"; // private   static final DataWatcherObject<Integer> d;
+                    watcherInvis = "S"; // protected static final DataWatcherObject<Byte>    S;
+                    watcherSpikes = "b"; // private   static final DataWatcherObject<Boolean> b;
+                    watcherAttacker = "d"; // private   static final DataWatcherObject<Integer> d;
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
                 } else if (ReflectionUtils.VER == 17) {
-                    watcherName1 = "Z"; // unused
-                    watcherName2 = "b"; // unused
-                    watcherName3 = "e"; // unused
+                    watcherInvis = "Z";
+                    watcherSpikes = "b";
+                    watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null); // 86
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null); // 35
                 } else {
-                    watcherName1 = "aa"; // unused
-                    watcherName2 = "b"; // unused
-                    watcherName3 = "e"; // unused
+                    watcherInvis = "Z"; // this.Y.b(Z, (byte)(b0 | 1 << i));
+                    watcherSpikes = "b";
+                    watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null);
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null);
                 }
 
-                WATCHER_INVISILIBITY = getField(entity, watcherName1, null);
-                WATCHER_SPIKES = getField(guardian, watcherName2, null);
-                WATCHER_ATTACK_ID = getField(guardian, watcherName3, null);
+                WATCHER_INVISILIBITY = getField(entity, watcherInvis, null);
+                WATCHER_SPIKES = getField(guardian, watcherSpikes, null);
+                WATCHER_ATTACK_ID = getField(guardian, watcherAttacker, null);
 
                 nmsWorld = craftWorld.getDeclaredMethod("getHandle").invoke(Bukkit.getWorlds().get(0));
 

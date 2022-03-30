@@ -57,7 +57,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
 
             @Override
             public void run() {
-                player.spawnParticle(Particle.HEART, projectile.getLocation(), 10, 0.01, 0.01, 0.01, 0.1);
+                ParticleDisplay.of(Particle.HEART).withCount(10).offset(0.01).withExtra(0.1).spawn(projectile.getLocation());
 //                try {
 //                    finalLas.moveEnd(projectile.getLocation());
 //                } catch (ReflectiveOperationException e) {

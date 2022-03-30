@@ -80,6 +80,11 @@ public enum SkillsLang {
     COMMAND_USER_XP_REMOVE("&3%amount% has been removed to the player's XP.", 1, 2, 3),
     COMMAND_USER_XP_SET("&3%amount% has been set as the player's XP.", 1, 2, 3),
     COMMAND_USER_SKILL_DESCRIPTION("&eUse to manipulate player skill.", 1, 2, 3),
+
+    COMMAND_USER_VULNERABLE_DESCRIPTION("&eUsed to set a player as vulnerable in critical situations.", 1, 2, 3),
+    COMMAND_USER_VULNERABLE_ALREADY_VULNERABLE("&e%target% &cis already vulnerable.", 1, 2, 3),
+    COMMAND_USER_VULNERABLE_SET("&3%target% &2is now vulnerable.", 1, 2, 3),
+
     COMMAND_USER_COSMETIC_DESCRIPTION("&eUse to manipulate player cosmetics.", 1, 2, 3),
     COMMAND_USER_COSMETIC_INVALID_CATEGORY("&cNo such cosmetic category named&8: &e%category%", 1, 2, 3, 4),
     COMMAND_USER_COSMETIC_INVALID_COSMETIC("&cNo such cosmetic in &e%category% &ccategory named&8: &e%cosmetic%", 1, 2, 3, 4),

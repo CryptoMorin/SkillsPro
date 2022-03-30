@@ -33,6 +33,7 @@ public class CommandUser extends SkillsCommand {
         new CommandUserMastery(this);
         new CommandUserImprove(this);
         new CommandUserCosmetic(this);
+        new CommandUserVulnerable(this);
     }
 
     public static void magicCircle(int tier, double size, ParticleDisplay display) {

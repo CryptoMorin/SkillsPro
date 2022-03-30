@@ -1,40 +1,24 @@
 package org.skills.services.mobs;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
+import com.cryptomorin.xseries.ReflectionUtils;
+import io.lumine.mythic.bukkit.BukkitAdapter;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.entity.LivingEntity;
+import org.skills.main.SLogger;
 import org.skills.utils.Pair;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-
-@SuppressWarnings("JavaLangInvokeHandleSignature")
 public class ServiceMythicMobs {
-    private static final MethodHandle GET_LEVEL;
+    private static final boolean SUPPORTED = ReflectionUtils.supports(16);
 
     static {
-        MethodHandle getLevel = null;
-
-        try {
-            getLevel = MethodHandles.lookup().findVirtual(ActiveMob.class, "getLevel", MethodType.methodType(int.class));
-        } catch (NoSuchMethodException | IllegalAccessException ignored) {
-        }
-
-        GET_LEVEL = getLevel;
-    }
-
-    private static double getLevel(ActiveMob mob) {
-        try {
-            return GET_LEVEL == null ? mob.getLevel() : (double) GET_LEVEL.invoke(mob);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            return 0;
-        }
+        if (!SUPPORTED) SLogger.warn("MythicMobs support cannot be enabled for your server version.");
     }
 
     public static Pair<String, Number> getMobProperties(LivingEntity entity) {
-        ActiveMob mob = MythicMobs.inst().getAPIHelper().getMythicMobInstance(entity);
-        return mob == null ? null : Pair.of(mob.getType().getInternalName(), getLevel(mob));
+        if (SUPPORTED) return null;
+
+        ActiveMob mob = MythicBukkit.inst().getMobManager().getMythicMobInstance(BukkitAdapter.adapt(entity));
+        return mob == null ? null : Pair.of(mob.getType().getInternalName(), mob.getLevel());
     }
 }

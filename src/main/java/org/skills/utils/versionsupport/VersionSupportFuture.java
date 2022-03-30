@@ -4,13 +4,21 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import java.util.Collection;
+import java.util.UUID;
+
 public class VersionSupportFuture {
+    private static final UUID ATTRIBUTE_MODIFIER_ID = UUID.randomUUID();
+    private static final String ATTRIBUTE_MODIFIER_NAME = "SkillsPro Class Max HP";
+
     public static void spawnColouredDust(Location loc) {
         spawnColouredDust(loc, Color.AQUA);
     }
@@ -27,8 +35,20 @@ public class VersionSupportFuture {
         return e.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
     }
 
+    private static AttributeModifier getAttrMod(double amount) {
+        return new AttributeModifier(ATTRIBUTE_MODIFIER_ID, ATTRIBUTE_MODIFIER_NAME, amount, AttributeModifier.Operation.ADD_NUMBER);
+    }
+
+    private static void removeAttrMod(Collection<AttributeModifier> modifiers) {
+        modifiers.removeIf(attributeModifier -> attributeModifier.getUniqueId() == ATTRIBUTE_MODIFIER_ID);
+    }
+
     public static void setMaxHealth(LivingEntity e, double amount) {
-        if (getMaxHealth(e) != amount) e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(amount);
+        AttributeInstance attr = e.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        attr.setBaseValue(amount);
+        // TODO
+//        removeAttrMod(attr.getModifiers());
+//        attr.addModifier(getAttrMod(amount));
     }
 
     public static boolean isCropFullyGrown(Block crop) {

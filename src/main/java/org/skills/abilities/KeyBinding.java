@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum KeyBinding {
-    RIGHT_CLICK('R'), LEFT_CLICK('L'), SNEAK('S'), WHILE_SNEAK('C'), DROP('Q'), SWITCH('F');
+    RIGHT_CLICK('R'), LEFT_CLICK('L'), SNEAK('S'), /*WHILE_SNEAK('C'),*/ DROP('Q'), SWITCH('F');
     public static final Map<Character, KeyBinding> SHORT_NAME_BINDINGS = new HashMap<>();
 
     static {
@@ -32,13 +32,13 @@ public enum KeyBinding {
     public static KeyBinding[] parseBinding(String binding) {
         binding = StringUtils.deleteWhitespace(binding);
         KeyBinding[] bindings = new KeyBinding[binding.length()];
-        boolean previousWhileSneak = false;
+//        boolean previousWhileSneak = false;
 
         for (int i = 0; i < bindings.length; i++) {
             KeyBinding keyBinding = KeyBinding.getKeyBindingFromName(Character.toUpperCase(binding.charAt(i)));
             if (keyBinding == null) throw new KeyBindingException(binding, i, KeyBindingException.Reason.UNKNOWN_KEY);
-            if (previousWhileSneak && (keyBinding == WHILE_SNEAK || keyBinding == SNEAK)) throw new KeyBindingException(binding, i, KeyBindingException.Reason.BAD_WHILE_SNEAK);
-            if (keyBinding == WHILE_SNEAK) previousWhileSneak = true;
+//            if (previousWhileSneak && (keyBinding == WHILE_SNEAK || keyBinding == SNEAK)) throw new KeyBindingException(binding, i, KeyBindingException.Reason.BAD_WHILE_SNEAK);
+//            if (keyBinding == WHILE_SNEAK) previousWhileSneak = true;
             bindings[i] = keyBinding;
         }
 
