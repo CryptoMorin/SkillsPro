@@ -69,6 +69,15 @@ masteries:
     # XP is the skills XP and EXP is the vanilla XP.
     # They all support formulas.
     blocks:
+      DEEPSLATE_EMERALD_ORE:
+        chance: randInt(0, (lvl + 9) / 2)
+        xp: 2
+        exp: 10
+        souls: 0
+        drops:
+          diamond:
+            material: EMERALD
+            amount: randInt(1, (lvl + 9) / 3)
       EMERALD_ORE:
         chance: randInt(0, (lvl + 9) / 2)
         xp: 2
@@ -77,6 +86,15 @@ masteries:
         drops:
           diamond:
             material: EMERALD
+            amount: randInt(1, (lvl + 9) / 3)
+      DEEPSLATE_DIAMOND_ORE:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 4
+        souls: 0
+        drops:
+          diamond:
+            material: DIAMOND
             amount: randInt(1, (lvl + 9) / 3)
       DIAMOND_ORE:
         chance: randInt(0, lvl + 1)
@@ -87,6 +105,15 @@ masteries:
           diamond:
             material: DIAMOND
             amount: randInt(1, (lvl + 9) / 3)
+      DEEPSLATE_GOLD_ORE:
+        chance: randInt(0, lvl + 1)
+        xp: 2
+        exp: 4
+        souls: 0
+        drops:
+          diamond:
+            material: GOLD_INGOT
+            amount: randInt(1, (lvl + 9) / 3)
       GOLD_ORE:
         chance: randInt(0, lvl + 1)
         xp: 2
@@ -96,12 +123,25 @@ masteries:
           diamond:
             material: GOLD_INGOT
             amount: randInt(1, (lvl + 9) / 3)
+      DEEPSLATE_IRON_ORE:
+        chance: randInt(0, lvl + 1)
+        exp: 1
+        drops:
+          diamond:
+            material: IRON_INGOT
+            amount: randInt(1, (lvl + 9) / 3)
       IRON_ORE:
         chance: randInt(0, lvl + 1)
         exp: 1
         drops:
           diamond:
             material: IRON_INGOT
+            amount: randInt(1, (lvl + 9) / 3)
+      DEEPSLATE_COAL_ORE:
+        chance: randInt(0, lvl * 2)
+        drops:
+          diamond:
+            material: COAL
             amount: randInt(1, (lvl + 9) / 3)
       COAL_ORE:
         chance: randInt(0, lvl * 2)
