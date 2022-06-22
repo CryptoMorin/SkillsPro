@@ -3,7 +3,9 @@ package org.skills.gui;
 import com.cryptomorin.xseries.XItemStack;
 import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Strings;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,11 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class GUIParser {
     public static ItemStack deserializeItem(@NotNull InteractiveGUI gui, ConfigurationSection section) {
-        ItemStack item = XItemStack.deserialize(section);
-        if (item == null) {
+        ItemStack item = XItemStack.deserialize(section, new ItemColorHandler());
+        if (item.getType() == Material.AIR) {
             MessageHandler.sendConsolePluginMessage("&4Could not parse item for option: &e" + section.getName() + " &4in GUI &e" + gui.getName() + " &4with properties&8:");
             section.getValues(true).forEach((k, v) -> MessageHandler.sendConsolePluginMessage("&6" + k + "&8: &e" + (v instanceof ConfigurationSection ? "" : v)));
             return null;
@@ -30,8 +33,15 @@ public class GUIParser {
         return item;
     }
 
-    public static void e(@NotNull String test) {
-        test.substring(3);
+    private static final class ItemColorHandler implements Function<String, String> {
+        private String lastColor;
+
+        @Override
+        public String apply(String s) {
+            if (lastColor != null) s = MessageHandler.colorize(lastColor + s);
+            lastColor = ChatColor.getLastColors(s);
+            return s;
+        }
     }
 
     private static String translate(OfflinePlayer player, String message, List<Object> edits) {

@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.2.1.1</version>
+    <version>19.2.2</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -208,7 +208,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>kingdoms</artifactId>
-            <version>1.11.16</version>
+            <version>1.13.3</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -326,7 +326,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.7.0</version>
+            <version>8.8.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

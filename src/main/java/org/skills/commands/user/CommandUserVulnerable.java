@@ -1,20 +1,13 @@
 package org.skills.commands.user;
 
-import com.bekvon.bukkit.residence.commands.info;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
-import org.skills.commands.TabCompleteManager;
-import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.SkillsLang;
-import org.skills.types.SkillManager;
-
-import java.util.Arrays;
 
 public class CommandUserVulnerable extends SkillsCommand {
     public CommandUserVulnerable(SkillsCommand group) {

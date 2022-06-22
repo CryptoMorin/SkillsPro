@@ -133,7 +133,7 @@ public class SkillsPro extends JavaPlugin {
         registerEvent(new AbilityListener());
         registerEvent(new InteractiveGUIManager());
         registerEvent(new SkillItemManager());
-        registerEvent(new EnchantmentManager());
+        registerEvent(new XPAndEnchantmentManager());
         registerEvent(new SkillsEventManager());
         registerEvent(new DebugManager());
         registerEvent(new StatManager());

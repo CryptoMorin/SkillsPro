@@ -16,7 +16,7 @@ public class ServiceMythicMobs {
     }
 
     public static Pair<String, Number> getMobProperties(LivingEntity entity) {
-        if (SUPPORTED) return null;
+        if (!SUPPORTED) return null;
 
         ActiveMob mob = MythicBukkit.inst().getMobManager().getMythicMobInstance(BukkitAdapter.adapt(entity));
         return mob == null ? null : Pair.of(mob.getType().getInternalName(), mob.getLevel());

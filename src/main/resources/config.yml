@@ -318,21 +318,18 @@ vanilla-exp-bar:
   # souls: Skills souls.
   shown-number: level
 
-sync-enchantment-tables:
-  enabled: false
-
-  # If the enchantment table level should be based on the player level
-  # instead of the bookshelves around it. You can use "lvl" placeholder for the current
-  # unmodified table level.
-  # Set to -1 to disable.
-  requirement-level-equation: '%skills_level%'
-
-  # What should be used for enchantment costs?
-  # vanilla: Use the vanilla levels.
-  # xp: Use skills XP.
-  # souls: Use skills souls.
-  # levels: Use skills levels.
-  cost-type: souls
+# Note that by default, your Vanilla levels are shown
+# on the EXP bar when you open enchantment tables, and they return
+# back to showing skill level when you close them.
+enchantment-tables:
+  # These are costs in addition to the
+  # Vanilla levels taken  You can use "lvl" placeholder for the
+  # enchantment level of the offer or "cost" for the Vanilla level cost of the offer.
+  # Set any to 0 to disable.
+  additional-costs:
+    souls: 0
+    skill-levels: 0
+    skill-xp: 0
 
 # Disabled commands.
 disabled-commands: [ ]

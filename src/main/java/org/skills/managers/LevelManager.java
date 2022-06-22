@@ -168,6 +168,8 @@ public final class LevelManager implements Listener {
         Player killer = (Player) killerOpt;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(killer);
         Pair<String, Number> property = ServiceHandler.getMobProperties(killed);
+        SLogger.debug(() -> "&c" + killer.getName() + " &6killed &2" + killed.getName() + " &8(&2" + killed.getCustomName() + "&7-&2"
+                + killed.getType() + "&8) &6with custom property &2" + property + " &6and vanilla EXP of &2" + event.getDroppedExp());
 
         /// XP ///
         double gainedXp = 0;
@@ -176,12 +178,9 @@ public final class LevelManager implements Listener {
                     MessageHandler.replace(SkillsConfig.DEFAULT_XP.getString(), "lvl",
                             property == null ? 1 : property.getValue().doubleValue()));
 
-            boolean debug = SkillsConfig.DEBUG.getBoolean();
-            if (debug) SLogger.debug("&6Checking XP properties for mob &2" + killed.getName() + " &8(&2" + killed.getCustomName() + "&7-&2"
-                    + killed.getType() + "&8) &6with custom property &2" + property + " &6and vanilla EXP of &2" + event.getDroppedExp() + "&8: ");
             for (CustomAmount custom : CUSTOM_XP) {
                 boolean matched = custom.matches(killed, property);
-                if (debug) SLogger.debug("Results for &9" + custom + " &6returned&8: " + (matched ? "&2true" : "&cfalse"));
+                SLogger.debug(() -> "Matching XP " + custom + " returned: " + matched);
                 if (matched) {
                     xp = custom.evaluate(killer, property);
                     break;
@@ -255,6 +254,8 @@ public final class LevelManager implements Listener {
                             property == null ? 1 : property.getValue().doubleValue()));
 
             for (CustomAmount custom : CUSTOM_SOULS) {
+                SLogger.debug(() -> "Matching souls '" + custom.matcher + "': '" + custom.equation + "' matches? "
+                        + custom.matches(killed, property) + " evaluated: " + custom.evaluate(killer, property));
                 if (custom.matches(killed, property)) {
                     souls = (int) custom.evaluate(killer, property);
                     break;
@@ -267,9 +268,8 @@ public final class LevelManager implements Listener {
             if (info.hasParty()) {
                 List<Player> inRange = partyMembersInRange(killer, info);
                 String equation = StringUtils.replace(StringUtils.replace(
-                                ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_SOULS_PER_MEMBER.getString()),
-                                "souls", String.valueOf(souls)),
-                        "members-in-range", String.valueOf(inRange.size()));
+                        ServiceHandler.translatePlaceholders(killer, SkillsConfig.PARTY_SOULS_PER_MEMBER.getString()),
+                        "souls", String.valueOf(souls)), "members-in-range", String.valueOf(inRange.size()));
                 int evaled = (int) MathUtils.evaluateEquation(equation);
 
                 if (SkillsConfig.PARTY_DISTRIBUTE.getBoolean()) {
@@ -417,11 +417,11 @@ public final class LevelManager implements Listener {
     private static final class CustomAmount {
         public CustomAmounType customAmounType;
         public EntityType type;
-        public String expression;
+        public String matcher;
         public String equation;
 
         public CustomAmount(String expression, String equation, EntityType type, CustomAmounType customAmounType) {
-            this.expression = customAmounType == CustomAmounType.CONTAINS ? expression.toLowerCase() : expression;
+            this.matcher = customAmounType == CustomAmounType.CONTAINS ? expression.toLowerCase() : expression;
             this.type = type;
             this.customAmounType = customAmounType;
             this.equation = equation;
@@ -430,11 +430,11 @@ public final class LevelManager implements Listener {
         public boolean matches(LivingEntity entity, Pair<String, Number> customMob) {
             switch (customAmounType) {
                 case CONTAINS:
-                    return entity.getCustomName() != null && entity.getCustomName().toLowerCase().contains(expression);
+                    return entity.getCustomName() != null && entity.getCustomName().toLowerCase().contains(matcher);
                 case CUSTOM_MOB:
-                    return customMob != null && customMob.getKey() != null && expression.equalsIgnoreCase(customMob.getKey());
+                    return customMob != null && customMob.getKey() != null && matcher.equalsIgnoreCase(customMob.getKey());
                 case NAME:
-                    return entity.getCustomName() != null && entity.getCustomName().equalsIgnoreCase(expression);
+                    return entity.getCustomName() != null && entity.getCustomName().equalsIgnoreCase(matcher);
                 case TYPE:
                     return entity.getType() == type;
                 default:
@@ -444,7 +444,7 @@ public final class LevelManager implements Listener {
 
         @Override
         public String toString() {
-            return "CustomAmount:{expression='" + expression + "', type=" + type + ", customMobType=" + customAmounType + ", equation='" + equation + "'}";
+            return "CustomAmount:{expression='" + matcher + "', type=" + type + ", customMobType=" + customAmounType + ", equation='" + equation + "'}";
         }
 
         public double evaluate(Player player, Pair<String, Number> customMob) {

@@ -318,6 +318,10 @@ public enum SkillsLang {
     NOT_ENOUGH_SOULS("&cYou don't have enough souls!", 2),
     NOT_ENOUGH_STATPOINTS("&cNot enough stat points.", 2),
 
+    ENCHANTMENTS_COSTS_NOT_ENOUGH_SOULS("&cYou need &e%amount% souls &cfor this enchantment.", 1, 2, 4),
+    ENCHANTMENTS_COSTS_NOT_ENOUGH_SKILL_LEVEL("&cYou need &e%amount% Skill Level &cfor this enchantment.", 1, 2, 4),
+    ENCHANTMENTS_COSTS_NOT_ENOUGH_SKILL_XP("&cYou need &e%amount% Skill XP &cfor this enchantment.", 1, 2, 4),
+
     // Misc
     KILL_MESSAGE("&3Gained &e%xp% XP &3and &e%souls% souls &3for killing &e%name%"),
     PLAYER_NOT_FOUND("&cCould not find player &e%name%."),

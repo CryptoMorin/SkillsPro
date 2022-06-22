@@ -2,6 +2,7 @@ package org.skills.managers;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.ActionBar;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.boss.BossBar;
@@ -107,14 +108,15 @@ public final class HealthAndEnergyManager implements Listener {
         return LEVEL_BOSSBARS.get(player.getEntityId());
     }
 
-    public static void updateStats(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
-            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+    public static float updateXPBar(Player player) {
+        SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+        float percent = (float) (info.getXP() / info.getLevelXP(info.getLevel()));
+        Validate.isTrue(percent <= 1.0 && percent >= 0.0,
+                "Invalid BossBar percent for " + player.getName() + ": " + percent + " -> XP: " + info.getXP() +
+                        ", Next Level XP: " + info.getLevelXP(info.getLevel()) + " for level " + info.getLevel());
 
-            float percent = (float) (info.getXP() / info.getLevelXP(info.getLevel()));
-            if (!(percent <= 1.0 && percent >= 0.0)) throw new IllegalArgumentException(
-                    "Invalid BossBar percent for " + player.getName() + ": " + percent + " -> XP: " + info.getXP() +
-                            ", Next Level XP: " + info.getLevelXP(info.getLevel()) + " for level " + info.getLevel());
+        if (SkillsConfig.VANILLA_EXP_BAR_ENABLED.getBoolean() && !SkillsConfig.VANILLA_EXP_BAR_REAL_SYNC.getBoolean()) {
+
             if (SkillsConfig.VANILLA_EXP_BAR_ENABLED.getBoolean()) {
                 String shown = SkillsConfig.VANILLA_EXP_BAR_SHOWN_NUMBER.getString().toLowerCase(Locale.ENGLISH);
                 int num;
@@ -136,6 +138,16 @@ public final class HealthAndEnergyManager implements Listener {
                 player.setLevel(num);
                 player.setExp(percent);
             }
+        }
+
+        return percent;
+    }
+
+    public static void updateStats(Player player) {
+        Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+
+            float percent = updateXPBar(player);
 
             if (SkillsConfig.BOSSBAR_LEVELS_ENABLED.getBoolean() && player.hasPermission("skills.bossbar")) {
                 BossBar bar = LEVEL_BOSSBARS.get(player.getEntityId());
@@ -214,6 +226,8 @@ public final class HealthAndEnergyManager implements Listener {
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         info.setScaledHealth();
 
+        XPAndEnchantmentManager.EXPS.put(player.getUniqueId(), player.getTotalExperience());
+
         if (!player.hasPlayedBefore()) {
             String skill = SkillsConfig.DEFAULT_SKILL.getString();
             if (!skill.equalsIgnoreCase(PlayerSkill.NONE)) {
@@ -245,7 +259,7 @@ public final class HealthAndEnergyManager implements Listener {
             BossBar bar = LEVEL_BOSSBARS.remove(player.getEntityId());
             if (bar != null) bar.removeAll();
 
-            Integer exp = EnchantmentManager.EXPS.remove(player.getUniqueId());
+            Integer exp = XPAndEnchantmentManager.EXPS.remove(player.getUniqueId());
             if (exp != null) player.setTotalExperience(exp);
         }
         CustomHudChangeEvent.ANIMATIONS.remove(player.getUniqueId());

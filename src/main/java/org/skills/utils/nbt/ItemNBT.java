@@ -34,7 +34,7 @@ public final class ItemNBT {
             setTag = lookup.findVirtual(nmsItemStack,
                     ReflectionUtils.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
             getTag = lookup.findVirtual(nmsItemStack,
-                    ReflectionUtils.v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
+                    ReflectionUtils.v(19, "v").v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
         } catch (NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
         }
