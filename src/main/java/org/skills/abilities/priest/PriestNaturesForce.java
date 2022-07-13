@@ -79,6 +79,7 @@ public class PriestNaturesForce extends ActiveAbility {
                 bee.setTarget(target);
                 XSound.ENTITY_BEE_LOOP_AGGRESSIVE.play(loc, 3.0f, 0);
                 particle.spawn(beeLoc);
+
                 Bukkit.getScheduler().scheduleSyncDelayedTask(SkillsPro.get(), () -> {
                     if (bee.isValid()) {
                         DEATH.spawn(bee.getLocation());

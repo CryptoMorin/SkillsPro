@@ -56,7 +56,11 @@ public class SkilledPlayer extends DataContainer {
     private Set<UUID> friendRequests = new HashSet<>();
     private UUID party;
     private PartyRank rank;
-    private transient boolean isUsingAbility;
+    /**
+     * This is mainly used as a protection for owners that set the ability cooldown lower than the
+     * ability duration. It's also useful as some kind of meta data if anyones interested.
+     */
+    private final transient Set<Ability> activeAbilities = Collections.newSetFromMap(new IdentityHashMap<>());
 
     public SkilledPlayer(UUID id) {
         this.id = Objects.requireNonNull(id, "Skilled Player's UUID cannot be null");
@@ -129,12 +133,13 @@ public class SkilledPlayer extends DataContainer {
         this.bonuses = bonuses;
     }
 
-    public boolean isUsingAbility() {
-        return isUsingAbility;
+    public Set<Ability> getActiveAbilities() {
+        return activeAbilities;
     }
 
-    public void toggleUsingAbility() {
-        isUsingAbility = !isUsingAbility;
+    public void setActiveAbilitiy(Ability ability, boolean active) {
+        if (active) activeAbilities.add(ability);
+        else activeAbilities.remove(ability);
     }
 
     public Map<String, PlayerSkill> getSkills() {

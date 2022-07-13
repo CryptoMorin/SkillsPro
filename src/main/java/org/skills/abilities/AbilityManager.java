@@ -37,6 +37,7 @@ public final class AbilityManager {
                 new ArbalistDualArrows(),
                 new ArbalistMinions(),
                 new ArbalistFireCrossbow(),
+                new ArbalistCrossExamination(),
 
                 new DevourerPassive(),
                 new DevourerGliders(),

@@ -35,6 +35,7 @@ import org.skills.utils.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Each skill has it's own abilities.<br>
@@ -47,11 +48,10 @@ import java.util.*;
  * @see ActiveAbility
  */
 public abstract class Ability implements Listener {
-    //    public static final String SKILLS_ENTITY = "SKILLS_ENTITY";
     protected static final List<Set<Integer>> DISPOSABLE_ENTITIES_SET = new ArrayList<>();
     protected static final List<Map<Integer, ?>> DISPOSABLE_ENTITIES_MAP = new ArrayList<>();
 
-    private static final Map<Integer, Entity> ENTITIES = new HashMap<>();
+    private static final Map<Integer, Entity> ENTITIES = new ConcurrentHashMap<>();
     private static final List<Integer> TASKS = new ArrayList<>();
     protected final String name;
     private final String skill;
@@ -64,12 +64,7 @@ public abstract class Ability implements Listener {
 
     public static void addEntity(Entity entity) {
         ENTITIES.put(entity.getEntityId(), entity);
-//        addMinion(entity);
     }
-
-//    public static void addMinion(Entity entity) {
-//        entity.setMetadata(SKILLS_ENTITY, new FixedMetadataValue(SkillsPro.get(), null));
-//    }
 
     @SafeVarargs
     public static void addDisposableHandler(Set<Integer>... sets) {
@@ -308,7 +303,7 @@ public abstract class Ability implements Listener {
         if (mode == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return null;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        if (info.isUsingAbility()) return null;
+        if (info.getActiveAbilities().contains(this)) return null;
         if (!isPassive() && !info.isActiveReady((ActiveAbility) this)) return null;
 
         PlayerAbilityData data = info.getAbilityData(this);

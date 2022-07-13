@@ -6,7 +6,9 @@ import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
@@ -20,13 +22,13 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.types.Stat;
+import org.skills.utils.FireworkUtil;
 import org.skills.utils.MathUtils;
 import org.skills.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class LevelUp {
     private final ConfigurationSection section;
@@ -141,19 +143,13 @@ public class LevelUp {
         XParticle.dnaReplication(plugin, 1, 0.2, 3, 1, height, 2, display);
 
         int fireworks = MathUtils.randInt(2, 5);
-        int lowLv2 = Math.max(1, lvl / 2);
-        List<Color> colors = new ArrayList<>();
-        for (int j = 0; j < lowLv2; j++) colors.add(Color.fromRGB(MathUtils.randInt(0, 255), MathUtils.randInt(0, 255), MathUtils.randInt(0, 255)));
+        int colorCount = Math.max(1, lvl / 2);
 
         for (int i = 0; i < fireworks; i++) {
             Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
             FireworkMeta meta = firework.getFireworkMeta();
-            FireworkEffect effect =
-                    FireworkEffect.builder().withColor(colors.stream().limit(lowLv2).collect(Collectors.toList()))
-                            .with(FireworkEffect.Type.values()[MathUtils.randInt(0, FireworkEffect.Type.values().length - 1)])
-                            .withTrail().build();
+            FireworkUtil.generateFireworkMeta(meta, colorCount);
             if (height > 10) meta.setPower(1);
-            meta.addEffect(effect);
             firework.setMetadata("LVLUP", new FixedMetadataValue(plugin, null));
             firework.setFireworkMeta(meta);
         }

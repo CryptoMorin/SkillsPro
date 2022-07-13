@@ -150,8 +150,6 @@ public class MathUtils {
 
     /**
      * What is P percent of X?
-     *
-     * @return
      */
     public static double percentOfAmount(double percent, double amount) {
         return (amount * percent) / 100;
@@ -301,7 +299,7 @@ public class MathUtils {
         if (number > 2 && isEven(number)) return false;
 
         // Only odd factors need to be tested up to n^0.5
-        for (int i = 3; i * i <= number; i += 2)
+        for (int i = 3; (long) i * i <= number; i += 2)
             if (number % i == 0) return false;
         return true;
     }

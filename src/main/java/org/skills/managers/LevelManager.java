@@ -156,6 +156,8 @@ public final class LevelManager implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onKillGains(EntityDeathEvent event) {
         LivingEntity killed = event.getEntity();
+        SLogger.debug(() -> "An entity was killed " + killed + " (" + killed.getType() + ") " + " | " + DamageManager.getKiller(event)
+                + " | " + Ability.isSkillEntity(killed) + " | " + ServiceHandler.isKingdomMob(killed) + " | " + SkillsConfig.isInDisabledWorld(killed.getWorld()));
         if (killed.getType() == EntityType.ARMOR_STAND) return;
 
         Entity killerOpt = DamageManager.getKiller(event);
@@ -168,25 +170,29 @@ public final class LevelManager implements Listener {
         Player killer = (Player) killerOpt;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(killer);
         Pair<String, Number> property = ServiceHandler.getMobProperties(killed);
-        SLogger.debug(() -> "&c" + killer.getName() + " &6killed &2" + killed.getName() + " &8(&2" + killed.getCustomName() + "&7-&2"
+        SLogger debugger = new SLogger();
+        debugger.add(() -> "&c" + killer.getName() + " &6killed &2" + killed.getName() + " &8(&2" + killed.getCustomName() + "&7-&2"
                 + killed.getType() + "&8) &6with custom property &2" + property + " &6and vanilla EXP of &2" + event.getDroppedExp());
 
         /// XP ///
-        double gainedXp = 0;
+        double xp = 0;
         if (killer.hasPermission("skills.xp") && !SkillsConfig.DISABLED_WORLDS_XP_GAIN.getStringList().contains(killer.getWorld().getName())) {
-            double xp = MathUtils.evaluateEquation(
+            xp = MathUtils.evaluateEquation(
                     MessageHandler.replace(SkillsConfig.DEFAULT_XP.getString(), "lvl",
                             property == null ? 1 : property.getValue().doubleValue()));
 
             for (CustomAmount custom : CUSTOM_XP) {
                 boolean matched = custom.matches(killed, property);
-                SLogger.debug(() -> "Matching XP " + custom + " returned: " + matched);
+                debugger.add(() -> "Matching XP " + custom + " returned: " + matched);
                 if (matched) {
                     xp = custom.evaluate(killer, property);
                     break;
                 }
             }
-            if (xp == -1) xp = event.getDroppedExp();
+            if (xp == -1) {
+                xp = event.getDroppedExp();
+                debugger.add(() -> "No custom XP defined for this entity, using the default XP which is " + event.getDroppedExp());
+            }
 
             // EXP Server-wide boost
             SkillsEvent xpEvent = SkillsEventManager.getEvent(SkillsEventType.XP);
@@ -240,8 +246,9 @@ public final class LevelManager implements Listener {
                 SkillXPGainEvent expGainEvent = new SkillXPGainEvent(killer, killed, xp);
                 Bukkit.getPluginManager().callEvent(expGainEvent);
                 if (!expGainEvent.isCancelled()) {
-                    info.addXP(expGainEvent.getGained());
-                    gainedXp = expGainEvent.getGained();
+                    if (xp != expGainEvent.getGained()) debugger.add("Event changed the gained XP from " + xp + " to " + expGainEvent.getGained());
+                    xp = expGainEvent.getGained();
+                    info.addXP(xp);
                 }
             }
         }
@@ -254,7 +261,7 @@ public final class LevelManager implements Listener {
                             property == null ? 1 : property.getValue().doubleValue()));
 
             for (CustomAmount custom : CUSTOM_SOULS) {
-                SLogger.debug(() -> "Matching souls '" + custom.matcher + "': '" + custom.equation + "' matches? "
+                debugger.add(() -> "Matching souls '" + custom.matcher + "': '" + custom.equation + "' matches? "
                         + custom.matches(killed, property) + " evaluated: " + custom.evaluate(killer, property));
                 if (custom.matches(killed, property)) {
                     souls = (int) custom.evaluate(killer, property);
@@ -328,17 +335,22 @@ public final class LevelManager implements Listener {
         }
         if (list.length() != 0) SkillsLang.ABILITY_UPGRADE_NOTIFICATION.sendMessage(killer, "%abilities%", list);
 
-        gainedXp = MathUtils.roundToDigits(gainedXp, 2);
+        double roundedXP = MathUtils.roundToDigits(xp, 2);
         if (SkillsConfig.HOLOGRAM_ENABLED.getBoolean()) {
             if (!SkillsConfig.HOLOGRAM_DISABLED_MOBS.getStringList().contains(killed.getType().name())) {
                 Hologram.spawn(killed.getLocation().clone().add(0, -2, 0),
                         SkillsConfig.HOLOGRAM_STAY.getLong(),
-                        SkillsConfig.HOLOGRAM_LINES.getStringList(), "%xp%", gainedXp, "%souls%", gainedSouls);
+                        SkillsConfig.HOLOGRAM_LINES.getStringList(), "%xp%", roundedXP, "%souls%", gainedSouls);
             }
         }
+
+
+        debugger.add("Final XP: " + xp + " Final souls: " + gainedSouls);
+        debugger.show();
+
         if (SkillsConfig.KILL_MESSAGE.getBoolean()) {
             String name = killed.getCustomName() == null ? killed.getName() : killed.getCustomName();
-            SkillsLang.KILL_MESSAGE.sendMessage(killer, "%xp%", gainedXp, "%souls%", gainedSouls, "%name%", name);
+            SkillsLang.KILL_MESSAGE.sendMessage(killer, "%xp%", roundedXP, "%souls%", gainedSouls, "%name%", name);
         }
         CustomHudChangeEvent.call(killer);
     }

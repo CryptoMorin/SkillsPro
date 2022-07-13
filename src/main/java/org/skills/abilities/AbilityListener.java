@@ -30,6 +30,7 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.managers.SkillItemManager;
+import org.skills.managers.resurrect.LastBreath;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.types.SkillScaling;
 import org.skills.utils.LocationUtils;
@@ -57,6 +58,7 @@ public class AbilityListener implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return false;
         if (SkillsConfig.isInDisabledWorld(player.getLocation())) return false;
         if (SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) return false;
+        if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && LastBreath.isLastBreaths(player)) return false;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         if (!info.hasSkill()) return false;

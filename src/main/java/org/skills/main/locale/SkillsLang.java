@@ -396,6 +396,7 @@ public enum SkillsLang {
     ABILITY_DUAL_ARROWS_TITLE("&6Dual Arrows", 1, 3),
     ABILITY_MINIONS_TITLE("&6Minions Arrow", 1, 2),
     ABILITY_FIRE_CROSSBOW_TITLE("&6Fire Crossbow", 1, 3),
+    //    ABILITY_CROSS_EXAMINE_TITLE("&6Fire Examine", 1, 3),
     ABILITY_LOCATE_TITLE("&6Locate", 1, 2),
     ABILITY_BLOOD_LUST_TITLE("&6Blood Lust", 1, 3),
     ABILITY_BLOOD_WELL_TITLE("&6Blood Well", 1, 3),
@@ -535,6 +536,7 @@ public enum SkillsLang {
             "&eLevel 2&8: &3Two skeletons with invisibility\neffect and better bows.\n&eLevel 3&8: &33 Pillagers with invisibility\nand flame arrows.", 1, 2),
     SKILL_ARBALIST_MINIONS_MSG("&cYou spawned your minions.", 1, 2),
     ABILITY_FIRE_CROSSBOW_DESCRIPTION("&3Fire an arrow at your enemy\nby punching. Does not use arrows,\nand instead uses energy.\nUpgrade to reduce cooldown", 1, 3),
+    //    ABILITY_CROSS_EXAMINE_DESCRIPTION("&3sth", 1, 3),
     ABILITY_VAMPIRE_PASSIVE_DESCRIPTION("&3You'll lose blood over time.\nAttacking gives you a few\nblood per hit. " +
             "For every\n%blood% blood you have, deal an additional\n&e%damage% &3melee damage to your targets.", 1, 3),
     ABILITY_BLOOD_LUST_DESCRIPTION("&3Level 1: If you have more than 70% of\nyour blood well full, go into a frenzy,\nallowing you to deal\n&e%damage% &3more damage than " +

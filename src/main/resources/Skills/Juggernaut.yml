@@ -35,11 +35,22 @@ abilities:
       THORNS: max(0, lvl - 2) def/3
   chain-smash:
     required-level: 20
-    damage: (str / 2) + lvl
-    range: lvl + 2
+
+    # The force causes the player to jump into the air to smash back.
     initial-launch: min(2, lvl)
-    smash-force: -max(2, lvl)
+
+    # The negative force that causes the player to smash back into the ground.
+    smash-force: min(-2, -lvl)
+
+    # The force that throws surrounding players away from the attacker.
     explosion-launch: min(2.5, lvl)
+
+    # Damage surrounding players.
+    damage: (str / 2) + lvl
+
+    # The surrounding players range which the damage and explosion launch applies to.
+    range: lvl + 2
+    
     cost: 100 * (lvl + 1)
     activation:
       key: LR

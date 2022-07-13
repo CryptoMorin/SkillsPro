@@ -28,6 +28,7 @@ public class PriestBarrier extends InstantActiveAbility {
     public void useSkill(AbilityContext context) {
         Player player = context.getPlayer();
         SkilledPlayer info = context.getInfo();
+        info.setActiveAbilitiy(this, true);
 
         double duration = getScaling(info, "duration");
         int frequency = (int) getScaling(info, "frequency");
@@ -46,7 +47,10 @@ public class PriestBarrier extends InstantActiveAbility {
             public void run() {
                 XParticle.sphere(radius, count, barrier);
                 playSound(player, info, "end");
-                if ((repeat -= decreamentFactor) <= 0) cancel();
+                if ((repeat -= decreamentFactor) <= 0) {
+                    cancel();
+                    info.setActiveAbilitiy(PriestBarrier.this, false);
+                }
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 10L);
 

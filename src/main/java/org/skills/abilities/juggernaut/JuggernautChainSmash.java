@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -24,16 +25,8 @@ import org.skills.managers.DamageManager;
 import org.skills.utils.EntityUtil;
 import org.skills.utils.MathUtils;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class JuggernautChainSmash extends InstantActiveAbility {
-    private static final Set<Integer> PERFORMING = new HashSet<>();
     private static final String CHAIN_SMASH = "CHAIN_SMASH";
-
-    static {
-        addDisposableHandler(PERFORMING);
-    }
 
     public JuggernautChainSmash() {
         super("Juggernaut", "chain_smash");
@@ -79,26 +72,27 @@ public class JuggernautChainSmash extends InstantActiveAbility {
 
     @EventHandler(ignoreCancelled = true)
     public void onFall(EntityDamageEvent event) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL && event.getEntity() instanceof Player &&
-                PERFORMING.remove(event.getEntity().getEntityId())) event.setCancelled(true);
+        if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
+        if (!(event.getEntity() instanceof Player)) return;
+        if (!SkilledPlayer.getSkilledPlayer((OfflinePlayer) event.getEntity()).getActiveAbilities().remove(this)) return;
+        event.setCancelled(true);
     }
 
     @Override
     public void useSkill(AbilityContext context) {
         Player player = context.getPlayer();
         SkilledPlayer info = context.getInfo();
-        info.toggleUsingAbility();
 
+        info.setActiveAbilitiy(this, true);
         double initialLaunch = getScaling(info, "initial-launch");
         player.setVelocity(new Vector(0, initialLaunch, 0));
         XSound.ENTITY_HORSE_JUMP.play(player, 3, 0);
         ParticleDisplay cloud = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).withCount(100).offset(1);
         cloud.spawn();
-        PERFORMING.add(player.getEntityId());
 
         double damage = getScaling(info, "damage");
         double range = getScaling(info, "range");
-        double launch = getScaling(info, "launch");
+        double launch = getScaling(info, "explosion-launch");
         double smashForce = getScaling(info, "smash-force");
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
@@ -112,7 +106,6 @@ public class JuggernautChainSmash extends InstantActiveAbility {
 
                     // If they're not on the ground yet.
                     if (!MathUtils.isInteger(loc.getY())) return;
-                    info.toggleUsingAbility();
 
                     cancel();
                     cloud.spawn(loc);
@@ -133,7 +126,7 @@ public class JuggernautChainSmash extends InstantActiveAbility {
                         display.spawn(entity.getLocation());
                     }
 
-                    PERFORMING.remove(player.getEntityId());
+                    info.setActiveAbilitiy(JuggernautChainSmash.this, false);
                 }
             }.runTaskTimer(SkillsPro.get(), 5L, 1L);
         }, 20L);
@@ -143,7 +136,6 @@ public class JuggernautChainSmash extends InstantActiveAbility {
     public void onTp(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        if (info.isUsingAbility()) return;
         if (info.getLastAbilityUsed() != this) return;
         SkillsLang.COMMAND_BINDINGS_CHANGED.sendMessage(player);
     }

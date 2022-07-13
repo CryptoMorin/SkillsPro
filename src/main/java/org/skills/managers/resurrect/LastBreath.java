@@ -274,12 +274,16 @@ public final class LastBreath implements Listener {
         }.runTaskTimer(SkillsPro.get(), 0L, 20L);
     }
 
+    public static boolean isLastBreaths(Player player) {
+        return LAST_MEN_STANDING.containsKey(player.getEntityId());
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onMove(PlayerMoveEvent event) {
         if (!LocationUtils.hasMovedABlock(event.getFrom(), event.getTo())) return;
 
         Player player = event.getPlayer();
-        if (!LAST_MEN_STANDING.containsKey(player.getEntityId())) return;
+        if (!isLastBreaths(player)) return;
 
         Block to = event.getTo().getBlock();
         Block toBarrier = to.getRelative(BlockFace.UP);

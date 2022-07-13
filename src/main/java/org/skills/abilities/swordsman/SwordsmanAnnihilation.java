@@ -21,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.NumberConversions;
@@ -38,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SwordsmanAnnihilation extends InstantActiveAbility {
     private static final String META = "Annihilation";
@@ -45,10 +45,11 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
     private static final Map<Integer, Runnable> CANCELS = new HashMap<>();
 
     static {
-        if (XMaterial.supports(16)) SWORDS = new XMaterial[]{XMaterial.WOODEN_SWORD, XMaterial.STONE_SWORD, XMaterial.IRON_SWORD,
-                XMaterial.GOLDEN_SWORD, XMaterial.DIAMOND_SWORD, XMaterial.NETHERITE_SWORD};
-        else SWORDS = new XMaterial[]{XMaterial.WOODEN_SWORD, XMaterial.STONE_SWORD, XMaterial.IRON_SWORD,
-                XMaterial.GOLDEN_SWORD, XMaterial.DIAMOND_SWORD};
+        List<XMaterial> swords = new ArrayList<>(Arrays.asList(
+                XMaterial.WOODEN_SWORD, XMaterial.STONE_SWORD, XMaterial.IRON_SWORD,
+                XMaterial.GOLDEN_SWORD, XMaterial.DIAMOND_SWORD));
+        if (XMaterial.supports(16)) swords.add(XMaterial.NETHERITE_SWORD);
+        SWORDS = swords.toArray(new XMaterial[0]);
     }
 
     public SwordsmanAnnihilation() {
@@ -74,10 +75,10 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         if (event.getAction() != Action.LEFT_CLICK_AIR) return;
 
         Player player = event.getPlayer();
-        if (!player.hasMetadata(META)) return;
         if (Cooldown.isInCooldown(player.getUniqueId(), META)) return;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+        if (!info.getActiveAbilities().contains(this)) return;
         new Cooldown(player.getUniqueId(), META, (long) getScaling(info, "throw.cooldown"), TimeUnit.SECONDS);
 
         ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1).withCount(10);
@@ -89,7 +90,6 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
             Item item = player.getWorld().dropItem(loc, sword.parseItem());
             item.setGravity(false);
             item.setPickupDelay(Integer.MAX_VALUE);
-            item.setMetadata(META, new FixedMetadataValue(SkillsPro.get(), null));
             remove.spawn(loc);
             items.add(item);
         }
@@ -160,7 +160,6 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                 rate += 0.5;
                 if (rate > 20) {
                     cancel();
-                    info.toggleUsingAbility();
                     Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
                         for (Item item : items) {
                             item.remove();
@@ -176,10 +175,10 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
     public void useSkill(AbilityContext context) {
         Player player = context.getPlayer();
         SkilledPlayer info = context.getInfo();
-        info.toggleUsingAbility();
+        info.setActiveAbilitiy(this, true);
 
         ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1, 0.1, 0.1).withCount(10);
-        Set<Entity> items = ConcurrentHashMap.newKeySet();
+        List<Item> items = new ArrayList<>(SWORDS.length);
         new BukkitRunnable() {
             final ThreadLocalRandom random = ThreadLocalRandom.current();
             int i = 0;
@@ -193,14 +192,12 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                 Item item = player.getWorld().dropItem(loc, mat.parseItem());
                 item.setGravity(false);
                 item.setPickupDelay(Integer.MAX_VALUE);
-                item.setMetadata(META, new FixedMetadataValue(SkillsPro.get(), null));
                 items.add(item);
+                addEntity(item);
 
                 if (++i == SWORDS.length) cancel();
             }
         }.runTaskTimer(SkillsPro.get(), 1, 20L);
-        addAllEntities(items);
-        player.setMetadata(META, new FixedMetadataValue(SkillsPro.get(), items));
 
         long duration = (long) getScaling(info, "duration") * 20L;
         XSound.MUSIC_DISC_FAR.play(player, 10f, 0.5f);
@@ -214,6 +211,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                 new double[]{0, pi / 4, pi / 2, pi / 4}));
 
         AtomicBoolean cancel = new AtomicBoolean();
+        AtomicReference<Runnable> canceller = new AtomicReference<>(); // fuck java
         BukkitTask task = new BukkitRunnable() {
             static final double radius = 2;
             final double rateDiv = pi / 30;
@@ -246,43 +244,11 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                     i++;
                 }
 
-                if (--dur <= 0) {
-                    cancel();
-                    curl.cancel();
-                    cancel.set(true);
-                    CANCELS.remove(player.getEntityId());
-                    player.stopSound(XSound.MUSIC_DISC_FAR.parseSound());
-
-                    Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
-                        for (Entity item : items) {
-                            item.remove();
-                            remove.spawn(item.getLocation());
-                            player.removeMetadata(META, SkillsPro.get());
-                            removeEntity(item);
-                        }
-                    });
-                    XSound.BLOCK_BEACON_DEACTIVATE.play(player.getLocation(), 10f, 0.5f);
-                }
+                if (--dur <= 0) canceller.get().run();
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0, 1);
-        Runnable canceller = () -> {
-            curl.cancel();
-            task.cancel();
-            cancel.set(true);
-            CANCELS.remove(player.getEntityId());
-            player.stopSound(XSound.MUSIC_DISC_FAR.parseSound());
 
-            for (Entity item : items) {
-                item.remove();
-                remove.spawn(item.getLocation());
-                player.removeMetadata(META, SkillsPro.get());
-                removeEntity(item);
-            }
-            XSound.BLOCK_BEACON_DEACTIVATE.play(player.getLocation(), 10f, 0.5f);
-        };
-        CANCELS.put(player.getEntityId(), canceller);
-
-        new BukkitRunnable() {
+        BukkitTask trackerTask = new BukkitRunnable() {
             final double range = getScaling(info, "range");
             final double damage = getScaling(info, "damage");
             final double rateDiv = Math.PI / 20;
@@ -292,10 +258,6 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
 
             @Override
             public void run() {
-                if (cancel.get()) {
-                    cancel();
-                    return;
-                }
                 if (fighting.size() >= SWORDS.length) return;
                 for (Entity entity : player.getNearbyEntities(range, range, range)) {
                     if (player == entity) continue;
@@ -355,6 +317,27 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                 }
             }
         }.runTaskTimer(SkillsPro.get(), 20, 20);
+
+
+        canceller.set(() -> {
+            curl.cancel();
+            task.cancel();
+            trackerTask.cancel();
+            cancel.set(true);
+            CANCELS.remove(player.getEntityId());
+            player.stopSound(XSound.MUSIC_DISC_FAR.parseSound());
+
+            Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
+                for (Entity item : items) {
+                    item.remove();
+                    remove.spawn(item.getLocation());
+                    removeEntity(item);
+                }
+            });
+            XSound.BLOCK_BEACON_DEACTIVATE.play(player.getLocation(), 10f, 0.5f);
+            info.setActiveAbilitiy(this, false);
+        });
+        CANCELS.put(player.getEntityId(), canceller.get());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -374,6 +357,6 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
 
     @EventHandler(ignoreCancelled = true)
     public void onHoppeerSwordPickup(InventoryPickupItemEvent event) {
-        if (event.getItem().hasMetadata(META)) event.setCancelled(true);
+        if (isSkillEntity(event.getItem())) event.setCancelled(true);
     }
 }
