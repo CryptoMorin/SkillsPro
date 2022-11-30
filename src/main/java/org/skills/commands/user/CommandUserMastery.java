@@ -39,8 +39,8 @@ public class CommandUserMastery extends SkillsCommand {
                     info.setMasteryLevel(mastery, request);
 
                     SkillsLang.Command_User_Mastery_Set_Success.sendMessage(sender,
-                            "%player%", player.getName(), "%amount%", amount + "",
-                            "%mastery%", mastery.getName(), "%new%", info.getMasteryLevel(mastery) + "");
+                            "%player%", player.getName(), "%amount%", String.valueOf(amount),
+                            "%mastery%", mastery.getName(), "%new%", String.valueOf(info.getMasteryLevel(mastery)));
                 } catch (NumberFormatException ignored) {
                     SkillsCommandHandler.sendNotNumber(sender, mastery.getName() + "'s level", args[3]);
                 }

@@ -20,6 +20,7 @@ import org.skills.api.events.ClassChangeEvent;
 import org.skills.api.events.SkillToggleAbilityEvent;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
+import org.skills.managers.resurrect.LastBreath;
 import org.skills.utils.LocationUtils;
 
 import java.util.HashSet;
@@ -92,6 +93,7 @@ public class PriestPassive extends Ability {
             if (!LocationUtils.hasMoved(event.getFrom(), event.getTo())) return;
             Player player = event.getPlayer();
             if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
+            if (LastBreath.isLastBreaths(player)) return;
 
             SkilledPlayer info = this.checkup(player);
             if (info == null) return;
@@ -168,6 +170,8 @@ public class PriestPassive extends Ability {
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();
+        if (LastBreath.isLastBreaths(player)) return;
+
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 

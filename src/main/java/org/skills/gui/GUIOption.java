@@ -81,8 +81,8 @@ public class GUIOption {
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     public GUIOption clone() {
         GUIOption option = new GUIOption(this.name, item.clone(), new ArrayList<>(slots), sound, canBeTaken, new ArrayList<>(commands), message);
-        option.setConversation(conversation);
-        option.setRunnables(runnables);
+        option.conversation = conversation;
+        option.runnables = runnables;
         return option;
     }
 

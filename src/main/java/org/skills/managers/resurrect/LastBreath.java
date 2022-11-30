@@ -1,10 +1,10 @@
 package org.skills.managers.resurrect;
 
+import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -125,23 +125,28 @@ public final class LastBreath implements Listener {
         event.setDamage(SkillsConfig.LAST_BREATH_DAMAGE.getDouble());
     }
 
+    /**
+     * https://minecraft.fandom.com/wiki/Totem_of_Undying
+     */
+    public static void totemOfUndying(Player player) {
+        // player.spawnParticle(Particle.TOTEM, player.getEyeLocation(), 1); // Doesn't work
+        // XSound.ITEM_TOTEM_USE.play(player); // Not needed, the line below takes care of that.
+        player.playEffect(EntityEffect.TOTEM_RESURRECT);
+
+        player.setHealth(player.getHealth() + 1);
+
+        // player.getActivePotionEffects().clear(); // Doesn't work, it's a copy
+        player.getActivePotionEffects().forEach(x -> player.removePotionEffect(x.getType()));
+
+        player.addPotionEffect(XPotion.REGENERATION.buildPotionEffect(45 * 20, 2));
+        player.addPotionEffect(XPotion.FIRE_RESISTANCE.buildPotionEffect(40 * 20, 1));
+        player.addPotionEffect(XPotion.ABSORPTION.buildPotionEffect(5 * 20, 1));
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onDeathOrDamage(EntityDamageEvent event) {
-        switch (event.getCause()) {
-            case SUICIDE:
-            case SUFFOCATION:
-            case LAVA:
-            case VOID:
-                return;
-            case STARVATION:
-                cancel(event, event.getEntity());
-                break;
-        }
-
         if (!(event.getEntity() instanceof Player)) return;
         Player player = (Player) event.getEntity();
-        double hpLeft = player.getHealth() - event.getFinalDamage();
-        if (hpLeft > 0) return; // They're still alive
 
         // Can't save them again if they die.
         LastManStanding lastMan = LAST_MEN_STANDING.remove(player.getEntityId());
@@ -149,6 +154,37 @@ public final class LastBreath implements Listener {
             lastMan.resetState();
             return;
         }
+
+        switch (event.getCause()) {
+            case SUICIDE:
+            case SUFFOCATION:
+            case LAVA:
+            case VOID:
+            case DROWNING:
+            case CUSTOM:
+                return;
+            case STARVATION:
+                cancel(event, event.getEntity());
+                break;
+        }
+
+        double hpLeft = player.getHealth() - event.getFinalDamage();
+        if (hpLeft > 0) return; // They'll be alive
+
+        if (ReflectionUtils.supports(11)) {
+            boolean mainTotem = XMaterial.matchXMaterial(player.getInventory().getItemInMainHand()) == XMaterial.TOTEM_OF_UNDYING;
+            boolean offTotem = XMaterial.matchXMaterial(player.getInventory().getItemInOffHand()) == XMaterial.TOTEM_OF_UNDYING;
+            if (mainTotem || offTotem) {
+                totemOfUndying(player);
+
+                if (mainTotem) player.getInventory().setItemInMainHand(null);
+                else player.getInventory().setItemInOffHand(null);
+
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (Cooldown.isInCooldown(player.getUniqueId(), "LASTBREATH")) return;
         if (hpLeft > SkillsConfig.LAST_BREATH_INTENSITY_RESISTANCE.getDouble()) return;
 

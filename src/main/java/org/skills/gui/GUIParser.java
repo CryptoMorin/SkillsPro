@@ -63,6 +63,7 @@ public class GUIParser {
     public static InteractiveGUI parseOption(Player player, OfflinePlayer placeholder, String name, List<Object> edits) {
         Configuration config = GUIConfig.getGUI(name);
         if (config == null) return null;
+
         config.options().pathSeparator('\u0000'); // NULL
         boolean disallowCreative = config.getBoolean("disallow-creative");
         if (disallowCreative && player.getGameMode() == GameMode.CREATIVE) {

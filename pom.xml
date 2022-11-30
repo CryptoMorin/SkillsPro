@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.2.3.0.0.1</version>
+    <version>19.2.4</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -208,7 +208,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>kingdoms</artifactId>
-            <version>1.13.3</version>
+            <version>1.14.15.3-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -326,7 +326,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>9.0.0</version>
+            <version>9.2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

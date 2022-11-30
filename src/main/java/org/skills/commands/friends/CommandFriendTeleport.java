@@ -77,7 +77,7 @@ public class CommandFriendTeleport extends SkillsCommand {
                 if (sentReqsNew.isEmpty()) CommandFriendAccept.requests.remove(tpTo.getUniqueId());
                 else CommandFriendAccept.requests.put(tpTo.getUniqueId(), sentReqsNew);
             }
-        }, time * 20).getTaskId();
+        }, time * 20L).getTaskId();
 
         sentReqs.add(new CommandFriendAccept.Teleportation(player.getUniqueId(), id));
         CommandFriendAccept.requests.put(tpTo.getUniqueId(), sentReqs);

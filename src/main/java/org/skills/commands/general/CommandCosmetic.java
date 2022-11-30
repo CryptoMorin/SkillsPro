@@ -33,7 +33,8 @@ public class CommandCosmetic extends SkillsCommand {
 
         InteractiveGUI gui = GUIParser.parseOption(player, category.getName());
         if (gui == null) {
-            MessageHandler.sendPlayerMessage(player, "&4Could not find GUI for &e" + category.getName() + " &4cosmetic category. Please contact the server's administrators.");
+            MessageHandler.sendPlayerMessage(player, "&4Could not find/parse GUI for &e" + category.getName() + " &4cosmetic category. " +
+                    "Please contact the server's administrators. If you're an admin, please also check your console.");
             return;
         }
 

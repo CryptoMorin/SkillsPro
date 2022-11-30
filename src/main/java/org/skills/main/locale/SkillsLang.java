@@ -603,7 +603,7 @@ public enum SkillsLang {
     ABILITY_KINDLING_OF_LIFE_DESCRIPTION("&3Heal your team mates by &e%heal% &3amount.\nHigher levels gives higher velocity\nand higher health.\n" +
             "Activating the ability while sneaking,\nwill heal yourself.", 1, 4),
     ABILITY_BARRIER_TITLE("&4Barrier", 1, 2),
-    ABILITY_BARRIER_DESCRIPTION("&3Activate a shield while holding\na golden hoe to push all the\nenemies out of the barrier.\nEnemies that try to enter this shield\n" +
+    ABILITY_BARRIER_DESCRIPTION("&3Activate a shield while holding\na &5golden hoe &3to push all the\nenemies out of the barrier.\nEnemies that try to enter this shield\n" +
             "are affected and knocked back.\n\nThis ability is specially useful in\nclose spaces as enemies can't\nescape and keep getting damaged.", 1, 2),
     ABILITY_ASCLEPIUS_TITLE("&6Asclepius", 1, 2),
     ABILITY_ASCLEPIUS_DESCRIPTION("&3Give effects to players around you\n while holding a hoe.\nSupport your teammates before a fight\nwith some buffs.\n" +

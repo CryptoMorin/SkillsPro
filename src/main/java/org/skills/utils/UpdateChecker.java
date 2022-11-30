@@ -279,7 +279,7 @@ public class UpdateChecker implements Listener {
         return "&8-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-" +
                 "\n  &2There is an update available!" +
                 "\n  &2Current Version&8: &6v" + currentVersion +
-                "\n  &2Latest Version&8: &6v" + latestVersion + "\n" +
+                "\n  &2Latest Version&8: &6v" + latestVersion + '\n' +
                 "&8-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-";
     }
 

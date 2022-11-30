@@ -21,9 +21,9 @@ public class CommandAbout extends SkillsCommand {
                 "&9" + USER + " &8(&2" + NONCE + "&8)";
         MessageHandler.sendMessage(sender, "\n&8-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n" +
                 "             &7-=( &3SkillsPro &7)=-\n" +
-                "&7| &2" + plugin.getDescription().getDescription() + "\n" +
+                "&7| &2" + plugin.getDescription().getDescription() + '\n' +
                 "&7| &2Developers&8: &9Crypto Morin & Hex_26\n" +
-                "&7| &2Version&8: &9" + plugin.getDescription().getVersion() + "\n" +
+                "&7| &2Version&8: &9" + plugin.getDescription().getVersion() + '\n' +
                 "&7| &2Register&8: " + register + "\n\n" +
                 "&8-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n ");
     }

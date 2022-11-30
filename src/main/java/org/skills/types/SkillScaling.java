@@ -11,6 +11,6 @@ public enum SkillScaling {
 
     @Override
     public String toString() {
-        return "SCALING[" + this.name() + "]";
+        return "SCALING[" + this.name() + ']';
     }
 }

@@ -44,8 +44,8 @@ public abstract class SkillsCommand {
         SkillsCommand lastGroup = group;
         StringBuilder perms = new StringBuilder();
         while (lastGroup != null) {
-            perms.insert(0, lastGroup.getName() + '.');
-            lastGroup = lastGroup.getGroup();
+            perms.insert(0, lastGroup.name + '.');
+            lastGroup = lastGroup.group;
         }
         this.permission = "skills.command." + perms + this.name;
 
@@ -127,9 +127,9 @@ public abstract class SkillsCommand {
 
     public @NonNull
     SkillsCommand[] getSubCommands() {
-        if (!this.isGroup()) return new SkillsCommand[0];
+        if (!this.isGroup) return new SkillsCommand[0];
         return SkillsCommandHandler.commands.stream()
-                .filter(c -> c.getGroup() != null && c.getGroup().equals(this))
+                .filter(c -> c.group != null && c.group.equals(this))
                 .toArray(SkillsCommand[]::new);
     }
 

@@ -50,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class Ability implements Listener {
     protected static final List<Set<Integer>> DISPOSABLE_ENTITIES_SET = new ArrayList<>();
     protected static final List<Map<Integer, ?>> DISPOSABLE_ENTITIES_MAP = new ArrayList<>();
+    protected static final Map<Integer, List<BukkitTask>> DISPOSABLE_TASKS = new HashMap<>();
 
     private static final Map<Integer, Entity> ENTITIES = new ConcurrentHashMap<>();
     private static final List<Integer> TASKS = new ArrayList<>();
@@ -74,6 +75,14 @@ public abstract class Ability implements Listener {
     @SafeVarargs
     public static void addDisposableHandler(Map<Integer, ?>... maps) {
         DISPOSABLE_ENTITIES_MAP.addAll(Arrays.asList(maps));
+    }
+
+    public static void disposableTask(Player player, BukkitTask task) {
+        DISPOSABLE_TASKS.compute(player.getEntityId(), (k, v) -> {
+            if (v == null) v = new ArrayList<>(3);
+            v.add(task);
+            return v;
+        });
     }
 
     public static boolean isSkillEntity(Entity entity) {

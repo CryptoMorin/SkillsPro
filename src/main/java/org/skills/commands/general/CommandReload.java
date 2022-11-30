@@ -40,6 +40,7 @@ public class CommandReload extends SkillsCommand {
             return;
         }
 
+        new GUIConfig(plugin); // Needs to be before loading cosmetics or it resetes the GUIs
         CosmeticCategory.load(plugin);
         new SkillsCommandHandler(plugin);
         Hologram.load();
@@ -48,7 +49,6 @@ public class CommandReload extends SkillsCommand {
 
         LevelManager.load(plugin);
         SkillManager.init(plugin);
-        new GUIConfig(plugin);
 
         MasteryManager.getMasteries().forEach(HandlerList::unregisterAll);
         if (SkillsMasteryConfig.MASTERIES_ENABLED.getBoolean()) new MasteryManager();

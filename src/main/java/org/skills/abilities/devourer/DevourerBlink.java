@@ -105,7 +105,7 @@ public class DevourerBlink extends ActiveAbility {
             if (hits > maxHits) hits = -1;
         }
 
-        if (hits != -1) new Cooldown(player.getUniqueId(), "BLINK", 2 * 1000 + lvl * 500, TimeUnit.MILLISECONDS);
+        if (hits != -1) new Cooldown(player.getUniqueId(), "BLINK", 2 * 1000 + lvl * 500L, TimeUnit.MILLISECONDS);
         HITS.put(player.getUniqueId(), hits);
     }
 }

@@ -45,7 +45,7 @@ public class CommandHelp extends SkillsCommand {
                 .stream().filter(c -> c.hasPermission(sender)).toArray(SkillsCommand[]::new));
 
         int eachPage = SkillsConfig.COMMANDS_EACH_PAGE.getInt();
-        List<SkillsCommand> selectedCmds = commands.stream().skip(page * eachPage).collect(Collectors.toList());
+        List<SkillsCommand> selectedCmds = commands.stream().skip((long) page * eachPage).collect(Collectors.toList());
         if (selectedCmds.isEmpty()) {
             return;
         }
@@ -57,7 +57,7 @@ public class CommandHelp extends SkillsCommand {
             SkillsCommand group = cmd.getGroup();
 
             while (group != null) {
-                name.insert(0, group.getName() + " ");
+                name.insert(0, group.getName() + ' ');
                 group = group.getGroup();
             }
 
@@ -124,7 +124,7 @@ public class CommandHelp extends SkillsCommand {
         List<SkillsCommand> commands = Arrays.asList(SkillsCommandHandler.getCommands()
                 .stream().filter(c -> c.hasPermission(sender)).toArray(SkillsCommand[]::new));
 
-        for (int pages = getPageNumbers(commands); pages > 0; pages--) nums.add(pages + "");
+        for (int pages = getPageNumbers(commands); pages > 0; pages--) nums.add(String.valueOf(pages));
         return nums.toArray(new String[0]);
     }
 }

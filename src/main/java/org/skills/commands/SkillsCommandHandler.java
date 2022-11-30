@@ -112,7 +112,7 @@ public class SkillsCommandHandler implements CommandExecutor {
             SkillsCommand group = cmd.getGroup();
 
             while (group != null) {
-                name.insert(0, group.getName() + " ");
+                name.insert(0, group.getName() + ' ');
                 group = group.getGroup();
             }
 

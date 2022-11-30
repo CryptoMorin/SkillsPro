@@ -118,7 +118,7 @@ abilities:
     cost: 100 * (lvl + 1)
 
     # The duration of the barrier in seconds.
-    duration: lvl * 30
+    duration: lvl * 15
     # The frequency of barrier entity checks (potions, damages, pushes and etc) in ticks.
     # Very low frequencies (under 10) might lag the server.
     frequency: 10
@@ -129,7 +129,7 @@ abilities:
       barrier: ENTITY_ENDERMAN_SCREAM, 1, 0.5
 
     radius: 3 + lvl
-    knockback: lvl * 2
+    knockback: lvl
     damage: str / lvl
     effects:
       - "POISON, 30 * 20, lvl"

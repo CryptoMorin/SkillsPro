@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -179,11 +180,23 @@ public class AbilityListener implements Listener {
         if (activate(event.getPlayer(), KeyBinding.SWITCH)) event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onDisposablePlayerHandler(PlayerQuitEvent event) {
         int id = event.getPlayer().getEntityId();
+
+        disposeTasks(event.getPlayer());
         for (Set<Integer> set : Ability.DISPOSABLE_ENTITIES_SET) set.remove(id);
         for (Map<Integer, ?> map : Ability.DISPOSABLE_ENTITIES_MAP) map.remove(id);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        disposeTasks(event.getEntity());
+    }
+
+    static void disposeTasks(Player player) {
+        List<BukkitTask> disposableTasks = Ability.DISPOSABLE_TASKS.remove(player.getEntityId());
+        if (disposableTasks != null) disposableTasks.forEach(BukkitTask::cancel);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
