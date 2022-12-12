@@ -1,4 +1,4 @@
-    package org.skills.commands.user;
+package org.skills.commands.user;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
