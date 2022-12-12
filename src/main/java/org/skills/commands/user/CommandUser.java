@@ -1,4 +1,4 @@
-package org.skills.commands.user;
+    package org.skills.commands.user;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
@@ -24,6 +24,8 @@ public class CommandUser extends SkillsCommand {
 
         new CommandUserXP(this);
         new CommandUserLevel(this);
+        new CommandUserEnergy(this);
+        new CommandUserCooldown(this);
         new CommandUserSouls(this);
 
         new CommandUserSkill(this);

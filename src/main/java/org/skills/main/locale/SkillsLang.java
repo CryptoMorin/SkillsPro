@@ -79,6 +79,17 @@ public enum SkillsLang {
     COMMAND_USER_XP_ADD("&3%amount% has been added to the player's XP", 1, 2, 3),
     COMMAND_USER_XP_REMOVE("&3%amount% has been removed to the player's XP.", 1, 2, 3),
     COMMAND_USER_XP_SET("&3%amount% has been set as the player's XP.", 1, 2, 3),
+
+    COMMAND_USER_ENERGY_DESCRIPTION("&eUse to manipulate xp of a player. Player must be online", 1, 2, 3),
+    COMMAND_USER_ENERGY_ADD("&3%amount% has been added to the player's energy", 1, 2, 3),
+    COMMAND_USER_ENERGY_REMOVE("&3%amount% has been removed from the player's energy.", 1, 2, 3),
+    COMMAND_USER_ENERGY_SET("&3%amount% has been set as the player's energy.", 1, 2, 3),
+
+    COMMAND_USER_COOLDOWN_DESCRIPTION("&eUse to manipulate the cooldown time of a player. Player must be online and amount should be provided in milliseconds.", 1, 2, 3),
+    COMMAND_USER_COOLDOWN_ADD("&3%amount% ms has been added to the player's cooldown time.", 1, 2, 3),
+    COMMAND_USER_COOLDOWN_REMOVE("&3%amount% ms has been removed from the player's cooldown time.", 1, 2, 3),
+    COMMAND_USER_COOLDOWN_SET("&3%amount% ms has been set as the player's cooldown time.", 1, 2, 3),
+
     COMMAND_USER_SKILL_DESCRIPTION("&eUse to manipulate player skill.", 1, 2, 3),
 
     COMMAND_USER_VULNERABLE_DESCRIPTION("&eUsed to set a player as vulnerable in critical situations.", 1, 2, 3),
