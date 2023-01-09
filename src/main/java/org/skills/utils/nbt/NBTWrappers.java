@@ -331,6 +331,12 @@ public final class NBTWrappers {
             getValue().put(key, new NBTTagString(value));
         }
 
+        public void setStringList(String key, List<String> value) {
+            List<NBTBase<String>> strings = new ArrayList<>(value.size());
+            for (String val : value) strings.add(new NBTTagString(val));
+            getValue().put(key, new NBTTagList<>(strings));
+        }
+
         public void setCompound(String key, NBTTagCompound compound) {
             this.value.put(key, compound);
         }
@@ -399,6 +405,20 @@ public final class NBTWrappers {
             return ((NBTTagString) nbt).getValue();
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public List<String> getStringList(String key) {
+            NBTBase<?> nbt = get(key);
+            if (!(nbt instanceof NBTTagList)) return null;
+            List<NBTBase<?>> values = (List<NBTBase<?>>) ((NBTTagList) nbt).getValue();
+
+            List<String> strings = new ArrayList<>(values.size());
+            for (NBTBase<?> val : values) {
+                strings.add(String.valueOf(val.value));
+            }
+
+            return strings;
+        }
+
         public byte[] getByteArray(String key) {
             NBTBase<?> nbt = get(key);
             if (!(nbt instanceof NBTTagByteArray)) return null;
@@ -420,6 +440,7 @@ public final class NBTWrappers {
             try {
                 Map<String, Object> map = new HashMap<>(value.size());
                 for (Map.Entry<String, NBTBase<?>> entry : value.entrySet()) {
+                    if (entry.getValue() == this) throw new IllegalStateException("recursive NBT");
                     map.put(entry.getKey(), entry.getValue().toNBT());
                 }
 
@@ -580,7 +601,7 @@ public final class NBTWrappers {
                 }
 
                 getTypeId = lookup.findVirtual(nbtBase,
-                        ReflectionUtils.supports(18) ? "a" : "getTypeId",
+                        ReflectionUtils.v(19, "b").v(18, "a").orElse("getTypeId"),
                         MethodType.methodType(byte.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();

@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.2.5</version>
+    <version>19.3.0</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

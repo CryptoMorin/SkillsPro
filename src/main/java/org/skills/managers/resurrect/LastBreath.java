@@ -27,6 +27,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.cryptomorin.xseries.ReflectionUtils.*;
@@ -35,12 +36,14 @@ public final class LastBreath implements Listener {
     protected static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
     protected static final Map<Integer, LastManStanding> LAST_MEN_STANDING = new HashMap<>(), REVIVERS = new HashMap<>();
     private static final Object ENTITY_POSE_SWIMMING, ENTITY_POSE_STANDING, DATA_WATCHER_REGISTRY;
-    private static final MethodHandle PACKET_PLAY_OUT_ENTITY_METADATA, CREATE_DATA_WATCHER, GET_DATA_WATCHER, DATA_WATCHER_SET;
+    private static final MethodHandle PACKET_PLAY_OUT_ENTITY_METADATA, CREATE_DATA_WATCHER,
+            GET_DATA_WATCHER, DATA_WATCHER_SET, WATCHER_PACK;
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         Object entityPoseSwimming = null, entityPoseStanding = null, dataWatcherRegistry = null;
-        MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null, getDataWatcher = null, dataWatcherSet = null;
+        MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null,
+                getDataWatcher = null, dataWatcherSet = null, watcherPack = null;
 
         Class<?> entityPose = getNMSClass("world.entity", "EntityPose");
         Class<?> dataWatcher = getNMSClass("network.syncher", "DataWatcher");
@@ -55,12 +58,22 @@ public final class LastBreath implements Listener {
             entityPoseStanding = entityPose.getDeclaredField(v(17, "a").orElse("STANDING")).get(null);
             entityPoseSwimming = entityPose.getDeclaredField(v(17, "d").orElse("SWIMMING")).get(null);
 
-            getDataWatcher = lookup.findVirtual(entityPlayer, v(18, "ai").orElse("getDataWatcher"), MethodType.methodType(dataWatcher));
+            //     public DataWatcher al() {
+            //        return this.Y;
+            //    }
+            getDataWatcher = lookup.findVirtual(entityPlayer, v(19, "al").v(18, "ai").orElse("getDataWatcher"), MethodType.methodType(dataWatcher));
             dataWatcherSet = lookup.findVirtual(dataWatcher, v(18, "b").orElse("set"), MethodType.methodType(void.class, dataWatcherObjectClass, Object.class));
             createDataWatcher = lookup.findConstructor(dataWatcherObjectClass,
                     MethodType.methodType(void.class, int.class, dataWatcherSerializerClass));
+
             packetPlayOutEntityMetadata = lookup.findConstructor(packetPlayOutEntityMetadataClass,
-                    MethodType.methodType(void.class, int.class, dataWatcher, boolean.class));
+                    v(19, MethodType.methodType(void.class, int.class, List.class))
+                            .orElse(MethodType.methodType(void.class, int.class, dataWatcher, boolean.class)));
+
+            if (ReflectionUtils.supports(19)) {
+                // public @Nullable List<b<?>> b()
+                watcherPack = lookup.findVirtual(dataWatcher, "b", MethodType.methodType(List.class));
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -73,6 +86,7 @@ public final class LastBreath implements Listener {
         DATA_WATCHER_SET = dataWatcherSet;
         GET_DATA_WATCHER = getDataWatcher;
         PACKET_PLAY_OUT_ENTITY_METADATA = packetPlayOutEntityMetadata;
+        WATCHER_PACK = watcherPack;
     }
 
     static {
@@ -95,7 +109,12 @@ public final class LastBreath implements Listener {
             Object registry = CREATE_DATA_WATCHER.invoke(ENTITY_POSE_REGISTRY, DATA_WATCHER_REGISTRY);
 
             DATA_WATCHER_SET.invoke(watcher, registry, swimming ? ENTITY_POSE_SWIMMING : ENTITY_POSE_STANDING);
-            return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), watcher, true);
+
+            if (ReflectionUtils.supports(19)) {
+                return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), WATCHER_PACK.invoke(watcher));
+            } else {
+                return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), watcher, true);
+            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return null;

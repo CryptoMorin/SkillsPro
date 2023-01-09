@@ -75,8 +75,12 @@ public final class Laser {
             squid = null;
             createSquidPacket = NMSReflection.createSpawnPacket(end, NMSReflection.SQUID_TYPE);
         }
-        UUID squidUUID = (UUID) NMSReflection.getField("b", createSquidPacket);
-        int squidId = (int) NMSReflection.getField("a", createSquidPacket);
+
+        String UUIDFieldName = ReflectionUtils.v(19, "d").orElse("b");
+        String EntityIdFieldName = ReflectionUtils.v(19, "c").orElse("a");
+
+        UUID squidUUID = (UUID) NMSReflection.getField(UUIDFieldName, createSquidPacket); // private final UUID d;
+        int squidId = (int) NMSReflection.getField(EntityIdFieldName, createSquidPacket); // private final int c;
         this.squid = new NMSEntityInfo(squid, squidUUID, squidId);
         metadataPacketSquid = NMSReflection.createPacketMetadata(squidId, NMSReflection.fakeSquidWatcher);
         NMSReflection.setDirtyWatcher(NMSReflection.fakeSquidWatcher);
@@ -91,8 +95,8 @@ public final class Laser {
             guardian = null;
             createGuardianPacket = NMSReflection.createSpawnPacket(start, NMSReflection.GUARDIAN_TYPE);
         }
-        UUID guardianUUID = (UUID) NMSReflection.getField("b", createGuardianPacket);
-        int guardianId = (int) NMSReflection.getField("a", createGuardianPacket);
+        UUID guardianUUID = (UUID) NMSReflection.getField(UUIDFieldName, createGuardianPacket);
+        int guardianId = (int) NMSReflection.getField(EntityIdFieldName, createGuardianPacket);
         this.guardian = new NMSEntityInfo(guardian, guardianUUID, guardianId);
         metadataPacketGuardian = NMSReflection.createPacketMetadata(guardianId, fakeGuardianDataWatcher);
 
@@ -216,7 +220,7 @@ public final class Laser {
         private static final Class<?> packetRemove, packetTeleport, packetTeam, packetMetadata;
         private static Constructor<?> watcherConstructor;
 
-        private static Method watcherSet, watcherRegister, watcherDirty;
+        private static Method watcherSet, watcherRegister, watcherDirty, watcherPack;
         private static Object WATCHER_INVISILIBITY, WATCHER_SPIKES, WATCHER_ATTACK_ID;
         private static Object SQUID_TYPE, GUARDIAN_TYPE;
         private static Object fakeSquid, fakeSquidWatcher;
@@ -235,7 +239,8 @@ public final class Laser {
             Class<?> dataWatcher = getNMSClass("network.syncher", "DataWatcher");
             Class<?> dataWatcherObject = getNMSClass("network.syncher", "DataWatcherObject");
             Class<?> entityTypes = getNMSClass("world.entity", "EntityTypes");
-            Class<?> packetSpawnClass = getNMSClass("network.protocol.game", "PacketPlayOutSpawnEntityLiving");
+            Class<?> packetSpawnClass = getNMSClass("network.protocol.game",
+                    ReflectionUtils.v(19, "PacketPlayOutSpawnEntity").orElse("PacketPlayOutSpawnEntityLiving"));
 
             packetRemove = getNMSClass("network.protocol.game", "PacketPlayOutEntityDestroy");
             packetTeleport = getNMSClass("network.protocol.game", "PacketPlayOutEntityTeleport");
@@ -280,12 +285,18 @@ public final class Laser {
                     watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null); // 86
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null); // 35
-                } else {
+                } else if (ReflectionUtils.VER == 18) {
                     watcherInvis = "Z"; // this.Y.b(Z, (byte)(b0 | 1 << i));
                     watcherSpikes = "b";
                     watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null);
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null);
+                } else {
+                    watcherInvis = "Z"; // this.Y.b(Z, (byte)(b0 | 1 << i));
+                    watcherSpikes = "b";
+                    watcherAttacker = "e";
+                    SQUID_TYPE = entityTypes.getDeclaredField("aN").get(null);
+                    GUARDIAN_TYPE = entityTypes.getDeclaredField("O").get(null);
                 }
 
                 WATCHER_INVISILIBITY = getField(entity, watcherInvis, null);
@@ -298,8 +309,12 @@ public final class Laser {
                 watcherSet = getMethodStarting(dataWatcher, v(18, "b").orElse("set"), MethodType.methodType(void.class, dataWatcherObject));
                 watcherRegister = getMethodStarting(dataWatcher, v(18, "a").orElse("register"), MethodType.methodType(void.class, dataWatcherObject));
                 if (supports(15)) watcherDirty = getMethodIgnoreParams(dataWatcher, "markDirty");
+                if (supports(19)) watcherPack = dataWatcher.getDeclaredMethod("b");
 
-                packetSpawn = lookup.findConstructor(packetSpawnClass, supports(17) ? MethodType.methodType(void.class, entityLiving) : MethodType.methodType(void.class));
+                packetSpawn = lookup.findConstructor(packetSpawnClass,
+                        v(19, MethodType.methodType(void.class, entity))
+                                .v(18, MethodType.methodType(void.class, entityLiving))
+                                .orElse(MethodType.methodType(void.class)));
 
                 if (supports(17))
                     setLocation = lookup.findVirtual(entity,
@@ -462,7 +477,12 @@ public final class Laser {
         }
 
         private static Object createPacketMetadata(int entityId, Object watcher) throws ReflectiveOperationException {
-            return packetMetadata.getConstructor(int.class, watcher.getClass(), boolean.class).newInstance(entityId, watcher, false);
+            if (supports(19)) {
+                //noinspection JavaReflectionInvocation
+                return packetMetadata.getConstructor(int.class, List.class).newInstance(entityId, watcherPack.invoke(watcher));
+            } else {
+                return packetMetadata.getConstructor(int.class, watcher.getClass(), boolean.class).newInstance(entityId, watcher, false);
+            }
         }
 
         private static void tryWatcherSet(Object watcher, Object watcherObject, Object watcherData) throws ReflectiveOperationException {
