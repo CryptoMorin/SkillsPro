@@ -1,5 +1,6 @@
 package org.skills.abilities;
 
+import jdk.javadoc.internal.doclets.toolkit.taglets.SeeTaglet;
 import org.bukkit.Bukkit;
 import org.skills.abilities.arbalist.*;
 import org.skills.abilities.devourer.*;
@@ -12,11 +13,15 @@ import org.skills.abilities.swordsman.*;
 import org.skills.abilities.vampire.*;
 import org.skills.main.SkillsPro;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class AbilityManager {
     private static final Map<String, Ability> ABILITIES = new HashMap<>();
+    private static final Set<UUID> COOLDOWN_EXCEMPT = new HashSet<>();
+
+    public static Set<UUID> getCooldownExcempts() {
+        return COOLDOWN_EXCEMPT;
+    }
 
     /**
      * There's no need to clear the map when re-registering

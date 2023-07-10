@@ -1,6 +1,8 @@
 package org.skills.commands.general;
 
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.skills.commands.SkillsCommand;
@@ -15,6 +17,7 @@ public class CommandAbout extends SkillsCommand {
         super("about", SkillsLang.COMMAND_ABOUT_DESCRIPTION, false, "version");
     }
 
+    @SuppressWarnings("ConstantValue")
     @Override
     public void runCommand(@NonNull CommandSender sender, @NonNull String[] args) {
         String register = USER.startsWith("%%__USER__%") && USER.endsWith("%%") ? "&4Unrecognized" :

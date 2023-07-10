@@ -14,6 +14,8 @@ import org.skills.services.manager.ServiceHandler;
 import java.util.List;
 
 public abstract class ActiveAbility extends Ability {
+    private boolean isPvPBased;
+
     public ActiveAbility(String skill, String name) {
         super(skill, name);
     }
@@ -36,6 +38,14 @@ public abstract class ActiveAbility extends Ability {
 
     public int getIdle(SkilledPlayer info) {
         return getOptions(info).getInt("activation.idle");
+    }
+
+    public void setPvPBased(boolean pvPBased) {
+        isPvPBased = pvPBased;
+    }
+
+    public boolean isPvPBased() {
+        return isPvPBased;
     }
 
     public boolean isAbilityReady(Player p) {
@@ -79,7 +89,7 @@ public abstract class ActiveAbility extends Ability {
         // isActiveReady is checked in Ability class for performance reasons.
 
         info.setEnergy(info.getEnergy() - getEnergy(info));
-        info.setCooldown((long) getCooldown(info) * 1000L);
+        if (!AbilityManager.getCooldownExcempts().contains(player.getUniqueId())) info.setCooldown((long) getCooldown(info) * 1000L);
 
         sendMessage(player, getAbilityActivated(info));
         return info;

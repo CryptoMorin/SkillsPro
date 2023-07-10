@@ -17,6 +17,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import static com.cryptomorin.xseries.ReflectionUtils.*;
 
@@ -47,28 +48,30 @@ public final class Laser {
     private final Map<UUID, Player> players = new ConcurrentHashMap<>(10);
     private final Set<Integer> seen = new HashSet<>();
     private final NMSEntityInfo squid, guardian;
-    private Location start, end;
+    private Location start, lastEndLocation;
+    private Supplier<Location> endLocationTracker;
     private BukkitRunnable run;
 
     /**
      * Create a Laser instance
      *
      * @param start    Location where laser will starts
-     * @param end      Location where laser will ends
+     * @param endLocationTracker      Location where laser will ends
      * @param duration Duration of laser in seconds (<i>-1 if infinite</i>)
      * @param distance Distance where laser will be visible
      */
-    public Laser(Location start, Location end, int duration, int distance) throws ReflectiveOperationException {
+    public Laser(Location start, Supplier<Location> endLocationTracker, int duration, int distance) throws ReflectiveOperationException {
+        Location end = endLocationTracker.get();
         if (start.getWorld() != end.getWorld())
             throw new IllegalArgumentException("Laser start world is different from the end location: " + start.getWorld() + " - " + end.getWorld());
 
         this.start = start;
-        this.end = end;
+        this.endLocationTracker = endLocationTracker;
         this.duration = duration;
         this.distanceSquared = distance * distance;
 
         Object squid;
-        if (supports(17)) {
+        if (supports(17)) { // What happened is it from 9 or 17 ugh
             squid = NMSReflection.createSquid(end);
             createSquidPacket = NMSReflection.createPacketEntitySpawn(squid);
         } else {
@@ -123,10 +126,20 @@ public final class Laser {
             public void run() {
                 for (Player player : world.getPlayers()) {
                     if (isCloseEnough(player.getLocation())) {
-                        if (players.put(player.getUniqueId(), player) == null) sendStartPackets(player, !seen.add(player.getEntityId()));
+                        if (players.put(player.getUniqueId(), player) == null) sendStartPackets(plugin, player, !seen.add(player.getEntityId()));
                     } else if (players.remove(player.getUniqueId()) != null) destroy(player);
                 }
                 if (--time == 0) cancel();
+
+                try {
+                    Location end = getEndLocation();
+                    if (end != null) {
+                        Object packet = NMSReflection.teleport(squid, end);
+                        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
+                    }
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
@@ -163,15 +176,12 @@ public final class Laser {
         return start;
     }
 
-    public void moveEnd(Location location) throws ReflectiveOperationException {
+    public void moveEnd(Supplier<Location> endLocationTracker) throws ReflectiveOperationException {
         // Fixes the weird extra tail.
-        this.end = location.add(location.toVector().subtract(start.toVector()).normalize().multiply(-1.5));
-        Object packet = NMSReflection.teleport(squid, end);
-        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
-    }
-
-    public Location getEnd() {
-        return end;
+//        this.end = location.add(location.toVector().subtract(start.toVector()).normalize().multiply(-1.5));
+        this.endLocationTracker = endLocationTracker;
+//        Object packet = NMSReflection.teleport(squid, end);
+//        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
     }
 
     public void callColorChange() {
@@ -182,23 +192,46 @@ public final class Laser {
         return run != null;
     }
 
-    private void sendStartPackets(Player player, boolean hasSeen) {
+    private void sendStartPackets(Plugin plugin, Player player, boolean hasSeen) {
         List<Object> packets = new ArrayList<>(6);
 
-        packets.add(createSquidPacket);
-        packets.add(createGuardianPacket);
+        // Delayed because the initial cached squid packet gets spawned on the first getEndLocation() value
+        // But teleporting the entity will cause a small visual glitch.
+        // To fix this, we simply spawn the guardian later after the squid was teleported.
+        // 5 Ticks seems to be the best delay.
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            packets.clear();
+            packets.add(createGuardianPacket);
+            if (supports(15)) packets.add(metadataPacketGuardian);
+            if (!hasSeen) packets.add(teamCreatePacket);
 
+            Location end = getEndLocation();
+            if (end != null) {
+                try {
+                    packets.add(NMSReflection.teleport(squid, end));
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            sendPacketSync(player, packets.toArray());
+        }, 5L);
+
+        packets.add(createSquidPacket);
         if (supports(15)) {
             packets.add(metadataPacketSquid);
-            packets.add(metadataPacketGuardian);
         }
-        if (!hasSeen) packets.add(teamCreatePacket);
         sendPacketSync(player, packets.toArray());
     }
 
     private boolean isCloseEnough(Location location) {
         return distanceSquared(start, location) <= distanceSquared ||
-                distanceSquared(end, location) <= distanceSquared;
+                (lastEndLocation != null && distanceSquared(lastEndLocation, location) <= distanceSquared);
+    }
+
+    private Location getEndLocation() {
+        Location end = endLocationTracker.get();
+        return end == null ? lastEndLocation : (lastEndLocation = end);
     }
 
     private static final class NMSEntityInfo {
@@ -248,55 +281,56 @@ public final class Laser {
             packetMetadata = getNMSClass("network.protocol.game", "PacketPlayOutEntityMetadata");
 
             try {
-                String watcherInvis, watcherSpikes, watcherAttacker;
-                if (ReflectionUtils.VER < 13) {
+                String watcherInvis; // protected static final DataWatcherObject<Byte> an;
+                String watcherSpikes, watcherAttacker;
+                if (ReflectionUtils.MINOR_NUMBER < 13) {
                     watcherInvis = "Z";
                     watcherSpikes = "bA";
                     watcherAttacker = "bB";
                     SQUID_TYPE = 94;
                     GUARDIAN_TYPE = 68;
-                } else if (ReflectionUtils.VER == 13) {
+                } else if (ReflectionUtils.MINOR_NUMBER == 13) {
                     watcherInvis = "ac";
                     watcherSpikes = "bF";
                     watcherAttacker = "bG";
                     SQUID_TYPE = 70;
                     GUARDIAN_TYPE = 28;
-                } else if (ReflectionUtils.VER == 14) {
+                } else if (ReflectionUtils.MINOR_NUMBER == 14) {
                     watcherInvis = "W";
                     watcherSpikes = "b";
                     watcherAttacker = "bD";
                     SQUID_TYPE = 73;
                     GUARDIAN_TYPE = 30;
-                } else if (ReflectionUtils.VER == 15) {
+                } else if (ReflectionUtils.MINOR_NUMBER == 15) {
                     watcherInvis = "T";
                     watcherSpikes = "b";
                     watcherAttacker = "bA";
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
-                } else if (ReflectionUtils.VER == 16) {
+                } else if (ReflectionUtils.MINOR_NUMBER == 16) {
                     watcherInvis = "S"; // protected static final DataWatcherObject<Byte>    S;
                     watcherSpikes = "b"; // private   static final DataWatcherObject<Boolean> b;
                     watcherAttacker = "d"; // private   static final DataWatcherObject<Integer> d;
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
-                } else if (ReflectionUtils.VER == 17) {
+                } else if (ReflectionUtils.MINOR_NUMBER == 17) {
                     watcherInvis = "Z";
                     watcherSpikes = "b";
                     watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null); // 86
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null); // 35
-                } else if (ReflectionUtils.VER == 18) {
+                } else if (MINOR_NUMBER == 18) {
                     watcherInvis = "Z"; // this.Y.b(Z, (byte)(b0 | 1 << i));
                     watcherSpikes = "b";
                     watcherAttacker = "e";
                     SQUID_TYPE = entityTypes.getDeclaredField("aJ").get(null);
                     GUARDIAN_TYPE = entityTypes.getDeclaredField("K").get(null);
                 } else {
-                    watcherInvis = "Z"; // this.Y.b(Z, (byte)(b0 | 1 << i));
-                    watcherSpikes = "b";
-                    watcherAttacker = "e";
-                    SQUID_TYPE = entityTypes.getDeclaredField("aN").get(null);
-                    GUARDIAN_TYPE = entityTypes.getDeclaredField("O").get(null);
+                    watcherInvis = "an"; // this.Y.b(Z, (byte)(b0 | 1 << i));
+                    watcherSpikes = "b"; // private static final DataWatcherObject<Boolean> b;
+                    watcherAttacker = "e"; // private static final DataWatcherObject<Integer> e;
+                    SQUID_TYPE = entityTypes.getDeclaredField("aT").get(null);
+                    GUARDIAN_TYPE = entityTypes.getDeclaredField("V").get(null);
                 }
 
                 WATCHER_INVISILIBITY = getField(entity, watcherInvis, null);
@@ -312,8 +346,8 @@ public final class Laser {
                 if (supports(19)) watcherPack = dataWatcher.getDeclaredMethod("b");
 
                 packetSpawn = lookup.findConstructor(packetSpawnClass,
-                        v(19, MethodType.methodType(void.class, entity))
-                                .v(18, MethodType.methodType(void.class, entityLiving))
+                        v(19, MethodType.methodType(void.class, entity)).
+                                v(17, MethodType.methodType(void.class, entityLiving))
                                 .orElse(MethodType.methodType(void.class)));
 
                 if (supports(17))

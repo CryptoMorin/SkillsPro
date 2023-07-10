@@ -1,5 +1,6 @@
 package org.skills.utils.versionsupport;
 
+import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -17,6 +18,14 @@ public class VersionSupport {
         ExperienceOrb orb = loc.getWorld().spawn(loc, ExperienceOrb.class);
         orb.setExperience(amount);
         return orb;
+    }
+
+    public void ensurePatch() {
+        int latestPatch = ReflectionUtils.getLatestPatchNumberOf(ReflectionUtils.MINOR_NUMBER);
+        if (latestPatch < ReflectionUtils.PATCH_NUMBER) {
+            throw new IllegalStateException("Your server is currently running a patch version that's not supported: "
+                    + ReflectionUtils.getVersionInformation() + " Update to the latest patch: v1." + ReflectionUtils.MINOR_NUMBER + '.' + latestPatch);
+        }
     }
 
     public static int getHealthPercent(LivingEntity entity) {

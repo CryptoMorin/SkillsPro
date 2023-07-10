@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.skills.main.SLogger;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 
@@ -24,9 +25,14 @@ import java.util.function.Function;
 
 public class GUIParser {
     public static ItemStack deserializeItem(@NotNull InteractiveGUI gui, ConfigurationSection section) {
+        return deserializeItem("&4Could not parse item for option: &e" + section.getName()
+                + " &4in GUI &e" + gui.getName() + " &4with properties&8:", section);
+    }
+
+    public static ItemStack deserializeItem(String errorMsg, ConfigurationSection section) {
         ItemStack item = XItemStack.deserialize(section, new ItemColorHandler());
         if (item.getType() == Material.AIR) {
-            MessageHandler.sendConsolePluginMessage("&4Could not parse item for option: &e" + section.getName() + " &4in GUI &e" + gui.getName() + " &4with properties&8:");
+            MessageHandler.sendConsolePluginMessage(errorMsg);
             section.getValues(true).forEach((k, v) -> MessageHandler.sendConsolePluginMessage("&6" + k + "&8: &e" + (v instanceof ConfigurationSection ? "" : v)));
             return null;
         }
@@ -34,11 +40,11 @@ public class GUIParser {
     }
 
     private static final class ItemColorHandler implements Function<String, String> {
-        private String lastColor;
+        private String lastColor = "";
 
         @Override
         public String apply(String s) {
-            if (lastColor != null) s = MessageHandler.colorize(lastColor + s);
+            s = MessageHandler.colorize(lastColor + s);
             lastColor = ChatColor.getLastColors(s);
             return s;
         }

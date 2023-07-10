@@ -61,7 +61,7 @@ public final class LastBreath implements Listener {
             //     public DataWatcher al() {
             //        return this.Y;
             //    }
-            getDataWatcher = lookup.findVirtual(entityPlayer, v(19, "al").v(18, "ai").orElse("getDataWatcher"), MethodType.methodType(dataWatcher));
+            getDataWatcher = lookup.findVirtual(entityPlayer, v(19, "aj").v(18, "ai").orElse("getDataWatcher"), MethodType.methodType(dataWatcher));
             dataWatcherSet = lookup.findVirtual(dataWatcher, v(18, "b").orElse("set"), MethodType.methodType(void.class, dataWatcherObjectClass, Object.class));
             createDataWatcher = lookup.findConstructor(dataWatcherObjectClass,
                     MethodType.methodType(void.class, int.class, dataWatcherSerializerClass));

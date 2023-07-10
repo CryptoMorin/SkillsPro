@@ -58,8 +58,8 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
             double offset = (int) getScaling(info, "shotgun.offset");
             ThreadLocalRandom random = ThreadLocalRandom.current();
             for (int i = 0; i < random.nextInt(min, max); i++) {
-                Arrow extra = player.launchProjectile(Arrow.class, vector.clone().add(new Vector(
-                        random.nextDouble(-offset, offset), random.nextDouble(-offset, offset), random.nextDouble(-offset, offset))));
+                Arrow extra = player.getWorld().spawnArrow(player.getEyeLocation(), vector, (float) extraScaling, (float) offset);
+                extra.setMetadata(ARBALIST_FIRECROSSBOW, new FixedMetadataValue(SkillsPro.get(), null));
                 if (XMaterial.supports(14)) extra.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
             }
         }

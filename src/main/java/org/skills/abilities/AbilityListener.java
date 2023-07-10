@@ -58,7 +58,6 @@ public class AbilityListener implements Listener {
     private static boolean activate(Player player, KeyBinding action) {
         if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return false;
         if (SkillsConfig.isInDisabledWorld(player.getLocation())) return false;
-        if (SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) return false;
         if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && LastBreath.isLastBreaths(player)) return false;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
@@ -102,6 +101,7 @@ public class AbilityListener implements Listener {
 
         ACTIVATIONS.invalidate(player.getUniqueId());
         if (ability == null) return false;
+        if (ability.isPvPBased() && SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) return false;
 
         // Cooldown
         if (info.isInCooldown()) {

@@ -247,7 +247,9 @@ public final class HealthAndEnergyManager implements Listener {
                 BossBar bar = StringUtils.parseBossBarFromConfig(SkillsConfig.BOSSBAR_LEVELS_FREQUENCY.getInt() < 0 ? null : player, SkillsConfig.BOSSBAR_LEVELS.getSection());
                 LEVEL_BOSSBARS.put(player.getEntityId(), bar);
             }
-            if (SkillsConfig.BOSSBAR_BONUSES_ENABLED.getBoolean()) info.getBonuses().values().forEach(bonus -> bonus.startBonus(player));
+            if (SkillsConfig.BOSSBAR_BONUSES_ENABLED.getBoolean()) {
+                info.getBonuses().values().forEach(bonus -> bonus.startBonus(player));
+            }
         }
         updateStats(player);
     }

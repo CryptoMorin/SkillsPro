@@ -46,7 +46,7 @@ public class CommandShop extends SkillsCommand {
             }
 
             Player target = null;
-            int amount;
+            int amount = 1;
             try {
                 amount = Integer.parseInt(args[2]);
             } catch (NumberFormatException ex) {
@@ -72,7 +72,8 @@ public class CommandShop extends SkillsCommand {
                 return;
             }
 
-            ItemStack item = XItemStack.deserialize(section);
+            ItemStack item = GUIParser.deserializeItem("Failed to parse skill item: " + type, section);
+            item.setAmount(amount);
             item = ItemNBT.addSimpleTag(item, SkillItemManager.SKILL_ITEM, section.getString("skills-item-type"));
             if (target.getInventory().firstEmpty() > -1) target.getInventory().addItem(item);
             else target.getWorld().dropItemNaturally(target.getLocation(), item);
@@ -112,7 +113,7 @@ public class CommandShop extends SkillsCommand {
 
                 info.addSouls(-cost);
 
-                ItemStack item = XItemStack.deserialize(section);
+                ItemStack item = GUIParser.deserializeItem("Failed to parse skill item: " + sell, section);
                 item = ItemNBT.addSimpleTag(item, SkillItemManager.SKILL_ITEM, section.getString("skills-item-type"));
                 inv.addItem(item);
             });

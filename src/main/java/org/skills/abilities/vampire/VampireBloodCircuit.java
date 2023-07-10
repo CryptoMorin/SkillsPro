@@ -72,7 +72,7 @@ public class VampireBloodCircuit extends ActiveAbility {
         Laser laser = null;
         if (useLaser) {
             try {
-                laser = new Laser(crystal.getLocation().add(0, 0.5, 0), entity.getLocation(), -1, 16);
+                laser = new Laser(crystal.getLocation().add(0, 0.5, 0), () -> entity.getEyeLocation().add(0, -0.75, 0), -1, 16);
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
             }
@@ -103,15 +103,6 @@ public class VampireBloodCircuit extends ActiveAbility {
                     return;
                 }
                 boolean farAway = entity.getLocation().distance(crystal.getLocation()) > distance;
-
-                if (useLaser) {
-                    try {
-                        if (farAway) finalLaser.moveEnd(finalLaser.getStart());
-                        else finalLaser.moveEnd(entity.getEyeLocation().add(0, -0.75, 0));
-                    } catch (ReflectiveOperationException e) {
-                        e.printStackTrace();
-                    }
-                }
                 if (farAway) return;
 
                 if (particleTimer++ == 10) {

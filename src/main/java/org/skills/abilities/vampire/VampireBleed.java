@@ -45,7 +45,7 @@ public class VampireBleed extends Ability {
                 gain.spawn(player.getLocation());
                 bleed.spawn(entity.getLocation());
 
-                DamageManager.damage(entity, player, damageHeal);
+                entity.damage(damageHeal);
                 VersionSupport.heal(player, damageHeal);
                 if (duration-- <= 0) cancel();
             }

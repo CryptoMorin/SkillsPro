@@ -57,8 +57,11 @@ public class CommandBonusGive extends SkillsCommand {
                 info.addBonus(bonus);
 
                 SkillsLang.COMMAND_BONUS_GIVE_CONFIRMATION.sendMessage(sender, "%player%", p.getName(), "%time%", args[2]);
-                if (p.isOnline())
-                    SkillsLang.COMMAND_BONUS_GIVE_SUCCESS.sendMessage((Player) p, "%time%", args[2]);
+                if (p.isOnline()) {
+                    Player player = p.getPlayer();
+                    bonus.startBonus(player);
+                    SkillsLang.COMMAND_BONUS_GIVE_SUCCESS.sendMessage(player, "%time%", args[2]);
+                }
             } catch (NumberFormatException e) {
                 SkillsCommandHandler.sendUsage(sender, "<player> <xp/soul> <time> <multiplier>");
             }

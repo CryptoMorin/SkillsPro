@@ -24,6 +24,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
 
     public PriestKindlingOfLife() {
         super("Priest", "kindling_of_life");
+        setPvPBased(false);
     }
 
     @Override

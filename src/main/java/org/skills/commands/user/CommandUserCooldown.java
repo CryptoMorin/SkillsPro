@@ -1,8 +1,10 @@
 package org.skills.commands.user;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.skills.abilities.AbilityManager;
 import org.skills.commands.SkillsCommand;
 import org.skills.main.locale.SkillsLang;
 
@@ -12,6 +14,22 @@ public class CommandUserCooldown extends SkillsCommand {
     }
 
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            @SuppressWarnings("deprecation") OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+            if (!offlinePlayer.hasPlayedBefore()) {
+                SkillsLang.PLAYER_NOT_FOUND.sendMessage(sender, "%name%", args[0]);
+                return;
+            }
+
+            if (AbilityManager.getCooldownExcempts().remove(offlinePlayer.getUniqueId())) {
+                SkillsLang.COMMAND_USER_COOLDOWN_DISABLED.sendMessage(sender, "%name%", args[0]);
+            } else {
+                SkillsLang.COMMAND_USER_COOLDOWN_ENABLED.sendMessage(sender, "%name%", args[0]);
+                AbilityManager.getCooldownExcempts().add(offlinePlayer.getUniqueId());
+            }
+            return;
+        }
+
         CommandUser.handle(this, sender, args, (changeFactory, player, info, silent) -> {
             double pre = info.getCooldownTimeLeft();
             int finalAmount = (int) changeFactory.withInitialAmount(pre).getFinalAmount();

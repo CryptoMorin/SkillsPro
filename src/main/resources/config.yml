@@ -149,7 +149,20 @@ blood:
     ZOMBIE_HORSE: STEP_SOUND, SLIME_BLOCK, 10
 
 # Only works for 1.13+
-# NOTE: THIS IS AN EXPERIMENTAL FEATURE.
+# In some very unpopular games such as NecroVision, the player
+# has a few seconds after their health hits zeor. In this case,
+# they have a certain amount of time before someone can revive them.
+#
+# In order to revive a fallen player, hold sneak around them until
+# they get back up. The player themselves can also give up by sneak clicking
+# which kills them instantly.
+#
+# During this mode, the player is immune to all kinds of attacks and is
+# forced to crawl on the ground in very slow speed.
+# Not all deaths can be prevented. Falling from a very high place and
+# burning in lava cannot activate this mode.
+# The player can hit other all other entities in this mode, but it's only
+# for knockback purposes, it deals zero damage.
 last-breath:
   # Only takes effect after a restart.
   enabled: true

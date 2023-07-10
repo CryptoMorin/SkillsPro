@@ -43,7 +43,7 @@ public class MageExplosionSpell extends Ability {
             int lvl = info.getAbilityLevel(this);
             double damage = this.getScaling(info, "damage", event);
 
-            if (lvl > 2 && event.getEntity() instanceof Player && MathUtils.hasChance(1, 500)) {
+            if (lvl > 2 && event.getEntity() instanceof Player && MathUtils.hasChance(1, 1_000)) {
                 MessageHandler.sendPlayerMessage(player, "&4Ｃrimson-&0black &6blaze&5, king of myriad worlds, though I promulgate the laws of nature, " +
                         "I am the alias of destruction incarnate in accordance with the principles of all creation.");
                 MessageHandler.sendPlayerMessage((Player) entity, "&cYou've been struck by an unexpected crismon detonation power.");

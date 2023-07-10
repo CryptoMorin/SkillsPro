@@ -605,6 +605,7 @@ public class SkilledPlayer extends DataContainer {
     }
 
     public SkillsEvent removeBonus(SkillsEventType type) {
+        this.bonuses.values().forEach(SkillsEvent::stop);
         return this.bonuses.remove(type);
     }
 

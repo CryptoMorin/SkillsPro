@@ -86,6 +86,8 @@ public enum SkillsLang {
     COMMAND_USER_ENERGY_SET("&3%amount% has been set as the player's energy.", 1, 2, 3),
 
     COMMAND_USER_COOLDOWN_DESCRIPTION("&eUse to manipulate the cooldown time of a player. Player must be online and amount should be provided in milliseconds.", 1, 2, 3),
+    COMMAND_USER_COOLDOWN_ENABLED("&3Enabled cooldowns for &e%name%", 1, 2, 3),
+    COMMAND_USER_COOLDOWN_DISABLED("&cDisabled cooldowns for &e%name%", 1, 2, 3),
     COMMAND_USER_COOLDOWN_ADD("&3%amount% ms has been added to the player's cooldown time.", 1, 2, 3),
     COMMAND_USER_COOLDOWN_REMOVE("&3%amount% ms has been removed from the player's cooldown time.", 1, 2, 3),
     COMMAND_USER_COOLDOWN_SET("&3%amount% ms has been set as the player's cooldown time.", 1, 2, 3),
@@ -473,7 +475,7 @@ public enum SkillsLang {
     Skill_Mage_Activation_Message("&3&l*WHOOSH!*", 1, 2),
     ABILITY_FIREMAGE_PASSIVE_DESCRIPTION("&3When on fire, regain &e%heal% &3extra\nhealth when healing.\nYou are also immune to fire damage.", 1, 3),
     ABILITY_ABSORB_ENERGY_DESCRIPTION("&3When attacked, your next attack will\nset your targets on fire\nfor up to &e%fire% &3seconds.", 1, 3),
-    ABILITY_PHOENIX_ESSENCE_DESCRIPTION("&3After a few seconds a huge flaming ball will\nthrow your enemies backwards and\n" +
+    ABILITY_PHOENIX_ESSENCE_DESCRIPTION("&3While holding &3a hoe &3in hand:\n\n&3After a few seconds a huge flaming ball will\nthrow your enemies backwards and\n" +
             "you'll summon a dead horse with\nhigh speed and jump strenght.\n" +
             "&3Level 1&8: &eSlash forward by left-clicking\nthat deals &e%damage_slash% damage&3.\n" +
             "&3Level 2&8: &eSummon small volcanos in front of you\nthat throw your enemies\nin the air and sets them on fire.\n" +
@@ -540,6 +542,7 @@ public enum SkillsLang {
             "&eLevel 3&8: &3Have a chance to strike\na lightning on your target.\n\n" +
             "Chances will increase the more\nyou shoot the target.\nYour combo will reset if you miss\nor hit another target.", 1, 2),
     ABILITY_DUAL_ARROWS_DESCRIPTION("&3Your bow has %chance%% chance \nto fire two arrows at once.\n" +
+            "This ability also works on the consecutive arrows.\n" +
             "&3Level 1&8: &eIncrease your second \narrow damage by &3%damage%&e.\n" +
             "&3Level 2&8: &eThe second arrow will\nhave a higher velocity.\n" +
             "&3Level 3&8: &eThe second arrow will\nbe a flame arrow.", 1, 3),

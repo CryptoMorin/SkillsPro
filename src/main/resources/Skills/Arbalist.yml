@@ -25,12 +25,26 @@ abilities:
     cost: 100 * (lvl + 1)
   dual-arrows:
     required-level: 5
+
     # Damage in addition to the arrow's normal damage.
     damage: def/20+lvl
+
+    # The % chance that this can happen.
     chance: lvl * 25
+
     # Speed of the arrow. This will be multiplied by the original velocity.
     # If the final velocity axis is higher than 4 or less than -4, it'll default back to 4 or -4
     speed: min(lvl, 2)
+
+    # The amount of spread (like a shotgun) that the consecutive
+    # arrows can have. Like a radius value.
+    # The unit for this value is a Gaussian factor, but it's too complicated
+    # to actually compute, you should just trial and error.
+    spread: 30
+
+    # The amount of consecutive arrows that can be shot from a single ability trigger.
+    limit: 5
+
     # Fire ticks of the arrow.
     fire: (lvl - 1) * 50
     cost: 100 * (lvl + 1)

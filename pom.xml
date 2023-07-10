@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.3.0</version>
+    <version>19.4.1</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -69,13 +69,20 @@
             <id>enginehub-maven</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -208,7 +215,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>kingdoms</artifactId>
-            <version>1.14.15.3-SNAPSHOT</version>
+            <version>1.16.8.1.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -326,7 +333,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>9.2.0</version>
+            <version>9.4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
