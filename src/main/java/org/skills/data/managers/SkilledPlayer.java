@@ -67,7 +67,8 @@ public class SkilledPlayer extends DataContainer {
         SkillsPro.get().getPlayerDataManager().load(this);
     }
 
-    public SkilledPlayer() {}
+    public SkilledPlayer() {
+    }
 
     public static @NonNull
     SkilledPlayer getSkilledPlayer(@NonNull UUID id) {
@@ -165,7 +166,8 @@ public class SkilledPlayer extends DataContainer {
 
     public BukkitTask setEnergy(double amount) {
         Player player = getPlayer();
-        if (player == null) throw new IllegalStateException("Cannot set energy of offline player: " + getOfflinePlayer().getName() + " - " + getOfflinePlayer().getLastPlayed());
+        if (player == null)
+            throw new IllegalStateException("Cannot set energy of offline player: " + getOfflinePlayer().getName() + " - " + getOfflinePlayer().getLastPlayed());
 
         return new BukkitRunnable() {
             @Override
@@ -330,7 +332,7 @@ public class SkilledPlayer extends DataContainer {
 
         if (!Cooldown.isInCooldown(this.id, "ENERGY_BOOSTER")) energyBooster = 0;
         double maxEnergy = skill.getScaling(this, SkillScaling.MAX_ENERGY);
-        double energyRegen = skill.getScaling(this, SkillScaling.ENERGY_REGEN) + extra + energyBooster;
+        double energyRegen = skill.getScaling(this, SkillScaling.ENERGY_REGEN) + extra + (extra <= 0 ? 0 : energyBooster);
         double finale = energy;
 
         if (finale >= maxEnergy) return;
@@ -504,7 +506,6 @@ public class SkilledPlayer extends DataContainer {
      * Increases the level and calls {@link SkillLevelUpEvent} for each increase.
      *
      * @param levels the amount to increase the level.
-     *
      * @see #setXP(double, boolean)
      * @see #setRawXP(double, boolean)
      * @see #setLevel(int)

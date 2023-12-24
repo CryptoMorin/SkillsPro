@@ -52,7 +52,8 @@ public class CommandUnfriend extends SkillsCommand {
         inviterInfo.getFriends().remove(player.getUniqueId());
 
         SkillsLang.COMMAND_UNFRIEND_REMOVED.sendMessage(inviter, "%removed%", player.getName());
-        if (player.isOnline()) SkillsLang.COMMAND_UNFRIEND_NOTIFICATION.sendMessage((Player) player, "%remover%", inviter.getName());
+        if (player.isOnline())
+            SkillsLang.COMMAND_UNFRIEND_NOTIFICATION.sendMessage((Player) player, "%remover%", inviter.getName());
     }
 
     @Override

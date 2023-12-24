@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.skills.abilities.Ability;
 import org.skills.commands.SkillsCommand;
-import org.skills.commands.SkillsCommandHandler;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.SkillsLang;
 
@@ -17,40 +16,22 @@ public class CommandUserImprove extends SkillsCommand {
 
     @Override
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length >= 4) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
-            if (player != null) {
-                SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-                AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
-                if (changeFactory == null) return;
-
-                Ability ability = info.getSkill().getAbility(args[2]);
-                if (ability == null) {
-                    SkillsLang.ABILITY_NOT_FOUND.sendMessage(sender, "%ability%", args[2]);
-                    return;
-                }
-
-                try {
-                    int amount = Integer.parseInt(args[3]);
-                    int request = (int) changeFactory.withInitialAmount(info.getAbilityLevel(ability)).getFinalAmount();
-                    if (request < 0 || request > 3) {
-                        SkillsLang.ABILITY_INVALID_LEVEL.sendMessage(sender);
-                        return;
-                    }
-                    info.setAbilityLevel(ability, request);
-
-                    SkillsLang.COMMAND_USER_IMPROVEMENT_SUCCESS.sendMessage(sender,
-                            "%player%", player.getName(), "%amount%", amount,
-                            "%ability%", ability.getName(), "%new%", info.getAbilityLevel(ability));
-                } catch (NumberFormatException ignored) {
-                    SkillsCommandHandler.sendNotNumber(sender, ability.getName() + "'s level", args[3]);
-                }
-            } else {
-                SkillsLang.PLAYER_NOT_FOUND.sendMessage(sender, "%name%", args[0]);
+        CommandUser.handle(this, sender, args, "ability", (changeFactory, player, info, type, silent) -> {
+            Ability ability = info.getSkill().getAbility(type);
+            if (ability == null) {
+                SkillsLang.ABILITY_NOT_FOUND.sendMessage(sender, "%ability%", type, "%player%", player.getName());
+                return false;
             }
-        } else {
-            SkillsCommandHandler.sendUsage(sender, "user improvement <player> <add/decrease/set> <improvement> <amount>");
-        }
+
+            int request = (int) changeFactory.withInitialAmount(info.getAbilityLevel(ability)).getFinalAmount();
+            if (changeFactory.getType() == AmountChangeFactory.Type.SET && (request < 0 || request > 3)) {
+                SkillsLang.ABILITY_INVALID_LEVEL.sendMessage(sender);
+                return false;
+            }
+
+            info.setAbilityLevel(ability, Math.max(0, Math.min(3, request)));
+            return true;
+        });
     }
 
     @Override

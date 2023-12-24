@@ -44,7 +44,8 @@ public class YamlAdapter {
 
     public void loadDefaults() {
         InputStream stream = plugin.getClass().getResourceAsStream(resourcePath);
-        if (stream != null) config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(stream, Charsets.UTF_8)));
+        if (stream != null)
+            config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(stream, Charsets.UTF_8)));
     }
 
     public FileConfiguration getConfig() {

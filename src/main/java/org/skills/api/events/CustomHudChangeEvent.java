@@ -36,7 +36,8 @@ public class CustomHudChangeEvent extends Event implements Cancellable {
         //        else ANIMATION.put(player.getUniqueId(), pos + 1);
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        this.hud = info.isActiveReady() ? SkillsConfig.ACTIONBAR_ACTIVATED_SKILL.parse(player) :
+        this.hud = info.isActiveReady() ?
+                SkillsConfig.ACTIONBAR_ACTIVATED_SKILL.parse(player) :
                 SkillsConfig.ACTIONBAR_NORMAL.parse(player);
     }
 

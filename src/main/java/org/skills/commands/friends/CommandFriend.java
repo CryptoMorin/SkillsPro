@@ -57,7 +57,8 @@ public class CommandFriend extends SkillsCommand {
             return;
         }
         if (inviterInfo.getFriendRequests().contains(player.getUniqueId())) {
-            if (player.isOnline()) SkillsLang.COMMAND_FRIEND_FRIENDED.sendMessage((Player) player, "%friend%", inviter.getName());
+            if (player.isOnline())
+                SkillsLang.COMMAND_FRIEND_FRIENDED.sendMessage((Player) player, "%friend%", inviter.getName());
             SkillsLang.COMMAND_FRIEND_FRIENDED.sendMessage(inviter, "%friend%", player.getName());
 
             info.getFriendRequests().remove(inviter.getUniqueId());
@@ -69,7 +70,8 @@ public class CommandFriend extends SkillsCommand {
 
         info.friendRequest(inviter);
         SkillsLang.COMMAND_FRIEND_REQUEST.sendMessage(inviter, "%invited%", player.getName());
-        if (player.isOnline()) SkillsLang.COMMAND_FRIEND_NOTIFICATION.sendMessage((Player) player, "%inviter%", inviter.getName());
+        if (player.isOnline())
+            SkillsLang.COMMAND_FRIEND_NOTIFICATION.sendMessage((Player) player, "%inviter%", inviter.getName());
     }
 
     @Override

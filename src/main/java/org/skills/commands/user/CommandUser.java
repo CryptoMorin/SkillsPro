@@ -61,8 +61,16 @@ public class CommandUser extends SkillsCommand {
     }
 
     public static void handle(SkillsCommand cmd, @NotNull CommandSender sender, @NotNull String[] args, UserAmountHandler handler) {
-        if (args.length < 3) {
-            SkillsCommandHandler.sendUsage(sender, "user " + cmd.getName() + " <player> <add/decrease/set> <amount>");
+        handle(cmd, sender, args, null,
+                (changeFactory, player, info, type, silent) -> handler.handle(changeFactory, player, info, silent));
+    }
+
+    public static void handle(SkillsCommand cmd, @NotNull CommandSender sender, @NotNull String[] args,
+                              String type, TypedUserAmountHandler handler) {
+        boolean hasType = type != null;
+        if (args.length < (hasType ? 4 : 3)) {
+            String typeStr = hasType ? "" : " <" + type + '>';
+            SkillsCommandHandler.sendUsage(sender, "user " + cmd.getName() + " <player> <add/decrease/set>" + typeStr + " <amount>");
             return;
         }
 
@@ -79,19 +87,23 @@ public class CommandUser extends SkillsCommand {
             players = Collections.singletonList(player);
         }
 
-        boolean silent = args.length > 3 &&
-                (args[3].equalsIgnoreCase("silent") || args[3].equalsIgnoreCase("true"));
-        AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
+        int silentIndex = hasType ? 4 : 3;
+        boolean silent = args.length > (silentIndex + 1) && args[silentIndex].equalsIgnoreCase("silent");
+        AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, 1, (hasType ? 3 : 2), args);
         if (changeFactory == null) return;
+
+        String fetchedType = null;
+        if (hasType) fetchedType = args[2];
 
         for (OfflinePlayer player : players) {
             SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-            handler.handle(changeFactory, player, info, silent);
-            changeFactory.handleSuccess(sender, "COMMAND_USER_" + cmd.getName().toUpperCase(), player);
-            if (player.isOnline()) {
-                double maxEnergy = info.getScaling(SkillScaling.MAX_ENERGY);
-                if (info.getEnergy() > maxEnergy) info.setEnergy(maxEnergy);
-                HealthAndEnergyManager.updateStats(player.getPlayer());
+            if (handler.handle(changeFactory, player, info, fetchedType, silent)) {
+                changeFactory.handleSuccess(sender, "COMMAND_USER_" + cmd.getName().toUpperCase(), player);
+                if (player.isOnline()) {
+                    double maxEnergy = info.getScaling(SkillScaling.MAX_ENERGY);
+                    if (info.getEnergy() > maxEnergy) info.setEnergy(maxEnergy);
+                    HealthAndEnergyManager.updateStats(player.getPlayer());
+                }
             }
         }
     }
@@ -109,5 +121,10 @@ public class CommandUser extends SkillsCommand {
     @FunctionalInterface
     protected interface UserAmountHandler {
         boolean handle(AmountChangeFactory changeFactory, OfflinePlayer player, SkilledPlayer info, boolean silent);
+    }
+
+    @FunctionalInterface
+    protected interface TypedUserAmountHandler {
+        boolean handle(AmountChangeFactory changeFactory, OfflinePlayer player, SkilledPlayer info, String type, boolean silent);
     }
 }

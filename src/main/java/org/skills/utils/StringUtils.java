@@ -62,7 +62,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      * Apache's {@link org.apache.commons.lang.StringUtils#capitalize(String)} doesn't lowercase the other half.
      *
      * @param str the string to capitalize.
-     *
      * @return a capitalized word.
      * @since 1.0.0
      */
@@ -125,7 +124,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      * Characters such as <code>!@#$%^&*()_+|</code> will not be accepted.
      *
      * @param str the string to check.
-     *
      * @return true if the whole string is in English, otherwise false.
      * @see #containsNumber(String)
      * @since 1.0.0
@@ -145,7 +143,8 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
             String clazz = stack.getClassName();
             if (clazz.startsWith("net.minecraft")) color = "&6";
             else if (clazz.startsWith("org.bukkit")) color = "&d";
-            else if (clazz.startsWith("co.aikar") || clazz.startsWith("io.papermc") || clazz.startsWith("com.destroystokyo")) color = "&d";
+            else if (clazz.startsWith("co.aikar") || clazz.startsWith("io.papermc") || clazz.startsWith("com.destroystokyo"))
+                color = "&d";
             else if (clazz.startsWith("java")) color = "&c";
             else color = "&2";
 
@@ -193,7 +192,8 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
     @Nonnull
     public static List<String> split(@Nonnull String str, char separatorChar, boolean preserveAllTokens) {
-        if (Strings.isNullOrEmpty(str)) throw new IllegalArgumentException("Cannot split a null or empty string: " + str);
+        if (Strings.isNullOrEmpty(str))
+            throw new IllegalArgumentException("Cannot split a null or empty string: " + str);
         int len = str.length();
 
         List<String> list = new ArrayList<>();
@@ -232,7 +232,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      * Checks if the given string contains a number.
      *
      * @param str the string to check the numbers.
-     *
      * @return true if the string contains any number, otherwise false.
      * @see #isEnglish(String)
      * @since 1.0.0
@@ -316,7 +315,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      *     </pre></blockquote>
      *
      * @param grouped the groups index (will be replaced with "_").
-     *
      * @return the config option.
      * @since 1.0.0
      */
@@ -349,7 +347,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      *
      * @param str     the original string.
      * @param strings the other strings to check.
-     *
      * @return true if the original string is equal to one of the other strings, otherwise false.
      * @since 1.0.0
      */
@@ -400,12 +397,11 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      *
      * @param str     the original string
      * @param strings the other strings to check
-     *
      * @return true if the original string contains one of the other strings, otherwise false.
      * @since 1.0.0
      */
     public static boolean containsAny(@Nullable String str, @NonNull String... strings) {
-        if (Strings.isNullOrEmpty(str) || strings == null || strings.length == 0) return false;
+        if (Strings.isNullOrEmpty(str) || strings == null) return false;
         for (String string : strings) {
             if (str.contains(string)) return true;
         }
@@ -428,7 +424,6 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
      * @param args    the arguments to convert to string.
      * @param joinStr the string to put between each argument when converting to string.
      * @param from    the index where it should start converting from.
-     *
      * @return a converted string.
      * @since 1.0.0
      */

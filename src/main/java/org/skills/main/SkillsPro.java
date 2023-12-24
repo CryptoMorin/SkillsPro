@@ -105,7 +105,8 @@ public class SkillsPro extends JavaPlugin {
         new Metrics(this, 6224); // https://bstats.org/plugin/bukkit/SkillsPro/6224
         if (SkillsConfig.ARMOR_WEIGHTS_RESET_SPEEDS_ENABLED.getBoolean()) {
             // This prevents dangerous data losses.
-            if (ReflectionUtils.supports(17)) throw new IllegalStateException("Armor weight reset option is currently not supported on " + Bukkit.getVersion());
+            if (ReflectionUtils.supports(17))
+                throw new IllegalStateException("Armor weight reset option is currently not supported on " + Bukkit.getVersion());
             OfflineNBT.perform();
         }
     }
@@ -133,13 +134,15 @@ public class SkillsPro extends JavaPlugin {
         registerEvent(new AbilityListener());
         registerEvent(new InteractiveGUIManager());
         registerEvent(new SkillItemManager());
+        registerEvent(new MoveManager());
         registerEvent(new XPAndEnchantmentManager());
         registerEvent(new SkillsEventManager());
         registerEvent(new DebugManager());
         registerEvent(new StatManager());
         if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XMaterial.supports(13)) registerEvent(new LastBreath());
         if (SkillsConfig.SMART_DAMAGE.getBoolean()) registerEvent(new DamageManager());
-        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean()) registerEvent(new DamageAestheticsManager());
+        if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean())
+            registerEvent(new DamageAestheticsManager());
         if (SkillsConfig.BLOOD_ENABLED.getBoolean()) registerEvent(new BloodManager());
 
         registerEvent(new LevelManager(this));

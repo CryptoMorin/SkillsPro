@@ -107,7 +107,8 @@ public class VampireBloodCircuit extends ActiveAbility {
 
                 if (particleTimer++ == 10) {
                     particleTimer = 0;
-                    if (!useLaser) XParticle.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
+                    if (!useLaser)
+                        XParticle.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
                 }
                 if (repeat++ == inferno) {
                     repeat = 0;

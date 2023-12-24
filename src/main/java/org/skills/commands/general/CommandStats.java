@@ -164,7 +164,8 @@ public class CommandStats extends SkillsCommand {
 
     @Override
     public String[] tabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 1 && sender instanceof Player && sender.hasPermission("skills.command.stats.others")) return null;
+        if (args.length == 1 && sender instanceof Player && sender.hasPermission("skills.command.stats.others"))
+            return null;
         return new String[0];
     }
 }

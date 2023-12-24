@@ -2,9 +2,11 @@ package org.skills.services.placeholders;
 
 import com.google.common.base.Enums;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.skills.abilities.vergil.VergilPassive;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.data.managers.Cosmetic;
 import org.skills.data.managers.SkilledPlayer;
@@ -26,6 +28,7 @@ public enum SkillsPlaceholders {
     // General
     SKILL, SKILL_DISPLAYNAME, LEVEL, SOUL, XP, MAXXP, RAWXP,
     ENERGY, PRECISE_ENERGY, ENERGY_REGEN, MAX_PRECISE_ENERGY, MAX_ENERGY, ENERGY_TYPE, ENERGY_SYMBOL, ENERGY_STRING, ENERGY_COLOR,
+    SKILL_VERGIL_CONCENTRATION_LEVEL,
     HEALTH, MAX_HEALTH, STATUS, ACTIVE_COOLDOWN, LAST_ABILITY_COOLDOWN,
     PARTY_NAME, PARTY_MEMBERS, PARTY_ONLINE_MEMBERS, PARTY_OFFLINE_MEMBERS, PARTY_RANK, LAST_ABILITY,
 
@@ -283,6 +286,10 @@ public enum SkillsPlaceholders {
                 return MathUtils.roundToDigits(info.getRawXP(), 2);
             case SKILL:
                 return info.getSkillName();
+            case SKILL_VERGIL_CONCENTRATION_LEVEL:
+                BossBar motivation = VergilPassive.MOTIVATION_LEVELS.get(info.getId());
+                if (motivation == null) return -1;
+                else return VergilPassive.getMotivationLevelFromProgress(motivation.getProgress());
             case SKILL_DISPLAYNAME:
                 return info.getSkill().getDisplayName();
             case SOUL:

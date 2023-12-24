@@ -129,7 +129,7 @@ public abstract class SkillsCommand {
     SkillsCommand[] getSubCommands() {
         if (!this.isGroup) return new SkillsCommand[0];
         return SkillsCommandHandler.commands.stream()
-                .filter(c -> c.group != null && c.group.equals(this))
+                .filter(c -> this.equals(c.group))
                 .toArray(SkillsCommand[]::new);
     }
 

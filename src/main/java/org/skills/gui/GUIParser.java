@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.skills.main.SLogger;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 
@@ -142,7 +141,8 @@ public class GUIParser {
 
         ItemStack item = deserializeItem(gui, itemConfig);
         if (item == null) return null;
-        if (item.getAmount() > gui.getInventory().getMaxStackSize()) gui.getInventory().setMaxStackSize(item.getAmount());
+        if (item.getAmount() > gui.getInventory().getMaxStackSize())
+            gui.getInventory().setMaxStackSize(item.getAmount());
 
         String itemSound = itemConfig.getString("sound");
         ConfigurationSection optSect = itemConfig.getConfigurationSection("sound");

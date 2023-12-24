@@ -246,7 +246,8 @@ public final class LevelManager implements Listener {
                 SkillXPGainEvent expGainEvent = new SkillXPGainEvent(killer, killed, xp);
                 Bukkit.getPluginManager().callEvent(expGainEvent);
                 if (!expGainEvent.isCancelled()) {
-                    if (xp != expGainEvent.getGained()) debugger.add("Event changed the gained XP from " + xp + " to " + expGainEvent.getGained());
+                    if (xp != expGainEvent.getGained())
+                        debugger.add("Event changed the gained XP from " + xp + " to " + expGainEvent.getGained());
                     xp = expGainEvent.getGained();
                     info.addXP(xp);
                 }
@@ -397,8 +398,10 @@ public final class LevelManager implements Listener {
                             break;
                         }
                     }
-                } else soulsLost = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.SOULS_LOSS_UPON_DEATH.getString()));
-            } else soulsLost = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.SOULS_LOSS_UPON_DEATH.getString()));
+                } else
+                    soulsLost = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.SOULS_LOSS_UPON_DEATH.getString()));
+            } else
+                soulsLost = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.SOULS_LOSS_UPON_DEATH.getString()));
             info.setSouls(Math.max(0, info.getSouls() - soulsLost));
         }
         if (info.getXP() > 1 && !SkillsConfig.DISABLED_WORLDS_XP_LOSS.getStringList().contains(player.getWorld().getName())) {
@@ -412,8 +415,10 @@ public final class LevelManager implements Listener {
                         }
                     }
                     if (xpLost == -1) xpLost = event.getDroppedExp();
-                } else xpLost = MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.XP_LOSS_UPON_DEATH.getString()));
-            } else xpLost = MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.XP_LOSS_UPON_DEATH.getString()));
+                } else
+                    xpLost = MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.XP_LOSS_UPON_DEATH.getString()));
+            } else
+                xpLost = MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, SkillsConfig.XP_LOSS_UPON_DEATH.getString()));
             info.setAbsoluteXP(Math.max(0, info.getXP() - xpLost));
         }
 

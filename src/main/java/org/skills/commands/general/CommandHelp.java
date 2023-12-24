@@ -70,7 +70,8 @@ public class CommandHelp extends SkillsCommand {
             if (pages == page + 1)
                 builder.append(SkillsLang.COMMAND_HELP_FOOTER_CURRENT_PAGE.getLang(), placeholder, "%number%", pages, "%previous_page%", page, "%page%", page + 1,
                         "%next_page%", page + 2, "%max_pages%", maxPages);
-            else builder.append(placeholder, "%number%", pages, "%previous_page%", page, "%page%", page + 1, "%next_page%", page + 2, "%max_pages%", maxPages);
+            else
+                builder.append(placeholder, "%number%", pages, "%previous_page%", page, "%page%", page + 1, "%next_page%", page + 2, "%max_pages%", maxPages);
             builder.append(" ");
         }
         SkillsLang.COMMAND_HELP_FOOTER.sendMessage(sender, builder.asComplexEdit("%pages%"),

@@ -1,5 +1,6 @@
 package org.skills.abilities;
 
+import com.cryptomorin.xseries.NMSExtras;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
@@ -101,7 +102,8 @@ public class AbilityListener implements Listener {
 
         ACTIVATIONS.invalidate(player.getUniqueId());
         if (ability == null) return false;
-        if (ability.isPvPBased() && SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) return false;
+        if (ability.isPvPBased() && SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player))
+            return false;
 
         // Cooldown
         if (info.isInCooldown()) {
@@ -175,8 +177,12 @@ public class AbilityListener implements Listener {
         if (activate(event.getPlayer(), KeyBinding.DROP)) event.setCancelled(true);
     }
 
+    static boolean state;
+
     @EventHandler
     public void onF(PlayerSwapHandItemsEvent event) {
+        NMSExtras.spinEntity(event.getPlayer(), state);
+        state = !state;
         if (activate(event.getPlayer(), KeyBinding.SWITCH)) event.setCancelled(true);
     }
 
@@ -241,7 +247,8 @@ public class AbilityListener implements Listener {
             if (action == Action.RIGHT_CLICK_BLOCK) {
                 Block clicked = event.getClickedBlock();
                 if (item.getType().isBlock()) return;
-                if (XMaterial.matchXMaterial(clicked.getType()).isOneOf(SkillsConfig.PREVENT_ACTIVATION_BLOCKS.getStringList())) return;
+                if (XMaterial.matchXMaterial(clicked.getType()).isOneOf(SkillsConfig.PREVENT_ACTIVATION_BLOCKS.getStringList()))
+                    return;
             }
 
             KeyBinding activationAction = action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK ?

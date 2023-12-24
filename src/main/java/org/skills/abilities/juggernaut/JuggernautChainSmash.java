@@ -74,7 +74,8 @@ public class JuggernautChainSmash extends InstantActiveAbility {
     public void onFall(EntityDamageEvent event) {
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
         if (!(event.getEntity() instanceof Player)) return;
-        if (!SkilledPlayer.getSkilledPlayer((OfflinePlayer) event.getEntity()).getActiveAbilities().remove(this)) return;
+        if (!SkilledPlayer.getSkilledPlayer((OfflinePlayer) event.getEntity()).getActiveAbilities().remove(this))
+            return;
         event.setCancelled(true);
     }
 
@@ -109,9 +110,12 @@ public class JuggernautChainSmash extends InstantActiveAbility {
 
                     cancel();
                     cloud.spawn(loc);
-                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(loc, EntityType.PRIMED_TNT);
-                    tnt.setMetadata(CHAIN_SMASH, new FixedMetadataValue(SkillsPro.get(), player));
-                    tnt.setFuseTicks(0);
+
+                    if (!getOptions(info, "disable-explosion").getBoolean()) {
+                        TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(loc, EntityType.PRIMED_TNT);
+                        tnt.setMetadata(CHAIN_SMASH, new FixedMetadataValue(SkillsPro.get(), player));
+                        tnt.setFuseTicks(0);
+                    }
 
                     XSound.ENTITY_GENERIC_EXPLODE.play(player, (float) range, XSound.DEFAULT_PITCH);
                     ParticleDisplay display = ParticleDisplay.of(Particle.EXPLOSION_LARGE).withCount(10).offset(1);

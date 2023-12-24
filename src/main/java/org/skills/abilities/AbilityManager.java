@@ -1,6 +1,5 @@
 package org.skills.abilities;
 
-import jdk.javadoc.internal.doclets.toolkit.taglets.SeeTaglet;
 import org.bukkit.Bukkit;
 import org.skills.abilities.arbalist.*;
 import org.skills.abilities.devourer.*;
@@ -11,6 +10,7 @@ import org.skills.abilities.mage.*;
 import org.skills.abilities.priest.*;
 import org.skills.abilities.swordsman.*;
 import org.skills.abilities.vampire.*;
+import org.skills.abilities.vergil.*;
 import org.skills.main.SkillsPro;
 
 import java.util.*;
@@ -99,7 +99,17 @@ public final class AbilityManager {
                 new PriestNaturesForce(),
                 new PriestNaturesCall(),
                 new PriestBarrier(),
-                new PriestPurification()
+                new PriestPurification(),
+
+                new VergilPassive(),
+                new VergilJudgementCut(),
+                new VergilJudgementCutEnd(),
+                new VergilRapidSlash(),
+                new VergilVerticalSlash(),
+                new VergilTrickAction(),
+                new VergilMirageEdgeSlash(),
+                new VergilDoppelganger(),
+                new VergilPhantomBlade()
         };
 
         for (Ability ability : abilities) register(ability);

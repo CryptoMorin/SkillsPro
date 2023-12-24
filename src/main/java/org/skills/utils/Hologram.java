@@ -78,7 +78,8 @@ public class Hologram implements Listener {
             armorStand.setCollidable(false);
             armorStand.setCustomNameVisible(true);
             if (staticArmor) armorStand.setMarker(true);
-            else armorStand.setVelocity(new Vector(rand.nextDouble(minx, maxx), rand.nextDouble(miny, maxy), rand.nextDouble(minz, maxz)));
+            else
+                armorStand.setVelocity(new Vector(rand.nextDouble(minx, maxx), rand.nextDouble(miny, maxy), rand.nextDouble(minz, maxz)));
             if (effect != null && effect.hasChance()) armorStand.addPotionEffect(effect.getEffect());
 
             for (int i = edits.length; i > 0; i -= 2) {

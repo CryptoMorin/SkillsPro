@@ -123,6 +123,7 @@ public abstract class Ability implements Listener {
 
     public boolean commonDamageCheckup(EntityDamageByEntityEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return true;
+        if (event.getEntity() == event.getDamager()) return true; // Apparently can happen somehow?
         if (!(event.getEntity() instanceof LivingEntity)) return true;
         return !(event.getDamager() instanceof Player);
     }
@@ -148,18 +149,27 @@ public abstract class Ability implements Listener {
     }
 
     public String getTitle(SkilledPlayer info) {
-        return SkillsLang.valueOf("ABILITY_" + this.name.toUpperCase(Locale.ENGLISH) + "_TITLE").parse(info.getOfflinePlayer());
+        try {
+            return SkillsLang.valueOf("ABILITY_" + this.name.toUpperCase(Locale.ENGLISH) + "_TITLE").parse(info.getOfflinePlayer());
+        } catch (IllegalArgumentException ex) {
+            return name;
+        }
     }
 
     public String getDescription(SkilledPlayer info) {
-        return SkillsLang.valueOf("ABILITY_" + this.name.toUpperCase(Locale.ENGLISH) + "_DESCRIPTION").parse(info.getOfflinePlayer());
+        try {
+            return SkillsLang.valueOf("ABILITY_" + this.name.toUpperCase(Locale.ENGLISH) + "_DESCRIPTION").parse(info.getOfflinePlayer());
+        } catch (IllegalArgumentException ex) {
+            return "No Description";
+        }
     }
 
     public String getScalingDescription(SkilledPlayer info, String scaling) {
         return getScalingColor(scaling) + StringUtils.toFancyNumber(getAbsoluteScaling(info, scaling));
     }
 
-    public void start() {}
+    public void start() {
+    }
 
     public String translate(SkilledPlayer info, String scaling) {
         return getScalingDescription(info, getOptions(info, scaling).getString());
@@ -307,13 +317,17 @@ public abstract class Ability implements Listener {
     }
 
     public SkilledPlayer checkup(Player player) {
+        return checkup(player, false);
+    }
+
+    public SkilledPlayer checkup(Player player, boolean forceReady) {
         GameMode mode = player.getGameMode();
         if (mode == GameMode.SPECTATOR) return null;
         if (mode == GameMode.CREATIVE && !player.hasPermission("skills.use-creative")) return null;
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
         if (info.getActiveAbilities().contains(this)) return null;
-        if (!isPassive() && !info.isActiveReady((ActiveAbility) this)) return null;
+        if (!forceReady && !isPassive() && !info.isActiveReady((ActiveAbility) this)) return null;
 
         PlayerAbilityData data = info.getAbilityData(this);
         if (data == null) return null; // The player's active skill doesn't have this ability

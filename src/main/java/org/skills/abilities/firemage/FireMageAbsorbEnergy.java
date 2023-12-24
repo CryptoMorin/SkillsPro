@@ -45,7 +45,7 @@ public class FireMageAbsorbEnergy extends Ability {
             if (lvl == 2) {
                 display.withCount((chance / 2) + 10).offset(.3).spawn();
             } else {
-                XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
+                XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, 0.5, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
             }
         }
     }

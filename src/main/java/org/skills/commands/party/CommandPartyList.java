@@ -65,7 +65,8 @@ public class CommandPartyList extends SkillsCommand {
             }
 
             for (OfflinePlayer members : info.getParty().getOnlineMembers()) {
-                if (members.isOnline()) SkillsLang.COMMAND_PARTY_KICK_KICKED.sendMessage((Player) members, player, "%kicked%", player.getName(), "%kicker%", player.getName());
+                if (members.isOnline())
+                    SkillsLang.COMMAND_PARTY_KICK_KICKED.sendMessage((Player) members, player, "%kicked%", player.getName(), "%kicker%", player.getName());
             }
             info.leaveParty();
         });

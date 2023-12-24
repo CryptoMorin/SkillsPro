@@ -193,7 +193,8 @@ public class PriestPurification extends Ability {
 
         if (lvl > 2) {
             String type = mob.getType().name();
-            if (type.equals("ENDERMAN") || type.equals("ELDER_GUARDIAN") || type.equals("PHANTOM")) event.setCancelled(true);
+            if (type.equals("ENDERMAN") || type.equals("ELDER_GUARDIAN") || type.equals("PHANTOM"))
+                event.setCancelled(true);
         }
     }
 }

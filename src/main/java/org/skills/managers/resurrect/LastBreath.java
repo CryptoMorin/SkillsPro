@@ -1,5 +1,6 @@
 package org.skills.managers.resurrect;
 
+import com.cryptomorin.xseries.NMSExtras;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
@@ -35,34 +36,42 @@ import static com.cryptomorin.xseries.ReflectionUtils.*;
 public final class LastBreath implements Listener {
     protected static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
     protected static final Map<Integer, LastManStanding> LAST_MEN_STANDING = new HashMap<>(), REVIVERS = new HashMap<>();
-    private static final Object ENTITY_POSE_SWIMMING, ENTITY_POSE_STANDING, DATA_WATCHER_REGISTRY;
-    private static final MethodHandle PACKET_PLAY_OUT_ENTITY_METADATA, CREATE_DATA_WATCHER,
-            GET_DATA_WATCHER, DATA_WATCHER_SET, WATCHER_PACK;
+    private static final Object DATA_WATCHER_REGISTRY;
+    private static final MethodHandle PACKET_PLAY_OUT_ENTITY_METADATA, CREATE_DATA_WATCHER, WATCHER_PACK;
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Object entityPoseSwimming = null, entityPoseStanding = null, dataWatcherRegistry = null;
-        MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null,
-                getDataWatcher = null, dataWatcherSet = null, watcherPack = null;
+        Object dataWatcherRegistry = null;
+        MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null, watcherPack = null;
 
-        Class<?> entityPose = getNMSClass("world.entity", "EntityPose");
         Class<?> dataWatcher = getNMSClass("network.syncher", "DataWatcher");
-        Class<?> entityPlayer = getNMSClass("server.level", "EntityPlayer");
         Class<?> dataWatcherObjectClass = getNMSClass("network.syncher", "DataWatcherObject");
         Class<?> dataWatcherRegistryClass = getNMSClass("network.syncher", "DataWatcherRegistry");
         Class<?> dataWatcherSerializerClass = getNMSClass("network.syncher", "DataWatcherSerializer");
         Class<?> packetPlayOutEntityMetadataClass = getNMSClass("network.protocol.game", "PacketPlayOutEntityMetadata");
 
         try {
-            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, "s", dataWatcherSerializerClass).invoke();
-            entityPoseStanding = entityPose.getDeclaredField(v(17, "a").orElse("STANDING")).get(null);
-            entityPoseSwimming = entityPose.getDeclaredField(v(17, "d").orElse("SWIMMING")).get(null);
+            // public static final DataWatcherSerializer<NBTTagCompound> s;
+            /*
+             s = new DataWatcherSerializer<NBTTagCompound>() {
+            public void a(PacketDataSerializer var0, NBTTagCompound var1) {
+                var0.a(var1);
+            }
+
+            public NBTTagCompound b(PacketDataSerializer var0) {
+                return var0.p();
+            }
+
+            public NBTTagCompound a(NBTTagCompound var0) {
+                return var0.h();
+            }
+        };
+             */
+            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, ReflectionUtils.v(19, "s").v(13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
 
             //     public DataWatcher al() {
             //        return this.Y;
             //    }
-            getDataWatcher = lookup.findVirtual(entityPlayer, v(19, "aj").v(18, "ai").orElse("getDataWatcher"), MethodType.methodType(dataWatcher));
-            dataWatcherSet = lookup.findVirtual(dataWatcher, v(18, "b").orElse("set"), MethodType.methodType(void.class, dataWatcherObjectClass, Object.class));
             createDataWatcher = lookup.findConstructor(dataWatcherObjectClass,
                     MethodType.methodType(void.class, int.class, dataWatcherSerializerClass));
 
@@ -78,13 +87,9 @@ public final class LastBreath implements Listener {
             e.printStackTrace();
         }
 
-        ENTITY_POSE_SWIMMING = entityPoseSwimming;
-        ENTITY_POSE_STANDING = entityPoseStanding;
         DATA_WATCHER_REGISTRY = dataWatcherRegistry;
 
         CREATE_DATA_WATCHER = createDataWatcher;
-        DATA_WATCHER_SET = dataWatcherSet;
-        GET_DATA_WATCHER = getDataWatcher;
         PACKET_PLAY_OUT_ENTITY_METADATA = packetPlayOutEntityMetadata;
         WATCHER_PACK = watcherPack;
     }
@@ -104,11 +109,12 @@ public final class LastBreath implements Listener {
 
     protected static Object registerDataWatcher(Player player, boolean swimming) {
         try {
-            Object handle = getHandle(player);
-            Object watcher = GET_DATA_WATCHER.invoke(handle);
+            Object handle = NMSExtras.getEntityHandle(player);
+            Object watcher = NMSExtras.getDataWatcher(handle);
             Object registry = CREATE_DATA_WATCHER.invoke(ENTITY_POSE_REGISTRY, DATA_WATCHER_REGISTRY);
 
-            DATA_WATCHER_SET.invoke(watcher, registry, swimming ? ENTITY_POSE_SWIMMING : ENTITY_POSE_STANDING);
+            Object pos = (swimming ? NMSExtras.EntityPose.SWIMMING : NMSExtras.EntityPose.STANDING).getEnumValue();
+            NMSExtras.setData(watcher, registry, pos);
 
             if (ReflectionUtils.supports(19)) {
                 return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), WATCHER_PACK.invoke(watcher));

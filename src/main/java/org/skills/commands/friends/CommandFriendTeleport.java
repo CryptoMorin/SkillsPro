@@ -71,8 +71,10 @@ public class CommandFriendTeleport extends SkillsCommand {
             Set<CommandFriendAccept.Teleportation> sentReqsNew = CommandFriendAccept.requests.getOrDefault(tpTo.getUniqueId(), new HashSet<>());
             CommandFriendAccept.Teleportation request = sentReqsNew.stream().filter(x -> x.from.equals(player.getUniqueId())).findFirst().orElse(null);
             if (request != null) {
-                if (player.isOnline()) SkillsLang.COMMAND_FRIENDTP_EXPIRED.sendMessage(player, "%friend%", tpTo.getName());
-                if (tpTo.isOnline()) SkillsLang.COMMAND_FRIENDTP_EXPIRED_NOTIFY.sendMessage(tpTo, "%friend%", player.getName());
+                if (player.isOnline())
+                    SkillsLang.COMMAND_FRIENDTP_EXPIRED.sendMessage(player, "%friend%", tpTo.getName());
+                if (tpTo.isOnline())
+                    SkillsLang.COMMAND_FRIENDTP_EXPIRED_NOTIFY.sendMessage(tpTo, "%friend%", player.getName());
                 sentReqsNew.remove(request);
                 if (sentReqsNew.isEmpty()) CommandFriendAccept.requests.remove(tpTo.getUniqueId());
                 else CommandFriendAccept.requests.put(tpTo.getUniqueId(), sentReqsNew);

@@ -72,7 +72,6 @@ public class MessageHandler {
      *
      * @param str   the original string that is going to be checked.
      * @param edits the objects with their variables that are going to be replaced.
-     *
      * @return a translated string with all the variables replaced.
      * @since 1.0.0
      */
@@ -95,7 +94,6 @@ public class MessageHandler {
      *
      * @param str   the string to replace.
      * @param edits the edits to apply to the string.
-     *
      * @return a replaced string.
      * @since 3.0.0
      */
@@ -127,7 +125,6 @@ public class MessageHandler {
      * @param text     the string to replace the variable in.
      * @param variable the variable to replace.
      * @param replace  the replacement object. A supplier in special cases.
-     *
      * @return the string with the variable replaced.
      * @since 2.0.0
      */
@@ -180,7 +177,6 @@ public class MessageHandler {
      * be included in the last color, but it'll stop once it found an actual (hex) color code.
      *
      * @param input the string to search for colors.
-     *
      * @return translated last color of the string.
      * @since 3.0.0
      */
@@ -239,7 +235,6 @@ public class MessageHandler {
      *
      * @param builder the color code builder.
      * @param code    the color code.
-     *
      * @return if this color code was a formatted color code.
      * @since 3.0.0
      */
@@ -261,7 +256,6 @@ public class MessageHandler {
      * Translates color codes for the given string using <code>&</code> character.
      *
      * @param str the string to translate.
-     *
      * @return Translated Alternate Color Codes of the string.
      * @since 1.0.0
      */
@@ -320,7 +314,6 @@ public class MessageHandler {
      * A part of color codes can be {@link #isHexOrDigit(char)} hex or {@link #isFormattingCode(char)} color code.
      *
      * @param ch the character.
-     *
      * @return true if this character can color code, otherwise false.
      * @since 3.0.0
      */
@@ -333,7 +326,6 @@ public class MessageHandler {
      * Special color codes are bolds, italics, resets, underlines, strikethrough and obfuscated.
      *
      * @param ch the character.
-     *
      * @return true if this character can color code, otherwise false.
      * @since 3.0.0
      */
@@ -346,7 +338,6 @@ public class MessageHandler {
      * https://simple.wikipedia.org/wiki/Hexadecimal
      *
      * @param ch the character.
-     *
      * @return true if this character can be a hex color code, otherwise false.
      * @since 3.0.0
      */
@@ -360,7 +351,6 @@ public class MessageHandler {
      *
      * @param str   the string to strip colors from.
      * @param strip whether the colors should be stripped only or removed completely.
-     *
      * @return a string with visible colors.
      * @since 3.0.0
      */
@@ -433,7 +423,6 @@ public class MessageHandler {
      *
      * @param receiver the sender who's going to receive the message.
      * @param message  the message to send to the receiver.
-     *
      * @see #sendPluginMessage(CommandSender, String)
      * @since 1.0.0
      */
@@ -448,7 +437,6 @@ public class MessageHandler {
      *
      * @param receiver the sender who's going to receive the message.
      * @param message  the message to send to the receiver.
-     *
      * @see #sendMessage(CommandSender, String)
      * @since 1.0.0
      */
@@ -462,7 +450,6 @@ public class MessageHandler {
      *
      * @param player  the player who's going to receive the message.
      * @param message the message that is going to be sent to the player.
-     *
      * @since 1.0.0
      */
     public static void sendPlayerMessage(Player player, String message) {
@@ -474,7 +461,6 @@ public class MessageHandler {
      *
      * @param player  the player who's going to receive the message.
      * @param message the message that is going to be sent to the player.
-     *
      * @since 1.0.0
      */
     public static void sendPlayerPluginMessage(Player player, String message) {
@@ -485,7 +471,6 @@ public class MessageHandler {
      * Sends a colored message to console.
      *
      * @param message the message that is going to be sent to console.
-     *
      * @since 1.0.0
      */
     public static void sendConsoleMessage(String message) {
@@ -496,7 +481,6 @@ public class MessageHandler {
      * Sends a colored message using the plugin's prefix to console.
      *
      * @param message the message that is going to be sent to console.
-     *
      * @since 1.0.0
      */
     public static void sendConsolePluginMessage(String message) {
@@ -507,7 +491,6 @@ public class MessageHandler {
      * Sends a colored message to all the online players on the server.
      *
      * @param message the message that is going to be sent to the players.
-     *
      * @since 1.0.0
      */
     public static void sendPlayersMessage(String message) {
@@ -518,7 +501,6 @@ public class MessageHandler {
      * Sends a colored message with the plugin's prefix to all the online players on the server.
      *
      * @param message the message that is going to be sent to the players.
-     *
      * @since 1.0.0
      */
     public static void sendPlayersPluginMessage(String message) {
@@ -531,7 +513,6 @@ public class MessageHandler {
      * You can also change the debug prefix yourself inside the method.
      *
      * @param message the message to send to console and the players.
-     *
      * @since 1.0.0
      */
     public static void debug(String message) {

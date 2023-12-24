@@ -78,7 +78,8 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
                 if (i > 4) cancel();
                 if (arrow.isOnGround()) cancel();
 
-                if (XMaterial.supports(13)) player.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
+                if (XMaterial.supports(13))
+                    player.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
                 player.spawnParticle(Particle.FLAME, arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
             }
         }.runTaskTimer(SkillsPro.get(), 5L, 5L);

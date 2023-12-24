@@ -30,7 +30,8 @@ public abstract class Mastery implements Listener {
 
     protected Mastery(String name, boolean isDefault) {
         this.name = name;
-        if (isDefault && SkillsMasteryConfig.ENABLED.withProperties(getConfigName()).getBoolean()) MasteryManager.registerDefault(this);
+        if (isDefault && SkillsMasteryConfig.ENABLED.withProperties(getConfigName()).getBoolean())
+            MasteryManager.registerDefault(this);
     }
 
     public static boolean isPlaced(Block block) {
@@ -97,7 +98,8 @@ public abstract class Mastery implements Listener {
     }
 
     public SkilledPlayer checkup(Player player) {
-        if (!player.hasPermission("skills.masteries.creative") && player.getGameMode() == GameMode.CREATIVE) return null;
+        if (!player.hasPermission("skills.masteries.creative") && player.getGameMode() == GameMode.CREATIVE)
+            return null;
         if (!player.hasPermission("skills.mastery." + getConfigName())) return null;
         if (SkillsConfig.isInDisabledWorld(player.getLocation())) return null;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);

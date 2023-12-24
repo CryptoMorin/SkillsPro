@@ -24,7 +24,8 @@ public class CommandEventEvents extends SkillsCommand {
             return;
         }
 
-        if (xp != null) SkillsLang.COMMAND_EVENT_EVENTS_XP.sendMessage(sender, "%xp_duration%", xp.getDisplayTime(), "%xp_multiplier%", xp.getMultiplier());
+        if (xp != null)
+            SkillsLang.COMMAND_EVENT_EVENTS_XP.sendMessage(sender, "%xp_duration%", xp.getDisplayTime(), "%xp_multiplier%", xp.getMultiplier());
         if (soul != null)
             SkillsLang.COMMAND_EVENT_EVENTS_SOUL.sendMessage(sender, "%soul_duration%", soul.getDisplayTime(), "%soul_multiplier%", soul.getMultiplier());
     }

@@ -62,7 +62,8 @@ public class CommandPartyKick extends SkillsCommand {
 
         for (UUID members : info.getParty().getMembers()) {
             OfflinePlayer member = Bukkit.getOfflinePlayer(members);
-            if (member.isOnline()) SkillsLang.COMMAND_PARTY_KICK_KICKED.sendMessage((Player) member, player, "%kicked%", player.getName(), "%kicker%", kicker.getName());
+            if (member.isOnline())
+                SkillsLang.COMMAND_PARTY_KICK_KICKED.sendMessage((Player) member, player, "%kicked%", player.getName(), "%kicker%", kicker.getName());
         }
         info.leaveParty();
     }

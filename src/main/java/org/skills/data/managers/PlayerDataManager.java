@@ -48,7 +48,8 @@ public class PlayerDataManager extends DataManager<SkilledPlayer> {
                 saved++;
             }
         }
-        if (SkillsConfig.ANNOUNCE_AUTOSAVES.getBoolean()) MessageHandler.sendConsolePluginMessage("Saved a total of &e" + saved + " &3players data.");
+        if (SkillsConfig.ANNOUNCE_AUTOSAVES.getBoolean())
+            MessageHandler.sendConsolePluginMessage("Saved a total of &e" + saved + " &3players data.");
     }
 
     private void generateCrap() {

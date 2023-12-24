@@ -1,15 +1,18 @@
 name: "Vampire"
 commands-to-perform-upon-select: [ ]
 commands-to-perform-upon-change: [ ]
+
 max-level: 100
 max-health: min(20 + (lvl / 2), 60)
 max-energy: lvl + 20
-required-level: 20
-cost: 5000
 # blood lost
 energy-regen: "%skills_max_energy% / (20 + bloodwell)"
-stats: [ STR, DEX ]
 energy: blood
+
+required-level: 20
+stats: [ STR, DEX ]
+cost: 5000
+
 abilities:
   vampire-passive:
     damage: str/5+1

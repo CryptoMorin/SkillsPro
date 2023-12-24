@@ -1,14 +1,17 @@
 package org.skills.utils;
 
+import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.skills.main.SkillsPro;
@@ -23,7 +26,38 @@ public class LocationUtils {
     private static final double ROUND_SCALING = Math.pow(10, 1);
 
     public static void faceOther(Entity entity, Entity other) {
-        entity.getLocation().setDirection(entity.getLocation().toVector().subtract(other.getLocation().toVector()));
+        entity.teleport(entity.getLocation().setDirection(entity.getLocation().toVector().subtract(other.getLocation().toVector())));
+    }
+
+    /**
+     * https://www.spigotmc.org/threads/how-to-calculate-armorstand-arm-tip-location.331825/
+     */
+    public static Location getArmorStandHandLocation(ArmorStand armorStand) {
+        Location asl = armorStand.getLocation().clone();
+        asl.setYaw(asl.getYaw() + 90f); // No need for getRotation(), it's included in the location.
+        Vector dir = asl.getDirection();
+
+        // Shoulder
+        asl.setX(asl.getX() + 5f / 16f * dir.getX());
+        asl.setY(asl.getY() + 22f / 16f);
+        asl.setZ(asl.getZ() + 5f / 16f * dir.getZ());
+
+        // Hand
+        EulerAngle ea = armorStand.getRightArmPose();
+        Vector armDir = getDirection(ea.getX(), ea.getY(), -ea.getZ()); // https://haselkern.com/Minecraft-ArmorStand/
+        armDir = ParticleDisplay.rotateAround(armDir, ParticleDisplay.Axis.Y, -Math.toRadians(asl.getYaw() - 90f));
+        asl.setX(asl.getX() + 10f / 16f * armDir.getX());
+        asl.setY(asl.getY() + 10f / 16f * armDir.getY());
+        asl.setZ(asl.getZ() + 10f / 16f * armDir.getZ());
+
+        return asl;
+    }
+
+    private static Vector getDirection(double pitch, double yaw, double roll) {
+        // https://upload.wikimedia.org/wikipedia/commons/c/c1/Yaw_Axis_Corrected.svg
+        // The x modification is because the original algorithm placed the particle in the middle of the armorstand (with the corret y and z)
+        // when the pitch was too high or low (looking at sky or ground)
+        return ParticleDisplay.rotateAround(new Vector(-(Math.abs(Math.toDegrees(pitch)) * 0.00663), -1, 0), pitch, yaw, roll);
     }
 
     private static double roundToDigits(double value) {
@@ -83,7 +117,6 @@ public class LocationUtils {
      *
      * @param entity  The entity to get the hand location from.
      * @param offhand whether the location should be the player's offhand or main hand.
-     *
      * @return location of the entity's hand.
      */
     public static Location getHandLocation(LivingEntity entity, boolean offhand) {
@@ -214,7 +247,6 @@ public class LocationUtils {
      * Gets the BlockFace of the block the player is currently targeting.
      *
      * @param entity the entity's whos targeted blocks BlockFace is to be checked.
-     *
      * @return the BlockFace of the targeted block, or null if the targeted block is non-occluding.
      */
     public static BlockFace getEntityBlockFace(LivingEntity entity) {

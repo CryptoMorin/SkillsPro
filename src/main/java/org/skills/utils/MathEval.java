@@ -61,7 +61,8 @@ public final class MathEval {
      * Set a custom operator, replacing any existing operator with the same symbol. Operators cannot be removed, only replaced.
      */
     public static void setOperator(Operator opr) {
-        if (opr.symbol >= OPERATORS.length) throw new IllegalArgumentException("Operator handler cannot handle char '" + opr.symbol + "' with char code: " + ((int) opr.symbol));
+        if (opr.symbol >= OPERATORS.length)
+            throw new IllegalArgumentException("Operator handler cannot handle char '" + opr.symbol + "' with char code: " + ((int) opr.symbol));
         OPERATORS[opr.symbol] = opr;
 //        OPERATORS.put(opr.symbol, opr);
     }
@@ -245,7 +246,8 @@ public final class MathEval {
 
                 if ((nxt = getOperator(chr)) != OPERAND) {
                     if (nxt == OPERATOR_EQUAL) nxt = OPERAND;
-                    else break; // must kill operator to prevent spurious "Expression ends with a blank sub-expression" at end of function
+                    else
+                        break; // must kill operator to prevent spurious "Expression ends with a blank sub-expression" at end of function
                 } else if (chr == ')' || chr == ',' || chr == ';') break; // end of subexpression or function argument.
             }
 
@@ -312,8 +314,10 @@ public final class MathEval {
     }
 
     private double doOperation(int beg, double lft, Operator opr, double rgt) {
-        if (opr.unary != Side.RIGHT && Double.isNaN(lft)) throw exception(beg, "Mathematical NaN detected in right-operand");
-        if (opr.unary != Side.LEFT && Double.isNaN(rgt)) throw exception(beg, "Mathematical NaN detected in left-operand");
+        if (opr.unary != Side.RIGHT && Double.isNaN(lft))
+            throw exception(beg, "Mathematical NaN detected in right-operand");
+        if (opr.unary != Side.LEFT && Double.isNaN(rgt))
+            throw exception(beg, "Mathematical NaN detected in left-operand");
 
         try {
             return opr.function.apply(lft, rgt);
@@ -321,7 +325,8 @@ public final class MathEval {
             throw exception(beg, "Mathematical expression \"" + expression + "\" failed to evaluate", thr);
         } catch (UnsupportedOperationException thr) {
             int tmp = beg;
-            while (tmp > 0 && getOperator(expression.charAt(tmp)) == null) tmp--; // set up for offset of the offending operator
+            while (tmp > 0 && getOperator(expression.charAt(tmp)) == null)
+                tmp--; // set up for offset of the offending operator
             throw exception(tmp, "Operator \"" + opr.symbol + "\" not handled by math engine (Programmer error: The list of operators is inconsistent within the engine)");
         }
     }

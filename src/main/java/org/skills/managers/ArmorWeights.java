@@ -57,7 +57,8 @@ public final class ArmorWeights implements Listener {
                 String lore = sec.getString("lore");
 
                 if ((finalName != null && !Strings.isNullOrEmpty(name) && finalName.contains(name)) ||
-                        (finalLore != null && !Strings.isNullOrEmpty(lore) && finalLore.contains(lore))) weight = sec.getDouble("weight");
+                        (finalLore != null && !Strings.isNullOrEmpty(lore) && finalLore.contains(lore)))
+                    weight = sec.getDouble("weight");
             }
         }
 

@@ -49,7 +49,8 @@ public class ArbalistMinions extends ActiveAbility {
         if (metas.isEmpty()) return;
         LivingEntity target = (LivingEntity) metas.get(0).value();
 
-        if (event.getTarget() == null || target.getEntityId() != event.getTarget().getEntityId()) event.setTarget(target);
+        if (event.getTarget() == null || target.getEntityId() != event.getTarget().getEntityId())
+            event.setTarget(target);
     }
 
     @EventHandler

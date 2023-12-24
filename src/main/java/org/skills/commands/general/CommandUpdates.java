@@ -19,7 +19,8 @@ public class CommandUpdates extends SkillsCommand {
         plugin.getUpdater().checkForUpdates().thenRunAsync(() -> {
             if (plugin.getUpdater().canUpdate()) {
                 MessageHandler.sendPluginMessage(sender, plugin.getUpdater().updateText());
-            } else MessageHandler.sendPluginMessage(sender, "&2No updates found &8- &8(&6v" + plugin.getUpdater().currentVersion + "&8)");
+            } else
+                MessageHandler.sendPluginMessage(sender, "&2No updates found &8- &8(&6v" + plugin.getUpdater().currentVersion + "&8)");
         });
     }
 

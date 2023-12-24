@@ -123,7 +123,12 @@ public enum SkillsLang {
     Command_User_Invalid_Setter("&cInvalid setter&8: &e%setter% &cUse one of the following keywords&8: &eadd &7| &eremove &7| &eset", 1, 2),
     COMMAND_USER_MASTERY_DESCRIPTION("&eUse to modify a player's mastery levels.", 1, 2, 3),
     COMMAND_USER_IMPROVE_DESCRIPTION("&eUse to modify a player's skill's improvements.", 1, 2, 3),
-    Command_User_Mastery_Set_Success("&e%amount% &3levels has been added to the player's &e%mastery% &3mastery, new level&8: &e%new%", 1, 2, 3),
+    COMMAND_USER_IMPROVE_ADD("&3%amount% has been added to the player's ability level", 1, 2, 3),
+    COMMAND_USER_IMPROVE_REMOVE("&3%amount% has been removed to the player's ability level.", 1, 2, 3),
+    COMMAND_USER_IMPROVE_SET("&3%amount% has been set as the player's ability level.", 1, 2, 3),
+    COMMAND_USER_MASTERY_ADD("&3%amount% has been added to the player's mastery level", 1, 2, 3),
+    COMMAND_USER_MASTERY_REMOVE("&3%amount% has been removed to the player's mastery level.", 1, 2, 3),
+    COMMAND_USER_MASTERY_SET("&3%amount% has been set as the player's mastery level.", 1, 2, 3),
     COMMAND_USER_IMPROVEMENT_SUCCESS("&e%amount% &3levels has been added to the player's &e%ability% &3ability, new level&8: &e%new%", 1, 2, 3),
 
     COMMAND_STATS_OTHERS_PERMISSION("&4You don't have the permission to see others stats.", 1, 2),
@@ -352,7 +357,7 @@ public enum SkillsLang {
 
     ABILITY_UPGRADED("&3Skill ability upgraded!", 1),
     ABILITY_MAXXED("&cSkill ability is at maximum level.", 1),
-    ABILITY_NOT_FOUND("&e%ability% &3ability not found.", 1),
+    ABILITY_NOT_FOUND("&e%ability% &3ability not found for &e%player%", 1),
     ABILITY_INVALID_LEVEL("&cAbility level must be a value between 0-3", 1),
     ABILITY_REQUIRED_LEVEL("&cYou need to be at least level &e%level% &cto use this ability.", 1),
     ABILITY_UPGRADE_NOTIFICATION("&3You have &e%skills_soul% &3souls. You can now upgrade&8: %abilities%", 1),
@@ -373,6 +378,7 @@ public enum SkillsLang {
 
     SKILL_MAXIMUM_LEVEL("&cThis improvement is upgraded to the max level.", 1),
     ABILITY_TITLE("&6&lPassive", 1, 2),
+    ABILITY_VERGIL_PASSIVE_TITLE("&6Passive", 1, 3),
     ABILITY_SWORDSMAN_PASSIVE_TITLE("&6Passive", 1, 3),
     ABILITY_ARBALIST_PASSIVE_TITLE("&6Passive", 1, 3),
     ABILITY_EIDOLON_PASSIVE_TITLE("&6Passive", 1, 3),
@@ -384,6 +390,7 @@ public enum SkillsLang {
     ABILITY_JUGGERNAUT_PASSIVE_TITLE("&6Passive", 1, 3),
     ABILITY_NATURES_FORCE_TITLE("&2Nature's Force", 1, 3),
     ABILITY_NATURES_CALL_TITLE("&2Nature's Call", 1, 3),
+    ABILITY_JUDGEMENT_CUT_TITLE("&aJugdement Cut", 1, 3),
 
     ABILITY_DODGE_TITLE("&6Dodge", 1, 2),
     ABILITY_PARRY_TITLE("&6Parry", 1, 2),
@@ -446,6 +453,7 @@ public enum SkillsLang {
             "\n&3Level 2: &eHostile mobs will naturally\nbe neutral to you.\nIf you attack a mob, neutrality is\ndisabled for 30 seconds.\n" +
             "Some mobs like Enderman, endermite,\nwither, guardians and the ender dragon\nwill be still able to see you." +
             "\n&3Level 3&8: &eThe first attack you make\nbefore becoming visible will\ndeal &6%damage% &emore damage.", 1, 2),
+    ABILITY_JUDGEMENT_CUT_DESCRIPTION("A cool ability", 1, 2),
     Skill_Devourer_Invis_Disabled("&cYour invisibility is disabled for 30 seconds!", 1, 2),
     Skill_Devourer_Invis_Enabled("&1You fade into the darkness...", 1, 2),
     Skill_Devourer_Neutrality_Disabled("&cYour neutrality is disabled for 30 seconds!", 1, 2),

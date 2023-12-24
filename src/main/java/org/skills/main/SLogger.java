@@ -6,7 +6,8 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class SLogger {
-    @SuppressWarnings("StringBufferField") private final StringBuilder builder;
+    @SuppressWarnings("StringBufferField")
+    private final StringBuilder builder;
     private boolean shown;
 
     public SLogger() {

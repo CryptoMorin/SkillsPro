@@ -60,7 +60,8 @@ public class SkillsEvent implements Cloneable {
     }
 
     public void startEvent() {
-        if (SkillsEventManager.isEventRunning(type)) throw new IllegalArgumentException(type + " global event is already running");
+        if (SkillsEventManager.isEventRunning(type))
+            throw new IllegalArgumentException(type + " global event is already running");
         SkillsEventManager.getEvents().put(type, this);
         if (SkillsConfig.BOSSBAR_EVENTS_ENABLED.getBoolean()) {
             ConfigurationSection bossConfig = SkillsConfig.BOSSBAR_EVENTS.getSection();

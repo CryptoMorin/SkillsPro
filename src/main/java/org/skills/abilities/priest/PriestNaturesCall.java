@@ -45,7 +45,8 @@ public class PriestNaturesCall extends ActiveAbility {
         if (metas.isEmpty()) return;
         LivingEntity target = (LivingEntity) metas.get(0).value();
 
-        if (event.getTarget() == null || !target.getUniqueId().equals(event.getTarget().getUniqueId())) event.setTarget(target);
+        if (event.getTarget() == null || !target.getUniqueId().equals(event.getTarget().getUniqueId()))
+            event.setTarget(target);
     }
 
     @EventHandler

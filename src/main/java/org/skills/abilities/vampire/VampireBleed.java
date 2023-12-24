@@ -10,7 +10,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
-import org.skills.managers.DamageManager;
 import org.skills.utils.MathUtils;
 import org.skills.utils.versionsupport.VersionSupport;
 

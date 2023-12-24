@@ -76,13 +76,15 @@ public class CommandPartyInvite extends SkillsCommand {
         }
 
         SkillsLang.COMMAND_PARTY_INVITE_INVITED.sendMessage(inviter, "%invited%", player.getName());
-        if (player.isOnline()) SkillsLang.COMMAND_PARTY_INVITE_NOTIFICATION.sendMessage(player, "%inviter%", inviter.getName(), "%party%", inviterInfo.getParty().getName());
+        if (player.isOnline())
+            SkillsLang.COMMAND_PARTY_INVITE_NOTIFICATION.sendMessage(player, "%inviter%", inviter.getName(), "%party%", inviterInfo.getParty().getName());
         parties.add(inviterInfo.getPartyId());
         PartyManager.INVITES.put(player.getUniqueId(), parties);
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             if (PartyManager.INVITES.remove(player.getUniqueId()) != null) {
-                if (player.isOnline()) SkillsLang.COMMAND_PARTY_INVITE_EXPIRED.sendMessage(player, "%inviter%", inviter.getName());
+                if (player.isOnline())
+                    SkillsLang.COMMAND_PARTY_INVITE_EXPIRED.sendMessage(player, "%inviter%", inviter.getName());
             }
         }, 60 * 20L);
     }

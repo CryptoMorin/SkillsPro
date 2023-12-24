@@ -25,10 +25,37 @@ import java.util.concurrent.TimeUnit;
 public final class DamageManager implements Listener {
     public static final String LAST_DAMAGE = "SKILLS_ATTACK";
     private static final Cache<Integer, Map<UUID, Double>> DAMAGES = CacheHandler.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
-//    private static final Map<UUID, UUID> LAST_DAMAGES = new HashMap<>();
+    private static final Cache<UUID, EntityDamageByEntityEvent> LAST_PLAYER_DAMAGES = CacheHandler.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+    private static final Cache<UUID, EntityDamageByEntityEvent> LAST_ENTITY_DAMAGES = CacheHandler.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+    private static final Cache<UUID, EntityDamageByEntityEvent> LAST_HIT_ENTITY = CacheHandler.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+    private static final Map<UUID, Integer> DAMAGE_TICKS = new HashMap<>();
+
+    public static void storeDamageTicks(LivingEntity entity) {
+        DAMAGE_TICKS.put(entity.getUniqueId(), entity.getNoDamageTicks());
+    }
+
+    public static void restoreDamageTicks(LivingEntity entity) {
+        Integer ticks = DAMAGE_TICKS.remove(entity.getUniqueId());
+        if (ticks != null) entity.setNoDamageTicks(ticks);
+    }
 
     public static void damage(LivingEntity target, Player damager, double damage) {
-        if (damage > 0) target.damage(damage, damager);
+        if (damage > 0) {
+            target.damage(damage, damager);
+        }
+    }
+
+    public static EntityDamageByEntityEvent getLastHitEntity(Player damager) {
+        return LAST_HIT_ENTITY.getIfPresent(damager.getUniqueId());
+    }
+
+    public static EntityDamageByEntityEvent getLastDamager(Player victim, boolean includingMobs) {
+        return (includingMobs ? LAST_ENTITY_DAMAGES : LAST_PLAYER_DAMAGES).getIfPresent(victim.getUniqueId());
+    }
+
+    public static LivingEntity getLastSourceDamager(Player victim, boolean includingMobs) {
+        EntityDamageByEntityEvent event = getLastDamager(victim, includingMobs);
+        return DamageManager.getDamager(event);
     }
 
     protected static Player getFinalHitMob(LivingEntity entity) {
@@ -116,9 +143,16 @@ public final class DamageManager implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onMostDamageHandle(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (damager instanceof Player) {
+            LAST_PLAYER_DAMAGES.put(event.getEntity().getUniqueId(), event);
+        }
+        LAST_ENTITY_DAMAGES.put(event.getEntity().getUniqueId(), event);
+        LAST_HIT_ENTITY.put(event.getDamager().getUniqueId(), event);
+
         DAMAGES.asMap().compute(event.getEntity().getEntityId(), (k, v) -> {
             if (v == null) v = new HashMap<>();
-            v.compute(event.getDamager().getUniqueId(), (k2, v2) -> v2 == null ? event.getFinalDamage() : v2 + event.getFinalDamage());
+            v.compute(damager.getUniqueId(), (k2, v2) -> v2 == null ? event.getFinalDamage() : v2 + event.getFinalDamage());
             return v;
         });
     }

@@ -89,35 +89,15 @@ public class FireMageInferno extends ActiveAbility {
 
         event.setDamage(event.getDamage() + damage);
         player.getWorld().playEffect(entity.getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-        if (entity instanceof Player) ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * 8, 0));
+        if (entity instanceof Player)
+            ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * 8, 0));
         XSound.BLOCK_LAVA_POP.play(entity);
 
         if (lvl > 1) {
             player.setFireTicks((int) (player.getFireTicks() + (damageScaling * 20)));
             spreadFire(player.getLocation(), (int) getScaling(info, "range"));
-            if (lvl > 2) XParticle.helix(SkillsPro.get(), lvl, 1, 0.1, 1, 3, 1, false, true, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME));
-        }
-    }
-
-    private static final class SimpleBlockPosition {
-        public final int x, y, z;
-
-        private SimpleBlockPosition(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public int hashCode() {
-            return (y + z * 31) * 31 + x;
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            SimpleBlockPosition that = (SimpleBlockPosition) o;
-            return x == that.x && y == that.y && z == that.z;
+            if (lvl > 2)
+                XParticle.helix(SkillsPro.get(), lvl, 1, 0.1, 1, 3, 1, 0.5, false, true, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME));
         }
     }
 }

@@ -97,7 +97,6 @@ public abstract class BackupManager {
      *
      * @param zip     the ZIP file path.
      * @param unzipTo the directory to copy the uncompressed files to.
-     *
      * @see #zipFiles()
      * @since 1.0.0
      */
@@ -236,7 +235,6 @@ public abstract class BackupManager {
      * directories will be checked and passed to {@link #isWhitelistedFile(Path)}
      *
      * @param file the directory that we're about to enter.
-     *
      * @return true if the contents inside this directory should be accepted.
      * @since 1.0.0
      */
@@ -246,7 +244,6 @@ public abstract class BackupManager {
      * When taking a backup from the files in the directory, only these files are accepted.
      *
      * @param file the file that we're about to backup.
-     *
      * @return true if the specified path should be accepted.
      * @since 1.0.0
      */
@@ -258,7 +255,6 @@ public abstract class BackupManager {
      * @param path     the backup file's path.
      * @param time     any files older than this time.
      * @param timeUnit the time unit for time parameter..
-     *
      * @return true if this backup should be deleted, otherwise false.
      * @since 1.0.0
      */
@@ -282,7 +278,6 @@ public abstract class BackupManager {
      *
      * @param time     any files older than this time.
      * @param timeUnit the time unit for time parameter.
-     *
      * @since 1.0.0
      */
     @SuppressWarnings("UnusedReturnValue")

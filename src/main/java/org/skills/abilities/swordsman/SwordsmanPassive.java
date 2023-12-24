@@ -169,7 +169,8 @@ public class SwordsmanPassive extends Ability {
         player.spawnParticle(Particle.DAMAGE_INDICATOR, entity.getLocation().clone().add(0, 0.75, 0.5),
                 MathUtils.randInt(1, 4), 0.1, 0.1, 1.0, 0.2);
 
-        if (item.getDurability() + 1 < item.getType().getMaxDurability()) item.setDurability((short) (item.getDurability() + 1));
+        if (item.getDurability() + 1 < item.getType().getMaxDurability())
+            item.setDurability((short) (item.getDurability() + 1));
         else {
             XSound.ENTITY_ITEM_BREAK.play(player.getLocation());
             player.getInventory().setItemInOffHand(null);

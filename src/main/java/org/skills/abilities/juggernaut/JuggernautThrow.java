@@ -76,7 +76,8 @@ public class JuggernautThrow extends ActiveAbility {
             double damage = event.getDamage();
             event.setDamage(damage - MathUtils.percentOfAmount(getScaling(info, "shield-percent"), damage));
         }
-        if (THROW_PAIRS.containsKey(damager.getEntityId()) || THROW_PAIRS.containsValue(damager.getEntityId())) event.setCancelled(true);
+        if (THROW_PAIRS.containsKey(damager.getEntityId()) || THROW_PAIRS.containsValue(damager.getEntityId()))
+            event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -87,7 +88,7 @@ public class JuggernautThrow extends ActiveAbility {
     @SuppressWarnings("deprecation")
     private void carryEntity(Player carrier, SkilledPlayer info, LivingEntity target) {
         THROW_PAIRS.put(carrier.getEntityId(), target.getEntityId());
-        carrier.setPassenger(target);
+        carrier.setPassenger(target); // IllegalArgumentException: Entity cannot ride itself (fixed in commonDamageCheckup)
         SkillsLang.Skill_Juggernaut_Active_Activated_Message.sendMessage(carrier);
 
         new BukkitRunnable() {

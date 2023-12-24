@@ -132,7 +132,7 @@ public class Skill {
     }
 
     public YamlAdapter getAdapter() {
-        return adapter;
+        return Objects.requireNonNull(adapter, () -> "Adapter of skill " + name + " is null");
     }
 
     public void setAdapter(YamlAdapter adapter) {

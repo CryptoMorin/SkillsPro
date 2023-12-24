@@ -12,6 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -37,6 +38,7 @@ import org.skills.utils.versionsupport.VersionSupport;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public final class HealthAndEnergyManager implements Listener {
     private static final Map<Integer, BossBar> LEVEL_BOSSBARS = new HashMap<>();
@@ -64,7 +66,8 @@ public final class HealthAndEnergyManager implements Listener {
                 String title = SkillsConfig.BOSSBAR_LEVELS.getSection().getString("title");
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     BossBar bar = LEVEL_BOSSBARS.get(player.getEntityId());
-                    if (bar != null) bar.setTitle(MessageHandler.colorize(ServiceHandler.translatePlaceholders(player, title)));
+                    if (bar != null)
+                        bar.setTitle(MessageHandler.colorize(ServiceHandler.translatePlaceholders(player, title)));
                 }
             }, 100L, frequency);
         }
@@ -77,8 +80,9 @@ public final class HealthAndEnergyManager implements Listener {
                 if (!info.hasSkill()) continue;
 
                 Energy energy = info.getSkill().getEnergy();
-                boolean reverse = energy.getCharging() == Energy.ChargingMethod.AUTO_REVERSE;
-                if (energy.getCharging() == Energy.ChargingMethod.AUTO || reverse) {
+                boolean reverse = energy.hasChargingMethod(Energy.ChargingMethod.AUTO_REVERSE);
+                boolean noDmg = energy.hasChargingMethod(Energy.ChargingMethod.AUTO_NO_DAMAGE);
+                if (energy.hasChargingMethod(Energy.ChargingMethod.AUTO) || reverse || noDmg) {
                     double currEnergy = info.getEnergy();
                     double energyRegen = info.getScaling(SkillScaling.ENERGY_REGEN);
                     double finale = currEnergy;
@@ -87,6 +91,8 @@ public final class HealthAndEnergyManager implements Listener {
                         if (currEnergy - energyRegen <= 0) finale = 0;
                         else finale -= energyRegen;
                     } else {
+                        if (noDmg && Cooldown.isInCooldown(player.getUniqueId(), "LAST_DAMAGE_AUTO_ENERGY")) continue;
+
                         if (!Cooldown.isInCooldown(player.getUniqueId(), "ENERGY_BOOSTER")) info.setEnergyBooster(0);
                         double booster = info.getEnergyBooster();
                         energyRegen += booster;
@@ -166,25 +172,60 @@ public final class HealthAndEnergyManager implements Listener {
         });
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onHitEnergyCharge(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            new Cooldown(player.getUniqueId(), "LAST_DAMAGE_AUTO_ENERGY", 10, TimeUnit.SECONDS);
+
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+            Energy energy = info.getSkill().getEnergy();
+            if (energy != null && energy.hasChargingMethod(Energy.ChargingMethod.REDUCE_ON_DAMAGE)) {
+                info.chargeEnergy(-5);
+            }
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onHitEnergyCharge(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
+        if (event.getDamager() instanceof Player) { // Damager
+            Player player = (Player) event.getDamager();
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+            if (info.hasSkill()) {
+                Energy energy = info.getSkill().getEnergy();
+                if (energy.hasChargingMethod(Energy.ChargingMethod.HIT)) {
+                    if (energy.getElements() == null || energy.getElements().isEmpty()) {
+                        info.chargeEnergy();
+                        return;
+                    }
 
-        Player player = (Player) event.getDamager();
-        SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        if (!info.hasSkill()) return;
-        Energy energy = info.getSkill().getEnergy();
-
-        if (energy.getCharging() == Energy.ChargingMethod.HIT) {
-            if (energy.getElements() == null || energy.getElements().isEmpty()) {
-                info.chargeEnergy();
-                return;
+                    for (String elements : energy.getElements()) {
+                        if (event.getEntityType().name().equals(elements)) {
+                            info.chargeEnergy();
+                            break;
+                        }
+                    }
+                }
             }
+        }
+        if (event.getEntity() instanceof Player) { // Victim
+            Player player = (Player) event.getEntity();
+            SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
+            if (info.hasSkill()) {
+                Energy energy = info.getSkill().getEnergy();
 
-            for (String elements : energy.getElements()) {
-                if (event.getEntityType().name().equals(elements)) {
-                    info.chargeEnergy();
-                    break;
+                if (energy.hasChargingMethod(Energy.ChargingMethod.PAIN)) {
+                    if (energy.getElements() == null || energy.getElements().isEmpty()) {
+                        info.chargeEnergy();
+                        return;
+                    }
+
+                    for (String elements : energy.getElements()) {
+                        if (event.getEntityType().name().equals(elements)) {
+                            info.chargeEnergy();
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -199,7 +240,7 @@ public final class HealthAndEnergyManager implements Listener {
         if (!info.hasSkill()) return;
         Energy energy = info.getSkill().getEnergy();
 
-        if (energy.getCharging() == Energy.ChargingMethod.KILL) {
+        if (energy.hasChargingMethod(Energy.ChargingMethod.KILL)) {
             if (energy.getElements() == null || energy.getElements().isEmpty()) {
                 info.chargeEnergy();
                 return;
@@ -232,7 +273,8 @@ public final class HealthAndEnergyManager implements Listener {
             String skill = SkillsConfig.DEFAULT_SKILL.getString();
             if (!skill.equalsIgnoreCase(PlayerSkill.NONE)) {
                 Skill defaultSkill = SkillManager.getSkill(skill);
-                if (defaultSkill == null) MessageHandler.sendConsolePluginMessage("&4Unknown default skill option&8: &e" + skill);
+                if (defaultSkill == null)
+                    MessageHandler.sendConsolePluginMessage("&4Unknown default skill option&8: &e" + skill);
                 else if (info.setActiveSkill(defaultSkill).isCancelled())
                     throw new IllegalStateException("A plugin prevented setting default skill " + skill + " for player " + player.getName());
             }

@@ -10,6 +10,7 @@ import org.skills.data.database.SkillsDatabase;
 import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.events.SkillsEventType;
+import org.skills.main.SLogger;
 import org.skills.party.SkillsParty;
 
 import java.io.BufferedReader;
@@ -93,6 +94,15 @@ public class JsonDatabase<T extends DataContainer> implements SkillsDatabase<T> 
             info = gson.fromJson(reader, adapter);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
+        }
+
+        if (info == null) {
+            try {
+                SLogger.error("Corrupted data file '" + path + "': " + Files.readAllLines(path));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return null;
         }
 

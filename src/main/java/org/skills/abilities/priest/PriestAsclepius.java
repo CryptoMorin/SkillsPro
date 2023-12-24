@@ -44,7 +44,8 @@ public class PriestAsclepius extends InstantActiveAbility {
 
                 if (lvl > 2) {
                     for (PotionEffect debuff : target.getActivePotionEffects()) {
-                        if (XPotion.DEBUFFS.contains(XPotion.matchXPotion(debuff.getType()))) target.removePotionEffect(debuff.getType());
+                        if (XPotion.DEBUFFS.contains(XPotion.matchXPotion(debuff.getType())))
+                            target.removePotionEffect(debuff.getType());
                     }
                 }
             } else if (damage > 0) {
@@ -57,6 +58,7 @@ public class PriestAsclepius extends InstantActiveAbility {
         XSound.ENTITY_BAT_TAKEOFF.play(player);
 
         XParticle.circle(range * 2, range * 8, ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE));
-        if (lvl > 1) XParticle.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, true, false, ParticleDisplay.simple(player.getLocation(), Particle.ENCHANTMENT_TABLE));
+        if (lvl > 1)
+            XParticle.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, 0.5, true, false, ParticleDisplay.simple(player.getLocation(), Particle.ENCHANTMENT_TABLE));
     }
 }

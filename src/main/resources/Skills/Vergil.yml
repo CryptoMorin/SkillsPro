@@ -1,0 +1,89 @@
+name: "Vergil"
+commands-to-perform-upon-select: [ ]
+commands-to-perform-upon-change: [ ]
+max-health: min(20 + (lvl / 2), 60)
+max-level: 100
+required-level: 0
+cost: 0
+energy: concentration
+max-energy: lvl + 20
+energy-regen: "%skills_max_energy% / 50"
+stats: [ INT, DEX ]
+
+concentration-bossbar:
+  enabled: true
+  title: "&3Concentration&8: &9%skills_skill_vergil_concentration_level%"
+  color: GREEN
+  style: SEGMENTED_6
+  flags: [ ]
+
+abilities:
+  vergil-passive:
+    test: 2
+  judgement-cut:
+    required-level: 10
+    cost: 100 * (lvl + 1)
+    activation:
+      key: LR
+      energy: 4
+      cooldown: 3
+      items: [ IRON_SWORD ]
+    test: 2
+  judgement-cut-end:
+    required-level: 100
+    cost: 1000 * (lvl + 1)
+    activation:
+      key: LLRR
+      energy: 3
+      cooldown: 3
+      items: [ IRON_SWORD ]
+  mirage-edge-slash:
+    required-level: 20
+    cost: 100 * (lvl + 1)
+    activation:
+      key: LRL
+      energy: 3
+      cooldown: 3
+      items: [ DIAMOND_SWORD ]
+  rapid-slash:
+    required-level: 5
+    cost: 100 * (lvl + 1)
+    activation:
+      key: LLLR
+      energy: 3
+      cooldown: 3
+      items: [ IRON_SWORD ]
+  vertical-slash:
+    required-level: 5
+    cost: 100 * (lvl + 1)
+    activation:
+      idle: 5
+      key: FL
+      energy: 3
+      cooldown: 3
+      items: [ IRON_SWORD ]
+  phantom-blade:
+    required-level: 10
+    cost: 100 * (lvl + 1)
+    activation:
+      key: R
+      energy: 1
+      cooldown: 01
+      items: [ IRON_SWORD, DIAMOND_SWORD ]
+  trick-action:
+    required-level: 10
+    cost: 100 * (lvl + 1)
+    activation:
+      key: Q
+      energy: 1
+      cooldown: 1
+      items: [ ]
+  doppelganger:
+    required-level: 50
+    cost: 500 * (lvl + 1)
+    activation:
+      idle: 5
+      key: F
+      energy: 3
+      cooldown: 3
+      items: [ BOOK ]

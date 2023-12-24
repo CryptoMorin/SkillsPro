@@ -45,7 +45,8 @@ public class CommandFriends extends SkillsCommand {
             ItemStack item = holder.getItem();
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SkullMeta) SkullUtils.applySkin(meta, friend);
-            else MessageHandler.sendConsolePluginMessage("&4Cannot set friend skin on an item that is not a skull&8: &e" + item);
+            else
+                MessageHandler.sendConsolePluginMessage("&4Cannot set friend skin on an item that is not a skull&8: &e" + item);
             item.setItemMeta(meta);
             GUIOption.defineVariables(item, friend);
 
@@ -85,8 +86,10 @@ public class CommandFriends extends SkillsCommand {
                     Set<CommandFriendAccept.Teleportation> sentReqsNew = CommandFriendAccept.requests.getOrDefault(tpTo.getUniqueId(), new HashSet<>());
                     CommandFriendAccept.Teleportation request = sentReqsNew.stream().filter(x -> x.from.equals(player.getUniqueId())).findFirst().orElse(null);
                     if (request != null) {
-                        if (player.isOnline()) SkillsLang.COMMAND_FRIENDTP_EXPIRED.sendMessage(player, "%friend%", tpTo.getName());
-                        if (tpTo.isOnline()) SkillsLang.COMMAND_FRIENDTP_EXPIRED_NOTIFY.sendMessage(tpTo, "%friend%", player.getName());
+                        if (player.isOnline())
+                            SkillsLang.COMMAND_FRIENDTP_EXPIRED.sendMessage(player, "%friend%", tpTo.getName());
+                        if (tpTo.isOnline())
+                            SkillsLang.COMMAND_FRIENDTP_EXPIRED_NOTIFY.sendMessage(tpTo, "%friend%", player.getName());
                         sentReqsNew.remove(request);
                         if (sentReqsNew.isEmpty()) CommandFriendAccept.requests.remove(tpTo.getUniqueId());
                         else CommandFriendAccept.requests.put(tpTo.getUniqueId(), sentReqsNew);

@@ -108,7 +108,8 @@ public class HoverLang {
                 builder.append(replacement);
                 last = index;
             }
-            if (last > 0) builder.append(new TextComponent(TextComponent.fromLegacyText(str.substring(last))), ComponentBuilder.FormatRetention.NONE);
+            if (last > 0)
+                builder.append(new TextComponent(TextComponent.fromLegacyText(str.substring(last))), ComponentBuilder.FormatRetention.NONE);
 
 //            for (int i = edits.length; i > 0; i -= 2) {
 //                String variable = String.valueOf(edits[i - 2]);

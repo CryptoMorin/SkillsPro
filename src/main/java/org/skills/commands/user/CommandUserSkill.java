@@ -49,7 +49,8 @@ public class CommandUserSkill extends SkillsCommand {
         if (args.length == 2) {
             String[] names = TabCompleteManager.getSkillTypes(args[1]).toArray(new String[0]);
             if (args[1].isEmpty()) return names;
-            else return Arrays.stream(names).filter(x -> x.toLowerCase().startsWith(args[1].toLowerCase())).toArray(String[]::new);
+            else
+                return Arrays.stream(names).filter(x -> x.toLowerCase().startsWith(args[1].toLowerCase())).toArray(String[]::new);
         }
         return new String[0];
     }

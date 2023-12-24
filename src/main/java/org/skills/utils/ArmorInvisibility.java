@@ -38,8 +38,10 @@ public final class ArmorInvisibility {
             asNmsCopy = lookup.findStatic(craftItemStack, "asNMSCopy", MethodType.methodType(nmsItem, ItemStack.class));
             airArmor = asNmsCopy.invoke(new ItemStack(Material.AIR));
 
-            if (XMaterial.supports(16)) packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, List.class));
-            else packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, enumItemSlot, nmsItem));
+            if (XMaterial.supports(16))
+                packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, List.class));
+            else
+                packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, enumItemSlot, nmsItem));
 
             for (Object slot : enumItemSlot.getEnumConstants()) {
                 String name = slot.toString();
@@ -71,7 +73,8 @@ public final class ArmorInvisibility {
         SLOT_FEET = feet;
     }
 
-    private ArmorInvisibility() {}
+    private ArmorInvisibility() {
+    }
 
     private static void sendAllPacket(World world, Object... packets) {
         for (Player player : world.getPlayers()) ReflectionUtils.sendPacket(player, packets);

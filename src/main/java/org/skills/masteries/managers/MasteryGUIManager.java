@@ -56,7 +56,8 @@ public class MasteryGUIManager {
             if (SkillsMasteryConfig.DOWNGRADE.getBoolean())
                 actions = new InteractiveGUI.ActionRunnable[]{new InteractiveGUI.ActionRunnable(ClickType.LEFT, () -> setMastery(info, player, mastery, true)),
                         new InteractiveGUI.ActionRunnable(ClickType.RIGHT, () -> setMastery(info, player, mastery, false))};
-            else actions = new InteractiveGUI.ActionRunnable[]{new InteractiveGUI.ActionRunnable(ClickType.LEFT, () -> setMastery(info, player, mastery, true))};
+            else
+                actions = new InteractiveGUI.ActionRunnable[]{new InteractiveGUI.ActionRunnable(ClickType.LEFT, () -> setMastery(info, player, mastery, true))};
 
             gui.push(mastery.getConfigName(), edits, null, actions);
         }

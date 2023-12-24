@@ -46,20 +46,39 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
     }
 
     public static void forwardSlash(double distance, ParticleDisplay display) {
+        forwardSlash(distance, display, null);
+    }
+
+    public static void forwardSlash(double distance, ParticleDisplay display, Player a) {
         new BukkitRunnable() {
-            final Vector direction = display.getLocation().getDirection();
             double limit = 0;
+            private final Location loc = display.getLocation().clone();
 
             @Override
             public void run() {
-                Vector clone = direction.clone().multiply(limit);
-                XParticle.ellipse(
-                        0, Math.PI,
-                        Math.PI / 30,
-                        3, 4,
-                        display.cloneWithLocation(clone.getX(), clone.getY(), clone.getZ())
-                );
+//                XParticle.ellipse(
+//                        0, Math.PI,
+//                        Math.PI / 30,
+//                        3, 4,
+//                        display
+//                );
+
+                for (double theta = 0; theta <= Math.PI; theta += Math.PI / 30) {
+                    double x = 3 * Math.cos(theta);
+                    double z = 3 * Math.sin(theta);
+                    //Location spawnAt = rotate(display, display.getLocation(), x, 0, z);
+                    Vector local = new Vector(x, 0, z);
+                    Location spawnAt = display.getLocation().clone();
+                    ParticleDisplay.Quaternion rot = ParticleDisplay.Quaternion.rotation(loc.getYaw(), new Vector(0, 1, 0));
+                    rot = rot.mul(ParticleDisplay.Quaternion.rotation(-loc.getPitch(), new Vector(1, 0, 0)));
+                    rot = rot.mul(ParticleDisplay.Quaternion.rotation(45, new Vector(0, 0, 1)));
+                    Vector vec = ParticleDisplay.Quaternion.rotate(local, rot);
+                    spawnAt = spawnAt.add(vec);
+                    display.getLocation().getWorld().spawnParticle(display.getParticle(), spawnAt, 1, 0, 0, 0, 0, null, false);
+                }
+
                 if (limit++ >= distance) cancel();
+                else display.advanceInDirection(0.1);
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 1L, 1L);
     }
@@ -127,7 +146,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
 
             display.face(player)
                     .rotate(0, 0, zRot)
-                    .rotationOrder(ParticleDisplay.Axis.X, ParticleDisplay.Axis.Z, ParticleDisplay.Axis.Y)
+                    //.rotationOrder(ParticleDisplay.Axis.X, ParticleDisplay.Axis.Z, ParticleDisplay.Axis.Y)
                     .onSpawn(loc -> {
                         if (i.incrementAndGet() == 5) {
                             i.set(0);
@@ -229,7 +248,8 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
         Location loc = player.getLocation();
         for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (EntityUtil.filterEntity(player, entity)) continue;
-            if (entity instanceof Player) ParticleDisplay.simple(null, Particle.FLASH).spawn(entity.getLocation(), (Player) entity);
+            if (entity instanceof Player)
+                ParticleDisplay.simple(null, Particle.FLASH).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
 
             DamageManager.damage((LivingEntity) entity, player, initialDamage);
             EntityUtil.knockBack(entity, loc, knockback);
@@ -251,7 +271,8 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                     for (Entity entity : player.getNearbyEntities(lightningRadius, lightningRadius, lightningRadius)) {
                         if (entity == horse) continue;
                         if (EntityUtil.filterEntity(player, entity)) continue;
-                        if (entity instanceof Player) ParticleDisplay.simple(null, Particle.FLASH).spawn(entity.getLocation(), (Player) entity);
+                        if (entity instanceof Player)
+                            ParticleDisplay.simple(null, Particle.FLASH).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
                         entity.setFireTicks(10 * 20);
                         Location loc = entity.getLocation();
                         thunderTunnel(loc.clone(), 1, () -> entity.getWorld().strikeLightning(loc));

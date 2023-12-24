@@ -18,7 +18,8 @@ public class FireMageBlackFire extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onFireDamage(EntityDamageEvent event) {
-        if (event.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && event.getCause() != EntityDamageEvent.DamageCause.FIRE) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK && event.getCause() != EntityDamageEvent.DamageCause.FIRE)
+            return;
 
         for (Entity entity : event.getEntity().getNearbyEntities(5, 5, 5)) {
             if (EntityUtil.isInvalidEntity(entity)) continue;

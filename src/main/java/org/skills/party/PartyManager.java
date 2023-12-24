@@ -35,8 +35,10 @@ public class PartyManager extends DataManager<SkillsParty> implements Listener {
         Player damager = (Player) event.getDamager();
 
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(damager);
-        if (!SkillsConfig.FRIENDS_FRIENDLY_FIRE.getBoolean() && info.getFriends().contains(victim.getUniqueId())) event.setCancelled(true);
-        else if (!SkillsConfig.PARTY_FRIENDLY_FIRE.getBoolean() && (info.hasParty() && info.getParty().getMembers().contains(victim.getUniqueId()))) event.setCancelled(true);
+        if (!SkillsConfig.FRIENDS_FRIENDLY_FIRE.getBoolean() && info.getFriends().contains(victim.getUniqueId()))
+            event.setCancelled(true);
+        else if (!SkillsConfig.PARTY_FRIENDLY_FIRE.getBoolean() && (info.hasParty() && info.getParty().getMembers().contains(victim.getUniqueId())))
+            event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

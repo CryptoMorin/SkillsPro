@@ -2,6 +2,7 @@ package org.skills.managers.resurrect;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.XWorldBorder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,7 +15,6 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.managers.blood.DamageAestheticsManager;
 import org.skills.managers.blood.HeartPulse;
-import org.skills.managers.blood.WorldBorderAPI;
 import org.skills.utils.LocationUtils;
 import org.skills.utils.StringUtils;
 
@@ -99,12 +99,12 @@ final class LastManStanding {
         player.setWalkSpeed((float) SkillsConfig.LAST_BREATH_SPEED.getDouble());
         player.setFoodLevel(0);
 
-        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_START.getString());
-        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_MUSIC.getString());
+        XSound.parse(SkillsConfig.LAST_BREATH_SOUNDS_START.getString()).forPlayer(player).play();
+        XSound.parse(SkillsConfig.LAST_BREATH_SOUNDS_MUSIC.getString()).forPlayer(player).play();
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             if (SkillsConfig.PULSE_ENABLED.getBoolean()) HeartPulse.pulse(player, 0, 0);
-            if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) WorldBorderAPI.send(player, 0, 0);
+            if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) DamageAestheticsManager.send(player, 0, 0);
         }, 1L);
     }
 
@@ -128,7 +128,7 @@ final class LastManStanding {
         player.sendBlockChange(location, location.getBlock().getBlockData());
 
         HeartPulse.remove(player);
-        WorldBorderAPI.remove(player);
+        XWorldBorder.remove(player);
     }
 
     public void resetState() {

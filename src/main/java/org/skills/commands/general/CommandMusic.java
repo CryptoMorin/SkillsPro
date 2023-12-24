@@ -13,7 +13,6 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
 public class CommandMusic extends SkillsCommand {
     public CommandMusic() {

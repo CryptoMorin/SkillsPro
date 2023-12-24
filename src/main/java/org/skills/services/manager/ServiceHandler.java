@@ -188,14 +188,17 @@ public class ServiceHandler {
     }
 
     public static void registerFriendlyHandler(Plugin plugin, BiFunction<Player, Player, Boolean> handler) {
-        if (plugin instanceof SkillsPro) throw new IllegalArgumentException("Friendly registrar cannot be SkillsPro plugin");
+        if (plugin instanceof SkillsPro)
+            throw new IllegalArgumentException("Friendly registrar cannot be SkillsPro plugin");
         Objects.requireNonNull(handler, "Friendly handler function cannot be null");
-        if (FRIENDLY_HANDLERS.containsKey(plugin)) throw new IllegalArgumentException("Plugin has already registered a friendly handler: " + plugin.getName());
+        if (FRIENDLY_HANDLERS.containsKey(plugin))
+            throw new IllegalArgumentException("Plugin has already registered a friendly handler: " + plugin.getName());
         FRIENDLY_HANDLERS.put(plugin, handler);
     }
 
     public static void unregisterFriendlyHandler(Plugin plugin) {
         Objects.requireNonNull(plugin, "Cannot unregister friendly handler for null plugin");
-        if (FRIENDLY_HANDLERS.remove(plugin) == null) throw new IllegalArgumentException("Plugin did not register any friendly handlers: " + plugin.getName());
+        if (FRIENDLY_HANDLERS.remove(plugin) == null)
+            throw new IllegalArgumentException("Plugin did not register any friendly handlers: " + plugin.getName());
     }
 }

@@ -131,7 +131,6 @@ public class Metrics {
      *
      * @param plugin Any plugin. It's just used to get a logger instance.
      * @param data   The data to send.
-     *
      * @throws Exception If the request failed.
      */
     private static void sendData(Plugin plugin, JsonObject data) throws Exception {
@@ -181,7 +180,6 @@ public class Metrics {
      * Gzips the given String.
      *
      * @param str The string to gzip.
-     *
      * @return The gzipped String.
      * @throws IOException If the compression failed.
      */
@@ -349,7 +347,8 @@ public class Metrics {
                                 }
                             }
                         }
-                    } catch (NullPointerException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+                    } catch (NullPointerException | NoSuchMethodException | IllegalAccessException |
+                             InvocationTargetException ignored) {
                     }
                 }
             } catch (NoSuchFieldException ignored) {

@@ -21,7 +21,8 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         SkilledPlayer info = new SkilledPlayer();
         JsonObject json = jsonElement.getAsJsonObject();
 
-        Type mapType = new TypeToken<Map<String, PlayerSkill>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, PlayerSkill>>() {
+        }.getType();
         info.setSkills(context.deserialize(json.get("skills"), mapType));
         PlayerSkill activeSkill = info.getSkills().get(json.get("skill").getAsString());
         if (activeSkill == null) activeSkill = new PlayerSkill(PlayerSkill.NONE);
@@ -48,10 +49,12 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         if (partyEle != null) info.setParty(FastUUID.fromString(partyEle.getAsString()));
         info.setRank(context.deserialize(json.get("rank"), PartyRank.class));
 
-        mapType = new TypeToken<HashMap<String, Integer>>() {}.getType();
+        mapType = new TypeToken<HashMap<String, Integer>>() {
+        }.getType();
         info.setMasteries(context.deserialize(json.get("masteries"), mapType));
 
-        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {}.getType();
+        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {
+        }.getType();
         Map<SkillsEventType, SkillsEvent> bonuses = context.deserialize(json.get("bonuses"), mapType);
         Map<SkillsEventType, SkillsEvent> newBonuses = new EnumMap<>(SkillsEventType.class);
 
@@ -89,7 +92,8 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         json.addProperty("showActionBar", info.showActionBar());
         json.addProperty("lastSkillChange", info.getLastSkillChange());
 
-        Type uuidType = new TypeToken<Set<UUID>>() {}.getType();
+        Type uuidType = new TypeToken<Set<UUID>>() {
+        }.getType();
         json.addProperty("healthScaling", info.getHealthScaling());
         json.add("friends", context.serialize(info.getFriends(), uuidType));
         json.add("friendRequests", context.serialize(info.getFriendRequests(), uuidType));
@@ -103,10 +107,12 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         }
         json.add("skills", skills);
 
-        Type mapType = new TypeToken<HashMap<String, Integer>>() {}.getType();
+        Type mapType = new TypeToken<HashMap<String, Integer>>() {
+        }.getType();
         json.add("masteries", context.serialize(info.getMasteries(), mapType));
 
-        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {}.getType();
+        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {
+        }.getType();
         json.add("bonuses", context.serialize(info.getBonuses(), mapType));
 
         JsonObject cosmetics = new JsonObject();

@@ -36,6 +36,10 @@ abilities:
   chain-smash:
     required-level: 20
 
+    # Should a TNT be used as an explosion?
+    # If true, no blocks will be destroyed.
+    disable-explosion: false
+
     # The force causes the player to jump into the air to smash back.
     initial-launch: min(2, lvl)
 
@@ -50,7 +54,7 @@ abilities:
 
     # The surrounding players range which the damage and explosion launch applies to.
     range: lvl + 2
-    
+
     cost: 100 * (lvl + 1)
     activation:
       key: LR

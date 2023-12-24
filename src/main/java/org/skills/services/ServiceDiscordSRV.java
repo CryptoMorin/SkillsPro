@@ -52,7 +52,8 @@ public class ServiceDiscordSRV {
         else {
             Guild guild = DiscordSRV.getPlugin().getMainGuild();
             int len = str.length();
-            if (len > 15 && len < 20 && StringUtils.isPureNumber(str)) return guild.getTextChannelById(Long.parseUnsignedLong(str));
+            if (len > 15 && len < 20 && StringUtils.isPureNumber(str))
+                return guild.getTextChannelById(Long.parseUnsignedLong(str));
             else {
                 List<TextChannel> chans = guild.getTextChannelsByName(str, true);
                 return chans.isEmpty() ? null : chans.get(0);

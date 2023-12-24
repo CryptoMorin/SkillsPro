@@ -78,6 +78,10 @@ public abstract class ActiveAbility extends Ability {
         MessageHandler.sendMessage(player, msg, SkillsConfig.PREFIX.getBoolean());
     }
 
+    public SkilledPlayer basicCheckup(Player player) {
+        return super.checkup(player, true);
+    }
+
     public SkilledPlayer checkup(Player player) {
         SkilledPlayer info = super.checkup(player);
         if (info == null) return null;
@@ -89,7 +93,8 @@ public abstract class ActiveAbility extends Ability {
         // isActiveReady is checked in Ability class for performance reasons.
 
         info.setEnergy(info.getEnergy() - getEnergy(info));
-        if (!AbilityManager.getCooldownExcempts().contains(player.getUniqueId())) info.setCooldown((long) getCooldown(info) * 1000L);
+        if (!AbilityManager.getCooldownExcempts().contains(player.getUniqueId()))
+            info.setCooldown((long) getCooldown(info) * 1000L);
 
         sendMessage(player, getAbilityActivated(info));
         return info;

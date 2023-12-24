@@ -81,7 +81,8 @@ public class SkillsCommandHandler implements CommandExecutor {
     }
 
     public static SkillsCommand getCommand(String name, String... groups) {
-        if (groups.length == 0) return commands.stream().filter(c -> c.getGroup() == null && c.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (groups.length == 0)
+            return commands.stream().filter(c -> c.getGroup() == null && c.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 
         SkillsCommand lastGroup = null;
         for (String group : groups) {

@@ -1,14 +1,10 @@
 package org.skills.commands.user;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
-import org.skills.commands.SkillsCommandHandler;
 import org.skills.commands.TabCompleteManager;
-import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.SkillsLang;
 import org.skills.masteries.managers.Mastery;
 import org.skills.masteries.managers.MasteryManager;
@@ -20,36 +16,17 @@ public class CommandUserMastery extends SkillsCommand {
 
     @Override
     public void runCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length >= 4) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
-            if (player != null) {
-                SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-                AmountChangeFactory changeFactory = AmountChangeFactory.of(sender, args);
-                if (changeFactory == null) return;
-
-                Mastery mastery = MasteryManager.getMastery(args[2]);
-                if (mastery == null) {
-                    SkillsLang.MASTERY_NOT_FOUND.sendMessage(sender, "%mastery%", args[2]);
-                    return;
-                }
-
-                try {
-                    int amount = Integer.parseInt(args[3]);
-                    int request = (int) changeFactory.withInitialAmount(info.getMasteryLevel(mastery)).getFinalAmount();
-                    info.setMasteryLevel(mastery, request);
-
-                    SkillsLang.Command_User_Mastery_Set_Success.sendMessage(sender,
-                            "%player%", player.getName(), "%amount%", String.valueOf(amount),
-                            "%mastery%", mastery.getName(), "%new%", String.valueOf(info.getMasteryLevel(mastery)));
-                } catch (NumberFormatException ignored) {
-                    SkillsCommandHandler.sendNotNumber(sender, mastery.getName() + "'s level", args[3]);
-                }
-            } else {
-                SkillsLang.PLAYER_NOT_FOUND.sendMessage(sender, "%name%", args[0]);
+        CommandUser.handle(this, sender, args, "mastery", (changeFactory, player, info, type, silent) -> {
+            Mastery mastery = MasteryManager.getMastery(type);
+            if (mastery == null) {
+                SkillsLang.MASTERY_NOT_FOUND.sendMessage(sender, "%mastery%", type);
+                return false;
             }
-        } else {
-            SkillsCommandHandler.sendUsage(sender, "user mastery <player> <add/decrease/set> <mastery> <amount>");
-        }
+
+            int request = (int) changeFactory.withInitialAmount(info.getMasteryLevel(mastery)).getFinalAmount();
+            info.setMasteryLevel(mastery, request);
+            return true;
+        });
     }
 
     @Override

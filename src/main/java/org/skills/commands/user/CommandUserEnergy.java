@@ -1,6 +1,5 @@
 package org.skills.commands.user;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;

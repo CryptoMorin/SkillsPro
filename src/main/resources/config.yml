@@ -776,6 +776,16 @@ energy:
     color: '&9'
     charging: AUTO
     elements: [ ]
+  concentration:
+    name: Concentration
+    symbol: 'ծ'
+    sounds:
+      not-enough: BLOCK_NOTE_BLOCK_BASS
+      full: ENTITY_BAT_AMBIENT
+    color: '&b'
+    charging: [ AUTO_NO_DAMAGE, HIT, KILL, REDUCE_ON_DAMAGE ]
+    elements: [ ]
+
   blood:
     name: Blood
     symbol: 'ծ'

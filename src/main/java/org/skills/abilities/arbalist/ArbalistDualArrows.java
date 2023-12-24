@@ -1,6 +1,5 @@
 package org.skills.abilities.arbalist;
 
-import net.minecraft.util.MathHelper;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,15 +9,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SLogger;
 import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ArbalistDualArrows extends Ability {
@@ -118,7 +114,7 @@ public class ArbalistDualArrows extends Ability {
 //        double x = velocity.getX(), y = velocity.getY(), z = velocity.getZ();
 //        velocity = new Vector(x > 0 ? Math.min(x, 4) : Math.max(x, -4), y > 0 ? Math.min(y, 4) : Math.max(y, -4), z > 0 ? Math.min(z, 4) : Math.max(z, -4));
 
-            float speed = (float) arrow.getVelocity().length();
+        float speed = (float) arrow.getVelocity().length();
         do {
             Arrow extraArrow = player.getWorld().spawnArrow(player.getEyeLocation(), velocity, speed, (float) spread); // player.launchProjectile(Arrow.class, velocity);
             extraArrow.setFireTicks((int) getScaling(info, "fire"));

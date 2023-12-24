@@ -11,7 +11,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public final class NBTWrappers {
-    private NBTWrappers() {}
+    private NBTWrappers() {
+    }
 
     private static Class<?> getNBTClass(String clazz) {
         return ReflectionUtils.getNMSClass("nbt", clazz);
@@ -42,7 +43,6 @@ public final class NBTWrappers {
 
         /**
          * @param nbtObject The NBT object
-         *
          * @return The correct {@link NBTBase} or null if the tag is not supported
          */
         public static NBTBase<?> fromNBT(Object nbtObject) {
@@ -137,7 +137,8 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, String.class));
+                if (XMaterial.supports(15))
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, String.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, String.class));
 
                 Field field = getDeclaredField(clazz, "A", "data");
@@ -640,7 +641,6 @@ public final class NBTWrappers {
          * Adds the {@link NBTBase}, if the type of the list is correct or the list is empty
          *
          * @param base The {@link NBTBase} to add
-         *
          * @return True if it was added.
          */
         public boolean add(NBTBase<T> base) {
@@ -650,7 +650,6 @@ public final class NBTWrappers {
 
         /**
          * @param type The type to check for
-         *
          * @return True if the list is empty or this type
          */
         public boolean isType(NBTBase<?> type) {
@@ -727,7 +726,8 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, double.class));
+                if (XMaterial.supports(15))
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, double.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, double.class));
 
                 Field field = getDeclaredField(clazz, "w", "data");
@@ -1027,7 +1027,8 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, long.class));
+                if (XMaterial.supports(15))
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, long.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, long.class));
 
                 Field field = getDeclaredField(clazz, "c", "data");
@@ -1090,7 +1091,8 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, float.class));
+                if (XMaterial.supports(15))
+                    handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, float.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, float.class));
 
                 Field field = getDeclaredField(clazz, "w", "data");

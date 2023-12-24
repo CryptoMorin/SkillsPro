@@ -30,7 +30,6 @@ public class MathUtils {
      * An invocation of this method creates an instance of {@link MathEval}.
      *
      * @param eqn the equation to evalute.
-     *
      * @return the calculated equation.
      */
     public static double evaluateEquation(String eqn) {
@@ -41,7 +40,6 @@ public class MathUtils {
      * Check if the passed argument is an integer value.
      *
      * @param number double
-     *
      * @return true if the passed argument is an integer value.
      */
     public static boolean isInteger(double number) {
@@ -54,7 +52,6 @@ public class MathUtils {
      * Supports days to milliseconds.
      *
      * @param time the string time with its unit.
-     *
      * @return the parsed milliseconds from the time unit.
      */
     public static Long calcMillis(String time, TimeUnit timeUnit) {
@@ -86,7 +83,6 @@ public class MathUtils {
      * </blockquote>
      *
      * @param percent the required chance percent.
-     *
      * @return true if the chance is equals or greater than the required chance.
      */
     public static boolean hasChance(int percent) {
@@ -103,7 +99,6 @@ public class MathUtils {
      *
      * @param min the possible minimum amount.
      * @param max the possible maximum amount.
-     *
      * @return a random number between the given values (values included as well).
      */
     public static int randInt(int min, int max) {
@@ -116,7 +111,6 @@ public class MathUtils {
      *
      * @param min the possible minimum amount.
      * @param max the possible maximum amount.
-     *
      * @return a random number between the given values (values included as well).
      */
     public static double rand(double min, double max) {
@@ -132,7 +126,6 @@ public class MathUtils {
      *
      * @param max     the max possible value for the given value.
      * @param current the value.
-     *
      * @return the percentage of the value.
      */
     public static double getPercent(double current, double max) {
@@ -163,7 +156,6 @@ public class MathUtils {
      * Gets the number if the given string is a number.
      *
      * @param number the number to parse as double.
-     *
      * @return the parsed double number or null if not a number.
      */
     public static Double getIfNumber(String number) {
@@ -186,7 +178,6 @@ public class MathUtils {
      *
      * @param value     the actual number.
      * @param precision the decimal numbers to keep and round others.
-     *
      * @return a rounded decimal.
      */
     public static double roundToDigits(double value, int precision) {
@@ -212,7 +203,6 @@ public class MathUtils {
      * </pre></blockquote>
      *
      * @param number the number to convert.
-     *
      * @return a short formatted number.
      */
     public static String getShortNumber(double number) {
@@ -249,7 +239,6 @@ public class MathUtils {
      *
      * @param min the minimum number in the range.
      * @param max the maximum number in the range.
-     *
      * @return a chosen number between the given range.
      */
     public static int increasingRandInt(int min, int max) {
@@ -270,7 +259,6 @@ public class MathUtils {
      *
      * @param min the minimum number in the range.
      * @param max the maximum number in the range.
-     *
      * @return a chosen number between the given range.
      */
     public static int decreasingRandInt(int min, int max) {
@@ -288,7 +276,6 @@ public class MathUtils {
      * Checks if a number is even.
      *
      * @param number the number to check
-     *
      * @return true if the number is even, otherwise false as it's an odd number.
      */
     public static boolean isEven(long number) {

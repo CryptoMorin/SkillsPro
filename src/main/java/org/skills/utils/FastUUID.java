@@ -90,7 +90,6 @@ public final class FastUUID {
      * {@link UUID#toString()}.
      *
      * @param uuidSequence the character sequence from which to parse a UUID
-     *
      * @return the UUID represented by the given character sequence
      * @throws IllegalArgumentException if the given character sequence does not conform to the string representation as
      *                                  described in {@link UUID#toString()}
@@ -142,7 +141,6 @@ public final class FastUUID {
      * {@link UUID#toString()}.
      *
      * @param uuid the UUID to represent as a string
-     *
      * @return a string representation of the given UUID
      */
     public static String toString(UUID uuid) {

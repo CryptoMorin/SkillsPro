@@ -16,7 +16,8 @@ public class CommandUserXP extends SkillsCommand {
             int finalAmount = (int) changeFactory.withInitialAmount(pre).getFinalAmount();
 
             if (silent) info.setRawXP(finalAmount, false);
-            else info.setXP(changeFactory.getType() == AmountChangeFactory.Type.REMOVE ? -changeFactory.getAmount() : finalAmount);
+            else
+                info.setXP(changeFactory.getType() == AmountChangeFactory.Type.REMOVE ? -changeFactory.getAmount() : finalAmount);
             return true;
         });
     }

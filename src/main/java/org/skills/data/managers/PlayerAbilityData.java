@@ -7,7 +7,8 @@ import javax.annotation.Nullable;
 
 public class PlayerAbilityData {
     private int level;
-    @Nullable private KeyBinding[] keyBinding;
+    @Nullable
+    private KeyBinding[] keyBinding;
     private boolean disabled;
 
     public PlayerAbilityData() {

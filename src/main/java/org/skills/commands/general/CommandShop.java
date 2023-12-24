@@ -1,6 +1,5 @@
 package org.skills.commands.general;
 
-import com.cryptomorin.xseries.XItemStack;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

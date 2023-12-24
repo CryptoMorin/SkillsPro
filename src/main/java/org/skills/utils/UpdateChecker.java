@@ -119,7 +119,6 @@ public class UpdateChecker implements Listener {
      *
      * @param oldVer the old version.
      * @param newVer the new version.
-     *
      * @return true if the newVer is higher than oldVer, otherwise false.
      * @since 1.0.0
      */
@@ -259,7 +258,6 @@ public class UpdateChecker implements Listener {
      *
      * @param receiver the receiver which is either a player or the console. Null also means console.
      * @param msg      the message that is going to be sent to the receiver.
-     *
      * @since 1.0.0
      */
     private void sendMessages(@Nonnull CommandSender receiver, @Nonnull String msg) {

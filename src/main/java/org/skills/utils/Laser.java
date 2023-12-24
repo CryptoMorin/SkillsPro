@@ -55,10 +55,10 @@ public final class Laser {
     /**
      * Create a Laser instance
      *
-     * @param start    Location where laser will starts
-     * @param endLocationTracker      Location where laser will ends
-     * @param duration Duration of laser in seconds (<i>-1 if infinite</i>)
-     * @param distance Distance where laser will be visible
+     * @param start              Location where laser will starts
+     * @param endLocationTracker Location where laser will ends
+     * @param duration           Duration of laser in seconds (<i>-1 if infinite</i>)
+     * @param distance           Distance where laser will be visible
      */
     public Laser(Location start, Supplier<Location> endLocationTracker, int duration, int distance) throws ReflectiveOperationException {
         Location end = endLocationTracker.get();
@@ -126,7 +126,8 @@ public final class Laser {
             public void run() {
                 for (Player player : world.getPlayers()) {
                     if (isCloseEnough(player.getLocation())) {
-                        if (players.put(player.getUniqueId(), player) == null) sendStartPackets(plugin, player, !seen.add(player.getEntityId()));
+                        if (players.put(player.getUniqueId(), player) == null)
+                            sendStartPackets(plugin, player, !seen.add(player.getEntityId()));
                     } else if (players.remove(player.getUniqueId()) != null) destroy(player);
                 }
                 if (--time == 0) cancel();

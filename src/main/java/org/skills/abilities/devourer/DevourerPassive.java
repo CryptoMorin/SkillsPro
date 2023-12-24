@@ -56,7 +56,8 @@ public class DevourerPassive extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onPoisoned(EntityDamageEvent event) {
-        if (event.getCause() != EntityDamageEvent.DamageCause.POISON && event.getCause() != EntityDamageEvent.DamageCause.WITHER) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.POISON && event.getCause() != EntityDamageEvent.DamageCause.WITHER)
+            return;
         Entity entity = event.getEntity();
         List<MetadataValue> meta = entity.getMetadata(PASSIVE);
         if (meta.isEmpty()) return;

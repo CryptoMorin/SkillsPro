@@ -65,7 +65,8 @@ public class GUIOption {
         try {
             return BooleanEval.evaluate(condition, expression -> {
                 expression = ServiceHandler.translatePlaceholders(player, MessageHandler.replaceVariables(expression, edits));
-                if (player instanceof Player) return PERMISSION_PATTERN.matcher(expression).replaceAll(Boolean.toString(((Player) player).hasPermission("$1".replace(',', '.'))));
+                if (player instanceof Player)
+                    return PERMISSION_PATTERN.matcher(expression).replaceAll(Boolean.toString(((Player) player).hasPermission("$1".replace(',', '.'))));
                 else return PERMISSION_PATTERN.matcher(expression).replaceAll("false");
             });
         } catch (IllegalArgumentException ex) {

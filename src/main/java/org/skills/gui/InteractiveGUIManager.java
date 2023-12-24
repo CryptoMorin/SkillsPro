@@ -35,7 +35,8 @@ public class InteractiveGUIManager implements Listener {
         for (int i = 0; i < inventory.getSize(); i++) {
             if (slot.test(i)) {
                 ItemStack compare = items[i];
-                if (compare != null && compare.isSimilar(item) && compare.getMaxStackSize() != compare.getAmount()) return i;
+                if (compare != null && compare.isSimilar(item) && compare.getMaxStackSize() != compare.getAmount())
+                    return i;
             }
         }
         return -1;

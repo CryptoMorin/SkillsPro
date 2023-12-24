@@ -17,16 +17,16 @@ public final class AmountChangeFactory {
         this.amount = amount;
     }
 
-    public static AmountChangeFactory of(CommandSender sender, String[] args) {
-        Type type = getType(args[1]);
+    public static AmountChangeFactory of(CommandSender sender, int typeIndex, int amountIndex, String[] args) {
+        Type type = getType(args[typeIndex]);
         double amount;
 
         if (type == null) {
-            SkillsLang.Command_User_Invalid_Setter.sendMessage(sender, "%setter%", args[1]);
+            SkillsLang.Command_User_Invalid_Setter.sendMessage(sender, "%setter%", args[typeIndex]);
             return null;
         }
 
-        String amountStr = args[2];
+        String amountStr = args[amountIndex];
         try {
             amount = Double.parseDouble(amountStr);
         } catch (IllegalArgumentException ex) {

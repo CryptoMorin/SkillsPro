@@ -1,6 +1,5 @@
 package org.skills.abilities.priest;
 
-import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
@@ -9,7 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -22,6 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
+import org.skills.utils.BeeUtils;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,14 +69,7 @@ public class PriestNaturesForce extends ActiveAbility {
             @Override
             public void run() {
                 Location beeLoc = hiveLoc.clone().add(random.nextDouble(-1, 1), random.nextDouble(-1, 1), random.nextDouble(-1, 1));
-                Bee bee = (Bee) beeLoc.getWorld().spawnEntity(beeLoc, EntityType.BEE);
-                bee.setCannotEnterHiveTicks(Integer.MAX_VALUE);
-                bee.setHive(null);
-                bee.setFlower(null);
-                bee.setHasNectar(false);
-                bee.setHasStung(false);
-                bee.setAnger(Integer.MAX_VALUE);
-                bee.addPotionEffect(XPotion.SPEED.buildPotionEffect(1000000, 6));
+                Mob bee = BeeUtils.spawn(beeLoc);
                 bee.setMetadata(NATURES_FORCE, new FixedMetadataValue(SkillsPro.get(), damage));
                 bee.setMetadata(NATURES_FORCE_TARGET, new FixedMetadataValue(SkillsPro.get(), target));
                 bee.setTarget(target);
@@ -131,8 +127,8 @@ public class PriestNaturesForce extends ActiveAbility {
 
     @EventHandler
     public void onTargetChange(EntityTargetEvent event) {
-        if (!(event.getEntity() instanceof Bee)) return;
-        Bee bee = (Bee) event.getEntity();
+        if (!BeeUtils.isBee(event.getEntity())) return;
+        Entity bee = event.getEntity();
 
         List<MetadataValue> metadata = bee.getMetadata(NATURES_FORCE_TARGET);
         if (metadata.isEmpty()) return;
@@ -142,14 +138,14 @@ public class PriestNaturesForce extends ActiveAbility {
 
     @EventHandler(ignoreCancelled = true)
     public void tntDmaage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Bee)) return;
-        Bee bee = (Bee) event.getDamager();
+        if (!BeeUtils.isBee(event.getDamager())) return;
+        Entity bee = event.getDamager();
 
         List<MetadataValue> metadata = bee.getMetadata(NATURES_FORCE);
         if (metadata.isEmpty()) return;
 
         double damage = metadata.get(0).asDouble();
         event.setDamage(damage);
-        Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> bee.setHasStung(false), 1L);
+        Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> BeeUtils.setHasStung(bee, false), 1L);
     }
 }
