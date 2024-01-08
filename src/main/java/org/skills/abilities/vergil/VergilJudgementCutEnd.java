@@ -109,7 +109,7 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
                                 targetEntry.getValue().run();
                                 LivingEntity target = targetEntry.getKey();
                                 DamageManager.damage(target, null, 10);
-                                XSound.ENTITY_PLAYER_ATTACK_SWEEP.play(target.getLocation());
+                                XSound.ENTITY_PLAYER_ATTACK_SWEEP.record().soundPlayer().atLocation(target.getLocation()).play();
                                 damageDisplay.spawn(target.getLocation());
                                 target.setVelocity(target.getLocation().toVector()
                                         .subtract(player.getLocation().toVector()).normalize().multiply(3));

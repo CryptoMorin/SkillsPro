@@ -73,7 +73,7 @@ public class GUIParser {
         boolean disallowCreative = config.getBoolean("disallow-creative");
         if (disallowCreative && player.getGameMode() == GameMode.CREATIVE) {
             MessageHandler.sendPlayerMessage(player, "&cYou can't open this GUI in creative mode.");
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return null;
         }
 

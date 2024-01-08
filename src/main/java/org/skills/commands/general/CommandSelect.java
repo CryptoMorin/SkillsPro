@@ -33,19 +33,19 @@ public class CommandSelect extends SkillsCommand {
     public static void select(Player player, SkilledPlayer info, Skill skill) {
         if (info.getSkill().equals(skill)) {
             SkillsLang.COMMAND_SELECT_ALREADY_CHOSEN.sendMessage(player, "%skill%", skill.getName());
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return;
         }
 
         if (!player.hasPermission("skills.select." + skill.getName().toLowerCase())) {
             SkillsLang.SKILL_NO_PERMISSION.sendMessage(player, "%skill%", skill.getName());
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return;
         }
 
         if (info.hasSkill() && !player.hasPermission("skills.change")) {
             SkillsLang.SKILL_OWNED_ERROR.sendMessage(player);
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return;
         }
 
@@ -53,7 +53,7 @@ public class CommandSelect extends SkillsCommand {
             int requiredLevel = (int) skill.getScaling(info, SkillScaling.REQUIRED_LEVEL);
             if (info.getLevel() < requiredLevel) {
                 SkillsLang.SKILL_REQUIRED_LEVEL.sendMessage(player, "%level%", requiredLevel);
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 return;
             }
         }
@@ -62,7 +62,7 @@ public class CommandSelect extends SkillsCommand {
             SkillsLang.SKILL_CHANGE_COOLDOWN_ERROR.sendMessage(player,
                     "%cooldown%", info.getTimeLeftToChangeSkillString());
 
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return;
         }
 

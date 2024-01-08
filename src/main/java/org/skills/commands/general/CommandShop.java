@@ -98,7 +98,7 @@ public class CommandShop extends SkillsCommand {
 
                 if (info.getSouls() < cost) {
                     SkillsLang.SKILLS_ITEM_COST.sendMessage(player, "%cost%", cost);
-                    XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                    XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                     return;
                 }
 
@@ -106,7 +106,7 @@ public class CommandShop extends SkillsCommand {
                 int free = inv.firstEmpty();
                 if (free < 0) {
                     SkillsLang.SKILLS_ITEM_COST.sendMessage(player, "%cost%", cost);
-                    XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                    XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                     return;
                 }
 

@@ -59,7 +59,7 @@ public class CommandImprove extends SkillsCommand {
 
         gui.push("previous-page", () -> {
             if (page == 0) {
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 return;
             }
             openMenu(player, info, page - 1, true);
@@ -67,7 +67,7 @@ public class CommandImprove extends SkillsCommand {
         });
         gui.push("next-page", () -> {
             if (page + 2 > finalPages) {
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 return;
             }
             openMenu(player, info, page + 1, true);
@@ -146,7 +146,7 @@ public class CommandImprove extends SkillsCommand {
                 int required = ability.getRequiredLevel(info);
                 if (required > info.getLevel()) {
                     SkillsLang.ABILITY_REQUIRED_LEVEL.sendMessage(player, "%level%", required);
-                    XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                    XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                     return;
                 }
 
@@ -162,14 +162,14 @@ public class CommandImprove extends SkillsCommand {
                     openMenu(player, info, page, true);
                 } else {
                     SkillsLang.NOT_ENOUGH_SOULS.sendMessage(player);
-                    XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                    XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 }
             }), new InteractiveGUI.ActionRunnable(ClickType.RIGHT, () -> {
                 if (info.getAbilityLevel(ability) == 0) {
                     int required = ability.getRequiredLevel(info);
                     if (required > info.getLevel()) {
                         SkillsLang.ABILITY_REQUIRED_LEVEL.sendMessage(player, "%level%", required);
-                        XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                        XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                         return;
                     }
                 }

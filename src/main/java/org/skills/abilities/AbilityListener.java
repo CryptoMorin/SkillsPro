@@ -107,14 +107,14 @@ public class AbilityListener implements Listener {
 
         // Cooldown
         if (info.isInCooldown()) {
-            XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+            XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return true;
         }
 
         // Energy
         double energy = ability.getEnergy(info);
         if (info.getEnergy() < energy) {
-            XSound.play(player, info.getSkill().getEnergy().getSoundNotEnough());
+            XSound.play(info.getSkill().getEnergy().getSoundNotEnough(), x -> x.forPlayers(player));
             return true;
         }
 
@@ -177,12 +177,8 @@ public class AbilityListener implements Listener {
         if (activate(event.getPlayer(), KeyBinding.DROP)) event.setCancelled(true);
     }
 
-    static boolean state;
-
     @EventHandler
     public void onF(PlayerSwapHandItemsEvent event) {
-        NMSExtras.spinEntity(event.getPlayer(), state);
-        state = !state;
         if (activate(event.getPlayer(), KeyBinding.SWITCH)) event.setCancelled(true);
     }
 

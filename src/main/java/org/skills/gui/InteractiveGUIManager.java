@@ -216,7 +216,7 @@ public class InteractiveGUIManager implements Listener {
         StringUtils.performCommands(player, option.getCommands());
 
         String sound = option.getSound();
-        if (sound != null && !sound.equals("default")) XSound.play(player, sound);
+        if (sound != null && !sound.equals("default")) XSound.play(sound, x -> x.forPlayers(player));
         if (!Strings.isNullOrEmpty(option.getMessage())) MessageHandler.sendPlayerMessage(player, option.getMessage());
     }
 

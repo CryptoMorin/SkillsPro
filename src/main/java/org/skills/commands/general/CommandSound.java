@@ -28,7 +28,7 @@ public class CommandSound extends SkillsCommand {
             return;
         }
         MessageHandler.sendMessage(sender, "&3Playing sound...");
-        XSound.play((Player) sender, String.join(",", args));
+        XSound.play(String.join(",", args), x -> x.forPlayers((Player) sender));
     }
 
     @Override

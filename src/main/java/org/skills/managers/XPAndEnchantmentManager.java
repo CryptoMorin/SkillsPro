@@ -76,7 +76,7 @@ public final class XPAndEnchantmentManager implements Listener {
         if (lvlCost >= 0) {
             if (info.getLevel() >= lvlCost) info.setLevel(info.getLevel() - lvlCost);
             else {
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 SkillsLang.ENCHANTMENTS_COSTS_NOT_ENOUGH_SKILL_LEVEL.sendMessage(player, "%amount%", lvlCost);
                 event.setCancelled(true);
                 return;
@@ -86,7 +86,7 @@ public final class XPAndEnchantmentManager implements Listener {
         if (xpCost >= 0) {
             if (info.getXP() >= xpCost) info.addXP(-xpCost);
             else {
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 SkillsLang.ENCHANTMENTS_COSTS_NOT_ENOUGH_SKILL_XP.sendMessage(player, "%amount%", xpCost);
                 event.setCancelled(true);
                 return;
@@ -96,7 +96,7 @@ public final class XPAndEnchantmentManager implements Listener {
         if (soulsCost >= 0) {
             if (info.getSouls() >= soulsCost) info.addSouls(-soulsCost);
             else {
-                XSound.BLOCK_NOTE_BLOCK_BASS.play(player);
+                XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
                 SkillsLang.ENCHANTMENTS_COSTS_NOT_ENOUGH_SOULS.sendMessage(player, "%amount%", soulsCost);
                 event.setCancelled(true);
             }

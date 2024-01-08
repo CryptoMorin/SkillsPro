@@ -340,7 +340,7 @@ public class SkilledPlayer extends DataContainer {
         else finale += energyRegen;
 
         setEnergy(finale);
-        if (finale >= maxEnergy) XSound.play(getPlayer(), getSkill().getEnergy().getSoundFull());
+        if (finale >= maxEnergy) XSound.play(getSkill().getEnergy().getSoundFull(), x -> x.forPlayers(getPlayer()));
     }
 
     public void addXP(double xp) {

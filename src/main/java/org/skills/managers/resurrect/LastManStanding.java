@@ -53,7 +53,7 @@ final class LastManStanding {
                 @Override
                 public void run() {
                     die();
-                    XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_BLEED_OUT.getString());
+                    XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_BLEED_OUT.getString(), x -> x.forPlayers(player));
                 }
             }.runTaskLater(SkillsPro.get(), bleed * 20L);
 
@@ -99,8 +99,8 @@ final class LastManStanding {
         player.setWalkSpeed((float) SkillsConfig.LAST_BREATH_SPEED.getDouble());
         player.setFoodLevel(0);
 
-        XSound.parse(SkillsConfig.LAST_BREATH_SOUNDS_START.getString()).forPlayer(player).play();
-        XSound.parse(SkillsConfig.LAST_BREATH_SOUNDS_MUSIC.getString()).forPlayer(player).play();
+        XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_START.getString(), x -> x.forPlayers(player));
+        XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_MUSIC.getString(), x -> x.forPlayers(player));
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             if (SkillsConfig.PULSE_ENABLED.getBoolean()) HeartPulse.pulse(player, 0, 0);
@@ -120,7 +120,7 @@ final class LastManStanding {
     }
 
     public void revive() {
-        XSound.play(player, SkillsConfig.LAST_BREATH_SOUNDS_REVIVE.getString());
+        XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_REVIVE.getString(), x-> x.forPlayers(player));
         resetState();
         standWouldYouKindly();
 

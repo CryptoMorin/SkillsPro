@@ -176,7 +176,7 @@ public abstract class Ability implements Listener {
     }
 
     public void playSound(Player player, SkilledPlayer info, String option) {
-        XSound.play(player, getOptions(info, "sounds." + option).getString());
+        XSound.play(getOptions(info, "sounds." + option).getString(), x -> x.forPlayers(player));
     }
 
     public XSound.Record getSound(SkilledPlayer info, String option) {

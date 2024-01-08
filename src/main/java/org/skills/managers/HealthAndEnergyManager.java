@@ -101,7 +101,7 @@ public final class HealthAndEnergyManager implements Listener {
                         if (finale >= maxEnergy) continue;
                         if (currEnergy + energyRegen >= maxEnergy) finale = maxEnergy;
                         else finale += energyRegen;
-                        if (finale >= maxEnergy) XSound.play(player, energy.getSoundFull());
+                        if (finale >= maxEnergy) XSound.play(energy.getSoundFull(), x -> x.forPlayers(player));
                     }
 
                     if (player.isOnline()) info.setEnergy(finale);

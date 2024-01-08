@@ -36,38 +36,38 @@ public class VergilMirageEdgeSlash extends InstantActiveAbility {
     public static final Map<String, double[]> angles = new HashMap<>();
     private static final ParticleDisplay.Axis[] order = {ParticleDisplay.Axis.X, ParticleDisplay.Axis.Y, ParticleDisplay.Axis.Z};
 
-    @EventHandler
-    public void onTest(AsyncPlayerChatEvent event) {
-        String message = event.getMessage().replace(" ", "").toLowerCase(Locale.ENGLISH);
-        if (message.equals("reset")) {
-            angles.clear();
-            return;
-        }
-        if (message.startsWith("!")) {
-            String[] split = message.substring(1).toUpperCase().split(",");
-
-            try {
-                order[0] = ParticleDisplay.Axis.valueOf(split[0]);
-                order[1] = ParticleDisplay.Axis.valueOf(split[1]);
-                order[2] = ParticleDisplay.Axis.valueOf(split[2]);
-
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            String[] split = message.split(",");
-
-            try {
-                String ns = split[0];
-                double[] angles = VergilMirageEdgeSlash.angles.computeIfAbsent(ns, k -> new double[3]);
-                angles[0] = Math.toRadians(Double.parseDouble(split[1]));
-                angles[1] = Math.toRadians(Double.parseDouble(split[2]));
-                angles[2] = Math.toRadians(Double.parseDouble(split[3]));
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+//    @EventHandler
+//    public void onTest(AsyncPlayerChatEvent event) {
+//        String message = event.getMessage().replace(" ", "").toLowerCase(Locale.ENGLISH);
+//        if (message.equals("reset")) {
+//            angles.clear();
+//            return;
+//        }
+//        if (message.startsWith("!")) {
+//            String[] split = message.substring(1).toUpperCase().split(",");
+//
+//            try {
+//                order[0] = ParticleDisplay.Axis.valueOf(split[0]);
+//                order[1] = ParticleDisplay.Axis.valueOf(split[1]);
+//                order[2] = ParticleDisplay.Axis.valueOf(split[2]);
+//
+//            } catch (Throwable ex) {
+//                ex.printStackTrace();
+//            }
+//        } else {
+//            String[] split = message.split(",");
+//
+//            try {
+//                String ns = split[0];
+//                double[] angles = VergilMirageEdgeSlash.angles.computeIfAbsent(ns, k -> new double[3]);
+//                angles[0] = Math.toRadians(Double.parseDouble(split[1]));
+//                angles[1] = Math.toRadians(Double.parseDouble(split[2]));
+//                angles[2] = Math.toRadians(Double.parseDouble(split[3]));
+//            } catch (Throwable ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//    }
 
     @Override
     public void useSkill(AbilityContext context) {

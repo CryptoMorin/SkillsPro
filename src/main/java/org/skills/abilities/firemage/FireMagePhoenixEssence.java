@@ -288,9 +288,9 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
 
             XSound.Record record = getSound(info, "music");
             if (record != null) {
-                float volume = record.volume;
+                float volume = record.getVolume();
                 for (Entity entity : loc.getWorld().getNearbyEntities(loc, volume, volume, volume)) {
-                    if (entity instanceof Player) record.sound.stopSound((Player) entity);
+                    if (entity instanceof Player) record.soundPlayer().forPlayers((Player) entity).stopSound();
                 }
             }
 

@@ -218,7 +218,7 @@ public class InteractiveGUI {
         InteractiveGUIManager.CONVERSATION.remove(player.getEntityId());
         if (!refresh) {
             StringUtils.performCommands(player, commands);
-            if (!Strings.isNullOrEmpty(sound)) XSound.play(player, sound);
+            if (!Strings.isNullOrEmpty(sound)) XSound.play(sound, x -> x.forPlayers(player));
             if (!Strings.isNullOrEmpty(message)) MessageHandler.sendPlayerMessage(player, message);
         } else if (update) refresh();
     }
