@@ -22,11 +22,13 @@ $RECYCLE.BIN/
 # Operating System Files
 # =========================
 
-ChangeLog.txt
+ChangeLog.md
 *.iml
 .idea/
 target/
 repo/
 out/
+build/
+.gradle/
 META-INF/
 dependency-reduced-pom.xml

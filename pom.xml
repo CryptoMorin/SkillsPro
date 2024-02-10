@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.4.2.1.2</version>
+    <version>19.4.3</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>

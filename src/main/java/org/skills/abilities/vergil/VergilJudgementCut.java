@@ -53,42 +53,56 @@ public class VergilJudgementCut extends InstantActiveAbility {
 
     public static BooleanSupplier helix(int strings, double radius, double rate, double extension, int length, int speed,
                                         boolean fadeUp, boolean fadeDown, ParticleDisplay display, Entity target) {
+        // Player's eye location is the starting location for the particle
+        Location startLoc = display.getLocation();
+
+        // We need to clone() this location, because we will add() to it later.
+        Location particleLoc = startLoc.clone();
+
+        World world = startLoc.getWorld(); // We need this later to show the particle
+
+        // dir is the Vector direction (offset from 0,0,0) the player is facing in 3D space
+        Vector dir = startLoc.getDirection();
+
         return new BooleanSupplier() {
-            // If we look at a helix string from above, we'll see a circle tunnel.
-            // To make this tunnel we're going to generate circles while moving
-            // upwards to get a curvy tunnel.
-            // Since we're generating this string infinitely we don't need
-            // to use radians or degrees.
+            double particleDistance = 1;
+            final int maxBeamLength = 30; // Max beam length
+            final int beamLength = 0; // Current beam length
+            final double targetHeight = 0.0; // Height of the target entity. Used for tracking to the exact center.
+
+            final int ticks = 0; // Tick counter
+            final int ticksPerParticle = 3; // How many ticks per particle
+
+
+            final boolean fadeDown = false;
+            final boolean fadeUp = false;
+            final double length = 10;
+            final double rate = 0.1;
+            final double radius = 1;
+            final int strings = 2;
             final double distanceBetweenEachCirclePoints = XParticle.PII / strings;
-            final double radiusDiv = radius;
+            final double radiusDiv = radius / (length / rate);
             final double radiusDiv2 = fadeUp && fadeDown ? radiusDiv * 2 : radiusDiv;
             double dynamicRadius = fadeDown ? 0 : radius;
             boolean center = !fadeDown;
-            final double rotationRate = distanceBetweenEachCirclePoints / 20; // the divided by number must be adjusted based on the "rate" arg
+            final double rotationRate = distanceBetweenEachCirclePoints / 7;
             double rotation = 0;
-            final boolean done = false;
-            double particleDistance = 1;
-            int startCurving = 20;
-            final Vector direction = display.getDirection();
-            final Location startLoc = display.getLocation();
 
-            @Override
+
+            // The run() function runs every X number of ticks - see below
             public boolean getAsBoolean() {
-                if (done) return false;
+                // vecOffset is used to determine where the next particle should appear
+                Vector vecOffset = null;
 
-//                int repeat = speed;
-//                while (repeat-- > 0) {
-//                    y += rate;
-
-                if (startCurving <= 0) {
-                    Location particleLoc = display.getLocation();
-
+                // Once the beam has traveled 3 blocks, start homing towards the closest entity
+                // We have a target! Adjust vector to point to this entity
+                if (beamLength >= 6 && target != null) {
                     // Target the center of the target entity
-                    Location targetLoc = target.getLocation().clone().add(0, target.getHeight() / 2, 0);
+                    Location targetLoc = target.getLocation().clone().add(0, targetHeight / 2, 0);
 
                     // Get the current particle trajectory
-                    Vector particleDirection = display.getDirection();
-                    // Calc the vector half way between the projectile and the target.
+                    Vector particleDirection = particleLoc.getDirection();
+                    // Calc the vector halfway between the projectile and the target.
                     Vector inBetween = targetLoc.clone().subtract(particleLoc).toVector().normalize();
 
                     double accuracy = 0.5;
@@ -96,46 +110,46 @@ public class VergilJudgementCut extends InstantActiveAbility {
                     // If the distance between the particle and the target is 5 or less, tighten the curve towards the target
                     //  and speed up the particle slightly
                     double distance = particleLoc.distance(targetLoc);
+                    // Maths FTW! This creates a nice effect where the closer it gets to the target, the tighter the curve
+                    // Returns a nice percentage number between 0.06 and .90 that we then multiply by 0.5 and add that to 0.5
+                    accuracy = accuracy * Math.pow(0.6, distance) + 0.5;
 
-                    if (distance < 5) {
-                        // Maths FTW! This creates a nice effect where the closer it gets to the target, the tighter the curve
-                        // Returns a nice percentage number between 0.06 and .90 that we then multiply by 0.5 and add that to 0.5
-                        accuracy = accuracy * Math.pow(0.6, distance) + 0.5;
-
-                        // Now adjust the distance between particles to prevent circling of targets
-                        particleDistance = 0.5 - (0.5 * accuracy);
-                    }
+                    // Now adjust the distance between particles to prevent circling of targets
+                    particleDistance = 0.5 - (0.5 * accuracy);
 
                     // Add the now multiplied "in between" vector to the projectile's direction vector and then normalize it
                     inBetween.multiply(accuracy);
                     particleDirection.add(inBetween).normalize();
-                    display.withDirection(particleDirection.clone());
+                    vecOffset = particleDirection.clone();
+                    // Need to set the new direction, otherwise direction resumes to before tracking direction
+                    particleLoc.setDirection(particleDirection);
                 } else {
-                    display.advanceInDirection(particleDistance);
+                    // No target. Continue moving in the previous direction
+                    vecOffset = particleLoc.getDirection().clone().multiply(particleDistance);
                 }
+
+                // Now we add the direction vector offset to the particle's current location
+
+                particleLoc.add(vecOffset);
 
                 if (!center) {
                     dynamicRadius += radiusDiv2;
                     if (dynamicRadius >= radius) center = true;
                 } else if (fadeUp) dynamicRadius -= radiusDiv2;
 
-                // Now we're going to copy our points and rotate them.
                 for (double i = 0; i < strings; i++) {
                     // 2D cirlce points.
-                    double angle = i * distanceBetweenEachCirclePoints * extension + rotation;
-                    double x = dynamicRadius * Math.cos(angle);
-                    double z = dynamicRadius * Math.sin(angle);
-                    display.spawn(x, 0, z);
+                    double angle = (i * distanceBetweenEachCirclePoints) + rotation;
+                    double x = 2 * Math.cos(angle);
+                    double z = 2 * Math.sin(angle);
+                    Location facing = particleLoc.clone();
+                    facing.setPitch(facing.getPitch() - 20);
+                    facing.setYaw(facing.getYaw() + 20);
+                    ParticleDisplay.of(Particle.FLAME).withLocation(particleLoc.clone())
+                            .face(facing).spawn(x, 0, z);
                 }
 
                 rotation += rotationRate;
-//                if (y > length) {
-//                    done = true;
-//                    return false;
-//                }
-//                }
-
-                --startCurving;
                 return true;
             }
         };
@@ -168,7 +182,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
             SLogger.info("ray: " + trace.getHitBlock() + ' ' + trace.getHitEntity());
             //return;
         }
-        ;
+
         SLogger.info("passed 4");
         //if (checkup(player) == null) return;
 
@@ -179,6 +193,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
     }
 
     public void dustToDust(Player player, Entity target, Location loc, int levels) {
+        XSound.ENTITY_WARDEN_SONIC_BOOM.play(player.getEyeLocation());
         if (player.isSneaking()) {
             AAAA.particleTutorial(player, target);
             return;
@@ -188,8 +203,15 @@ public class VergilJudgementCut extends InstantActiveAbility {
         XSound.ENTITY_WARDEN_DIG.play(player.getEyeLocation());
         double distance = LocationUtils.distance(player.getLocation(), loc);
         ParticleDisplay lineDisplay = ParticleDisplay.of(Particle.FLAME).withCount(1).withLocation(player.getEyeLocation());
-        ParticleDisplay display = ParticleDisplay.of(Particle.FLAME).withCount(1).withLocation(player.getEyeLocation()).face(player);
-        helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, false, false, display, target);
+        ParticleDisplay helixDipslay = ParticleDisplay.of(Particle.FLAME).withCount(1).withLocation(player.getEyeLocation()).face(player);
+        BukkitTask stop = helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, false, false, helixDipslay, target);
+
+        // Plugin plugin, int strings, double radius, double rate,
+        //                                   double extension, double height, double speed, double rotationRate,
+        //                                   boolean fadeUp, boolean fadeDown, ParticleDisplay display
+        //XParticle.helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, 5, false, false, helixDipslay.clone().withParticle(Particle.END_ROD).withLocation(player.getLocation()));
+        XParticle.helix(SkillsPro.get(), 2, 2, 0.1, 1, 5, 0.1, 20, false, false,
+                ParticleDisplay.of(Particle.DRAGON_BREATH).withLocation(player.getLocation()).withDirection(new Vector(0, 1, 0)));
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
 
@@ -211,7 +233,8 @@ public class VergilJudgementCut extends InstantActiveAbility {
             }
 
             XSound.ENTITY_WARDEN_AGITATED.play(loc);
-            XParticle.sphere(3, Math.PI / 50, ParticleDisplay.of(Particle.FLAME).withLocation(loc.clone()).directional());
+            stop.cancel();
+            //XParticle.sphere(3, Math.PI / 50, ParticleDisplay.of(Particle.FLAME).withLocation(loc.clone()).directional());
         }, 20L * 3L);
 
         if (levels < 4) {

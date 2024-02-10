@@ -1,4 +1,4 @@
-main: ${project.groupId}.main.${project.name}
+main: org.skills.main.SkillsPro
 name: ${project.name}
 description: ${project.description}
 author: Crypto Morin

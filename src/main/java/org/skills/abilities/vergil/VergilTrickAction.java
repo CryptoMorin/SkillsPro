@@ -35,7 +35,6 @@ public class VergilTrickAction extends InstantActiveAbility {
         Player player = (Player) event.getEntity();
 
         SkilledPlayer info = basicCheckup(player);
-        SLogger.info("info is: " + info);
         if (info == null) return;
         //if (info.getAbilityLevel(this) == 3) return;
         new Cooldown(player.getUniqueId(), TRICK_BEHIND, 1000, TimeUnit.MILLISECONDS);
@@ -59,7 +58,8 @@ public class VergilTrickAction extends InstantActiveAbility {
             changeYawPitch = false;
         } else if (!player.isOnGround()) {
             teleportTo = player.getLocation().add(0, 7, 0);
-            if (XPotion.SLOW_FALLING.isSupported()) player.addPotionEffect(XPotion.SLOW_FALLING.buildPotionEffect(20 * 5, 20));
+            if (XPotion.SLOW_FALLING.isSupported())
+                player.addPotionEffect(XPotion.SLOW_FALLING.buildPotionEffect(20 * 5, 20));
         } else {
             RayTraceResult trace = player.getWorld().rayTrace(
                     player.getEyeLocation(),

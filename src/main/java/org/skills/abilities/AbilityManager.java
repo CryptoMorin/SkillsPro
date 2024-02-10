@@ -112,7 +112,9 @@ public final class AbilityManager {
                 new VergilPhantomBlade()
         };
 
-        for (Ability ability : abilities) register(ability);
+        Arrays.stream(abilities)
+                .filter(Ability::isSupported)
+                .forEach(AbilityManager::register);
     }
 
     public static Map<String, Ability> getAbilities() {

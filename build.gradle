@@ -1,0 +1,246 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import javax.swing.filechooser.FileSystemView
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+//    dependencies {
+//        classpath 'org.fusesource.jansi:jansi:2.4.1'
+//    }
+}
+
+plugins {
+    id 'java-library'
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+java {
+//    toolchain {
+//        languageVersion.set(JavaLanguageVersion.of(17))
+//    }
+    // Cause: warning: source release 17 requires target release 17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenLocal()
+
+    maven {
+        url = uri('https://repo.codemc.org/repository/nms/')
+    }
+
+    maven {
+        url = uri('https://maven.citizensnpcs.co/repo')
+    }
+
+    maven {
+        url = uri('https://ci.ender.zone/plugin/repository/everything/')
+    }
+
+    maven {
+        url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
+    }
+
+    maven {
+        url = uri('https://mvn.lumine.io/repository/maven-public/')
+    }
+
+    maven {
+        url = uri('https://nexus.scarsz.me/content/groups/public/')
+    }
+
+    maven {
+        url = uri('https://repo.inventivetalent.org/content/groups/public/')
+    }
+
+    maven {
+        url = uri('https://maven.sk89q.com/repo/')
+    }
+
+    maven {
+        url = uri('https://maven.enginehub.org/repo/')
+    }
+
+    maven {
+        url = uri('https://jitpack.io')
+    }
+
+    mavenCentral()
+}
+
+dependencies {
+    api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
+    api 'com.github.cryptomorin:XSeries:9.9.0'
+    compileOnly 'org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.10.9'
+    compileOnly 'com.bekvon:residence:5.0.0'
+    compileOnly 'me.lorinth:lorinthsrpgmobs:1.10.0'
+    compileOnly 'com.github.lokka30:levelledmobs:3.3.3'
+    compileOnly 'com.magmaguy:elitemobs:7.3.12'
+    compileOnly 'com.massivecraft:massivecore:2.14.0'
+    compileOnly 'com.massivecraft:Factions:1.6.9.5-U0.6.0'
+    compileOnly 'com.massivecraft:massivefactions:2.14.0'
+    compileOnly 'com.github.cryptomorin:kingdoms:1.16.8.1.1'
+    compileOnly 'io.lumine:Mythic-Dist:5.0.2'
+    compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'de.Keyle.MyPet:mypet:3.0'
+    compileOnly('net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT') { transitive = false } // net.byteflux:libby-bukkit
+    compileOnly 'org.mcmonkey:sentinel:2.8.0-SNAPSHOT'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
+    compileOnly 'com.discordsrv:discordsrv:1.26.2'
+}
+
+group = 'org.skills'
+version = '19.4.4'
+description = 'An RPG plugin for players to grind with!'
+java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.20"
+        .replace("\${user.home}", FileSystemView.getFileSystemView().getHomeDirectory().absolutePath))
+logger.lifecycle("Server Path: " + serverPath.toAbsolutePath().toString())
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks {
+    processResources {
+        filter(ReplaceTokens, tokens: ['$': '={'], beginToken: '=', endToken: '{')
+
+        // Gradle will sometimes cache the results, so a "clean" task is required.
+        def props = [
+                project: [
+                        name       : "SkillsPro",
+                        version    : project.version,
+                        description: project.description
+                ]
+        ]
+        filesMatching("plugin.yml") {
+            expand(props)
+        }
+    }
+    shadowJar {
+        relocate("com.cryptomorin.xseries", "org.skills.utils.xseries")
+        relocate("com.github.benmanes.caffeine", "org.skills.utils.caffeine")
+        relocate("com.google.errorprone", "org.skills.utils.errorprone")
+    }
+    build {
+        finalizedBy(shadowJar)
+    }
+}
+
+tasks.register("copyToServer", Copy) {
+    Provider<RegularFile> file = (tasks.getByName("shadowJar") as Jar).archiveFile
+
+    from(file)
+    rename { "${project.name}-${project.version}.jar" }
+    into(serverPath.resolve("plugins"))
+}
+
+class Globals {
+    static Process lastProcess
+}
+
+java.nio.file.Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"))
+java.nio.file.Path tempFile = tempDir.resolve("gradle-runServer-taskpid.tmp")
+
+String pidOfPid(ProcessHandle handle) {
+    String pids = handle.pid().toString()
+
+    if (handle.children().count() > 0) {
+        pids += "," + handle.children()
+                .map { pidOfPid(it) }
+                .collect().join(",")
+    }
+
+    return pids
+}
+
+tasks.register("runServer") {
+    doLast {
+        var activeDir = serverPath
+        ProcessBuilder procBuilder = new ProcessBuilder(
+                "cmd", "/c", "start", "cmd", "/c", "Run.bat")
+                .directory(activeDir.toFile())
+        // procBuilder.environment().put("gradled", "true")
+        def lastProcess = Globals.lastProcess = procBuilder.start()
+
+        println("Executed ${lastProcess.pid()} in $activeDir (temp: " + tempFile.toAbsolutePath() + ")")
+    }
+}
+
+String infoOfInfo(ProcessHandle proc, int nest = 0) {
+    if (nest >= 10) return ""
+    def inf = proc.info()
+    String value = "  ".repeat(nest) + proc.pid() + ":"
+    inf.command().ifPresent { value += it }
+    inf.commandLine().ifPresent { value += "|" + it }
+    inf.arguments().ifPresent { value += " " + it }
+    value += "\n" + proc.children().map { infoOfInfo(it, nest + 1) }.collect().join("")
+    return value
+}
+
+tasks.register("stopServerIfRunning") {
+    doLast {
+        if (Globals.lastProcess != null) {
+            List<Long> pids = Globals.lastProcess.descendants().collect { it.pid() }
+
+            // Old method
+            // Runtime.getRuntime().exec("taskkill /F /PID " + pidStr)
+
+            // Doesn't work properly because it requires admin privs
+            // to see the commandLine info.
+            // ProcessHandle.allProcesses().forEach { x ->
+            //    println(infoOfInfo(x))
+            // }
+
+            for (final def pid in pids) {
+                def proc = ProcessHandle.of(pid)
+                if (proc.isPresent()) {
+                    println("Stopping server process with PID: " + pid)
+                    proc.get().destroy()
+                } else println("No server process found with PID: " + pid)
+            }
+
+            Globals.lastProcess = null
+        } else {
+            println("No server processes found.")
+        }
+    }
+}
+
+tasks.register("everything") {
+    def taskSeq = [
+            "stopServerIfRunning", "build", "copyToServer", "runServer"
+    ]
+    dependsOn(taskSeq)
+
+    for (i in 0..<taskSeq.size()) {
+        if ((i + 1) >= taskSeq.size()) break
+
+        def prev = taskSeq[i]
+        def next = taskSeq[i + 1]
+
+        try {
+            tasks.findByName(next).mustRunAfter(tasks.findByName(prev))
+        } catch (Exception ex) {
+            throw new RuntimeException("while gathering tasks $prev->$next", ex)
+        }
+    }
+}

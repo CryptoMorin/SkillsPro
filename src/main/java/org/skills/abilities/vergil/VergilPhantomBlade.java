@@ -113,18 +113,18 @@ public class VergilPhantomBlade extends InstantActiveAbility {
                 player.getEyeLocation().getDirection(),
                 50, FluidCollisionMode.ALWAYS, true, 0.5, e -> e != player);
 
-        Location hit;
-        if (trace != null) {
-            if (trace.getHitEntity() != null) {
-                hit = trace.getHitEntity().getLocation();
-            } else if (trace.getHitBlock() != null) {
-                hit = trace.getHitBlock().getLocation();
-            } else {
-                hit = trace.getHitPosition().toLocation(player.getWorld());
-            }
-        } else {
-            return;
-        }
+//        Location hit;
+//        if (trace != null) {
+//            if (trace.getHitEntity() != null) {
+//                hit = trace.getHitEntity().getLocation();
+//            } else if (trace.getHitBlock() != null) {
+//                hit = trace.getHitBlock().getLocation();
+//            } else {
+//                hit = trace.getHitPosition().toLocation(player.getWorld());
+//            }
+//        } else {
+//            return;
+//        }
 
         Location spawnLoc = player.getEyeLocation();
 

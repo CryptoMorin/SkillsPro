@@ -1,6 +1,5 @@
 package org.skills.abilities;
 
-import com.cryptomorin.xseries.NMSExtras;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
@@ -28,6 +27,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.SkilledPlayer;
+import org.skills.main.SLogger;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
@@ -61,9 +61,16 @@ public class AbilityListener implements Listener {
         if (SkillsConfig.isInDisabledWorld(player.getLocation())) return false;
         if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && LastBreath.isLastBreaths(player)) return false;
 
+        SLogger debugging = new SLogger();
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(player);
-        if (!info.hasSkill()) return false;
-        if (info.isActiveReady()) return false;
+        if (!info.hasSkill()) {
+            debugging.add("Player has no skill").show();
+            return false;
+        }
+        if (info.isActiveReady()) {
+            debugging.add("Player has no active ready abilities.").show();
+            return false;
+        }
 
         ActiveAbility ability = null;
         List<KeyBinding> keys = ACTIVATIONS.getIfPresent(player.getUniqueId());
@@ -75,6 +82,7 @@ public class AbilityListener implements Listener {
 
         //if (action != KeyBinding.SNEAK && player.isSneaking()) keys.add(KeyBinding.WHILE_SNEAK);
         keys.add(action);
+        debugging.add("Current key combinations: " + keys);
 
         ItemStack item = player.getItemInHand();
         for (Ability abs : info.getSkill().getAbilities()) {
@@ -97,16 +105,25 @@ public class AbilityListener implements Listener {
                 break;
             }
 
+            debugging.add("No skill was found with the given key binding combinations.").show();
             return true;
         }
 
         ACTIVATIONS.invalidate(player.getUniqueId());
-        if (ability == null) return false;
-        if (ability.isPvPBased() && SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player))
+        if (ability == null) {
+            debugging.add("No skill was found with the given key binding combinations.").show();
             return false;
+        }
+
+        debugging.add("Ability: " + ability.name);
+        if (ability.isPvPBased() && SkillsConfig.DISABLE_ABILITIES_IN_REGIONS.getBoolean() && ServiceHandler.isPvPOff(player)) {
+            debugging.add("Ability cannot be used in disabled worldguard regions.").show();
+            return false;
+        }
 
         // Cooldown
         if (info.isInCooldown()) {
+            debugging.add("Ability is in cooldown.").show();
             XSound.BLOCK_NOTE_BLOCK_BASS.record().soundPlayer().forPlayers(player).play();
             return true;
         }
@@ -114,22 +131,28 @@ public class AbilityListener implements Listener {
         // Energy
         double energy = ability.getEnergy(info);
         if (info.getEnergy() < energy) {
+            debugging.add("Not enough energy for ability: " + info.getEnergy() + " < " + energy).show();
             XSound.play(info.getSkill().getEnergy().getSoundNotEnough(), x -> x.forPlayers(player));
             return true;
         }
 
         String ready = ability.getAbilityReady(info);
         if (info.showReadyMessage() && ready != null) ability.sendMessage(player, ready);
-        if (!info.setActiveReady(ability, true)) return true;
+        if (!info.setActiveReady(ability, true)) {
+            debugging.add("Ability is not actively ready.").show();
+            return true;
+        }
         CustomHudChangeEvent.call(player);
         info.setLastAbilityUsed(ability);
 
         // Activate instantly if that's what the active requires
         if (ability instanceof InstantActiveAbility) {
             if (ability.checkup(player) != null) {
-                AbilityContext context = new AbilityContext(player, info);
-                ((InstantActiveAbility) ability).useSkill(context);
+                InstantActiveAbility instantActiveAbility = (InstantActiveAbility) ability;
+                AbilityContext context = new AbilityContext(player, info, instantActiveAbility);
+                instantActiveAbility.useSkill(context);
             }
+            debugging.add("Ability has been instantly activated.").show();
             return true;
         }
 
@@ -158,6 +181,7 @@ public class AbilityListener implements Listener {
                 XSound.ITEM_ARMOR_EQUIP_CHAIN.play(player);
             }
         }, ability.getIdle(info) * 20L);
+        debugging.add("Ability requires activation by hitting a target.").show();
         return true;
     }
 

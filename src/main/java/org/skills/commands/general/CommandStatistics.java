@@ -32,6 +32,14 @@ public class CommandStatistics extends SkillsCommand {
         return result;
     }
 
+    public static String padRight(String s, int n) {
+        return String.format("%-" + n + 's', s);
+    }
+
+    public static String padLeft(String s, int n) {
+        return String.format("%" + n + 's', s);
+    }
+
     @Override
     public void runCommand(@NonNull CommandSender sender, @NonNull String[] args) {
         CompletableFuture.runAsync(() -> {
@@ -52,6 +60,9 @@ public class CommandStatistics extends SkillsCommand {
             int bars = 100;
             MessageHandler.sendMessage(sender, "&3Loaded &e" + loaded + " &3player data.");
             statistics = sortByValue(statistics);
+            // Padding wont work because Minecraft characters are not mono
+            // int maxChars = statistics.keySet().stream().map(String::length).max(Integer::compareTo).get() + "&8:".length();
+
             for (Map.Entry<String, Integer> stats : statistics.entrySet()) {
                 double percent = MathUtils.getPercent(stats.getValue(), loaded);
                 int on = (int) Math.floor(MathUtils.getAmountFromAmount(percent, 100, bars));
@@ -59,7 +70,7 @@ public class CommandStatistics extends SkillsCommand {
                 String displayPercent = "&2" + Strings.repeat("|", on) + (off != 0 ? "&8" + Strings.repeat("|", off) : "");
 
                 percent = MathUtils.roundToDigits(percent, 3);
-                HoverLang.sendComplexMessage(sender, null, "COMPLEX:&3" + stats.getKey() + "&8: hover:{" + displayPercent + ",&e" + percent + "%} " +
+                HoverLang.sendComplexMessage(sender, null, "COMPLEX:&3" + stats.getKey() + "&8:" + " hover:{" + displayPercent + ",&e" + percent + "%} " +
                         "&8(&7" + StringUtils.toFancyNumber(stats.getValue()) + "&8)");
             }
         }).exceptionally(throwable -> {

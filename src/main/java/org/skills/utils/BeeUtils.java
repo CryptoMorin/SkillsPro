@@ -2,15 +2,12 @@ package org.skills.utils;
 
 import com.cryptomorin.xseries.XPotion;
 import org.bukkit.Location;
-import org.bukkit.entity.Bee;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.skills.main.SkillsPro;
+import org.bukkit.entity.*;
 
 public final class BeeUtils {
-    public static Mob spawn(Location loc) {
+    public static final boolean SUPPORTS_BEES = Reflect.classExists("org.bukkit.entity.Bee");
+
+    public static LivingEntity spawn(Location loc, LivingEntity target) {
         Bee bee = (Bee) loc.getWorld().spawnEntity(loc, EntityType.BEE);
         bee.setCannotEnterHiveTicks(Integer.MAX_VALUE);
         bee.setHive(null);
@@ -18,15 +15,16 @@ public final class BeeUtils {
         bee.setHasNectar(false);
         bee.setHasStung(false);
         bee.setAnger(Integer.MAX_VALUE);
+        bee.setTarget(target);
         bee.addPotionEffect(XPotion.SPEED.buildPotionEffect(1000000, 6));
         return bee;
     }
 
-    public  static void setHasStung(Entity entity, boolean enabled) {
+    public static void setHasStung(Entity entity, boolean enabled) {
         ((Bee) entity).setHasStung(enabled);
     }
 
     public static boolean isBee(Entity entity) {
-        return entity instanceof Bee;
+        return SUPPORTS_BEES && entity instanceof Bee;
     }
 }

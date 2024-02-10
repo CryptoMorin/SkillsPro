@@ -31,10 +31,7 @@ import org.skills.services.manager.ServiceHandler;
 import org.skills.types.Energy;
 import org.skills.types.SkillManager;
 import org.skills.types.Stat;
-import org.skills.utils.Hologram;
-import org.skills.utils.Metrics;
-import org.skills.utils.OfflineNBT;
-import org.skills.utils.UpdateChecker;
+import org.skills.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -130,6 +127,7 @@ public class SkillsPro extends JavaPlugin {
     }
 
     private void registerAllEvents() {
+        if (false) registerEvent(new ParticleUtil.Listen());
         registerEvent(new HealthAndEnergyManager(this));
         registerEvent(new AbilityListener());
         registerEvent(new InteractiveGUIManager());

@@ -57,6 +57,10 @@ public abstract class Ability implements Listener {
     protected final String name;
     private final String skill;
 
+    public boolean isSupported() {
+        return true;
+    }
+
     public Ability(String skill, String name) {
         this.skill = skill;
         if (name.equalsIgnoreCase("passive")) this.name = skill.toLowerCase(Locale.ENGLISH) + "_passive";

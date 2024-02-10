@@ -39,6 +39,10 @@ public class EntityUtil {
         entity.setVelocity(entity.getLocation().toVector().subtract(from.toVector()).multiply(intensity));
     }
 
+    public static void knockBack(Entity entity, Vector direction, double intensity) {
+        entity.setVelocity(direction.multiply(intensity));
+    }
+
     public static Vector validateExcessiveVelocity(Vector vel) {
         double x = vel.getX();
         double y = vel.getY();

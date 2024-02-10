@@ -10,7 +10,6 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
+import org.skills.main.locale.MessageHandler;
 import org.skills.utils.BeeUtils;
 
 import java.util.List;
@@ -35,6 +35,16 @@ public class PriestNaturesForce extends ActiveAbility {
 
     public PriestNaturesForce() {
         super("Priest", "natures_force");
+    }
+
+    @Override
+    public boolean isSupported() {
+        try {
+            if (BeeUtils.SUPPORTS_BEES) return true;
+        } catch (Throwable ignored) {}
+
+        MessageHandler.sendConsolePluginMessage("&eServer doesn't support " + getClass().getSimpleName() + " ability.");
+        return false;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -69,10 +79,9 @@ public class PriestNaturesForce extends ActiveAbility {
             @Override
             public void run() {
                 Location beeLoc = hiveLoc.clone().add(random.nextDouble(-1, 1), random.nextDouble(-1, 1), random.nextDouble(-1, 1));
-                Mob bee = BeeUtils.spawn(beeLoc);
+                LivingEntity bee = BeeUtils.spawn(beeLoc, target);
                 bee.setMetadata(NATURES_FORCE, new FixedMetadataValue(SkillsPro.get(), damage));
                 bee.setMetadata(NATURES_FORCE_TARGET, new FixedMetadataValue(SkillsPro.get(), target));
-                bee.setTarget(target);
                 XSound.ENTITY_BEE_LOOP_AGGRESSIVE.play(loc, 3.0f, 0);
                 particle.spawn(beeLoc);
 

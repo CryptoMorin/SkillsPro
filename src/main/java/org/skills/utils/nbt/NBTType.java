@@ -67,12 +67,13 @@ public class NBTType<T> {
     private final PersistentDataType<T, T> persistentDataType;
     private final ItemTagType<T, T> itemTagType;
 
-    private NBTType(ItemTagType itemTagType, PersistentDataType persistentDataType) {
-        this.itemTagType = itemTagType;
-        this.persistentDataType = persistentDataType;
+    @SuppressWarnings("unchecked")
+    private NBTType(ItemTagType<?, ?> itemTagType, PersistentDataType<?, ?> persistentDataType) {
+        this.itemTagType = (ItemTagType<T, T>) itemTagType;
+        this.persistentDataType = (PersistentDataType<T, T>) persistentDataType;
     }
 
-    private NBTType(ItemTagType itemTagType) {
+    private NBTType(ItemTagType<?, ?> itemTagType) {
         this(itemTagType, null);
     }
 

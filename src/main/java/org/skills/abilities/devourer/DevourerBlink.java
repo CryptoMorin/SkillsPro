@@ -8,13 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.main.SkillsConfig;
 import org.skills.utils.Cooldown;
 
 import java.util.HashMap;
@@ -55,8 +55,7 @@ public class DevourerBlink extends ActiveAbility {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDevourerAttack(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        if (SkillsConfig.isInDisabledWorld(event.getEntity().getLocation())) return;
+        if (commonDamageCheckup(event)) return;
 
         Player player = (Player) event.getDamager();
         int hits = HITS.getOrDefault(player.getUniqueId(), 0);
@@ -72,7 +71,7 @@ public class DevourerBlink extends ActiveAbility {
 
         hits++;
         int lvl = info.getAbilityLevel(this);
-        Entity entity = event.getEntity();
+        LivingEntity entity = (LivingEntity) event.getEntity();
         ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).offset(1).withCount(100).spawn();
 
         player.addPotionEffect(XPotion.SPEED.getPotionEffectType().createEffect(20 * 10, 1));
@@ -80,14 +79,14 @@ public class DevourerBlink extends ActiveAbility {
         int maxHits = (int) getScaling(info, "hits");
 
         if (lvl == 1) {
-            safeTp(player, getBack(entity.getLocation()));
+            safeTp(player, getBack(entity.getEyeLocation()));
             if (hits > maxHits) hits = -1;
         } else if (lvl == 2) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             double x = 2 * Math.cos(random.nextDouble(0, Math.PI * 2));
             double z = 2 * Math.sin(random.nextDouble(0, Math.PI * 2));
-            Location circle = entity.getLocation().clone().add(x, 0, z);
-            circle.setDirection(entity.getLocation().toVector().subtract(circle.toVector()));
+            Location circle = entity.getEyeLocation().clone().add(x, 0, z);
+            circle.setDirection(entity.getEyeLocation().toVector().subtract(circle.toVector()));
             safeTp(player, circle);
             if (hits > maxHits) hits = -1;
 
@@ -98,9 +97,9 @@ public class DevourerBlink extends ActiveAbility {
             double x = radius * Math.cos(random.nextDouble(0, Math.PI * 2));
             double y = random.nextDouble(0.5, 2);
             double z = radius * Math.sin(random.nextDouble(0, Math.PI * 2));
-            Location circle = entity.getLocation().clone().add(x, y, z);
+            Location circle = entity.getEyeLocation().clone().add(x, y, z);
 
-            circle.setDirection(entity.getLocation().toVector().subtract(circle.toVector()));
+            circle.setDirection(entity.getEyeLocation().toVector().subtract(circle.toVector()));
             safeTp(player, circle);
             if (hits > maxHits) hits = -1;
         }

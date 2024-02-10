@@ -147,9 +147,10 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
             display.face(player)
                     .rotate(0, 0, zRot)
                     //.rotationOrder(ParticleDisplay.Axis.X, ParticleDisplay.Axis.Z, ParticleDisplay.Axis.Y)
-                    .onSpawn(loc -> {
+                    .postCalculation(ctx -> {
                         if (i.incrementAndGet() == 5) {
                             i.set(0);
+                            Location loc = ctx.getLocation();
                             Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
                                 for (Entity entity : loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5)) {
                                     if (EntityUtil.filterEntity(player, entity)) continue;
@@ -157,7 +158,6 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                                 }
                             });
                         }
-                        return true;
                     });
 
             forwardSlash(getScaling(info, "distance.slash"), display);

@@ -120,7 +120,7 @@ final class LastManStanding {
     }
 
     public void revive() {
-        XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_REVIVE.getString(), x-> x.forPlayers(player));
+        XSound.play(SkillsConfig.LAST_BREATH_SOUNDS_REVIVE.getString(), x -> x.forPlayers(player));
         resetState();
         standWouldYouKindly();
 

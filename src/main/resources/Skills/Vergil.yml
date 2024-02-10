@@ -40,8 +40,15 @@ abilities:
   mirage-edge-slash:
     required-level: 20
     cost: 100 * (lvl + 1)
+
+    distance: lvl * 10
+    size: 1 + lvl
+    damage: max(int, 10)
+    knockback: 1
+    range: 1
+
     activation:
-      key: LRL
+      key: FL
       energy: 3
       cooldown: 3
       items: [ DIAMOND_SWORD ]

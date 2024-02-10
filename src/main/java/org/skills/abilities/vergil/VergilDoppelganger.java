@@ -17,7 +17,7 @@ public class VergilDoppelganger extends ActiveAbility {
         setPvPBased(true);
     }
 
-    public static boolean isSupported() {
+    public boolean isSupported() {
         try {
             Class.forName("net.citizensnpcs.api.npc.NPC");
             Class.forName("org.mcmonkey.sentinel.SentinelTrait");

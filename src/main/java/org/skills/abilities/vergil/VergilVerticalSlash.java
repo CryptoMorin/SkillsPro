@@ -39,8 +39,21 @@ public class VergilVerticalSlash extends ActiveAbility {
         Player player = (Player) event.getDamager();
         LivingEntity mainVictim = (LivingEntity) event.getEntity();
 
+        ParticleDisplay display = ParticleDisplay.of(Particle.SWEEP_ATTACK)
+                .rotate(ParticleDisplay.Rotation.of(-(Math.PI / 2), ParticleDisplay.Axis.Z))
+                .face(player)
+                .withLocation(player.getEyeLocation());
+
         if (player.isSneaking() && UPPER_DOWN.getIfPresent(player.getUniqueId()) != null) {
             UPPER_DOWN.invalidate(player.getUniqueId());
+
+            XParticle.ellipse(
+                    0, Math.PI,
+                    Math.PI / 30,
+                    3, 4,
+                    display
+            );
+
             Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
                 double range = 1;
                 for (Entity nearbyEntity : player.getWorld().getNearbyEntities(mainVictim.getLocation(), range, range, range)) {
@@ -57,7 +70,6 @@ public class VergilVerticalSlash extends ActiveAbility {
         SkilledPlayer info = checkup(player);
         if (info == null) return;
 
-        ParticleDisplay display = ParticleDisplay.of(Particle.SWEEP_ATTACK).withLocation(player.getEyeLocation());
         XParticle.ellipse(
                 0, Math.PI,
                 Math.PI / 30,

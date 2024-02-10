@@ -1,20 +1,24 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.particles.ParticleDisplay;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.skills.abilities.vergil.VergilMirageEdgeSlash;
-import org.skills.main.SLogger;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public final class DisplayEntityUtil {
     public static Entity spawnDisplay(Player player, Location spawnLoc) {
-        ItemDisplay itemDisplay = (ItemDisplay) spawnLoc.getWorld().spawnEntity(spawnLoc, EntityType.ITEM_DISPLAY);
+        Location noPitchLoc = spawnLoc.clone();
+        noPitchLoc.setPitch(0);
+        noPitchLoc.setYaw(0);
+
+        ItemDisplay itemDisplay = (ItemDisplay) spawnLoc.getWorld().spawnEntity(noPitchLoc, EntityType.ITEM_DISPLAY);
         itemDisplay.setItemStack(XMaterial.DIAMOND_SWORD.parseItem());
         // itemDisplay.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
         // itemDisplay.setBillboard(Display.Billboard.CENTER); Automatic rotation
@@ -22,57 +26,44 @@ public final class DisplayEntityUtil {
         itemDisplay.setDisplayHeight(20);
         itemDisplay.setDisplayWidth(20);
 
-        itemDisplay.setInterpolationDuration(40);
-        itemDisplay.setInterpolationDelay(-1);
+//        itemDisplay.setTeleportDuration(50);
+//        itemDisplay.setInterpolationDuration(40);
+//        itemDisplay.setInterpolationDelay(-1);
 
-        Location lookAt = spawnLoc.clone().add(spawnLoc.getDirection().normalize().multiply(5));
         // https://github.com/JOML-CI/JOML/blob/main/src/jmh/java/org/joml/jmh/Matrix4f.java
+        // https://misode.github.io/transformation/
         Vector axis = player.getEyeLocation().getDirection();
         Transformation transformation = itemDisplay.getTransformation();
         Quaternionf dest2 = transformation.getRightRotation(); // https://www.evl.uic.edu/ralph/508S98/coordinates.html
 
-        double[] angles = Arrays.stream(VergilMirageEdgeSlash.angles.getOrDefault("p", new double[3])).map(Math::toDegrees).toArray();
-        if (!player.isSneaking()) {
-//            Quaternionf dest1 = new Quaternionf();
-//            Quaternionf dest2 = new Quaternionf();
+        Location location = player.getEyeLocation();
 
-            // blank out my quaternions
-//            dest1.w = 1f;
-//            dest1.x = 0f;
-//            dest1.y = 0f;
-//            dest1.z = 0f;
+        ParticleUtil.VALUES.entrySet().stream().filter(x -> x.getKey().startsWith("trans")).map(Map.Entry::getValue).forEach(x -> {
+            double[] trans = Arrays.stream(x).toArray();
+            if (ParticleUtil.hasValue("perp")) {
+                Vector perp = ParticleUtil.getPerpendicularVector(new Vector(trans[1], trans[2], trans[3]));
+                trans[1] = perp.getX();
+                trans[2] = perp.getY();
+                trans[3] = perp.getZ();
+            }
+            transformation.getRightRotation().rotateAxis((float) trans[0], new Vector3f((float) trans[1], (float) trans[2], (float) trans[3]));
+        });
 
-            dest2.w = 1f;
-            dest2.x = 0f;
-            dest2.y = 0f;
-            dest2.z = 0f;
-
-            // I keep my pitch/yaw/roll in another Vector3F called rotationXYZ as degrees
-//            Vector rotationXYZ = new Vector(spawnLoc.getPitch() + 90, -spawnLoc.getYaw(), 0);
-            SLogger.info("angles: " + Arrays.toString(angles));
-            Vector rotationXYZ = new Vector(angles[0], angles[1], angles[2]);
-            double x, y, z;
-            x = rotationXYZ.getX();// + rotationXYZ.x;// testX;
-            y = rotationXYZ.getY();// + rotationXYZ.y;//testY;
-            z = rotationXYZ.getZ();// + rotationXYZ.z;//testZ;
-
-            // just make sure the degrees values don't get bigger than they need to be
-            x = x % 360.0f;
-            y = y % 360.0f;
-            z = z % 360.0f;
-
-            // convert to radians and start transforming
-            Vector3f v = new Vector3f();
-            dest2.rotateXYZ((float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
-            // dest1.transform(v);
-
-            // Use v now
-
-        } else {
-            ToQuaternion(dest2, angles[0], angles[1], angles[2]);
+        Vector direction = location.getDirection();
+        if (ParticleUtil.hasValue("face")) {
+            ParticleDisplay.Quaternion q = ParticleUtil.INTERNAL_CALL_LookRotation(direction, new Vector(0, 1, 0));
+            transformation.getRightRotation().mul((float) q.x, (float) q.y, (float) q.z, (float) q.w);
+//            transformation.getRightRotation().rotateAxis((float) Math.toRadians(location.getYaw()), new Vector3f(0f, 1f, 0f));
+//            transformation.getRightRotation().rotateAxis((float) Math.toRadians(location.getPitch()), new Vector3f(1f, 0f, 0f));
+        }
+        if (ParticleUtil.hasValue("faf")) {
+            transformation.getRightRotation().lookAlong(
+                    new Vector3f((float) direction.getX(), (float) direction.getY(), (float) direction.getZ()),
+                    new Vector3f(0, 1, 0));
         }
 
         itemDisplay.setTransformation(transformation);
+        //itemDisplay.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(0.5));
 //        transformation.getLeftRotation()
 //                .set(new AxisAngle4f(20, (float) axis.getX(), (float) axis.getY(), (float) axis.getZ()));
 //        itemDisplay.setTransformation(transformation);

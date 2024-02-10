@@ -38,6 +38,8 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
         double radius = 10;
         Location startLocation = player.getLocation();
         player.setInvulnerable(true);
+        ParticleDisplay trial = ParticleDisplay.of(Particle.TRIAL_SPAWNER_DETECTION).withCount(1000).offset(radius).withLocation(player.getEyeLocation());
+        ParticleDisplay spore = ParticleDisplay.of(Particle.WARPED_SPORE).withCount(1000).offset(radius).withLocation(player.getEyeLocation().add(0, 3, 0));
         ParticleDisplay display = ParticleDisplay.of(Particle.FLAME).withLocation(player.getEyeLocation());
 
         new BukkitRunnable() {
@@ -45,6 +47,8 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
 
             @Override
             public void run() {
+                trial.spawn();
+                spore.spawn();
                 XParticle.sphere(radius, 30, display);
                 if (--times == 0) cancel();
             }
