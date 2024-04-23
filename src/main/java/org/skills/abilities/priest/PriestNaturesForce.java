@@ -41,7 +41,8 @@ public class PriestNaturesForce extends ActiveAbility {
     public boolean isSupported() {
         try {
             if (BeeUtils.SUPPORTS_BEES) return true;
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         MessageHandler.sendConsolePluginMessage("&eServer doesn't support " + getClass().getSimpleName() + " ability.");
         return false;

@@ -36,7 +36,7 @@ public class VergilTrickAction extends InstantActiveAbility {
 
         SkilledPlayer info = basicCheckup(player);
         if (info == null) return;
-        //if (info.getAbilityLevel(this) == 3) return;
+        // if (info.getAbilityLevel(this) == 3) return;
         new Cooldown(player.getUniqueId(), TRICK_BEHIND, 1000, TimeUnit.MILLISECONDS);
     }
 

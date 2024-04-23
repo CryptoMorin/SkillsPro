@@ -22,8 +22,7 @@ import org.skills.api.events.SkillSoulGainEvent;
 import org.skills.api.events.SkillXPGainEvent;
 import org.skills.data.managers.PlayerDataManager;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.events.SkillsEvent;
-import org.skills.events.SkillsEventManager;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventType;
 import org.skills.main.SLogger;
 import org.skills.main.SkillsConfig;
@@ -195,12 +194,7 @@ public final class LevelManager implements Listener {
             }
 
             // EXP Server-wide boost
-            SkillsEvent xpEvent = SkillsEventManager.getEvent(SkillsEventType.XP);
-            if (xpEvent != null) xp *= xpEvent.calcMultiplier(killer);
-
-            // Single boost
-            SkillsEvent xpBonus = info.getBonus(SkillsEventType.XP);
-            if (xpBonus != null) xp *= xpBonus.calcMultiplier(killer);
+            xp *= SkillsBonus.getMultiplierFor(killer, SkillsEventType.XP);
 
             if (info.hasParty()) {
                 List<Player> inRange = partyMembersInRange(killer, info);
@@ -222,7 +216,7 @@ public final class LevelManager implements Listener {
                 } else xp += evaled;
             }
 
-            //MythicMobs check, check if level difference is not too high
+            // MythicMobs check, check if level difference is not too high
             if (property != null &&
                     SkillsConfig.MYTHICMOBS_WORLDS_WITH_LEVEL_MARGIN.getStringList().contains(killed.getWorld().getName())) {
                 double level = property.getValue().doubleValue();
@@ -270,9 +264,6 @@ public final class LevelManager implements Listener {
                 }
             }
 
-            SkillsEvent soulBonus = info.getBonus(SkillsEventType.SOUL);
-            if (soulBonus != null) souls *= soulBonus.calcMultiplier(killer);
-
             if (info.hasParty()) {
                 List<Player> inRange = partyMembersInRange(killer, info);
                 String equation = StringUtils.replace(StringUtils.replace(
@@ -290,10 +281,9 @@ public final class LevelManager implements Listener {
                 } else souls += evaled;
             }
 
-            SkillsEvent soulsEvent = SkillsEventManager.getEvent(SkillsEventType.SOUL);
-            if (soulsEvent != null) souls *= soulsEvent.calcMultiplier(killer);
+            souls *= (int) SkillsBonus.getMultiplierFor(killer, SkillsEventType.SOUL);
 
-            //MythicMobs check, check if level difference is not too high
+            // MythicMobs check, check if level difference is not too high
             if (property != null &&
                     SkillsConfig.MYTHICMOBS_WORLDS_WITH_LEVEL_MARGIN.getStringList().contains(killed.getWorld().getName())) {
                 double level = property.getValue().doubleValue();
@@ -313,7 +303,7 @@ public final class LevelManager implements Listener {
             if (killed.hasMetadata(LevelManager.SPAWNER))
                 souls = (int) SkillsConfig.SPAWNERS_SOULS.fromEquation(killer, "%souls%", souls);
 
-            //Check for spawner mob before awarding souls
+            // Check for spawner mob before awarding souls
             if (souls != 0 && !SkillsConfig.DISABLED_WORLDS_SOUL_GAIN.getStringList().contains(killed.getWorld().getName())) {
                 SkillSoulGainEvent soulEvent = new SkillSoulGainEvent(killer, killed, souls);
                 Bukkit.getPluginManager().callEvent(soulEvent);

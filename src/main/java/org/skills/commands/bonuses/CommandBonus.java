@@ -14,7 +14,7 @@ public class CommandBonus extends SkillsCommand {
 
         new CommandBonusGive(this);
         new CommandBonusTake(this);
-        //new CommandBonusTime(this);
+        // new CommandBonusTime(this);
     }
 
     @Override

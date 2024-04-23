@@ -17,6 +17,7 @@ import java.util.*;
 
 public final class AbilityManager {
     private static final Map<String, Ability> ABILITIES = new HashMap<>();
+    public static final Set<String> UNSUPPORTED_ABILITIES = new HashSet<>();
     private static final Set<UUID> COOLDOWN_EXCEMPT = new HashSet<>();
 
     public static Set<UUID> getCooldownExcempts() {
@@ -111,6 +112,10 @@ public final class AbilityManager {
                 new VergilDoppelganger(),
                 new VergilPhantomBlade()
         };
+
+        Arrays.stream(abilities)
+                .filter(x -> !x.isSupported())
+                .forEach(x -> UNSUPPORTED_ABILITIES.add(x.getName()));
 
         Arrays.stream(abilities)
                 .filter(Ability::isSupported)

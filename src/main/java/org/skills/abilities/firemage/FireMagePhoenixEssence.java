@@ -66,7 +66,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                 for (double theta = 0; theta <= Math.PI; theta += Math.PI / 30) {
                     double x = 3 * Math.cos(theta);
                     double z = 3 * Math.sin(theta);
-                    //Location spawnAt = rotate(display, display.getLocation(), x, 0, z);
+                    // Location spawnAt = rotate(display, display.getLocation(), x, 0, z);
                     Vector local = new Vector(x, 0, z);
                     Location spawnAt = display.getLocation().clone();
                     ParticleDisplay.Quaternion rot = ParticleDisplay.Quaternion.rotation(loc.getYaw(), new Vector(0, 1, 0));

@@ -8,12 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
 import org.skills.commands.TabCompleteManager;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventManager;
 import org.skills.events.SkillsEventType;
+import org.skills.events.SkillsGlobalBonus;
 import org.skills.main.locale.SkillsLang;
 import org.skills.utils.MathUtils;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -45,22 +47,22 @@ public class CommandEventStart extends SkillsCommand {
                 return;
             }
 
-            SkillsEvent event = SkillsEventManager.getEvent(type);
+            SkillsBonus event = SkillsEventManager.getEvent(type);
             if (event == null || !event.isActive()) {
-                event = new SkillsEvent(null, type, String.valueOf(multiplier), time);
-                event.startEvent();
+                event = new SkillsGlobalBonus(type, String.valueOf(multiplier), Duration.ofMillis(time), System.currentTimeMillis());
+                event.start();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     SkillsLang.COMMAND_BOOST_BROADCAST.sendMessage(player,
                             "%type%", type.toString(),
                             "%multiplier%", String.valueOf(multiplier),
-                            "%time%", event.getDisplayTime());
+                            "%time%", event.getDisplayDuration());
                 }
             } else {
                 SkillsLang.COMMAND_BOOST_ALREADY_STARTED.sendMessage(sender,
                         "%type%", type.toString(),
                         "%multiplier%", multiplier,
-                        "%time%", event.getDisplayTime());
+                        "%time%", event.getDisplayDuration());
             }
         } else {
             SkillsCommandHandler.sendUsage(sender, "<xp/soul> <time> <multiplier>");

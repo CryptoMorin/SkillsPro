@@ -69,7 +69,7 @@ public class SwordsmanThousandCuts extends ActiveAbility {
                 if (i < getScaling(info, "cut-count") && entity.isValid()) {
                     activeTrapcount.put(entity.getEntityId(), i + 1);
 
-                    //disorienter
+                    // disorienter
                     Location activeLocationOrienter = activeLocation.get(entity.getEntityId());
                     Location loc = new Location(activeLocationOrienter.getWorld(),
                             activeLocationOrienter.getX(),

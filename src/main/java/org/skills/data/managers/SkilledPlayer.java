@@ -15,8 +15,9 @@ import org.skills.abilities.ActiveAbility;
 import org.skills.abilities.eidolon.EidolonForm;
 import org.skills.api.events.*;
 import org.skills.data.database.DataContainer;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventType;
+import org.skills.events.SkillsPersonalBonus;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
@@ -36,6 +37,7 @@ import org.skills.utils.NoEpochDate;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SkilledPlayer extends DataContainer {
     private transient PlayerSkill skill = new PlayerSkill(PlayerSkill.NONE);
@@ -50,7 +52,7 @@ public class SkilledPlayer extends DataContainer {
     private transient ActiveAbility lastAbilityUsed, activeReady;
     private boolean showActionBar = SkillsConfig.ACTIONBAR_DEFAULT.getBoolean();
     private Map<String, Integer> masteries = new HashMap<>();
-    private Map<SkillsEventType, SkillsEvent> bonuses = new EnumMap<>(SkillsEventType.class);
+    private Collection<SkillsPersonalBonus> bonuses = new ArrayList<>();
     private Map<String, Cosmetic> cosmetics = new HashMap<>();
     private Set<UUID> friends = new HashSet<>();
     private Set<UUID> friendRequests = new HashSet<>();
@@ -125,13 +127,42 @@ public class SkilledPlayer extends DataContainer {
     }
 
     @NonNull
-    public Map<SkillsEventType, SkillsEvent> getBonuses() {
-        bonuses.values().removeIf(event -> !event.isActive());
+    public Collection<SkillsPersonalBonus> getBonuses() {
+        removeExpiredBonuses();
         return bonuses;
     }
 
-    public void setBonuses(Map<SkillsEventType, SkillsEvent> bonuses) {
+    private void removeExpiredBonuses() {
+        // Bossbar removed in the repeating task.
+        bonuses.removeIf(SkillsBonus::hasExpired);
+    }
+
+    public void setBonuses(Collection<SkillsPersonalBonus> bonuses) {
         this.bonuses = bonuses;
+        removeExpiredBonuses();
+    }
+
+    public @NonNull
+    Collection<SkillsPersonalBonus> getBonus(SkillsEventType type) {
+        return getBonuses().stream().filter(x -> x.getType() == type).collect(Collectors.toList());
+    }
+
+    public void addBonus(SkillsPersonalBonus bonus) {
+        Objects.requireNonNull(bonus, "Cannot add null bonus");
+        if (bonus.hasExpired()) throw new IllegalArgumentException("Cannot add expired bonus: " + bonus);
+        if (!bonus.getPlayerId().equals(this.id))
+            throw new IllegalArgumentException("Bonus ids dont match: " + bonus.getPlayerId() + " != " + this.id);
+        this.bonuses.add(bonus);
+    }
+
+    public void removeBonus(SkillsEventType type) {
+        this.bonuses.removeIf(x -> {
+            if (x.getType() == type) {
+                x.stop();
+                return true;
+            }
+            return false;
+        });
     }
 
     public Set<Ability> getActiveAbilities() {
@@ -211,21 +242,15 @@ public class SkilledPlayer extends DataContainer {
         skill.setShowReadyMessage(showReadyMessage);
     }
 
-    public @NonNull
-    UUID getId() {
+    public @NonNull UUID getId() {
         return this.id;
-    }
-
-    public void setId(@NonNull UUID id) {
-        Objects.requireNonNull(id, "Cannot set Skilled player's UUID to null");
-        this.id = id;
     }
 
     @Override
     @NotNull
     public String getCompressedData() {
         return skill + compressUUID(party) + (rank == null ? "" : rank.ordinal()) + (healthScaling == 0 ? "" : healthScaling)
-                + compressCollecton(bonuses.values(), x -> x.start + x.time)
+                + compressCollecton(bonuses, SkillsBonus::toString)
                 + compressCollecton(masteries.values(), x -> x)
                 + compressCollecton(friends, DataContainer::compressUUID)
                 + compressCollecton(friendRequests, DataContainer::compressUUID)
@@ -241,6 +266,7 @@ public class SkilledPlayer extends DataContainer {
     @Override
     public void setIdentifier(@NonNull String identifier) {
         this.id = FastUUID.fromString(identifier);
+        this.bonuses.forEach(x -> x.setPlayerId(id));
     }
 
     public @NonNull
@@ -592,22 +618,8 @@ public class SkilledPlayer extends DataContainer {
         return this.skill.getAbilityData(ability).isDisabled();
     }
 
-    public @Nullable
-    SkillsEvent getBonus(SkillsEventType type) {
-        return getBonuses().get(type);
-    }
-
-    public void addBonus(SkillsEvent bonus) {
-        this.bonuses.put(bonus.getType(), bonus);
-    }
-
     public boolean hasParty() {
         return this.party != null;
-    }
-
-    public SkillsEvent removeBonus(SkillsEventType type) {
-        this.bonuses.values().forEach(SkillsEvent::stop);
-        return this.bonuses.remove(type);
     }
 
     public void upgradeAbility(@NonNull Ability ability) {

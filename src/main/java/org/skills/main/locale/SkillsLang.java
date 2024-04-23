@@ -143,7 +143,7 @@ public enum SkillsLang {
     COMMAND_BONUS_TAKE_SUCCESS("&3Removed all the boosts from the player.", 1, 2, 3),
     COMMAND_BONUS_NOT_FOUND("&cCould not find &e%bonus% &cbonus.", 1, 2),
     COMMAND_BONUS_TAKE_DESCRIPTION("&3Takes an active bonus from a player.", 1, 2, 3),
-    //COMMAND_BONUS_TIME_DESCRIPTION("&3Change one of a player's bonuses.", 1, 2),
+    // COMMAND_BONUS_TIME_DESCRIPTION("&3Change one of a player's bonuses.", 1, 2),
 
     COMMAND_BOOST_ALREADY_STARTED("&cThe specified event is already in progress! Remaining time&8: &e%time%", 1, 2),
     COMMAND_BOOST_BROADCAST("&e%type% &3boost activated for &e%time%&3! Get &ex%multiplier% &3%type% per kill!", 1, 2),
@@ -371,6 +371,7 @@ public enum SkillsLang {
     SKILL_NO_PERMISSION("&cYou don't have permission to use &e%skill%", 1),
     SKILL_OWNED_ERROR("&4You already own a skill!", 1),
     SKILL_REQUIRED_LEVEL("&cYou need to be at least level &e%level% &cto use this skill.", 1),
+    SKILL_CANNOT_SELECT("&cYou cannot select this class currently.", 1),
     SKILL_SELECTED("COMPLEX:&3You are now a &e%skills_skill_displayname%\n&3You can upgrade your abilities from hover:{&e/skill improve,&eClick to open,/skill improve}"),
     SKILL_CHANGE_COOLDOWN_ERROR("&cYou need to wait &e%cooldown% &cto change your skill.", 1),
     SKILL_SELECT_COST("&cYou need &e%cost% &csouls to select this skill.", 1),

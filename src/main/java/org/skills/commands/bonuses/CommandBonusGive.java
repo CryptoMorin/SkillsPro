@@ -9,12 +9,13 @@ import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
 import org.skills.commands.TabCompleteManager;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.events.SkillsEvent;
 import org.skills.events.SkillsEventType;
+import org.skills.events.SkillsPersonalBonus;
 import org.skills.main.locale.SkillsLang;
 import org.skills.utils.MathEval;
 import org.skills.utils.MathUtils;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -52,14 +53,15 @@ public class CommandBonusGive extends SkillsCommand {
                     SkillsLang.COMMAND_BONUS_GIVE_MULTIPLIER_INVALID.sendMessage(sender);
                     return;
                 }
-                SkillsEvent bonus = new SkillsEvent(p.getUniqueId(), bonusType, multiplier, time);
+                SkillsPersonalBonus bonus = new SkillsPersonalBonus(p.getUniqueId(), bonusType, multiplier,
+                        Duration.ofMillis(time), System.currentTimeMillis());
                 SkilledPlayer info = SkilledPlayer.getSkilledPlayer(p);
                 info.addBonus(bonus);
+                bonus.start();
 
                 SkillsLang.COMMAND_BONUS_GIVE_CONFIRMATION.sendMessage(sender, "%player%", p.getName(), "%time%", args[2]);
                 if (p.isOnline()) {
                     Player player = p.getPlayer();
-                    bonus.startBonus(player);
                     SkillsLang.COMMAND_BONUS_GIVE_SUCCESS.sendMessage(player, "%time%", args[2]);
                 }
             } catch (NumberFormatException e) {

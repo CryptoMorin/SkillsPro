@@ -100,7 +100,7 @@ public class LocationUtils {
     public static void whoooosh(Entity entity, Location location, double xMod, double yMod, double zMod) {
         Location loc = entity.getLocation();
         loc.setY(loc.getY() + 0.5);
-        //entity.teleport(loc);
+        // entity.teleport(loc);
 
         double gravity = -0.1D;
         double dist = location.distance(loc);
@@ -179,7 +179,7 @@ public class LocationUtils {
 
         loc.setYaw(centerYaw(loc.getYaw()));
         loc.setPitch(0);
-        //new Location(loc.getWorld(), loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5, centerYaw(loc.getYaw()), 0);
+        // new Location(loc.getWorld(), loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5, centerYaw(loc.getYaw()), 0);
         return loc;
     }
 

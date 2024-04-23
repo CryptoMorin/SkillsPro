@@ -13,7 +13,7 @@ public class SLogger {
     public SLogger() {
         if (SkillsConfig.DEBUG.getBoolean()) {
             this.builder = new StringBuilder(100);
-            //noinspection OptionalGetWithoutIsPresent
+            // noinspection OptionalGetWithoutIsPresent
             this.builder
                     .append("---------------- ")
                     .append(Arrays.stream(Thread.currentThread().getStackTrace()).skip(2).findFirst().get())

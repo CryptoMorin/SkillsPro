@@ -137,7 +137,7 @@ public class NPCHandler {
         NavigatorParameters params = npc.getNavigator().getDefaultParameters();
         params.distanceMargin(5);
         // params.destinationTeleportMargin(); This is useless... it teleports the NPC when it reaches this distance, not when it cant path find.
-        //params.stationaryTicks(20 * 5);
+        // params.stationaryTicks(20 * 5);
 
         npc.spawn(player.getLocation());
         npc.getEntity().setMetadata(METADATA, new FixedMetadataValue(SkillsPro.get(), player.getUniqueId()));
@@ -156,8 +156,8 @@ public class NPCHandler {
         sentinal.attackRate = 20;
         sentinal.healRate = 0;
         sentinal.realistic = true;
-        //sentinal.fightback = true;
-        //sentinal.itemHelper.swapToMelee();
+        // sentinal.fightback = true;
+        // sentinal.itemHelper.swapToMelee();
         attack(npc, victim);
 
         new BukkitRunnable() {

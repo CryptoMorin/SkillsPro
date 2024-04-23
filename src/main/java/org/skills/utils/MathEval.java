@@ -92,12 +92,12 @@ public final class MathEval {
 
         // https://en.cppreference.com/w/c/language/operator_precedence
         setOperator(new Operator('^', 12, 13, Side.NONE, Math::pow));
-        //setOperator(new Operator('±', 10, 10, Side.RIGHT, true, (a, b) -> -b));
+        // setOperator(new Operator('±', 10, 10, Side.RIGHT, true, (a, b) -> -b));
         setOperator(new Operator('*', 10, (a, b) -> a * b));
-        //setOperator(new Operator('·', 10, (a, b) -> a * b));
+        // setOperator(new Operator('·', 10, (a, b) -> a * b));
         setOperator(new Operator('(', 10, (a, b) -> a * b));
         setOperator(new Operator('/', 10, (a, b) -> a / b));
-        //setOperator(new Operator('÷', 10, (a, b) -> a / b));
+        // setOperator(new Operator('÷', 10, (a, b) -> a / b));
         setOperator(new Operator('%', 10, (a, b) -> a % b));
         setOperator(new Operator('+', 9, Double::sum));
         setOperator(new Operator('-', 9, (a, b) -> a - b));

@@ -513,7 +513,7 @@ public final class Laser {
 
         private static Object createPacketMetadata(int entityId, Object watcher) throws ReflectiveOperationException {
             if (supports(19)) {
-                //noinspection JavaReflectionInvocation
+                // noinspection JavaReflectionInvocation
                 return packetMetadata.getConstructor(int.class, List.class).newInstance(entityId, watcherPack.invoke(watcher));
             } else {
                 return packetMetadata.getConstructor(int.class, watcher.getClass(), boolean.class).newInstance(entityId, watcher, false);

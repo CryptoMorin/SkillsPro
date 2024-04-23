@@ -24,7 +24,7 @@ public class CommandParty extends SkillsCommand {
         new CommandPartyLeader(this);
         new CommandPartySpy(this);
         new CommandPartyParties(this);
-        //new CommandPartyDeny(this);
+        // new CommandPartyDeny(this);
     }
 
     @Override

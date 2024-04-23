@@ -225,7 +225,7 @@ public abstract class BackupManager {
 
         while (Files.exists(file))
             file = parent.resolve(name + " (" + count++ + ')' + extension);
-        //Paths.get(parent.toString(), name + " (" + count++ + ")" + extension);
+        // Paths.get(parent.toString(), name + " (" + count++ + ")" + extension);
 
         return file;
     }

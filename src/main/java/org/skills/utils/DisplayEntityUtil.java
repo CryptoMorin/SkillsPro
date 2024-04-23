@@ -63,7 +63,7 @@ public final class DisplayEntityUtil {
         }
 
         itemDisplay.setTransformation(transformation);
-        //itemDisplay.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(0.5));
+        // itemDisplay.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(0.5));
 //        transformation.getLeftRotation()
 //                .set(new AxisAngle4f(20, (float) axis.getX(), (float) axis.getY(), (float) axis.getZ()));
 //        itemDisplay.setTransformation(transformation);
@@ -88,19 +88,19 @@ public final class DisplayEntityUtil {
     }
 
     public void rotate(Quaternionf rotation, float x, float y, float z) {
-        //Use modulus to fix values to below 360 then convert values to radians
+        // Use modulus to fix values to below 360 then convert values to radians
         float newX = (float) Math.toRadians(x);
         float newY = (float) Math.toRadians(y);
         float newZ = (float) Math.toRadians(z);
 
-        //Create a quaternion with the delta rotation values
+        // Create a quaternion with the delta rotation values
         Quaternionf rotationDelta = new Quaternionf();
         rotationDelta.rotationXYZ(newX, newY, newZ);
 
-        //Calculate the inverse of the delta quaternion
+        // Calculate the inverse of the delta quaternion
         Quaternionf conjugate = rotationDelta.conjugate();
 
-        //Multiply this transform by the rotation delta quaternion and its inverse
+        // Multiply this transform by the rotation delta quaternion and its inverse
         rotation.mul(rotationDelta).mul(conjugate);
     }
 

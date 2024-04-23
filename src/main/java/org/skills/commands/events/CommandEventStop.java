@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventManager;
 import org.skills.events.SkillsEventType;
 import org.skills.main.locale.SkillsLang;
@@ -27,7 +27,7 @@ public class CommandEventStop extends SkillsCommand {
             return;
         }
 
-        SkillsEvent event = SkillsEventManager.getEvent(type);
+        SkillsBonus event = SkillsEventManager.getEvent(type);
         if (event == null) {
             SkillsLang.EVENT_NOT_RUNNING.sendMessage(sender, "%event%", type);
             return;

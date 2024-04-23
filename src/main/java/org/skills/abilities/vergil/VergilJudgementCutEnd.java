@@ -95,7 +95,7 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
 
                 @Override
                 public void run() {
-                    //slashes--;
+                    // slashes--;
 //                    player.setVelocity(new Vector(
 //                            rand.nextDouble(-randomRange, randomRange),
 //                            rand.nextDouble(-randomRange, randomRange),

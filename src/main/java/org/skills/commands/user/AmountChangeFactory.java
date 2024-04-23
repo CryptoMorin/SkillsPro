@@ -36,7 +36,7 @@ public final class AmountChangeFactory {
 
         if (amount < 0) {
             if (type == Type.ADD) type = Type.REMOVE;
-            //else if (type == Type.REMOVE) type = Type.ADD; No one does this to mean "add" ...
+            // else if (type == Type.REMOVE) type = Type.ADD; No one does this to mean "add" ...
             amount = -amount;
         }
 

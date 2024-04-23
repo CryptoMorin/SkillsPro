@@ -22,11 +22,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.UUID;
 
 public class JsonDatabase<T extends DataContainer> implements SkillsDatabase<T> {
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
+            .registerTypeAdapter(Duration.class, new AdapterDuration())
             .registerTypeAdapter(UUID.class, new AdapterUUID())
             .registerTypeAdapter(SkilledPlayer.class, new AdapterSkilledPlayer())
             .registerTypeAdapter(PlayerSkill.class, new AdapterPlayerSkill())

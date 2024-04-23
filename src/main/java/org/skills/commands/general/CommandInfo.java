@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.SkillsCommandHandler;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventType;
+import org.skills.events.SkillsPersonalBonus;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 
@@ -52,12 +53,12 @@ public class CommandInfo extends SkillsCommand {
     }
 
     public String getBonusString(SkilledPlayer info) {
-        Collection<SkillsEvent> activeBonuses = info.getBonuses().values();
-        if (activeBonuses.size() == 0) return "";
+        Collection<SkillsPersonalBonus> activeBonuses = info.getBonuses();
+        if (activeBonuses.isEmpty()) return "";
 
         StringBuilder bonuses = new StringBuilder();
         boolean once = false;
-        for (SkillsEvent bonus : activeBonuses) {
+        for (SkillsBonus bonus : activeBonuses) {
             SkillsLang bonusLang = bonus.getType() == SkillsEventType.SOUL ?
                     SkillsLang.COMMAND_INFO_SOUL_BONUS : SkillsLang.COMMAND_INFO_XP_BONUS;
             bonuses.append(bonusLang.parse(info.getOfflinePlayer()));

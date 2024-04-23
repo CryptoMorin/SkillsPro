@@ -180,11 +180,11 @@ public class VergilJudgementCut extends InstantActiveAbility {
 
         if (trace != null) {
             SLogger.info("ray: " + trace.getHitBlock() + ' ' + trace.getHitEntity());
-            //return;
+            // return;
         }
 
         SLogger.info("passed 4");
-        //if (checkup(player) == null) return;
+        // if (checkup(player) == null) return;
 
         Location loc = target.getLocation();
 //        Plugin plugin, int strings, double radius, double rate, double extension, int height, int speed,
@@ -209,7 +209,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
         // Plugin plugin, int strings, double radius, double rate,
         //                                   double extension, double height, double speed, double rotationRate,
         //                                   boolean fadeUp, boolean fadeDown, ParticleDisplay display
-        //XParticle.helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, 5, false, false, helixDipslay.clone().withParticle(Particle.END_ROD).withLocation(player.getLocation()));
+        // XParticle.helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, 5, false, false, helixDipslay.clone().withParticle(Particle.END_ROD).withLocation(player.getLocation()));
         XParticle.helix(SkillsPro.get(), 2, 2, 0.1, 1, 5, 0.1, 20, false, false,
                 ParticleDisplay.of(Particle.DRAGON_BREATH).withLocation(player.getLocation()).withDirection(new Vector(0, 1, 0)));
 
@@ -234,7 +234,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
 
             XSound.ENTITY_WARDEN_AGITATED.play(loc);
             stop.cancel();
-            //XParticle.sphere(3, Math.PI / 50, ParticleDisplay.of(Particle.FLAME).withLocation(loc.clone()).directional());
+            // XParticle.sphere(3, Math.PI / 50, ParticleDisplay.of(Particle.FLAME).withLocation(loc.clone()).directional());
         }, 20L * 3L);
 
         if (levels < 4) {

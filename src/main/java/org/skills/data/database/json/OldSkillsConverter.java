@@ -42,10 +42,10 @@ public class OldSkillsConverter {
         if (!dbFolder.exists()) dbFolder.mkdirs();
         this.conv = dbFolder.getParentFile().toPath().resolve("DONT DELETE ME V4.txt");
 
-        //validateConfigs();
-        //convertData();
-        //convertDataV2();
-        //convertDataV3();
+        // validateConfigs();
+        // convertData();
+        // convertDataV2();
+        // convertDataV3();
         convertDataV4();
     }
 

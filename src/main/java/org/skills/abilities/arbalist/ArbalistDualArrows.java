@@ -67,8 +67,8 @@ public class ArbalistDualArrows extends Ability {
 //        double d3 = Math.sqrt(direction.getX() * direction.getX() + direction.getZ() * direction.getZ());
 //        this.yaw = (float)(MathHelper.d(direction.getX(), direction.getZ()) * WTHNumber);
 //        this.pitch = (float)(MathHelper.d(direction.getY(), d3) * WTHNumber);
-        //this.lastYaw = this.yaw;
-        //this.lastPitch = this.pitch;
+        // this.lastYaw = this.yaw;
+        // this.lastPitch = this.pitch;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

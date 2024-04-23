@@ -58,6 +58,11 @@ public class CommandSelect extends SkillsCommand {
             }
         }
 
+        if (skill.getName().equalsIgnoreCase("vergil")) {
+            SkillsLang.SKILL_CANNOT_SELECT.sendMessage(player);
+            return;
+        }
+
         if (!info.canChangeSkill() && !player.hasPermission("skills.change.cooldownbypass")) {
             SkillsLang.SKILL_CHANGE_COOLDOWN_ERROR.sendMessage(player,
                     "%cooldown%", info.getTimeLeftToChangeSkillString());

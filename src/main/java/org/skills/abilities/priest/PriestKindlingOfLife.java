@@ -52,7 +52,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
         laser.start(Skills.get());*/
         XSound.ENTITY_SPLASH_POTION_THROW.play(player);
 
-        //Laser finalLas = laser;
+        // Laser finalLas = laser;
         new BukkitRunnable() {
             int i = 5;
 

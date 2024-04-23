@@ -6,14 +6,12 @@ import org.skills.data.managers.Cosmetic;
 import org.skills.data.managers.CosmeticCategory;
 import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.events.SkillsEvent;
-import org.skills.events.SkillsEventType;
+import org.skills.events.SkillsPersonalBonus;
 import org.skills.party.PartyRank;
 import org.skills.utils.FastUUID;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, JsonDeserializer<SkilledPlayer> {
     @Override
@@ -21,8 +19,7 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         SkilledPlayer info = new SkilledPlayer();
         JsonObject json = jsonElement.getAsJsonObject();
 
-        Type mapType = new TypeToken<Map<String, PlayerSkill>>() {
-        }.getType();
+        Type mapType = new TypeToken<Map<String, PlayerSkill>>() {}.getType();
         info.setSkills(context.deserialize(json.get("skills"), mapType));
         PlayerSkill activeSkill = info.getSkills().get(json.get("skill").getAsString());
         if (activeSkill == null) activeSkill = new PlayerSkill(PlayerSkill.NONE);
@@ -35,8 +32,7 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         JsonElement lastChange = json.get("lastSkillChange");
         info.setLastSkillChange(lastChange == null ? 0 : lastChange.getAsLong());
 
-        Type uuidType = new TypeToken<Set<UUID>>() {
-        }.getType();
+        Type uuidType = new TypeToken<Set<UUID>>() {}.getType();
         Set<UUID> friends = context.deserialize(json.get("friends"), uuidType);
         Set<UUID> friendRequests = context.deserialize(json.get("friendRequests"), uuidType);
         if (friends != null) info.setFriends(friends);
@@ -49,28 +45,16 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         if (partyEle != null) info.setParty(FastUUID.fromString(partyEle.getAsString()));
         info.setRank(context.deserialize(json.get("rank"), PartyRank.class));
 
-        mapType = new TypeToken<HashMap<String, Integer>>() {
-        }.getType();
+        mapType = new TypeToken<HashMap<String, Integer>>() {}.getType();
         info.setMasteries(context.deserialize(json.get("masteries"), mapType));
 
-        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {
-        }.getType();
-        Map<SkillsEventType, SkillsEvent> bonuses = context.deserialize(json.get("bonuses"), mapType);
-        Map<SkillsEventType, SkillsEvent> newBonuses = new EnumMap<>(SkillsEventType.class);
-
-        for (Map.Entry<SkillsEventType, SkillsEvent> entries : bonuses.entrySet()) {
-            SkillsEventType eventType = entries.getKey();
-            if (eventType == null) eventType = SkillsEventType.XP;
-            SkillsEvent entry = entries.getValue();
-            SkillsEvent newEntry = new SkillsEvent(entry.getId(), eventType, entry.getMultiplier(), entry.getTime(), TimeUnit.MILLISECONDS, entry.getStart());
-            newBonuses.put(eventType, newEntry);
-        }
-        info.setBonuses(newBonuses);
+        mapType = new TypeToken<List<SkillsPersonalBonus>>() {}.getType();
+        List<SkillsPersonalBonus> bonuses = context.deserialize(json.get("bonuses"), mapType);
+        info.setBonuses(bonuses);
 
         JsonElement cosmeticsElement = json.get("cosmetics");
         if (cosmeticsElement != null) {
-            mapType = new TypeToken<Map<String, String>>() {
-            }.getType();
+            mapType = new TypeToken<Map<String, String>>() {}.getType();
             Map<String, String> cosmetics = context.deserialize(cosmeticsElement, mapType);
             Map<String, Cosmetic> realCosmetics = new HashMap<>();
             for (Map.Entry<String, String> cosmetic : cosmetics.entrySet()) {
@@ -92,8 +76,7 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         json.addProperty("showActionBar", info.showActionBar());
         json.addProperty("lastSkillChange", info.getLastSkillChange());
 
-        Type uuidType = new TypeToken<Set<UUID>>() {
-        }.getType();
+        Type uuidType = new TypeToken<Set<UUID>>() {}.getType();
         json.addProperty("healthScaling", info.getHealthScaling());
         json.add("friends", context.serialize(info.getFriends(), uuidType));
         json.add("friendRequests", context.serialize(info.getFriendRequests(), uuidType));
@@ -102,17 +85,15 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
 
         JsonObject skills = new JsonObject();
         for (Map.Entry<String, PlayerSkill> skill : info.getSkills().entrySet()) {
-            //if (skill.getKey().equals(PlayerSkill.NONE)) continue;
+            // if (skill.getKey().equals(PlayerSkill.NONE)) continue;
             skills.add(skill.getKey(), context.serialize(skill.getValue()));
         }
         json.add("skills", skills);
 
-        Type mapType = new TypeToken<HashMap<String, Integer>>() {
-        }.getType();
+        Type mapType = new TypeToken<HashMap<String, Integer>>() {}.getType();
         json.add("masteries", context.serialize(info.getMasteries(), mapType));
 
-        mapType = new TypeToken<HashMap<SkillsEventType, SkillsEvent>>() {
-        }.getType();
+        mapType = new TypeToken<Collection<SkillsPersonalBonus>>() {}.getType();
         json.add("bonuses", context.serialize(info.getBonuses(), mapType));
 
         JsonObject cosmetics = new JsonObject();

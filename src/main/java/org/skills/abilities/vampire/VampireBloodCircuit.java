@@ -68,7 +68,7 @@ public class VampireBloodCircuit extends ActiveAbility {
         crystal.setShowingBottom(false);
 
         XSound.ENTITY_ELDER_GUARDIAN_CURSE.play(crystal.getLocation());
-        boolean useLaser = false;//getOptions(info, "use-laser").getBoolean();
+        boolean useLaser = false;// getOptions(info, "use-laser").getBoolean();
         Laser laser = null;
         if (useLaser) {
             try {

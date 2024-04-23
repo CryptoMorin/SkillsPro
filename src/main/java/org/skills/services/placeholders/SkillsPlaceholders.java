@@ -10,7 +10,7 @@ import org.skills.abilities.vergil.VergilPassive;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.data.managers.Cosmetic;
 import org.skills.data.managers.SkilledPlayer;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventManager;
 import org.skills.events.SkillsEventType;
 import org.skills.main.SkillsConfig;
@@ -33,8 +33,8 @@ public enum SkillsPlaceholders {
     PARTY_NAME, PARTY_MEMBERS, PARTY_ONLINE_MEMBERS, PARTY_OFFLINE_MEMBERS, PARTY_RANK, LAST_ABILITY,
 
     // Events
-    SOUL_EVENT_IS_RUNNING, SOUL_EVENT_DURATION, SOUL_EVENT_MULTIPLIER, SOUL_EVENT_ACTIVATED_BY,
-    XP_EVENT_IS_RUNNING, XP_EVENT_DURATION, XP_EVENT_MULTIPLIER, XP_EVENT_ACTIVATED_BY,
+    SOUL_EVENT_IS_RUNNING, SOUL_EVENT_DURATION, SOUL_EVENT_MULTIPLIER,
+    XP_EVENT_IS_RUNNING, XP_EVENT_DURATION, XP_EVENT_MULTIPLIER,
 
     // Bonuses
     SOUL_BONUS_IS_RUNNING, XP_BONUS_IS_RUNNING, XP_BONUS_DURATION, SOUL_BONUS_DURATION,
@@ -313,8 +313,8 @@ public enum SkillsPlaceholders {
     }
 
     private static Object translateEvents(@NonNull SkillsPlaceholders holder, @NonNull SkilledPlayer info) {
-        SkillsEvent soul = null;
-        SkillsEvent exp = null;
+        SkillsBonus soul = null;
+        SkillsBonus exp = null;
         SkillsLang msg = null;
 
         if (holder.name().contains("EVENT")) {
@@ -323,8 +323,10 @@ public enum SkillsPlaceholders {
 
             if (exp != null || soul != null) msg = SkillsLang.EVENT_NOT_RUNNING;
         } else if (holder.name().contains("BONUS")) {
-            if (holder.name().startsWith("XP_BONUS")) exp = info.getBonus(SkillsEventType.XP);
-            else if (holder.name().startsWith("SOUL_BONUS")) soul = info.getBonus(SkillsEventType.SOUL);
+            if (holder.name().startsWith("XP_BONUS"))
+                exp = info.getBonus(SkillsEventType.XP).stream().findFirst().orElse(null);
+            else if (holder.name().startsWith("SOUL_BONUS"))
+                soul = info.getBonus(SkillsEventType.SOUL).stream().findFirst().orElse(null);
 
             if (exp != null || soul != null) msg = SkillsLang.BONUS_INACTIVE;
         }
@@ -343,21 +345,17 @@ public enum SkillsPlaceholders {
             // Duration
             case SOUL_EVENT_DURATION:
             case SOUL_BONUS_DURATION:
-                return soul.getDisplayTime();
+                return soul.getDisplayDuration();
             case XP_EVENT_DURATION:
             case XP_BONUS_DURATION:
-                return exp.getDisplayTime();
+                return exp.getDisplayDuration();
             // Multiplier
             case SOUL_EVENT_MULTIPLIER:
             case SOUL_BONUS_MULTIPLIER:
-                return soul.calcMultiplier(info.getOfflinePlayer());
+                return soul.getMultiplierFor(info.getOfflinePlayer());
             case XP_EVENT_MULTIPLIER:
             case XP_BONUS_MULTIPLIER:
-                return exp.calcMultiplier(info.getOfflinePlayer());
-            case SOUL_EVENT_ACTIVATED_BY:
-                return soul.getId();
-            case XP_EVENT_ACTIVATED_BY:
-                return exp.getId();
+                return exp.getMultiplierFor(info.getOfflinePlayer());
         }
         return null;
     }

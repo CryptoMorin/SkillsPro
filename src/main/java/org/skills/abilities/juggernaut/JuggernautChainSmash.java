@@ -49,7 +49,7 @@ public class JuggernautChainSmash extends InstantActiveAbility {
 
                     theta = theta + Math.PI / 64;
                     x = times * Math.cos(theta);
-                    //y = 2 * Math.exp(-0.1 * times) * Math.sin(times) + 1.5;
+                    // y = 2 * Math.exp(-0.1 * times) * Math.sin(times) + 1.5;
                     z = times * Math.sin(theta);
                     secDisplay.spawn(x, y, z);
                 }

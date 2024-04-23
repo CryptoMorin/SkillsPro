@@ -176,7 +176,7 @@ public class VergilPassive extends Ability {
         return damager.getFallDistance() > 0.0F &&
                 !damager.isOnGround() &&
                 !damager.isSprinting() &&
-                //damager instanceof LivingEntity &&
+                // damager instanceof LivingEntity &&
                 !damager.hasPotionEffect(PotionEffectType.BLINDNESS) &&
                 damager.getVehicle() == null;
     }

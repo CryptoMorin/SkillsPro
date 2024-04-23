@@ -281,7 +281,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
 
                             // https://en.wikipedia.org/wiki/Butterfly_curve_(transcendental)
                             double cos = Math.cos(t);
-                            double r = 2 * Math.cos(5 * t);//Math.exp(cos / 30) - 2 * Math.cos(5 * t);;
+                            double r = 2 * Math.cos(5 * t);// Math.exp(cos / 30) - 2 * Math.cos(5 * t);;
                             double x = r * Math.sin(t);
                             double y = r * cos;
 

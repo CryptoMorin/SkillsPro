@@ -119,7 +119,7 @@ public final class SkillManager {
         skill.addScaling(SkillScaling.COST, config.getString("cost", "0"));
         skill.setDisplayName(MessageHandler.colorize(config.getString("name")));
 
-        //skill.setDisplayName(SkillsLang.valueOf("SKILL_" + skill.getName().toUpperCase(Locale.ENGLISH) + "_NAME").parse());
+        // skill.setDisplayName(SkillsLang.valueOf("SKILL_" + skill.getName().toUpperCase(Locale.ENGLISH) + "_NAME").parse());
         skill.setStats(config.getStringList("stats"));
         Energy energy = Energy.getEnergy(config.getString("energy"));
         if (energy == null) energy = Energy.ENERGY.get(0);
@@ -133,7 +133,11 @@ public final class SkillManager {
 
             Ability ab = AbilityManager.getAbility(ability);
             if (ab == null) {
-                MessageHandler.sendConsolePluginMessage("&cCould not find ability named &e" + ability + " &cto register for &e" + skill.getName());
+                if (AbilityManager.UNSUPPORTED_ABILITIES.contains(ability)) {
+                    MessageHandler.sendConsolePluginMessage("&eAbility &2" + ability + " &eis not supported for this server version which is used in class &2" + skill.getName());
+                } else {
+                    MessageHandler.sendConsolePluginMessage("&cCould not find ability named &e" + ability + " &cto register for &e" + skill.getName());
+                }
                 continue;
             }
 

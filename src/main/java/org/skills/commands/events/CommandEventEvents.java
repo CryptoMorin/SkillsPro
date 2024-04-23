@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.skills.commands.SkillsCommand;
-import org.skills.events.SkillsEvent;
+import org.skills.events.SkillsBonus;
 import org.skills.events.SkillsEventManager;
 import org.skills.events.SkillsEventType;
 import org.skills.main.locale.SkillsLang;
@@ -16,8 +16,8 @@ public class CommandEventEvents extends SkillsCommand {
 
     @Override
     public void runCommand(@NonNull CommandSender sender, @NonNull String[] args) {
-        SkillsEvent xp = SkillsEventManager.getEvent(SkillsEventType.XP);
-        SkillsEvent soul = SkillsEventManager.getEvent(SkillsEventType.SOUL);
+        SkillsBonus xp = SkillsEventManager.getEvent(SkillsEventType.XP);
+        SkillsBonus soul = SkillsEventManager.getEvent(SkillsEventType.SOUL);
 
         if (xp == null && soul == null) {
             SkillsLang.COMMAND_EVENT_EVENTS_NOTHING.sendMessage(sender);
@@ -25,9 +25,9 @@ public class CommandEventEvents extends SkillsCommand {
         }
 
         if (xp != null)
-            SkillsLang.COMMAND_EVENT_EVENTS_XP.sendMessage(sender, "%xp_duration%", xp.getDisplayTime(), "%xp_multiplier%", xp.getMultiplier());
+            SkillsLang.COMMAND_EVENT_EVENTS_XP.sendMessage(sender, "%xp_duration%", xp.getDisplayDuration(), "%xp_multiplier%", xp.getMultiplier());
         if (soul != null)
-            SkillsLang.COMMAND_EVENT_EVENTS_SOUL.sendMessage(sender, "%soul_duration%", soul.getDisplayTime(), "%soul_multiplier%", soul.getMultiplier());
+            SkillsLang.COMMAND_EVENT_EVENTS_SOUL.sendMessage(sender, "%soul_duration%", soul.getDisplayDuration(), "%soul_multiplier%", soul.getMultiplier());
     }
 
     @Override

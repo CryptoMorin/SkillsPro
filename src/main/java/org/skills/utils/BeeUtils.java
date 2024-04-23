@@ -2,7 +2,10 @@ package org.skills.utils;
 
 import com.cryptomorin.xseries.XPotion;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Bee;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 public final class BeeUtils {
     public static final boolean SUPPORTS_BEES = Reflect.classExists("org.bukkit.entity.Bee");
