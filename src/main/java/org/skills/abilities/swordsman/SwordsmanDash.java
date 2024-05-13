@@ -2,8 +2,8 @@ package org.skills.abilities.swordsman;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class SwordsmanDash extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
 
         new BukkitRunnable() {
-            final ParticleDisplay display = ParticleDisplay.simple(null, Particle.CLOUD).withCount(10).offset(0.5, 0.2, 0.5);
+            final ParticleDisplay display = ParticleDisplay.of(XParticle.CLOUD).withLocation(null).withCount(10).offset(0.5, 0.2, 0.5);
             int repeat = 20;
 
             @Override
@@ -48,7 +48,7 @@ public class SwordsmanDash extends InstantActiveAbility {
                 final double range = getScaling(info, "range");
                 final double kb = getScaling(info, "knockback");
                 final double damage = getScaling(info, "damage");
-                final ParticleDisplay masterDisplay = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).withCount(10).offset(1);
+                final ParticleDisplay masterDisplay = ParticleDisplay.of(XParticle.SWEEP_ATTACK).withLocation(null).withCount(10).offset(1);
                 final Set<Integer> targets = new HashSet<>();
                 int repeat = 20;
 

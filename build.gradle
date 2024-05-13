@@ -26,9 +26,9 @@ version = '19.5.0'
 description = 'An RPG plugin for players to grind with!'
 
 java {
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(17))
-//    }
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
     // Cause: warning: source release 17 requires target release 17
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -86,8 +86,8 @@ repositories {
 
 dependencies {
     api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    api 'com.github.cryptomorin:XSeries:9.10.0'
-    compileOnly 'org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT'
+    api 'com.github.cryptomorin:XSeries:10.0.0'
+    compileOnly 'org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.bekvon:residence:5.0.0'
     compileOnly 'me.lorinth:lorinthsrpgmobs:1.10.0'
@@ -139,6 +139,7 @@ tasks {
     shadowJar {
         relocate("com.cryptomorin.xseries", "org.skills.utils.xseries")
         relocate("com.github.benmanes.caffeine", "org.skills.utils.caffeine")
+        relocate("org.checkerframework", "org.skills.utils.caffeine.checkerframework")
         relocate("com.google.errorprone", "org.skills.utils.errorprone")
     }
     build {

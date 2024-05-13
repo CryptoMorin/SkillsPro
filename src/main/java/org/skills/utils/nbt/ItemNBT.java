@@ -6,43 +6,122 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
-import static com.cryptomorin.xseries.ReflectionUtils.supports;
+import static com.cryptomorin.xseries.ReflectionUtils.*;
 
 public final class ItemNBT {
-    public static final boolean CAN_ACCESS_UNBREAKABLE = supports(11);
+    public static final boolean CAN_ACCESS_UNBREAKABLE = supports(11), SUPPORTS_COMPONENTS;
     private static final MethodHandle AS_NMS_COPY;
     private static final MethodHandle AS_BUKKIT_COPY;
-    private static final MethodHandle SET_TAG;
-    private static final MethodHandle GET_TAG;
+    private static final MethodHandle SET_TAG, CUSTOM_DATA_CTOR;
+    private static final MethodHandle GET_TAG, COPY_TAG;
+    private static final Object CUSTOM_DATA_TYPE;
 
     static {
         MethodHandle asNmsCopy = null;
         MethodHandle asBukkitCopy = null;
-        MethodHandle setTag = null;
-        MethodHandle getTag = null;
+        MethodHandle setTag, customDataCtor = null;
+        MethodHandle getTag, copyTag = null;
+        Object customDataType = null;
+        boolean supportsComponents = false;
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         Class<?> crafItemStack = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
         Class<?> nmsItemStack = ReflectionUtils.getNMSClass("world.item", "ItemStack");
         Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("nbt", "NBTTagCompound");
+        // Why does this show up as "CompoundTag" in stacktraces???!?!?? Oh because of paper's remapping...
 
         try {
             asNmsCopy = lookup.findStatic(crafItemStack, "asNMSCopy", MethodType.methodType(nmsItemStack, ItemStack.class));
             asBukkitCopy = lookup.findStatic(crafItemStack, "asBukkitCopy", MethodType.methodType(ItemStack.class, nmsItemStack));
-
-            setTag = lookup.findVirtual(nmsItemStack,
-                    ReflectionUtils.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
-            getTag = lookup.findVirtual(nmsItemStack,
-                    ReflectionUtils.v(19, "v").v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        try {
+            // 1.20.5 "components"
+            Class<?> DataComponentsClass = ofMinecraft()
+                    .inPackage(MinecraftPackage.NMS, "core.component")
+                    .map(MinecraftMapping.MOJANG, "DataComponents")
+                    .reflect();
+            Class<?> DataComponentHolderClass = ofMinecraft()
+                    .inPackage(MinecraftPackage.NMS, "core.component")
+                    .map(MinecraftMapping.MOJANG, "DataComponents")
+                    .reflect();
+            ReflectionUtils.getNMSClass("core.component", "DataComponentHolder");
+            Class<?> DataComponentTypeClass = ofMinecraft()
+                    .inPackage(MinecraftPackage.NMS, "core.component")
+                    .map(MinecraftMapping.MOJANG, "DataComponentType")
+                    .reflect();
+            Class<?> CustomDataClass = ofMinecraft()
+                    .inPackage(MinecraftPackage.NMS, "world.item.component")
+                    .map(MinecraftMapping.MOJANG, "CustomData")
+                    .reflect();
+
+            /*
+             * @Nullable
+             * public <T> T b(DataComponentType<? super T> datacomponenttype, @Nullable T t0) {
+             *      return this.r.b(datacomponenttype, t0);
+             * }
+             */
+            setTag = lookup.findVirtual(nmsItemStack, ReflectionUtils.v(20, 5, "b").orElse("set"),
+                    MethodType.methodType(Object.class, DataComponentTypeClass, Object.class));
+
+            /*
+             * @Nullable
+             * default <T> T a(DataComponentType<? extends T> var0) {
+             *      return this.a().a(var0);
+             * }
+             */
+            getTag = lookup.findVirtual(nmsItemStack, ReflectionUtils.v(20, 5, "a").orElse("get"),
+                    MethodType.methodType(Object.class, DataComponentTypeClass));
+
+            /*
+             * public NBTTagCompound c() {
+             *      return this.e.i();
+             * }
+             */
+            copyTag = lookup.findVirtual(CustomDataClass, ReflectionUtils.v(20, 5, "c").orElse("copyTag"),
+                    MethodType.methodType(nbtTagCompound));
+
+            /*
+             * private CustomData(NBTTagCompound var0) {
+             *     this.e = var0;
+             * }
+             */
+            Constructor<?> customDataCtorJvm = CustomDataClass.getDeclaredConstructor(nbtTagCompound);
+            customDataCtorJvm.setAccessible(true);
+            customDataCtor = lookup.unreflectConstructor(customDataCtorJvm);
+
+            // net.minecraft.core.component.DataComponents#CUSTOM_DATA
+            Field typeField = DataComponentsClass.getDeclaredField(ReflectionUtils.v(20, 5, "b").orElse("CUSTOM_DATA"));
+            customDataType = typeField.get(null);
+
+            supportsComponents = true;
+        } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException | ClassNotFoundException ex) {
+            try {
+                setTag = lookup.findVirtual(nmsItemStack,
+                        ReflectionUtils.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
+
+                getTag = lookup.findVirtual(nmsItemStack,
+                        ReflectionUtils.v(19, "v").v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
+            } catch (NoSuchMethodException | IllegalAccessException ex2) {
+                RuntimeException newEx = new RuntimeException(ex2);
+                newEx.addSuppressed(ex);
+                throw newEx;
+            }
         }
 
         AS_NMS_COPY = asNmsCopy;
         AS_BUKKIT_COPY = asBukkitCopy;
         SET_TAG = setTag;
         GET_TAG = getTag;
+        COPY_TAG = copyTag;
+        CUSTOM_DATA_TYPE = customDataType;
+        CUSTOM_DATA_CTOR = customDataCtor;
+        SUPPORTS_COMPONENTS = supportsComponents;
     }
 
     private ItemNBT() {
@@ -84,7 +163,12 @@ public final class ItemNBT {
         Object nmsItem = asNMSCopy(item);
 
         try {
-            SET_TAG.invoke(nmsItem, nbtTag);
+            if (SUPPORTS_COMPONENTS) {
+                Object customData = CUSTOM_DATA_CTOR.invoke(nbtTag);
+                SET_TAG.invoke(nmsItem, CUSTOM_DATA_TYPE, customData);
+            } else {
+                SET_TAG.invoke(nmsItem, nbtTag);
+            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -100,11 +184,16 @@ public final class ItemNBT {
      */
     public static NBTWrappers.NBTTagCompound getTag(ItemStack item) {
         Object nmsItem = asNMSCopy(item);
-        Object tag = null;
+        Object tag;
         try {
-            tag = GET_TAG.invoke(nmsItem);
+            if (SUPPORTS_COMPONENTS) {
+                tag = GET_TAG.invoke(nmsItem, CUSTOM_DATA_TYPE);
+                if (tag != null) tag = COPY_TAG.invoke(tag);
+            } else {
+                tag = GET_TAG.invoke(nmsItem);
+            }
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            throw new RuntimeException(throwable);
         }
         if (tag == null) return new NBTWrappers.NBTTagCompound();
 

@@ -5,7 +5,11 @@ import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.*;
+import com.cryptomorin.xseries.particles.XParticle;
+import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -22,7 +26,6 @@ import org.skills.main.SkillsPro;
 import org.skills.utils.Cooldown;
 import org.skills.utils.LocationUtils;
 import org.skills.utils.MathUtils;
-import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -154,7 +157,7 @@ public final class LastBreath implements Listener {
      * https://minecraft.fandom.com/wiki/Totem_of_Undying
      */
     public static void totemOfUndying(Player player) {
-        // player.spawnParticle(Particle.TOTEM, player.getEyeLocation(), 1); // Doesn't work
+        // player.spawnParticle(XParticle.TOTEM, player.getEyeLocation(), 1); // Doesn't work
         // XSound.ITEM_TOTEM_USE.play(player); // Not needed, the line below takes care of that.
         player.playEffect(EntityEffect.TOTEM_RESURRECT);
 
@@ -286,7 +289,7 @@ public final class LastBreath implements Listener {
             reviver = REVIVERS.remove(player.getEntityId());
             if (reviver != null) {
                 reviver.resetProgress();
-                ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE).withCount(30).offset(0.5).spawn();
+                ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(player.getLocation()).withCount(30).offset(0.5).spawn();
             }
             return;
         }
@@ -315,7 +318,7 @@ public final class LastBreath implements Listener {
         closest.progress++;
         LastManStanding finLastMan = closest;
         closest.reviveTask = new BukkitRunnable() {
-            final ParticleDisplay display = ParticleDisplay.of(Particle.VILLAGER_HAPPY).withCount(20).offset(1);
+            final ParticleDisplay display = ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withCount(20).offset(1);
             final int maxProgress = SkillsConfig.LAST_BREATH_REVIVE_TIME.getInt();
 
             @Override

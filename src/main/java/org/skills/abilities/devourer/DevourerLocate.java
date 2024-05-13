@@ -1,8 +1,8 @@
 package org.skills.abilities.devourer;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -58,7 +58,7 @@ public class DevourerLocate extends InstantActiveAbility {
                 theta += rate;
                 if (theta > Math.PI) theta = -Math.PI;
 
-                ParticleDisplay.display(lastLocation, Particle.CLOUD);
+                ParticleDisplay.of(XParticle.CLOUD).withLocation(lastLocation).spawn();
                 if (--times == 0) cancel();
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 2L);

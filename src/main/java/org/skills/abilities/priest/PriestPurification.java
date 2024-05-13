@@ -2,10 +2,10 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -23,21 +23,23 @@ import org.skills.main.SkillsPro;
 import org.skills.utils.MathUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PriestPurification extends Ability {
     private static final Map<UUID, Set<UUID>> BATERAYED = new HashMap<>();
-    private static final XMaterial[] FLOWERS = {
+    private static final List<XMaterial> FLOWERS = Stream.of(
             XMaterial.BLUE_ORCHID, XMaterial.DANDELION,
             XMaterial.ALLIUM, XMaterial.AZURE_BLUET, XMaterial.LILY_OF_THE_VALLEY, XMaterial.CORNFLOWER, XMaterial.LILAC,
             XMaterial.OXEYE_DAISY
-    };
+    ).filter(XMaterial::isSupported).collect(Collectors.toList());
 
-    private static final EnumSet<XMaterial> CROPS = EnumSet.of(
+    private static final Set<XMaterial> CROPS = Stream.of(
             XMaterial.WHEAT, XMaterial.POTATOES, XMaterial.CARROTS,
             XMaterial.CARROT, XMaterial.POTATO, XMaterial.NETHER_WART, XMaterial.WHEAT_SEEDS, XMaterial.PUMPKIN_STEM,
             XMaterial.MELON_STEM, XMaterial.BEETROOTS, XMaterial.SUGAR_CANE, XMaterial.BAMBOO_SAPLING, XMaterial.CHORUS_PLANT,
             XMaterial.KELP, XMaterial.SEA_PICKLE
-    );
+    ).filter(XMaterial::isSupported).collect(Collectors.toSet());
 
     public PriestPurification() {
         super("Priest", "purification");
@@ -58,7 +60,7 @@ public class PriestPurification extends Ability {
             }
         }
 
-        int maxFlowers = FLOWERS.length - 1;
+        int maxFlowers = FLOWERS.size() - 1;
 
         Material grassBlock = XMaterial.GRASS_BLOCK.parseMaterial();
         Material grass = XMaterial.TALL_GRASS.parseMaterial();
@@ -70,10 +72,10 @@ public class PriestPurification extends Ability {
             if (up.getType().name().endsWith("AIR")) {
                 if (MathUtils.hasChance(chance / 2)) {
                     up.setType(grass);
-                    player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
+                    player.getWorld().spawnParticle(XParticle.HAPPY_VILLAGER.get(), player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
                 } else if (MathUtils.hasChance(chance)) {
-                    up.setType(FLOWERS[MathUtils.randInt(0, maxFlowers)].parseMaterial());
-                    player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
+                    up.setType(FLOWERS.get(MathUtils.randInt(0, maxFlowers)).parseMaterial());
+                    player.getWorld().spawnParticle(XParticle.HAPPY_VILLAGER.get(), player.getLocation(), 10, 0.5, 0.5, 0.5, 0);
                 }
             }
         }
@@ -82,7 +84,7 @@ public class PriestPurification extends Ability {
     @Override
     public void start() {
         if (!XMaterial.supports(13)) return;
-        ParticleDisplay display = ParticleDisplay.of(Particle.VILLAGER_HAPPY).withCount(30).offset(1);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withCount(30).offset(1);
 
         addTask(new BukkitRunnable() {
 

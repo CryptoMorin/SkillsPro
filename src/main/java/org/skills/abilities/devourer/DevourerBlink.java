@@ -4,8 +4,8 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -72,7 +72,7 @@ public class DevourerBlink extends ActiveAbility {
         hits++;
         int lvl = info.getAbilityLevel(this);
         LivingEntity entity = (LivingEntity) event.getEntity();
-        ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).offset(1).withCount(100).spawn();
+        ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation()).offset(1).withCount(100).spawn();
 
         player.addPotionEffect(XPotion.SPEED.getPotionEffectType().createEffect(20 * 10, 1));
         XSound.ENTITY_ENDERMAN_TELEPORT.play(player);

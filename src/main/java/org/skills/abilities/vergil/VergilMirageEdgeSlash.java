@@ -2,13 +2,13 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class VergilMirageEdgeSlash extends InstantActiveAbility {
         double knockback = context.getScaling("knockback");
         double range = context.getScaling("range");
 
-        ParticleDisplay display = ParticleDisplay.of(Particle.SOUL_FIRE_FLAME)
+        ParticleDisplay display = ParticleDisplay.of(XParticle.SOUL_FIRE_FLAME)
                 //.withColor(Color.CYAN, 2)
                 .withLocation(player.getEyeLocation())
                 .face(player)
@@ -65,10 +65,10 @@ public class VergilMirageEdgeSlash extends InstantActiveAbility {
                 });
 
         AtomicDouble size = new AtomicDouble(beamSize);
-        XParticle.slash(SkillsPro.get(), beamDistance, true, () -> size.getAndAdd(-0.01), () -> 0.3, display);
+        Particles.slash(SkillsPro.get(), beamDistance, true, () -> size.getAndAdd(-0.01), () -> 0.3, display);
         if (context.hasAbilityLevel(3)) {
-            XParticle.slash(SkillsPro.get(), beamDistance, true, size::get, () -> 0.3,
-                    display.clone().withParticle(Particle.REDSTONE).withColor(Color.RED, 1f));
+            Particles.slash(SkillsPro.get(), beamDistance, true, size::get, () -> 0.3,
+                    display.clone().withParticle(XParticle.DUST).withColor(Color.RED, 1f));
         }
         XSound.ENTITY_WARDEN_DEATH.record().withPitch(0).soundPlayer().atLocation(player.getEyeLocation()).play();
     }

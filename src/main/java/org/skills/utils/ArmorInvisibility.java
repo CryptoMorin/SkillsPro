@@ -16,6 +16,8 @@ import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.List;
 
+import static com.cryptomorin.xseries.ReflectionUtils.*;
+
 /**
  * Currently not used. Supposed to be used to hide Devourer's armor using {@link org.skills.abilities.devourer.DevourerCloak} ability.
  */
@@ -25,10 +27,17 @@ public final class ArmorInvisibility {
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Class<?> craftItemStack = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
-        Class<?> nmsItem = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
-        Class<?> packetClass = ReflectionUtils.getNMSClass("PacketPlayOutEntityEquipment");
-        Class<?> enumItemSlot = ReflectionUtils.getNMSClass("EnumItemSlot");
+        Class<?> craftItemStack = getCraftClass("inventory.CraftItemStack");
+        Class<?> nmsItem = getCraftClass("inventory.CraftItemStack");
+        MinecraftClassHandle packetClass = ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.protocol.game")
+                .map(MinecraftMapping.MOJANG, "ClientboundSetEquipmentPacket")
+                .map(MinecraftMapping.SPIGOT, "PacketPlayOutEntityEquipment");
+        Class<?> enumItemSlot = ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "world.entity")
+                .map(MinecraftMapping.MOJANG, "EquipmentSlot")
+                .map(MinecraftMapping.SPIGOT, "EnumItemSlot")
+                .unreflect();
 
         MethodHandle packet = null, asNmsCopy = null;
         Object head = null, chest = null, legs = null, feet = null;
@@ -39,9 +48,9 @@ public final class ArmorInvisibility {
             airArmor = asNmsCopy.invoke(new ItemStack(Material.AIR));
 
             if (XMaterial.supports(16))
-                packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, List.class));
+                packet = packetClass.constructor(int.class, List.class).unreflect();
             else
-                packet = lookup.findConstructor(packetClass, MethodType.methodType(void.class, int.class, enumItemSlot, nmsItem));
+                packet = packetClass.constructor(int.class, enumItemSlot, nmsItem).unreflect();
 
             for (Object slot : enumItemSlot.getEnumConstants()) {
                 String name = slot.toString();

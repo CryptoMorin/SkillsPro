@@ -2,11 +2,11 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PriestNaturesForce extends ActiveAbility {
     private static final String NATURES_FORCE = "NATURES_FORCE", BEEHIVE = "BEEHIVE", NATURES_FORCE_TARGET = "NATURES_FORCE_TARGET";
-    private static final ParticleDisplay DEATH = ParticleDisplay.simple(null, Particle.FLAME).withCount(100).offset(0.5, 0.5, 0.5);
+    private static final ParticleDisplay DEATH = ParticleDisplay.of(XParticle.FLAME).withLocation(null).withCount(100).offset(0.5, 0.5, 0.5);
 
     public PriestNaturesForce() {
         super("Priest", "natures_force");
@@ -61,9 +61,9 @@ public class PriestNaturesForce extends ActiveAbility {
         Block beehive = target.getLocation().add(0, 2, 0).getBlock();
         Material material = beehive.getType();
         beehive.setType(Material.BEEHIVE);
-        XParticle.spikeSphere(1, 20, 5, 1, 2, ParticleDisplay.simple(beehive.getLocation(), Particle.SPELL_WITCH));
+        Particles.spikeSphere(1, 20, 5, 1, 2, ParticleDisplay.of(XParticle.WITCH).withLocation(beehive.getLocation()));
 
-        ParticleDisplay particle = ParticleDisplay.simple(beehive.getLocation(), Particle.SMOKE_LARGE);
+        ParticleDisplay particle = ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(beehive.getLocation());
         particle.count = 100;
         particle.offset(0.5, 0.5, 0.5);
 
@@ -129,7 +129,7 @@ public class PriestNaturesForce extends ActiveAbility {
         Bukkit.getScheduler().cancelTask(task);
         event.setDropItems(false);
 
-        ParticleDisplay particle = ParticleDisplay.simple(beehive.getLocation(), Particle.SMOKE_LARGE);
+        ParticleDisplay particle = ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(beehive.getLocation());
         particle.count = 100;
         particle.offset(0.5, 0.5, 0.5);
         particle.spawn();

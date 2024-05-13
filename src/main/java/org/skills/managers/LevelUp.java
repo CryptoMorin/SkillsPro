@@ -1,17 +1,17 @@
 package org.skills.managers;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.messages.Titles;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -138,15 +138,15 @@ public class LevelUp {
     }
 
     public void celebrate(Player player, JavaPlugin plugin) {
-        ParticleDisplay display = ParticleDisplay.simple(player.getLocation(), Particle.CRIT_MAGIC);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.CRIT).withLocation(player.getLocation());
         int height = Math.min(Math.max(5, lvl / 2), 15);
-        XParticle.dnaReplication(plugin, 1, 0.2, 3, 1, height, 2, display);
+        Particles.dnaReplication(plugin, 1, 0.2, 3, 1, height, 2, display);
 
         int fireworks = MathUtils.randInt(2, 5);
         int colorCount = Math.max(1, lvl / 2);
 
         for (int i = 0; i < fireworks; i++) {
-            Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
+            Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation(), XEntityType.FIREWORK_ROCKET.get());
             FireworkMeta meta = firework.getFireworkMeta();
             FireworkUtil.generateFireworkMeta(meta, colorCount);
             if (height > 10) meta.setPower(1);

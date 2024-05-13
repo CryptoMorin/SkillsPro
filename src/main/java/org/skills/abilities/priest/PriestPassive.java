@@ -2,7 +2,11 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
-import org.bukkit.*;
+import com.cryptomorin.xseries.particles.XParticle;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
@@ -103,7 +107,7 @@ public class PriestPassive extends Ability {
             if ((ReflectionUtils.supports(16) && player.isInWater()) ||
                     isWaterLogged(block) || isWaterLogged(block.getRelative(BlockFace.DOWN))) {
                 if (player.getAllowFlight()) {
-                    player.spawnParticle(Particle.CLOUD, player.getLocation(), 5, 0.1, 0.1, 0.1, 0.1);
+                    player.spawnParticle(XParticle.CLOUD.get(), player.getLocation(), 5, 0.1, 0.1, 0.1, 0.1);
                     return;
                 }
 
@@ -116,7 +120,7 @@ public class PriestPassive extends Ability {
                         player.setVelocity(player.getLocation().getDirection().setY(0.1));
                     });
                 }
-                player.spawnParticle(Particle.CLOUD, player.getLocation(), 30, 0.3, 0, 0.3, 0.3);
+                player.spawnParticle(XParticle.CLOUD.get(), player.getLocation(), 30, 0.3, 0, 0.3, 0.3);
             } else {
                 if (!player.getAllowFlight()) return;
                 if (!JESUS.remove(player.getEntityId())) return;
@@ -188,7 +192,7 @@ public class PriestPassive extends Ability {
 
             @Override
             public void run() {
-                player.spawnParticle(Particle.FLAME, player.getLocation(), 10, 0.01, 0.01, 0.01, 0.1);
+                player.spawnParticle(XParticle.FLAME.get(), player.getLocation(), 10, 0.01, 0.01, 0.01, 0.1);
                 i--;
                 if (i == 0) cancel();
             }

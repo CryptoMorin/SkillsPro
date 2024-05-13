@@ -1,9 +1,9 @@
 package org.skills.managers;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
-import org.bukkit.entity.EntityType;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -38,7 +38,7 @@ public final class SkillItemManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void proj(ProjectileLaunchEvent event) {
         Projectile bottle = event.getEntity();
-        if (bottle.getType() != EntityType.THROWN_EXP_BOTTLE) return;
+        if (bottle.getType() != XEntityType.EXPERIENCE_BOTTLE.get()) return;
 
         if (!(bottle.getShooter() instanceof Player)) return;
         Player player = (Player) bottle.getShooter();
@@ -65,7 +65,7 @@ public final class SkillItemManager implements Listener {
         if (pot) {
             int addition = (int) MathUtils.evaluateEquation(ServiceHandler.translatePlaceholders(player, boost));
             info.chargeEnergy(addition);
-            ParticleDisplay display = ParticleDisplay.simple(player.getLocation(), Particle.SPELL_WITCH);
+            ParticleDisplay display = ParticleDisplay.of(XParticle.WITCH).withLocation(player.getLocation());
             display.count = 50;
             display.offset(0.5, 0.5, 0.5).spawn();
         } else {

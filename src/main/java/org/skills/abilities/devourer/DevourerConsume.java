@@ -2,7 +2,7 @@ package org.skills.abilities.devourer;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,8 +31,8 @@ public class DevourerConsume extends Ability {
             SkilledPlayer victimInfo = SkilledPlayer.getSkilledPlayer(victim);
             long take = (int) getScaling(info, "souls", "damage", event.getDamage(), "souls", victimInfo.getSouls());
 
-            ParticleDisplay.simple(player.getLocation(), Particle.VILLAGER_HAPPY).withCount(30).offset(1).spawn();
-            ParticleDisplay.simple(victim.getLocation(), Particle.VILLAGER_ANGRY).withCount(30).offset(1).spawn();
+            ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withLocation(player.getLocation()).withCount(30).offset(1).spawn();
+            ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withLocation(victim.getLocation()).withCount(30).offset(1).spawn();
 
             if (victimInfo.getSouls() < 1) {
                 double damage = getScaling(info, "damage", event);

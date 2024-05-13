@@ -3,10 +3,10 @@ package org.skills.abilities.devourer;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.base.Enums;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -95,7 +95,7 @@ public class DevourerHook extends InstantActiveAbility {
         }
 
         LocationUtils.whoooosh(player, arrowLoc, 0.15, 0.05, 0.15);
-        ParticleDisplay.simple(location, Particle.CLOUD).withCount(50).offset(1, 0, 1).spawn();
+        ParticleDisplay.of(XParticle.CLOUD).withLocation(location).withCount(50).offset(1, 0, 1).spawn();
         try {
             XSound.ENTITY_FISHING_BOBBER_RETRIEVE.play(player);
         } catch (IllegalArgumentException ignored) {
@@ -106,7 +106,7 @@ public class DevourerHook extends InstantActiveAbility {
             new Cooldown(player.getUniqueId(), COOLDOWN, 2, TimeUnit.SECONDS);
         }
         new BukkitRunnable() {
-            final ParticleDisplay dis = ParticleDisplay.simple(null, Particle.SMOKE_LARGE);
+            final ParticleDisplay dis = ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(null);
             int times = 0;
 
             @Override

@@ -2,12 +2,12 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +43,7 @@ public class VergilPhantomBlade extends InstantActiveAbility {
             .expireAfterWrite(300, TimeUnit.MILLISECONDS).build();
 
     private static final Map<Integer, ArmorStand> SWORDS = new ConcurrentHashMap<>();
-    private static final ParticleDisplay SWORD_PARTICLE = ParticleDisplay.of(Particle.DRAGON_BREATH).withCount(5);//.offset(0.2);
+    private static final ParticleDisplay SWORD_PARTICLE = ParticleDisplay.of(XParticle.DRAGON_BREATH).withCount(5);//.offset(0.2);
 
     static {
         Bukkit.getScheduler().runTaskTimerAsynchronously(SkillsPro.get(), () -> {

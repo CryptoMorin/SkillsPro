@@ -1,7 +1,7 @@
 package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +39,7 @@ public class VergilDoppelganger extends ActiveAbility {
         }
 
         LivingEntity victim = (LivingEntity) event.getEntity();
-        ParticleDisplay display = ParticleDisplay.of(Particle.CLOUD).withCount(100).offset(2);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.CLOUD).withCount(100).offset(2);
         display.spawn(player.getLocation());
         NPCHandler.spawnNPC(player, victim);
     }

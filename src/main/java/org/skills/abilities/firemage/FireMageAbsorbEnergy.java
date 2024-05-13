@@ -2,9 +2,9 @@ package org.skills.abilities.firemage;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +36,7 @@ public class FireMageAbsorbEnergy extends Ability {
         Location loc = entity.getLocation();
 
         entity.setFireTicks((int) (entity.getFireTicks() + (getScaling(info, "fire", event) * 20)));
-        ParticleDisplay display = ParticleDisplay.simple(loc, Particle.FLAME).withExtra(.2);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.FLAME).withLocation(loc).withExtra(.2);
 
         if (lvl == 1) {
             display.withCount(chance / 2).offset(.5).spawn();
@@ -45,7 +45,7 @@ public class FireMageAbsorbEnergy extends Ability {
             if (lvl == 2) {
                 display.withCount((chance / 2) + 10).offset(.3).spawn();
             } else {
-                XParticle.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, 0.5, false, false, ParticleDisplay.simple(loc, Particle.FLAME).withCount(2));
+                Particles.helix(SkillsPro.get(), 3, 0.7, 0.1, 1, 5, 1, 0.5, false, false, ParticleDisplay.of(XParticle.FLAME).withLocation(loc).withCount(2));
             }
         }
     }

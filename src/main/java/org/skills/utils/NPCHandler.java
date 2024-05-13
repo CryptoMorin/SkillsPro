@@ -1,6 +1,7 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -13,7 +14,6 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.util.Util;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -194,7 +194,7 @@ public class NPCHandler {
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             if (!npc.isSpawned()) return;
-            ParticleDisplay.of(Particle.CLOUD).offset(1).spawn(npc.getEntity().getLocation());
+            ParticleDisplay.of(XParticle.CLOUD).offset(1).spawn(npc.getEntity().getLocation());
             npc.despawn(DespawnReason.PLUGIN);
         }, 20L * 60L);
     }

@@ -1,5 +1,6 @@
 package org.skills.utils;
 
+import com.cryptomorin.xseries.XEntityType;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
@@ -11,10 +12,9 @@ public class EntityUtil {
 
     public static boolean isInvalidEntity(Entity entity) {
         EntityType type = entity.getType();
-        if (type == EntityType.ARMOR_STAND || type == EntityType.SNOWMAN) return true;
+        if (type == EntityType.ARMOR_STAND || type == XEntityType.SNOW_GOLEM.get()) return true;
         if (!(entity instanceof LivingEntity)) return true; // projectiles, hanging (items frames, paintings, etc)
         if (entity instanceof NPC || entity.hasMetadata("NPC")) return true;
-
         if (entity.isDead() || entity.isInvulnerable()) return true;
         if (entity instanceof Player) {
             Player player = (Player) entity;

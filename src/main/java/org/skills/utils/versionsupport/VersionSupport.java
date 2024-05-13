@@ -3,7 +3,6 @@ package org.skills.utils.versionsupport;
 import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -12,6 +11,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.skills.utils.MathUtils;
+
+import java.awt.*;
 
 public class VersionSupport {
     public static ExperienceOrb dropExp(Location loc, int amount) {
@@ -48,14 +49,14 @@ public class VersionSupport {
     }
 
     public static void spawnColouredDust(Location loc) {
-        spawnColouredDust(loc, Color.BLACK);
+        spawnColouredDust(loc, Color.black);
     }
 
-    public static void spawnColouredDust(Location loc, Color color) {
+    public static void spawnColouredDust(Location loc, java.awt.Color color) {
         if (XMaterial.supports(13)) {
             VersionSupportFuture.spawnColouredDust(loc, color);
         } else {
-            VersionSupportOld.spawnColouredDust(loc, color.asRGB());
+            VersionSupportOld.spawnColouredDust(loc, color.getRGB());
         }
     }
 

@@ -2,9 +2,9 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,7 +44,7 @@ public class VergilTrickAction extends InstantActiveAbility {
     public void useSkill(AbilityContext context) {
         Player player = context.getPlayer();
         Location playerLocation = player.getEyeLocation();
-        ParticleDisplay display = ParticleDisplay.of(Particle.CLOUD).withCount(200).offset(1);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.CLOUD).withCount(200).offset(1);
         display.spawn(playerLocation.clone());
 
         SLogger.info("last on ground: " + MoveManager.getLastTimeOnGround(player).toMillis());

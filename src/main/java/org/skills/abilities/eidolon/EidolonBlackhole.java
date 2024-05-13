@@ -1,9 +1,10 @@
 package org.skills.abilities.eidolon;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,7 @@ public class EidolonBlackhole extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
 
         Location loc = player.getEyeLocation();
-        ParticleDisplay particle = ParticleDisplay.simple(loc, Particle.PORTAL).withCount(100).withExtra(3);
+        ParticleDisplay particle = ParticleDisplay.of(XParticle.PORTAL).withLocation(loc).withCount(100).withExtra(3);
         ArmorStand blackhole = (ArmorStand) player.getWorld().spawnEntity(loc.clone().add(0, -1.5, 0), EntityType.ARMOR_STAND);
         blackhole.setVisible(false);
         blackhole.setMarker(true);
@@ -92,7 +93,7 @@ public class EidolonBlackhole extends InstantActiveAbility {
                     blackhole.remove();
                     removeEntity(blackhole);
 
-                    TNTPrimed tnt = (TNTPrimed) loc.getWorld().spawnEntity(loc, EntityType.PRIMED_TNT);
+                    TNTPrimed tnt = (TNTPrimed) loc.getWorld().spawnEntity(loc, XEntityType.TNT.get());
                     tnt.setMetadata(BLACKHOLE, new FixedMetadataValue(SkillsPro.get(), player));
                     tnt.setYield((float) getScaling(info, "yield"));
                     tnt.setFuseTicks(0);

@@ -1,8 +1,8 @@
 package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -38,13 +38,13 @@ public class PriestBarrier extends InstantActiveAbility {
         playSound(player, info, "start");
 
         disposableTask(player, new BukkitRunnable() {
-            final ParticleDisplay barrier = ParticleDisplay.of(Particle.PORTAL).withEntity(player);
+            final ParticleDisplay barrier = ParticleDisplay.of(XParticle.PORTAL).withEntity(player);
             final double count = Math.min(radius * 5, 50);
             double repeat = duration;
 
             @Override
             public void run() {
-                XParticle.sphere(radius, count, barrier);
+                Particles.sphere(radius, count, barrier);
                 playSound(player, info, "end");
                 if ((repeat -= decreamentFactor) <= 0) {
                     cancel();

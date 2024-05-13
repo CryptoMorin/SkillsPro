@@ -1,14 +1,13 @@
 package org.skills.abilities.vampire;
 
+import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
@@ -81,12 +80,12 @@ public class VampireEternalDarkness extends ActiveAbility {
             }.runTaskTimer(SkillsPro.get(), 0L, 15L);
         }
         if (lvl > 2) {
-            ParticleDisplay.simple(event.getEntity().getLocation(), Particle.SPELL).withCount(100).offset(1).spawn();
+            ParticleDisplay.of(XParticle.WITCH).withLocation(event.getEntity().getLocation()).withCount(100).offset(1).spawn();
             LocationUtils.rotate(event.getEntity(), 10, true, true, 100);
         }
 
         if (eternalDarkness.contains(player.getUniqueId())) {
-            ((LivingEntity) event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0));
+            ((LivingEntity) event.getEntity()).addPotionEffect(XPotion.BLINDNESS.buildPotionEffect(40, 1));
         }
     }
 

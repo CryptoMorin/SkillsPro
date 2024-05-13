@@ -1,8 +1,8 @@
 package org.skills.abilities.eidolon;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,11 +31,11 @@ public class EidolonPassive extends Ability {
 
         if (!info.showReadyMessage()) return;
         if (event.getNewForm() == EidolonForm.LIGHT) {
-            ParticleDisplay.simple(player.getLocation(), Particle.REDSTONE).withColor(Color.WHITE, 1.0f).offset(0.5, 0.5, 0.5).withCount(100).spawn();
+            ParticleDisplay.of(XParticle.DUST).withLocation(player.getLocation()).withColor(Color.WHITE, 1.0f).offset(0.5, 0.5, 0.5).withCount(100).spawn();
             playSound(player, info, "imbalance.light");
             SkillsLang.Skill_Eidolon_Turn_Light.sendMessage(player);
         } else {
-            ParticleDisplay.simple(player.getLocation(), Particle.REDSTONE).withColor(Color.BLACK, 1.0f).withCount(100).offset(0.5, 0.5, 0.5).spawn();
+            ParticleDisplay.of(XParticle.DUST).withLocation(player.getLocation()).withColor(Color.BLACK, 1.0f).withCount(100).offset(0.5, 0.5, 0.5).spawn();
             playSound(player, info, "imbalance.dark");
             SkillsLang.Skill_Eidolon_Turn_Dark.sendMessage(player);
         }

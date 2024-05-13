@@ -2,7 +2,7 @@ package org.skills.abilities.devourer;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,7 +29,7 @@ public class DevourerDisarm extends ActiveAbility {
 
         int lvl = info.getAbilityLevel(this);
         Player victim = (Player) event.getEntity();
-        ParticleDisplay.simple(victim.getLocation(), Particle.VILLAGER_ANGRY).withCount(100).offset(1).spawn();
+        ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withLocation(victim.getLocation()).withCount(100).offset(1).spawn();
         XSound.ENTITY_ITEM_BREAK.play(victim);
 
         ItemStack item = victim.getItemInHand();

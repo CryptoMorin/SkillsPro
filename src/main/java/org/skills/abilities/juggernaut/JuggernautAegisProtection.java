@@ -2,7 +2,7 @@ package org.skills.abilities.juggernaut;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,7 +40,7 @@ public class JuggernautAegisProtection extends Ability {
         event.setCancelled(true);
         int lvl = info.getAbilityLevel(this);
 
-        player.getLocation().getWorld().spawnParticle(Particle.SMOKE_LARGE, player.getLocation(), 30, 1, 1, 1, 0.3);
+        player.getLocation().getWorld().spawnParticle(XParticle.LARGE_SMOKE.get(), player.getLocation(), 30, 1, 1, 1, 0.3);
         XSound.ENTITY_ITEM_BREAK.play(player);
         if (lvl > 1) {
             Entity entity = event.getDamager();
@@ -49,7 +49,7 @@ public class JuggernautAegisProtection extends Ability {
                 if (entity == null) entity = event.getDamager();
             }
             XSound.ENTITY_GENERIC_EXPLODE.play(player);
-            ParticleDisplay display = ParticleDisplay.simple(entity.getLocation(), Particle.FLAME).offset(1);
+            ParticleDisplay display = ParticleDisplay.of(XParticle.FLAME).withLocation(entity.getLocation()).offset(1);
 
             if (entity instanceof LivingEntity) {
                 double dmg = MathUtils.percentOfAmount(this.getScaling(info, "reflect-damage-percent", event), event.getDamage());

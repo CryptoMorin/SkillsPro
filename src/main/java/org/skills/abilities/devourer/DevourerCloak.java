@@ -1,18 +1,17 @@
 package org.skills.abilities.devourer;
 
+import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.skills.abilities.Ability;
 import org.skills.api.events.SkillToggleAbilityEvent;
@@ -36,11 +35,11 @@ public class DevourerCloak extends Ability {
     }
 
     private static void activateInvisibility(SkilledPlayer info, Player player) {
-        if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+        if (!player.hasPotionEffect(XPotion.INVISIBILITY.getPotionEffectType())) {
             if (info.showReadyMessage()) player.sendMessage(SkillsLang.Skill_Devourer_Invis_Enabled.parse());
-            XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, 0.5, true, false, ParticleDisplay.simple(player.getLocation(), Particle.CLOUD));
+            Particles.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, 0.5, true, false, ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation()));
         }
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 200, 1), true);
+        player.addPotionEffect(XPotion.BLINDNESS.buildPotionEffect(200, 2), true);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class DevourerCloak extends Ability {
         Player player = DamageManager.getOwningPlayer(event.getDamager());
         if (player == null) return;
 
-        if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) return;
+        if (!player.hasPotionEffect(XPotion.INVISIBILITY.getPotionEffectType())) return;
         SkilledPlayer info = this.checkup(player);
         if (info == null) return;
 
@@ -76,8 +75,8 @@ public class DevourerCloak extends Ability {
         if (info.showReadyMessage()) SkillsLang.Skill_Devourer_Invis_Disabled.sendMessage(player);
         if (level > 2) event.setDamage(event.getDamage() + this.getScaling(info, "damage", event));
 
-        player.removePotionEffect(PotionEffectType.INVISIBILITY);
-        XParticle.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, 0.5, true, false, ParticleDisplay.simple(player.getLocation(), Particle.CLOUD));
+        player.removePotionEffect(XPotion.INVISIBILITY.getPotionEffectType());
+        Particles.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, 0.5, true, false, ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation()));
         new Cooldown(player.getUniqueId(), INVIS, (long) this.getScaling(info, "cooldown.invisibility"), TimeUnit.SECONDS);
 
         if (getOptions(info).getBoolean("neutrality")) {
@@ -102,7 +101,7 @@ public class DevourerCloak extends Ability {
         if (event.getAbility() instanceof DevourerCloak) {
             if (event.isDisabled()) {
                 Player player = event.getPlayer();
-                player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                player.removePotionEffect(XPotion.INVISIBILITY.getPotionEffectType());
             }
         }
     }

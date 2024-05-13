@@ -46,32 +46,46 @@ public final class NBTWrappers {
          * @return The correct {@link NBTBase} or null if the tag is not supported
          */
         public static NBTBase<?> fromNBT(Object nbtObject) {
+            // Also includes remapped names.
             switch (nbtObject.getClass().getSimpleName()) {
                 case "NBTTagCompound":
+                case "CompoundTag":
                     return NBTTagCompound.fromNBT(nbtObject);
                 case "NBTTagString":
+                case "StringTag":
                     return NBTTagString.fromNBT(nbtObject);
                 case "NBTTagByte":
+                case "ByteTag":
                     return NBTTagByte.fromNBT(nbtObject);
                 case "NBTTagShort":
+                case "ShortTag":
                     return NBTTagShort.fromNBT(nbtObject);
                 case "NBTTagInt":
+                case "IntTag":
                     return NBTTagInt.fromNBT(nbtObject);
                 case "NBTTagLong":
+                case "LongTag":
                     return NBTTagLong.fromNBT(nbtObject);
                 case "NBTTagFloat":
+                case "FloatTag":
                     return NBTTagFloat.fromNBT(nbtObject);
                 case "NBTTagDouble":
+                case "DoubleTag":
                     return NBTTagDouble.fromNBT(nbtObject);
                 case "NBTTagByteArray":
+                case "ByteArrayTag":
                     return NBTTagByteArray.fromNBT(nbtObject);
                 case "NBTTagIntArray":
+                case "IntArrayTag":
                     return NBTTagIntArray.fromNBT(nbtObject);
                 case "NBTTagLongArray":
+                case "LongArrayTag":
                     return NBTTagLongArray.fromNBT(nbtObject);
                 case "NBTTagList":
+                case "ListTag":
                     return NBTTagList.fromNBT(nbtObject);
                 case "NBTTagEnd":
+                case "EndTag":
                     return NBTTagEnd.fromNBT(nbtObject);
                 default:
                     throw new UnsupportedOperationException("Unknown NBT type: " + nbtObject.getClass().getSimpleName());

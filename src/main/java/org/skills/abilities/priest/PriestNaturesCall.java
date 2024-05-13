@@ -2,9 +2,9 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +33,7 @@ public class PriestNaturesCall extends ActiveAbility {
     }
 
     private static void killMinion(LivingEntity livingMinion) {
-        livingMinion.getLocation().getWorld().spawnParticle(Particle.DRAGON_BREATH, livingMinion.getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
+        livingMinion.getLocation().getWorld().spawnParticle(XParticle.DRAGON_BREATH.get(), livingMinion.getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
         livingMinion.setHealth(0);
     }
 
@@ -62,7 +62,7 @@ public class PriestNaturesCall extends ActiveAbility {
         }
 
         if (event.getEntity().hasMetadata(MINION)) {
-            event.getEntity().getLocation().getWorld().spawnParticle(Particle.DRAGON_BREATH, event.getEntity().getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
+            event.getEntity().getLocation().getWorld().spawnParticle(XParticle.DRAGON_BREATH.get(), event.getEntity().getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
         }
     }
 
@@ -105,7 +105,7 @@ public class PriestNaturesCall extends ActiveAbility {
 
             Location spawn = center.clone().add(x, 0, z);
             if (!spawn.getBlock().getType().name().endsWith("AIR")) spawn = player.getLocation();
-            ParticleDisplay.simple(spawn, Particle.SMOKE_LARGE).withCount(100).offset(0.5, 0.5, 0.5).spawn();
+            ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(spawn).withCount(100).offset(0.5, 0.5, 0.5).spawn();
 
             AtomicBoolean isDead = new AtomicBoolean();
             if (!entity.isValid()) {

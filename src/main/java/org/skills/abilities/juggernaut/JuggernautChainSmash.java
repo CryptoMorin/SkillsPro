@@ -1,12 +1,16 @@
 package org.skills.abilities.juggernaut;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -88,7 +92,7 @@ public class JuggernautChainSmash extends InstantActiveAbility {
         double initialLaunch = getScaling(info, "initial-launch");
         player.setVelocity(new Vector(0, initialLaunch, 0));
         XSound.ENTITY_HORSE_JUMP.play(player, 3, 0);
-        ParticleDisplay cloud = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD).withCount(100).offset(1);
+        ParticleDisplay cloud = ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation()).withCount(100).offset(1);
         cloud.spawn();
 
         double damage = getScaling(info, "damage");
@@ -112,15 +116,15 @@ public class JuggernautChainSmash extends InstantActiveAbility {
                     cloud.spawn(loc);
 
                     if (!getOptions(info, "disable-explosion").getBoolean()) {
-                        TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(loc, EntityType.PRIMED_TNT);
+                        TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(loc, XEntityType.TNT.get());
                         tnt.setMetadata(CHAIN_SMASH, new FixedMetadataValue(SkillsPro.get(), player));
                         tnt.setFuseTicks(0);
                     }
 
                     XSound.ENTITY_GENERIC_EXPLODE.play(player, (float) range, XSound.DEFAULT_PITCH);
-                    ParticleDisplay display = ParticleDisplay.of(Particle.EXPLOSION_LARGE).withCount(10).offset(1);
-                    explosionWave(SkillsPro.get(), 20, ParticleDisplay.simple(loc, Particle.FIREWORKS_SPARK),
-                            ParticleDisplay.simple(loc, Particle.SPELL_WITCH));
+                    ParticleDisplay display = ParticleDisplay.of(XParticle.EXPLOSION_EMITTER.get()).withCount(10).offset(1);
+                    explosionWave(SkillsPro.get(), 20, ParticleDisplay.of(XParticle.FIREWORK).withLocation(loc),
+                            ParticleDisplay.of(XParticle.WITCH).withLocation(loc));
 
                     for (Entity entity : player.getNearbyEntities(range, range, range)) {
                         if (EntityUtil.filterEntity(player, entity)) continue;

@@ -1,20 +1,21 @@
 package org.skills.abilities.mage;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -30,9 +31,8 @@ import org.skills.managers.MoveManager;
 import org.skills.utils.Cooldown;
 import org.skills.utils.MathUtils;
 import org.skills.utils.ParticleUtil;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +87,7 @@ public class MageNeptune extends Ability {
 
         if (event.getEntity() instanceof Trident) {
             Trident trident = (Trident) event.getEntity();
-            if (trident.getItem().containsEnchantment(Enchantment.LOYALTY)) {
+            if (trident.getItem().containsEnchantment(XEnchantment.LOYALTY.getEnchant())) {
                 // Setting the owner of a loyal trident as passenger will cause
                 // the trident to chase the player indefinitely vertically up in the air.
                 event.getEntity().removePassenger(event.getEntity().getPassenger());
@@ -151,7 +151,7 @@ public class MageNeptune extends Ability {
 
             new BukkitRunnable() {
                 int tenTickTimer = 10;
-                final ParticleDisplay particle = ParticleDisplay.of(Particle.REDSTONE)
+                final ParticleDisplay particle = ParticleDisplay.of(XParticle.DUST)
                         .withColor(Color.CYAN, 1).offset(0.3, 0.3, 0.3).withCount(10).withEntity(trident);
 
                 @Override
@@ -233,7 +233,7 @@ public class MageNeptune extends Ability {
                 if (spawnParticles) {
                     new BukkitRunnable() {
                         int ticks = 5 * 20;
-                        final ParticleDisplay particle = ParticleDisplay.of(Particle.REDSTONE)
+                        final ParticleDisplay particle = ParticleDisplay.of(XParticle.DUST)
                                 .withColor(Color.RED, 1).offset(0.3, 0.3, 0.3).withCount(10).withEntity(playerRiding);
 
                         @Override
@@ -335,7 +335,7 @@ public class MageNeptune extends Ability {
                     Location to = entity.getEyeLocation();
 
                     Vector vector = to.toVector().subtract(fire.toVector());
-                    center.getWorld().spawnParticle(Particle.CLOUD, fire, 100, 0.5, 0.5, 0.5, 0);
+                    center.getWorld().spawnParticle(XParticle.CLOUD.get(), fire, 100, 0.5, 0.5, 0.5, 0);
                     Trident trident = (Trident) center.getWorld().spawnEntity(fire, EntityType.TRIDENT);
                     trident.setVelocity(vector.multiply(0.5));
                     if (repeat-- <= 0) cancel();

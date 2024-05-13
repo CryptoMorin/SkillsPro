@@ -1,9 +1,9 @@
 package org.skills.abilities.arbalist;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -47,7 +47,7 @@ public class ArbalistPassive extends Ability {
         if (!MathUtils.hasChance((int) getScaling(info, "chance"))) return;
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             Location center = entity.getLocation().add(0, 10, 0);
-            world.spawnParticle(Particle.CLOUD, center, 200, 1, 0, 1, 0);
+            world.spawnParticle(XParticle.CLOUD.get(), center, 200, 1, 0, 1, 0);
 
             for (int i = 0; i < getScaling(info, "arrows"); i++) {
                 int x = MathUtils.randInt(0, i);

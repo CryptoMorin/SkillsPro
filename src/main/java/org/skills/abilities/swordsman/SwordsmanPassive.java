@@ -1,13 +1,12 @@
 package org.skills.abilities.swordsman;
 
-import com.cryptomorin.xseries.NMSExtras;
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.*;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -126,7 +125,7 @@ public class SwordsmanPassive extends Ability {
         if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
 
         double damage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
-        int sharpness = item.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
+        int sharpness = item.getEnchantmentLevel(XEnchantment.SHARPNESS.getEnchant());
         if (sharpness != 0) damage += 0.5 * (sharpness - 1) + 1;
 
         double armor = livingEntity.getAttribute(Attribute.GENERIC_ARMOR).getValue();
@@ -135,7 +134,16 @@ public class SwordsmanPassive extends Ability {
 
         NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
 
-        EntityDamageByEntityEvent damageEvent = new EntityDamageByEntityEvent(player, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        EntityDamageByEntityEvent damageEvent;
+        if (ReflectionUtils.supports(20, 5)) {
+            damageEvent = new EntityDamageByEntityEvent(player, entity,
+                    EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                    DamageSource.builder(DamageType.PLAYER_ATTACK).withCausingEntity(player).withDirectEntity(player).build(),
+                    damage
+            );
+        } else {
+            damageEvent = new EntityDamageByEntityEvent(player, entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
+        }
         Bukkit.getPluginManager().callEvent(damageEvent);
         if (damageEvent.isCancelled()) return;
         OFFHAND.put(entity.getEntityId(), damageEvent);
@@ -152,7 +160,7 @@ public class SwordsmanPassive extends Ability {
 
         boolean sweep = cooldown == 0 && !player.isSprinting();
         if (sweep) {
-            int sweeping = item.getEnchantmentLevel(Enchantment.SWEEPING_EDGE);
+            int sweeping = item.getEnchantmentLevel(XEnchantment.SWEEPING_EDGE.getEnchant());
             int sweepDmg = 1;
             if (sweeping != 0) sweepDmg += MathUtils.percentOfAmount(50 + ((sweeping - 1) * 25), damage);
             for (Entity nearby : livingEntity.getNearbyEntities(1, 1, 1)) {
@@ -163,10 +171,10 @@ public class SwordsmanPassive extends Ability {
             }
         }
         if (sweep) {
-            player.spawnParticle(Particle.SWEEP_ATTACK, entity.getLocation().clone().add(0, 0.75, 0), 1);
+            player.spawnParticle(XParticle.SWEEP_ATTACK.get(), entity.getLocation().clone().add(0, 0.75, 0), 1);
             XSound.ENTITY_PLAYER_ATTACK_SWEEP.play(player.getLocation());
         }
-        player.spawnParticle(Particle.DAMAGE_INDICATOR, entity.getLocation().clone().add(0, 0.75, 0.5),
+        player.spawnParticle(XParticle.DAMAGE_INDICATOR.get(), entity.getLocation().clone().add(0, 0.75, 0.5),
                 MathUtils.randInt(1, 4), 0.1, 0.1, 1.0, 0.2);
 
         if (item.getDurability() + 1 < item.getType().getMaxDurability())
@@ -176,11 +184,11 @@ public class SwordsmanPassive extends Ability {
             player.getInventory().setItemInOffHand(null);
         }
 
-        double kb = item.getEnchantmentLevel(Enchantment.KNOCKBACK) + 1 * 0.5;
+        double kb = item.getEnchantmentLevel(XEnchantment.KNOCKBACK.getEnchant()) + 1 * 0.5;
         Vector knockback = player.getLocation().getDirection().add(new Vector(0, 0.7, 0)).multiply(kb);
         entity.setVelocity(knockback);
 
-        int fire = item.getEnchantmentLevel(Enchantment.FIRE_ASPECT);
+        int fire = item.getEnchantmentLevel(XEnchantment.FIRE_ASPECT.getEnchant());
         if (fire != 0) entity.setFireTicks(fire * 80);
     }
 }

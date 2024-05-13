@@ -2,9 +2,9 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public class VergilRapidSlash extends InstantActiveAbility {
 
         double range = 3;
         Location loc = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(2));
-        ParticleDisplay.of(Particle.SWEEP_ATTACK).withCount(30).offset(1.5).spawn(loc);
+        ParticleDisplay.of(XParticle.SWEEP_ATTACK).withCount(30).offset(1.5).spawn(loc);
         XSound.ENTITY_PLAYER_ATTACK_SWEEP.play(loc);
         List<LivingEntity> entities = SLASHED.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>());
 

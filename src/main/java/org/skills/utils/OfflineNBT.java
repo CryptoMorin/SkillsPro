@@ -1,6 +1,5 @@
 package org.skills.utils;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.skills.main.SkillsConfig;
@@ -12,6 +11,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import static com.cryptomorin.xseries.ReflectionUtils.*;
 
 public final class OfflineNBT {
     private static final MethodHandle GET_COMPOUND;
@@ -25,8 +26,13 @@ public final class OfflineNBT {
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Class<?> compressor = ReflectionUtils.getNMSClass("nbt", "NBTCompressedStreamTools");
-        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("nbt", "NBTTagCompound");
+        MinecraftClassHandle compressor = ofMinecraft().inPackage(MinecraftPackage.NMS, "nbt")
+                .map(MinecraftMapping.MOJANG, "NbtIo")
+                .map(MinecraftMapping.SPIGOT, "NBTCompressedStreamTools");
+        Class<?> nbtTagCompound = ofMinecraft().inPackage(MinecraftPackage.NMS, "nbt")
+                .map(MinecraftMapping.MOJANG, "CompoundTag")
+                .map(MinecraftMapping.SPIGOT, "NBTTagCompound")
+                .unreflect();
         MethodHandle getCompound = null;
         MethodHandle setFloat = null;
         MethodHandle getFloat = null;
@@ -44,8 +50,14 @@ public final class OfflineNBT {
             setBoolean = lookup.findVirtual(nbtTagCompound, "setBoolean", MethodType.methodType(void.class, String.class, boolean.class));
             getBoolean = lookup.findVirtual(nbtTagCompound, "getBoolean", MethodType.methodType(boolean.class, String.class));
 
-            save = lookup.findStatic(compressor, "a", MethodType.methodType(void.class, nbtTagCompound, OutputStream.class));
-            load = lookup.findStatic(compressor, "a", MethodType.methodType(nbtTagCompound, InputStream.class));
+            save = compressor.method().asStatic().returns(void.class).parameters(nbtTagCompound, OutputStream.class)
+                    .map(MinecraftMapping.OBFUSCATED, "a")
+                    .map(MinecraftMapping.MOJANG, "writeCompressed")
+                    .unreflect();
+            load = compressor.method().asStatic().returns(nbtTagCompound).parameters(InputStream.class)
+                    .map(MinecraftMapping.OBFUSCATED, "a")
+                    .map(MinecraftMapping.MOJANG, "createDecompressorStream")
+                    .unreflect();
         } catch (NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
             emergency = true;

@@ -2,10 +2,14 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -80,7 +84,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
             final double rate = 0.1;
             final double radius = 1;
             final int strings = 2;
-            final double distanceBetweenEachCirclePoints = XParticle.PII / strings;
+            final double distanceBetweenEachCirclePoints = Particles.PII / strings;
             final double radiusDiv = radius / (length / rate);
             final double radiusDiv2 = fadeUp && fadeDown ? radiusDiv * 2 : radiusDiv;
             double dynamicRadius = fadeDown ? 0 : radius;
@@ -145,7 +149,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
                     Location facing = particleLoc.clone();
                     facing.setPitch(facing.getPitch() - 20);
                     facing.setYaw(facing.getYaw() + 20);
-                    ParticleDisplay.of(Particle.FLAME).withLocation(particleLoc.clone())
+                    ParticleDisplay.of(XParticle.FLAME).withLocation(particleLoc.clone())
                             .face(facing).spawn(x, 0, z);
                 }
 
@@ -202,16 +206,16 @@ public class VergilJudgementCut extends InstantActiveAbility {
         World world = player.getWorld();
         XSound.ENTITY_WARDEN_DIG.play(player.getEyeLocation());
         double distance = LocationUtils.distance(player.getLocation(), loc);
-        ParticleDisplay lineDisplay = ParticleDisplay.of(Particle.FLAME).withCount(1).withLocation(player.getEyeLocation());
-        ParticleDisplay helixDipslay = ParticleDisplay.of(Particle.FLAME).withCount(1).withLocation(player.getEyeLocation()).face(player);
+        ParticleDisplay lineDisplay = ParticleDisplay.of(XParticle.FLAME).withCount(1).withLocation(player.getEyeLocation());
+        ParticleDisplay helixDipslay = ParticleDisplay.of(XParticle.FLAME).withCount(1).withLocation(player.getEyeLocation()).face(player);
         BukkitTask stop = helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, false, false, helixDipslay, target);
 
         // Plugin plugin, int strings, double radius, double rate,
         //                                   double extension, double height, double speed, double rotationRate,
         //                                   boolean fadeUp, boolean fadeDown, ParticleDisplay display
-        // XParticle.helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, 5, false, false, helixDipslay.clone().withParticle(Particle.END_ROD).withLocation(player.getLocation()));
-        XParticle.helix(SkillsPro.get(), 2, 2, 0.1, 1, 5, 0.1, 20, false, false,
-                ParticleDisplay.of(Particle.DRAGON_BREATH).withLocation(player.getLocation()).withDirection(new Vector(0, 1, 0)));
+        // Particles.helix(SkillsPro.get(), 2, 1, 0.7, 1, 100, 1, 5, false, false, helixDipslay.clone().withParticle(XParticle.END_ROD).withLocation(player.getLocation()));
+        Particles.helix(SkillsPro.get(), 2, 2, 0.1, 1, 5, 0.1, 20, false, false,
+                ParticleDisplay.of(XParticle.DRAGON_BREATH).withLocation(player.getLocation()).withDirection(new Vector(0, 1, 0)));
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
 
@@ -221,7 +225,7 @@ public class VergilJudgementCut extends InstantActiveAbility {
                 double offset = 4;
                 Location randomStart = loc.clone().add(rand.nextDouble(-offset, offset), rand.nextDouble(-offset, offset), rand.nextDouble(-offset, offset));
                 Location randomEnd = loc.clone().add(rand.nextDouble(-offset, offset), rand.nextDouble(-offset, offset), rand.nextDouble(-offset, offset));
-                XParticle.line(randomStart, randomEnd, 0.3, lineDisplay);
+                Particles.line(randomStart, randomEnd, 0.3, lineDisplay);
             }
 
             double damageRadius = 5;
@@ -234,12 +238,12 @@ public class VergilJudgementCut extends InstantActiveAbility {
 
             XSound.ENTITY_WARDEN_AGITATED.play(loc);
             stop.cancel();
-            // XParticle.sphere(3, Math.PI / 50, ParticleDisplay.of(Particle.FLAME).withLocation(loc.clone()).directional());
+            // Particles.sphere(3, Math.PI / 50, ParticleDisplay.of(XParticle.FLAME).withLocation(loc.clone()).directional());
         }, 20L * 3L);
 
         if (levels < 4) {
             Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
-                ParticleDisplay.of(Particle.FLAME)
+                ParticleDisplay.of(XParticle.FLAME)
                         .withCount(30).offset(0.1)
                         .spawn(LocationUtils.getHandLocation(player, false));
             }, 20L);

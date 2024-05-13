@@ -1,10 +1,10 @@
 package org.skills.services.placeholders;
 
+import com.cryptomorin.xseries.XPotion;
 import com.google.common.base.Enums;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.skills.abilities.vergil.VergilPassive;
 import org.skills.api.events.CustomHudChangeEvent;
@@ -297,7 +297,7 @@ public enum SkillsPlaceholders {
             case STATUS:
                 player = info.getPlayer();
                 if (player == null || !player.isOnline()) return "";
-                if (player.hasPotionEffect(PotionEffectType.POISON))
+                if (player.hasPotionEffect(XPotion.POISON.getPotionEffectType()))
                     return SkillsConfig.ACTIONBAR_STATUS_POISONED.parse(player);
                 else if (player.getHealth() <= 6)
                     return SkillsConfig.ACTIONBAR_STATUS_LOWHEALTH.parse(player);

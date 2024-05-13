@@ -1,9 +1,10 @@
 package org.skills.abilities.arbalist;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
-import org.bukkit.Particle;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -82,6 +83,6 @@ public class ArbalistExecute extends Ability {
             player.playNote(player.getLocation(), Instrument.CHIME, Note.natural(0, Note.Tone.values()
                     [(Math.min(executer, Note.Tone.values().length - 1))]));
         }
-        target.getWorld().spawnParticle(Particle.CRIT, target.getLocation(), 10);
+        ParticleDisplay.of(XParticle.CRIT).withLocation(target.getLocation()).withCount(10).spawn();
     }
 }

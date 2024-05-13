@@ -1,9 +1,9 @@
 package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ public class AAAA {
             final double rate = 0.1;
             final double radius = 1;
             final int strings = 2;
-            final double distanceBetweenEachCirclePoints = XParticle.PII / strings;
+            final double distanceBetweenEachCirclePoints = Particles.PII / strings;
             final double radiusDiv = radius / (length / rate);
             final double radiusDiv2 = fadeUp && fadeDown ? radiusDiv * 2 : radiusDiv;
             double dynamicRadius = fadeDown ? 0 : radius;
@@ -93,7 +93,7 @@ public class AAAA {
 
                 // Kill this task if the beam length is max
                 if (beamLength >= maxBeamLength) {
-                    world.spawnParticle(Particle.FLASH, particleLoc, 0);
+                    world.spawnParticle(XParticle.FLASH.get(), particleLoc, 0);
                     this.cancel();
                     return;
                 }
@@ -115,7 +115,7 @@ public class AAAA {
                     Location facing = particleLoc.clone();
                     facing.setPitch(facing.getPitch() - 20);
                     facing.setYaw(facing.getYaw() + 20);
-                    ParticleDisplay.of(Particle.FLAME).withLocation(particleLoc.clone())
+                    ParticleDisplay.of(XParticle.FLAME).withLocation(particleLoc.clone())
                             .face(facing).spawn(x, 0, z);
                 }
 

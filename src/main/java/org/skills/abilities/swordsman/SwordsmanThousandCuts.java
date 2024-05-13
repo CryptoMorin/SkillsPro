@@ -1,7 +1,7 @@
 package org.skills.abilities.swordsman;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.particles.Particles;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -54,7 +54,7 @@ public class SwordsmanThousandCuts extends ActiveAbility {
                 Location start = entity.getEyeLocation().add(MathUtils.rand(-3, 3), MathUtils.rand(-0.5, 2), MathUtils.rand(-3, 3));
                 Vector endVect = entity.getEyeLocation().subtract(start).toVector().multiply(MathUtils.rand(1.2, 1.8));
                 Location end = start.clone().add(endVect);
-                XParticle.line(start, end, 0.1, display);
+                Particles.line(start, end, 0.1, display);
             }
         }
 

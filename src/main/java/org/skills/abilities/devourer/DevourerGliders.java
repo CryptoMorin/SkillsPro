@@ -2,9 +2,9 @@ package org.skills.abilities.devourer;
 
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -104,7 +104,7 @@ public class DevourerGliders extends Ability {
         if (info == null) return;
         if (info.getAbilityLevel(this) < getScaling(info, "double-jump-level")) return;
 
-        ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE).withCount(70).offset(0.5, 0, 0.5).spawn();
+        ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(player.getLocation()).withCount(70).offset(0.5, 0, 0.5).spawn();
         event.setCancelled(true);
     }
 
@@ -125,7 +125,7 @@ public class DevourerGliders extends Ability {
         }
         player.setVelocity(player.getLocation().getDirection().multiply(1.3).setY(getScaling(info, "height")));
 
-        ParticleDisplay dis = ParticleDisplay.simple(player.getLocation(), Particle.CLOUD);
+        ParticleDisplay dis = ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation());
         dis.count = 70;
         dis.offset(0.5, 0.5, 0.5);
         dis.spawn();

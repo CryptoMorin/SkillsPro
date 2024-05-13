@@ -1,15 +1,16 @@
 package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,7 +21,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.Ability;
 import org.skills.api.events.ClassChangeEvent;
 import org.skills.data.managers.SkilledPlayer;
@@ -77,7 +77,7 @@ public class VergilPassive extends Ability {
             }
         }, 0L, 20L * 10L);
 
-        ParticleDisplay display = ParticleDisplay.of(Particle.FLAME).offset(0.5).withExtra(0.5);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.FLAME).offset(0.5).withExtra(0.5);
         // level 3 concentration particles
         Bukkit.getScheduler().runTaskTimerAsynchronously(SkillsPro.get(), () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -177,7 +177,7 @@ public class VergilPassive extends Ability {
                 !damager.isOnGround() &&
                 !damager.isSprinting() &&
                 // damager instanceof LivingEntity &&
-                !damager.hasPotionEffect(PotionEffectType.BLINDNESS) &&
+                !damager.hasPotionEffect(XPotion.BLINDNESS.getPotionEffectType()) &&
                 damager.getVehicle() == null;
     }
 
@@ -193,15 +193,15 @@ public class VergilPassive extends Ability {
         if (event.getAction() != Action.LEFT_CLICK_AIR) return;
         if (true) return;
 
-        // ParticleDisplay display = ParticleDisplay.of(Particle.CLOUD).withLocation(player.getEyeLocation());
-        ParticleDisplay circleDisplay = ParticleDisplay.of(Particle.DRAGON_BREATH)
+        // ParticleDisplay display = ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getEyeLocation());
+        ParticleDisplay circleDisplay = ParticleDisplay.of(XParticle.DRAGON_BREATH)
                 .withLocation(player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(2)))
                 .withCount(1).face(player);
-        XParticle.filledCircle(2, 100, 0.5, circleDisplay);
+        Particles.filledCircle(2, 100, 0.5, circleDisplay);
         // int points, int spikes, double rate, double spikeLength, double coreRadius,
         //                                             double neuron, boolean prototype, int speed, ParticleDisplay display
         circleDisplay.withLocation(player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(3)));
-        XParticle.star(4, 4, 1000, 2, 2, 1, true, 1, circleDisplay).forEach(BooleanSupplier::getAsBoolean);
+        Particles.star(4, 4, 1000, 2, 2, 1, true, 1, circleDisplay).forEach(BooleanSupplier::getAsBoolean);
         XSound.BLOCK_PORTAL_AMBIENT.play(player.getLocation());
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
 

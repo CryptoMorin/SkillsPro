@@ -2,10 +2,10 @@ package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -38,9 +38,9 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
         double radius = 10;
         Location startLocation = player.getLocation();
         player.setInvulnerable(true);
-        ParticleDisplay trial = ParticleDisplay.of(Particle.TRIAL_SPAWNER_DETECTION).withCount(1000).offset(radius).withLocation(player.getEyeLocation());
-        ParticleDisplay spore = ParticleDisplay.of(Particle.WARPED_SPORE).withCount(1000).offset(radius).withLocation(player.getEyeLocation().add(0, 3, 0));
-        ParticleDisplay display = ParticleDisplay.of(Particle.FLAME).withLocation(player.getEyeLocation());
+        ParticleDisplay trial = ParticleDisplay.of(XParticle.TRIAL_SPAWNER_DETECTION).withCount(1000).offset(radius).withLocation(player.getEyeLocation());
+        ParticleDisplay spore = ParticleDisplay.of(XParticle.WARPED_SPORE).withCount(1000).offset(radius).withLocation(player.getEyeLocation().add(0, 3, 0));
+        ParticleDisplay display = ParticleDisplay.of(XParticle.FLAME).withLocation(player.getEyeLocation());
 
         new BukkitRunnable() {
             int times = 10;
@@ -49,13 +49,13 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
             public void run() {
                 trial.spawn();
                 spore.spawn();
-                XParticle.sphere(radius, 30, display);
+                Particles.sphere(radius, 30, display);
                 if (--times == 0) cancel();
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 20L);
         PERFORMING.put(player.getUniqueId(), startLocation);
 
-        ParticleDisplay lineDisplay = ParticleDisplay.of(Particle.FLAME).withLocation(player.getEyeLocation());
+        ParticleDisplay lineDisplay = ParticleDisplay.of(XParticle.FLAME).withLocation(player.getEyeLocation());
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             List<Pair<LivingEntity, Runnable>> targetedEntities = new ArrayList<>();
@@ -108,7 +108,7 @@ public class VergilJudgementCutEnd extends InstantActiveAbility {
                         PERFORMING.remove(player.getUniqueId());
 
                         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
-                            ParticleDisplay damageDisplay = ParticleDisplay.of(Particle.SWEEP_ATTACK).withCount(20).offset(2);
+                            ParticleDisplay damageDisplay = ParticleDisplay.of(XParticle.SWEEP_ATTACK).withCount(20).offset(2);
                             for (Pair<LivingEntity, Runnable> targetEntry : targetedEntities) {
                                 targetEntry.getValue().run();
                                 LivingEntity target = targetEntry.getKey();

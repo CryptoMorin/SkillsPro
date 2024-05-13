@@ -3,13 +3,12 @@ package org.skills.abilities;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import com.google.common.base.Enums;
+import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -156,8 +155,10 @@ public class AbilityListener implements Listener {
             return true;
         }
 
-        ParticleDisplay display = ParticleDisplay.simple(player.getLocation(),
-                Enums.getIfPresent(Particle.class, SkillsConfig.READY_PARTICLE_PARTICLE.getString()).or(Particle.SPELL_WITCH));
+
+        ParticleDisplay display = ParticleDisplay
+                .of(XParticle.of(SkillsConfig.READY_PARTICLE_PARTICLE.getString()))
+                .withLocation(player.getLocation());
         display.count = (int) SkillsConfig.READY_PARTICLE_COUNT.eval(info, ability);
         double offset = SkillsConfig.READY_PARTICLE_OFFSET.eval(info, ability);
         display.offset(offset, offset, offset);
@@ -251,7 +252,7 @@ public class AbilityListener implements Listener {
                 nbt.get(SkillItemManager.SKILL_ITEM, NBTType.STRING);
             } catch (Exception ex) {
                 MessageHandler.sendConsolePluginMessage("&cA NBT error has occurred! Please report this to the developer.");
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
 
             Material type = item.getType();

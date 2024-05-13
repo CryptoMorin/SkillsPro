@@ -2,8 +2,8 @@ package org.skills.abilities.mage;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -43,7 +43,7 @@ public class MageChronoprohiberis extends InstantActiveAbility {
         int duration = (int) getScaling(info, "duration") * 20;
         double damage = getScaling(info, "damage");
         List<PotionEffect> effects = getEffects(info, "effects");
-        ParticleDisplay display = ParticleDisplay.of(Particle.SMOKE_LARGE).withCount(50).offset(.5);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.LARGE_SMOKE).withCount(50).offset(.5);
         Set<EntityType> blacklisted = getEntityList(info, "blacklisted");
 
         for (Entity entity : player.getNearbyEntities(range, range, range)) {
@@ -63,7 +63,7 @@ public class MageChronoprohiberis extends InstantActiveAbility {
 
         if (entities.isEmpty()) return;
 
-        display.withParticle(Particle.CLOUD);
+        display.withParticle(XParticle.CLOUD);
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             for (LivingEntity entity : entities) {
                 entity.removeMetadata(META, SkillsPro.get());

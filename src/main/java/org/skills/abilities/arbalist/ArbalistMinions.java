@@ -1,11 +1,11 @@
 package org.skills.abilities.arbalist;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,7 +35,7 @@ public class ArbalistMinions extends ActiveAbility {
     }
 
     private static void killMinion(LivingEntity livingMinion) {
-        livingMinion.getWorld().spawnParticle(Particle.DRAGON_BREATH, livingMinion.getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
+        livingMinion.getWorld().spawnParticle(XParticle.DRAGON_BREATH.get(), livingMinion.getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
         livingMinion.setHealth(0);
         removeEntity(livingMinion);
     }
@@ -66,7 +66,7 @@ public class ArbalistMinions extends ActiveAbility {
         }
 
         if (event.getEntity().hasMetadata(MINION)) {
-            event.getEntity().getWorld().spawnParticle(Particle.DRAGON_BREATH, event.getEntity().getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
+            event.getEntity().getWorld().spawnParticle(XParticle.DRAGON_BREATH.get(), event.getEntity().getLocation(), 100, 0.5, 0.5, 0.5, 0.05);
         }
     }
 
@@ -90,9 +90,9 @@ public class ArbalistMinions extends ActiveAbility {
         XSound sound = shouldMax ? XSound.ENTITY_PILLAGER_AMBIENT : XSound.ENTITY_SKELETON_STEP;
 
         int dmg = (int) getScaling(info, "enchants.arrow-damage");
-        if (dmg > 0) bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, dmg);
+        if (dmg > 0) bow.addUnsafeEnchantment(XEnchantment.POWER.getEnchant(), dmg);
         int flame = (int) getScaling(info, "enchants.flame");
-        if (flame > 0) bow.addUnsafeEnchantment(Enchantment.ARROW_FIRE, flame);
+        if (flame > 0) bow.addUnsafeEnchantment(XEnchantment.FLAME.getEnchant(), flame);
 
         new BukkitRunnable() {
             int times = 5;
@@ -112,7 +112,7 @@ public class ArbalistMinions extends ActiveAbility {
 
             Location spawn = center.clone().add(x, 0, z);
             if (!spawn.getBlock().getType().name().endsWith("AIR")) spawn = player.getLocation();
-            spawn.getWorld().spawnParticle(Particle.PORTAL, spawn.clone().add(0, 1, 0), 500, 0, 0, 0, 1);
+            spawn.getWorld().spawnParticle(XParticle.PORTAL.get(), spawn.clone().add(0, 1, 0), 500, 0, 0, 0, 1);
 
             Location finalSpawn = spawn;
             AtomicBoolean isDead = new AtomicBoolean();

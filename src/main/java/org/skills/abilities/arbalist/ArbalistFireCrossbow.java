@@ -1,11 +1,12 @@
 package org.skills.abilities.arbalist;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
-import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -68,7 +69,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
         if (MathUtils.hasChance((int) getScaling(info, "critical-chance"))) arrow.setCritical(true);
         XSound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR.play(player);
 
-        player.spawnParticle(Particle.LAVA, player.getLocation(), (int) (extraScaling * 2) + 10, 0.1, 0.1, 0.1, 1);
+        player.spawnParticle(XParticle.LAVA.get(), player.getLocation(), (int) (extraScaling * 2) + 10, 0.1, 0.1, 0.1, 1);
         new BukkitRunnable() {
             int i = 0;
 
@@ -80,7 +81,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
 
                 if (XMaterial.supports(13))
                     player.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
-                player.spawnParticle(Particle.FLAME, arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
+                player.spawnParticle(XParticle.FLAME.get(), arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
             }
         }.runTaskTimer(SkillsPro.get(), 5L, 5L);
     }
@@ -97,7 +98,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
 
         event.setDamage((int) this.getScaling(info, "damage"));
         XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play(shooter, 2, 0);
-        shooter.spawnParticle(Particle.LAVA, event.getEntity().getLocation(), 30, 0.1, 0.1, 0.1, 0.1);
+        shooter.spawnParticle(XParticle.LAVA.get(), event.getEntity().getLocation(), 30, 0.1, 0.1, 0.1, 0.1);
     }
 
     @EventHandler
@@ -111,7 +112,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
         if (shooter == null) return;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(shooter);
         if (MathUtils.hasChance((int) getScaling(info, "explosion-chance"))) {
-            TNTPrimed TNT = (TNTPrimed) shooter.getLocation().getWorld().spawnEntity(event.getHitBlock().getLocation(), EntityType.PRIMED_TNT);
+            TNTPrimed TNT = (TNTPrimed) shooter.getLocation().getWorld().spawnEntity(event.getHitBlock().getLocation(), XEntityType.TNT.get());
             TNT.setFuseTicks(1);
         }
     }

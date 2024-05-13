@@ -2,7 +2,7 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -35,7 +35,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
 
         if (player.isSneaking()) {
             XSound.ENTITY_GENERIC_DRINK.play(player.getLocation());
-            ParticleDisplay.simple(player.getLocation(), Particle.HEART).withCount(lvl * 20).offset(0.5, 0.5, 0.5).spawn();
+            ParticleDisplay.of(XParticle.HEART).withLocation(player.getLocation()).withCount(lvl * 20).offset(0.5, 0.5, 0.5).spawn();
             VersionSupport.heal(player, this.getScaling(info, "heal"));
             return;
         }
@@ -58,7 +58,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
 
             @Override
             public void run() {
-                ParticleDisplay.of(Particle.HEART).withCount(10).offset(0.01).withExtra(0.1).spawn(projectile.getLocation());
+                ParticleDisplay.of(XParticle.HEART).withCount(10).offset(0.01).withExtra(0.1).spawn(projectile.getLocation());
 //                try {
 //                    finalLas.moveEnd(projectile.getLocation());
 //                } catch (ReflectiveOperationException e) {
@@ -83,7 +83,7 @@ public class PriestKindlingOfLife extends InstantActiveAbility {
         LivingEntity livingEntity = (LivingEntity) hit;
 
         XSound.ENTITY_EXPERIENCE_ORB_PICKUP.play((Entity) shooter, 2, 0);
-        hit.getWorld().spawnParticle(Particle.HEART, hit.getLocation(), 30, 0.5, 0.5, 0.5, 0.5);
+        hit.getWorld().spawnParticle(XParticle.HEART.get(), hit.getLocation(), 30, 0.5, 0.5, 0.5, 0.5);
 
         List<PotionEffect> effects;
         if (hit instanceof Player) effects = getEffects(info, "effects");

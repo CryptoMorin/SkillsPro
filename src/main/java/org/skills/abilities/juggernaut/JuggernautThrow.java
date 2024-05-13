@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.skills.abilities.ActiveAbility;
@@ -21,7 +22,6 @@ import org.skills.main.locale.SkillsLang;
 import org.skills.managers.DamageManager;
 import org.skills.utils.MathUtils;
 import org.skills.utils.versionsupport.VersionSupport;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.HashMap;
 import java.util.Locale;

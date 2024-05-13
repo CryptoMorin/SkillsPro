@@ -3,8 +3,8 @@ package org.skills.abilities.priest;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -40,7 +40,7 @@ public class PriestAsclepius extends InstantActiveAbility {
             if (ServiceHandler.areFriendly(player, entity)) {
                 applyEffects(info, target);
                 XSound.ENTITY_GENERIC_DRINK.play(entity);
-                target.getWorld().spawnParticle(Particle.SPELL_WITCH, target.getLocation(), 30, 0.5, 0.5, 0.5, 0.1);
+                target.getWorld().spawnParticle(XParticle.WITCH.get(), target.getLocation(), 30, 0.5, 0.5, 0.5, 0.1);
 
                 if (lvl > 2) {
                     for (PotionEffect debuff : target.getActivePotionEffects()) {
@@ -49,7 +49,7 @@ public class PriestAsclepius extends InstantActiveAbility {
                     }
                 }
             } else if (damage > 0) {
-                target.getWorld().spawnParticle(Particle.LAVA, target.getLocation(), 30, 0.5, 0.5, 0.5, 0.1);
+                target.getWorld().spawnParticle(XParticle.LAVA.get(), target.getLocation(), 30, 0.5, 0.5, 0.5, 0.1);
                 target.damage(damage);
             }
         }
@@ -57,8 +57,8 @@ public class PriestAsclepius extends InstantActiveAbility {
         XSound.ITEM_TOTEM_USE.play(player);
         XSound.ENTITY_BAT_TAKEOFF.play(player);
 
-        XParticle.circle(range * 2, range * 8, ParticleDisplay.simple(player.getLocation(), Particle.SMOKE_LARGE));
+        Particles.circle(range * 2, range * 8, ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(player.getLocation()));
         if (lvl > 1)
-            XParticle.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, 0.5, true, false, ParticleDisplay.simple(player.getLocation(), Particle.ENCHANTMENT_TABLE));
+            Particles.helix(SkillsPro.get(), lvl + 1, 1.5, 0.05, 1, 6, 3, 0.5, true, false, ParticleDisplay.of(XParticle.ENCHANT).withLocation(player.getLocation()));
     }
 }

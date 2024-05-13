@@ -2,10 +2,15 @@ package org.skills.abilities.firemage;
 
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -14,8 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.ActiveAbility;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
@@ -90,14 +93,14 @@ public class FireMageInferno extends ActiveAbility {
         event.setDamage(event.getDamage() + damage);
         player.getWorld().playEffect(entity.getLocation(), Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
         if (entity instanceof Player)
-            ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * 8, 0));
+            ((Player) entity).addPotionEffect(XPotion.NAUSEA.buildPotionEffect(20 * 8, 1));
         XSound.BLOCK_LAVA_POP.play(entity);
 
         if (lvl > 1) {
             player.setFireTicks((int) (player.getFireTicks() + (damageScaling * 20)));
             spreadFire(player.getLocation(), (int) getScaling(info, "range"));
             if (lvl > 2)
-                XParticle.helix(SkillsPro.get(), lvl, 1, 0.1, 1, 3, 1, 0.5, false, true, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME));
+                Particles.helix(SkillsPro.get(), lvl, 1, 0.1, 1, 3, 1, 0.5, false, true, ParticleDisplay.of(XParticle.FLAME).withLocation(entity.getLocation()));
         }
     }
 }

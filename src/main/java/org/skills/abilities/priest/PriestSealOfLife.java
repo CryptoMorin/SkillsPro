@@ -1,9 +1,9 @@
 package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class PriestSealOfLife extends Ability {
 
                 @Override
                 public void run() {
-                    p.spawnParticle(Particle.VILLAGER_HAPPY, p.getLocation(), 50, 1, 1, 1, 0);
+                    p.spawnParticle(XParticle.HAPPY_VILLAGER.get(), p.getLocation(), 50, 1, 1, 1, 0);
                     if (--i == 0) cancel();
                 }
             }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);

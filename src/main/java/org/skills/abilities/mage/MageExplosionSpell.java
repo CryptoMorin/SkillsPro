@@ -3,9 +3,9 @@ package org.skills.abilities.mage;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -56,12 +56,12 @@ public class MageExplosionSpell extends Ability {
 
                 XSound.ENTITY_GENERIC_EXPLODE.play(entity);
                 if (XMaterial.supports(12)) XSound.UI_TOAST_CHALLENGE_COMPLETE.play(entity);
-                XParticle.meguminExplosion(SkillsPro.get(), 3, ParticleDisplay.simple(entity.getLocation(), Particle.FLAME));
-                player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, entity.getLocation(), lvl * 3, 1, 1, 1);
+                Particles.meguminExplosion(SkillsPro.get(), 3, ParticleDisplay.of(XParticle.FLAME).withLocation(entity.getLocation()));
+                player.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), entity.getLocation(), lvl * 3, 1, 1, 1);
                 return;
             }
 
-            player.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, entity.getLocation(), lvl * 2, 1, 1, 1);
+            player.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), entity.getLocation(), lvl * 2, 1, 1, 1);
             XSound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST.play(entity);
             event.setDamage(event.getDamage() + damage);
         }

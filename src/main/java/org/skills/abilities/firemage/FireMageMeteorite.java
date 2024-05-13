@@ -2,9 +2,9 @@ package org.skills.abilities.firemage;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -53,8 +53,8 @@ public class FireMageMeteorite extends InstantActiveAbility {
 
         Location source = loc.clone().add(0, 5, 0);
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        ParticleDisplay display = ParticleDisplay.simple(null, Particle.FLAME).withCount(10);
-        ParticleDisplay ex = ParticleDisplay.simple(null, Particle.EXPLOSION_NORMAL).withCount(10).offset(1, 1, 1);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.FLAME).withLocation(null).withCount(10);
+        ParticleDisplay ex = ParticleDisplay.of(XParticle.EXPLOSION).withLocation(null).withCount(10).offset(1, 1, 1);
 
         new BukkitRunnable() {
             final float yield = (float) getScaling(info, "yield");
@@ -106,7 +106,7 @@ public class FireMageMeteorite extends InstantActiveAbility {
         Fireball fireBall = (Fireball) event.getEntity();
         if (!fireBall.hasMetadata(METEORITE)) return;
 
-        ParticleDisplay display = ParticleDisplay.simple(fireBall.getLocation(), Particle.LAVA).withCount(50).offset(1, 1, 1);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.LAVA).withLocation(fireBall.getLocation()).withCount(50).offset(1, 1, 1);
         display.spawn();
 
         Player player = (Player) fireBall.getMetadata(METEORITE).get(0).value();

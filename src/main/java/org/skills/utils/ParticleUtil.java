@@ -1,8 +1,8 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ParticleUtil {
-    public static final ParticleDisplay SPAWN_DESPAWN_PARTICLE = ParticleDisplay.of(Particle.CLOUD).withCount(50).offset(1, 1, 1);
+    public static final ParticleDisplay SPAWN_DESPAWN_PARTICLE = ParticleDisplay.of(XParticle.CLOUD).withCount(50).offset(1, 1, 1);
 
     private static final Vector UP = new Vector(0, 1, 0);
     private static final double UP_ANGLE = Math.PI / 2;

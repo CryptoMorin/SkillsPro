@@ -1,10 +1,9 @@
 package org.skills.abilities.eidolon;
 
+import com.cryptomorin.xseries.XPotion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.SkillsLang;
@@ -51,7 +50,7 @@ public class EidolonSpectre extends Ability {
         if (speed < 0) speed = 0;
         if (speed > 3) speed = 3;
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed));
+        player.addPotionEffect(XPotion.SPEED.buildPotionEffect(60, speed));
         SkillsLang.Skill_Eidolon_Shield_Speed.sendMessage(player);
         new Cooldown(player.getUniqueId(), "EShield", time, TimeUnit.SECONDS);
     }

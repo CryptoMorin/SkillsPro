@@ -1,12 +1,12 @@
 package org.skills.abilities.vergil;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class VergilVerticalSlash extends ActiveAbility {
         Player player = (Player) event.getDamager();
         LivingEntity mainVictim = (LivingEntity) event.getEntity();
 
-        ParticleDisplay display = ParticleDisplay.of(Particle.SWEEP_ATTACK)
+        ParticleDisplay display = ParticleDisplay.of(XParticle.SWEEP_ATTACK)
                 .rotate(ParticleDisplay.Rotation.of(-(Math.PI / 2), ParticleDisplay.Axis.Z))
                 .face(player)
                 .withLocation(player.getEyeLocation());
@@ -47,7 +47,7 @@ public class VergilVerticalSlash extends ActiveAbility {
         if (player.isSneaking() && UPPER_DOWN.getIfPresent(player.getUniqueId()) != null) {
             UPPER_DOWN.invalidate(player.getUniqueId());
 
-            XParticle.ellipse(
+            Particles.ellipse(
                     0, Math.PI,
                     Math.PI / 30,
                     3, 4,
@@ -70,7 +70,7 @@ public class VergilVerticalSlash extends ActiveAbility {
         SkilledPlayer info = checkup(player);
         if (info == null) return;
 
-        XParticle.ellipse(
+        Particles.ellipse(
                 0, Math.PI,
                 Math.PI / 30,
                 3, 4,

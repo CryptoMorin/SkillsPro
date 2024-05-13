@@ -73,7 +73,7 @@ public class MageEnergyFlux extends InstantActiveAbility {
 
         for (double i = 0.5D; i < length; i += 0.1) {
             Location loc = start.clone().add(x * i, y * i, z * i);
-            VersionSupport.spawnColouredDust(loc, color);
+            VersionSupport.spawnColouredDust(loc, new java.awt.Color(color.asRGB()));
             if (noPassThro || lvl < 3) {
                 if (canPassable) {
                     if (!loc.getBlock().isPassable()) break;

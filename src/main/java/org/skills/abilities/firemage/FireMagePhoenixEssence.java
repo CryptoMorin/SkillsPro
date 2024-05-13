@@ -4,11 +4,11 @@ import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -46,17 +46,13 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
     }
 
     public static void forwardSlash(double distance, ParticleDisplay display) {
-        forwardSlash(distance, display, null);
-    }
-
-    public static void forwardSlash(double distance, ParticleDisplay display, Player a) {
         new BukkitRunnable() {
             double limit = 0;
             private final Location loc = display.getLocation().clone();
 
             @Override
             public void run() {
-//                XParticle.ellipse(
+//                Particles.ellipse(
 //                        0, Math.PI,
 //                        Math.PI / 30,
 //                        3, 4,
@@ -74,7 +70,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                     rot = rot.mul(ParticleDisplay.Quaternion.rotation(45, new Vector(0, 0, 1)));
                     Vector vec = ParticleDisplay.Quaternion.rotate(local, rot);
                     spawnAt = spawnAt.add(vec);
-                    display.getLocation().getWorld().spawnParticle(display.getParticle(), spawnAt, 1, 0, 0, 0, 0, null, false);
+                    display.spawn(spawnAt);
                 }
 
                 if (limit++ >= distance) cancel();
@@ -106,7 +102,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
 
             @Override
             public void run() {
-                XParticle.circle(0.7, 30, ParticleDisplay.simple(location.add(0, step, 0), Particle.FLAME)
+                Particles.circle(0.7, 30, ParticleDisplay.of(XParticle.FLAME).withLocation(location.add(0, step, 0))
                         .directional().withExtra(.07).offset(0, 0, -0.03));
                 float pitch = 1f;
 
@@ -116,7 +112,9 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                     Bukkit.getScheduler().runTask(SkillsPro.get(), end);
                 }
 
-                XSound.BLOCK_CONDUIT_DEACTIVATE.play(location, 10, pitch);
+                XSound.BLOCK_CONDUIT_DEACTIVATE.or(XSound.ENTITY_ENDERMAN_TELEPORT)
+                        .record().withVolume(10).withPitch(pitch)
+                        .soundPlayer().atLocation(location).play();
             }
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0L, 5L);
     }
@@ -135,7 +133,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
         if (event.getAction() == Action.LEFT_CLICK_AIR && lvl >= getScaling(info, "levels.slash")) {
             if (Cooldown.isInCooldown(player.getUniqueId(), "FIREMAGE_SLASH")) return;
 
-            ParticleDisplay display = ParticleDisplay.simple(player.getEyeLocation(), Particle.SOUL_FIRE_FLAME);
+            ParticleDisplay display = ParticleDisplay.of(XParticle.SOUL_FIRE_FLAME.or(XParticle.FLAME)).withLocation(player.getEyeLocation());
             AtomicInteger i = new AtomicInteger();
             double zRot = Math.toRadians(45);
             if (state.getAndSet(!state.get())) {
@@ -173,7 +171,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                 final double maxDistance = getScaling(info, "distance.volcano");
                 final double throwForce = getScaling(info, "knockback.volcano");
                 final Vector directionIgnorePitch = location.getDirection().setY(0).normalize();
-                final Vector zipZag = directionIgnorePitch.clone().rotateAroundY(Math.PI / 2);
+                final Vector zipZag = ParticleDisplay.rotateAround(directionIgnorePitch.clone(), ParticleDisplay.Axis.Y, Math.PI / 2);
                 double distance = 1;
                 boolean odd;
 
@@ -185,7 +183,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                             .add(directionIgnorePitch.clone().multiply(distance))
                             .add(zipZag.clone().multiply(offset));
 
-                    volcano(20, 1, 0.1, ParticleDisplay.simple(loc, Particle.FLAME).directional().withExtra(1));
+                    volcano(20, 1, 0.1, ParticleDisplay.of(XParticle.FLAME).withLocation(loc).directional().withExtra(1));
                     playSound(player, info, "volcano");
 
                     Bukkit.getScheduler().runTask(SkillsPro.get(), () -> {
@@ -222,7 +220,7 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                         random.nextDouble(-1, rand),
                         random.nextDouble(-rand, rand)
                 );
-                ParticleDisplay.display(location, Particle.FLAME);
+                ParticleDisplay.of(XParticle.FLAME).withLocation(location).spawn();
                 if (count-- == 0) {
                     cancel();
                     ACITVATED.put(player.getEntityId(), new AtomicBoolean());
@@ -242,14 +240,14 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
         double initialDamage = getScaling(info, "damage.initial");
         double knockback = getScaling(info, "knockback.initial");
 
-        XParticle.sphere(3, 40, ParticleDisplay.simple(player.getLocation(), Particle.FLAME)
+        Particles.sphere(3, 40, ParticleDisplay.of(XParticle.FLAME).withLocation(player.getLocation())
                 .directional().withExtra(0.5).offset(0.5));
 
         Location loc = player.getLocation();
         for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (EntityUtil.filterEntity(player, entity)) continue;
             if (entity instanceof Player)
-                ParticleDisplay.simple(null, Particle.FLASH).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
+                ParticleDisplay.of(XParticle.FLASH).withLocation(null).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
 
             DamageManager.damage((LivingEntity) entity, player, initialDamage);
             EntityUtil.knockBack(entity, loc, knockback);
@@ -272,10 +270,13 @@ public class FireMagePhoenixEssence extends InstantActiveAbility {
                         if (entity == horse) continue;
                         if (EntityUtil.filterEntity(player, entity)) continue;
                         if (entity instanceof Player)
-                            ParticleDisplay.simple(null, Particle.FLASH).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
+                            ParticleDisplay.of(XParticle.FLASH).withLocation(null).onlyVisibleTo((Player) entity).spawn(entity.getLocation());
                         entity.setFireTicks(10 * 20);
                         Location loc = entity.getLocation();
-                        thunderTunnel(loc.clone(), 1, () -> entity.getWorld().strikeLightning(loc));
+                        thunderTunnel(loc.clone(), 1, () -> {
+                            entity.getWorld().strikeLightning(loc);
+                            XSound.ENTITY_LIGHTNING_BOLT_THUNDER.play(loc);
+                        });
                     }
                 }
             }.runTaskTimer(SkillsPro.get(), 5 * 20L, 5 * 20L);

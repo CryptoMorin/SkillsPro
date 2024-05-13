@@ -1,8 +1,12 @@
 package org.skills.abilities.eidolon;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
-import org.bukkit.*;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -31,7 +35,7 @@ public class EidolonDefile extends ActiveAbility {
         world.playEffect(loc, Effect.STEP_SOUND, Material.LAPIS_BLOCK);
         world.playEffect(loc, Effect.STEP_SOUND, Material.COAL_BLOCK);
         world.playEffect(loc, Effect.STEP_SOUND, Material.IRON_BLOCK);
-        XParticle.atom(4, 2, 30, ParticleDisplay.simple(loc, Particle.DRIP_LAVA), ParticleDisplay.simple(loc, Particle.FLAME));
+        Particles.atom(4, 2, 30, ParticleDisplay.of(XParticle.DRIPPING_LAVA).withLocation(loc), ParticleDisplay.of(XParticle.FLAME).withLocation(loc));
     }
 
     @EventHandler(ignoreCancelled = true)

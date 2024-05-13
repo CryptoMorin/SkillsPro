@@ -1,13 +1,13 @@
 package org.skills.abilities.priest;
 
-import org.bukkit.Particle;
+import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.skills.abilities.Ability;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.utils.MathUtils;
@@ -34,10 +34,10 @@ public class PriestMindPossession extends Ability {
         List<PotionEffect> effects = new ArrayList<>(3);
         int lvl = info.getAbilityLevel(this);
 
-        effects.add(new PotionEffect(PotionEffectType.BLINDNESS, (lvl * 5) * 20, 0));
+        effects.add(XPotion.BLINDNESS.buildPotionEffect((lvl * 5) * 20, 1));
         if (lvl > 1) {
-            effects.add(new PotionEffect(PotionEffectType.SLOW, (lvl * 10) * 20, 0));
-            player.spawnParticle(Particle.SPELL_MOB_AMBIENT, victim.getEyeLocation(), 30, 0.3, 0, 0.3, 0.3);
+            effects.add(XPotion.SLOWNESS.buildPotionEffect((lvl * 5) * 20, 1));
+            player.spawnParticle(XParticle.ENTITY_EFFECT.get(), victim.getEyeLocation(), 30, 0.3, 0, 0.3, 0.3);
         }
 
         victim.addPotionEffects(effects);

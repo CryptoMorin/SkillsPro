@@ -1,11 +1,12 @@
 package org.skills.abilities.vampire;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.EntityEffect;
-import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,7 +35,7 @@ public class VampireBloodCircuit extends ActiveAbility {
     }
 
     private static void killMinion(LivingEntity livingMinion) {
-        ParticleDisplay.simple(livingMinion.getLocation(), Particle.CLOUD).withCount(100).offset(0.5).withExtra(0.05).spawn();
+        ParticleDisplay.of(XParticle.CLOUD).withLocation(livingMinion.getLocation()).withCount(100).offset(0.5).withExtra(0.05).spawn();
         livingMinion.setHealth(0);
     }
 
@@ -64,7 +65,7 @@ public class VampireBloodCircuit extends ActiveAbility {
             victim.playEffect(EntityEffect.GUARDIAN_TARGET);
         }
 
-        EnderCrystal crystal = (EnderCrystal) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), EntityType.ENDER_CRYSTAL);
+        EnderCrystal crystal = (EnderCrystal) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), XEntityType.END_CRYSTAL.get());
         crystal.setShowingBottom(false);
 
         XSound.ENTITY_ELDER_GUARDIAN_CURSE.play(crystal.getLocation());
@@ -86,7 +87,7 @@ public class VampireBloodCircuit extends ActiveAbility {
             final int inferno = (int) getScaling(info, "inferno", event);
             final double distance = getScaling(info, "distance", event);
             final Set<LivingEntity> minions = new HashSet<>();
-            final ParticleDisplay particle = ParticleDisplay.simple(null, Particle.DRAGON_BREATH).withCount(10).offset(0.1);
+            final ParticleDisplay particle = ParticleDisplay.of(XParticle.DRAGON_BREATH).withLocation(null).withCount(10).offset(0.1);
             double damage = getScaling(info, "damage", event);
             int duration = (int) (getScaling(info, "duration", event) * 20);
             int repeat = 0;
@@ -97,7 +98,7 @@ public class VampireBloodCircuit extends ActiveAbility {
                 if (!entity.isValid() || !crystal.isValid() || duration-- <= 0) {
                     cancel();
                     if (useLaser) finalLaser.stop();
-                    ParticleDisplay.simple(crystal.getLocation(), Particle.SPELL_WITCH).withCount(200).offset(0.5).withExtra(0.5).spawn();
+                    ParticleDisplay.of(XParticle.WITCH).withLocation(crystal.getLocation()).withCount(200).offset(0.5).withExtra(0.5).spawn();
                     crystal.remove();
                     for (LivingEntity minion : minions) killMinion(minion);
                     return;
@@ -108,7 +109,7 @@ public class VampireBloodCircuit extends ActiveAbility {
                 if (particleTimer++ == 10) {
                     particleTimer = 0;
                     if (!useLaser)
-                        XParticle.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
+                        Particles.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
                 }
                 if (repeat++ == inferno) {
                     repeat = 0;

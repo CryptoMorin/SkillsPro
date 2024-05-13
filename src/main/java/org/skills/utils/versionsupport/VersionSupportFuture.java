@@ -1,8 +1,8 @@
 package org.skills.utils.versionsupport;
 
-import org.bukkit.Color;
+import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -12,6 +12,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -20,11 +21,11 @@ public class VersionSupportFuture {
     private static final String ATTRIBUTE_MODIFIER_NAME = "SkillsPro Class Max HP";
 
     public static void spawnColouredDust(Location loc) {
-        spawnColouredDust(loc, Color.AQUA);
+        spawnColouredDust(loc, Color.CYAN);
     }
 
-    public static void spawnColouredDust(Location loc, Color color) {
-        loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 1, new Particle.DustOptions(color, 2));
+    public static void spawnColouredDust(Location loc, java.awt.Color color) {
+        ParticleDisplay.of(XParticle.DUST).withLocation(loc).withColor(color, 2f).spawn();
     }
 
     public static boolean isPassenger(Entity e, Entity pass) {

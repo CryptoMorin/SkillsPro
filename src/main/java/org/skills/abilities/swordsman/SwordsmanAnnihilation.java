@@ -3,10 +3,10 @@ package org.skills.abilities.swordsman;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -81,7 +81,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         if (!info.getActiveAbilities().contains(this)) return;
         new Cooldown(player.getUniqueId(), META, (long) getScaling(info, "throw.cooldown"), TimeUnit.SECONDS);
 
-        ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1).withCount(10);
+        ParticleDisplay remove = ParticleDisplay.of(XParticle.CLOUD).withLocation(null).offset(0.1).withCount(10);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Set<Item> items = ConcurrentHashMap.newKeySet();
         XSound.ENTITY_WITHER_SHOOT.play(player.getLocation(), 3.0f, 0.5f);
@@ -102,8 +102,8 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         new BukkitRunnable() {
             final double xDir = Math.toRadians(from.getPitch() + 90);
             final double yDir = Math.toRadians(-from.getYaw());
-            final double dist = XParticle.PII / items.size();
-            final ParticleDisplay display = ParticleDisplay.simple(null, Particle.DRAGON_BREATH);
+            final double dist = Particles.PII / items.size();
+            final ParticleDisplay display = ParticleDisplay.of(XParticle.DRAGON_BREATH);
             double rate = 1;
             double radius = 1;
             boolean reverse = false;
@@ -116,7 +116,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
                 Location mid = from.clone().add(middle);
                 new BukkitRunnable() {
                     final double damage = getScaling(info, "throw.damage");
-                    final ParticleDisplay sweep = ParticleDisplay.simple(null, Particle.SWEEP_ATTACK).offset(0.3).withCount(5);
+                    final ParticleDisplay sweep = ParticleDisplay.of(XParticle.SWEEP_ATTACK).withLocation(null).offset(0.3).withCount(5);
 
                     @Override
                     public void run() {
@@ -177,7 +177,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
         info.setActiveAbilitiy(this, true);
 
-        ParticleDisplay remove = ParticleDisplay.simple(null, Particle.CLOUD).offset(0.1, 0.1, 0.1).withCount(10);
+        ParticleDisplay remove = ParticleDisplay.of(XParticle.CLOUD).withLocation(null).offset(0.1, 0.1, 0.1).withCount(10);
         List<Item> items = new ArrayList<>(SWORDS.length);
         new BukkitRunnable() {
             final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -201,7 +201,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
 
         long duration = (long) getScaling(info, "duration") * 20L;
         XSound.MUSIC_DISC_FAR.play(player, 10f, 0.5f);
-        BukkitTask curl = XParticle.blackhole(SkillsPro.get(), 5, 2, 30, 1, (int) duration, ParticleDisplay.simple(player.getLocation(), Particle.FLAME).withEntity(player));
+        BukkitTask curl = Particles.blackhole(SkillsPro.get(), 5, 2, 30, 1, (int) duration, ParticleDisplay.of(XParticle.FLAME).withLocation(player.getLocation()).withEntity(player));
         Map<Integer, Integer> fighting = new HashMap<>();
         Set<Integer> mobs = new HashSet<>();
 
@@ -217,7 +217,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
             final double rateDiv = pi / 30;
             final double rotMin = pi / 100;
             final double rotMax = pi / 50;
-            final ParticleDisplay display = ParticleDisplay.simple(null, Particle.SPELL_WITCH);
+            final ParticleDisplay display = ParticleDisplay.of(XParticle.WITCH);
             final ThreadLocalRandom random = ThreadLocalRandom.current();
             long dur = duration;
 
@@ -253,8 +253,8 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
             final double damage = getScaling(info, "damage");
             final double rateDiv = Math.PI / 20;
 
-            final ParticleDisplay display = ParticleDisplay.of(XMaterial.supports(16) ? Particle.SOUL_FIRE_FLAME : Particle.SPELL_WITCH);
-            final ParticleDisplay sweep = ParticleDisplay.of(Particle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
+            final ParticleDisplay display = ParticleDisplay.of(XMaterial.supports(16) ? XParticle.SOUL_FIRE_FLAME : XParticle.WITCH);
+            final ParticleDisplay sweep = ParticleDisplay.of(XParticle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
 
             @Override
             public void run() {

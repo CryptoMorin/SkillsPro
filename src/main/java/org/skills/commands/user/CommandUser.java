@@ -1,7 +1,7 @@
 package org.skills.commands.user;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
-import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.particles.Particles;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -41,23 +41,23 @@ public class CommandUser extends SkillsCommand {
     public static void magicCircle(int tier, double size, ParticleDisplay display) {
         if (tier == 1) {
             // https://i.pinimg.com/originals/aa/ee/0a/aaee0a69680c1cd8b6d30d1814028143.jpg
-            XParticle.polygon(4, 4, size, 0.02, 0.3, display);
-            XParticle.polygon(4, 3, size / (size - 1), 0.5, 0, display.clone().rotate(0, Math.PI / 2, 0));
-            XParticle.polygon(8, 3, size / (size - 1), 0.5, 0, display);
-            XParticle.polygon(8, 3, size / (size - 1), 0.5, 0, display);
+            Particles.polygon(4, 4, size, 0.02, 0.3, display);
+            Particles.polygon(4, 3, size / (size - 1), 0.5, 0, display.clone().rotate(0, Math.PI / 2, 0));
+            Particles.polygon(8, 3, size / (size - 1), 0.5, 0, display);
+            Particles.polygon(8, 3, size / (size - 1), 0.5, 0, display);
         } else if (tier == 2) {
             // https://i.pinimg.com/236x/41/bf/2d/41bf2d9769fc135039049c1f72bd011b--magic-circle-fantasy-weapons.jpg
-            XParticle.polygon(3, 3, size / (size - 1), 0.5, 0, display);
-            XParticle.polygon(6, 3, size / (size - 1), 0.5, 0, display);
+            Particles.polygon(3, 3, size / (size - 1), 0.5, 0, display);
+            Particles.polygon(6, 3, size / (size - 1), 0.5, 0, display);
         } else if (tier == 3) {
             // https://vignette.wikia.nocookie.net/overlordmaruyama/images/3/38/Overlord_EP04_023.png/revision/latest/scale-to-width-down/340?cb=20150730120703
         } else if (tier == 4) {
             // https://thumbs.dreamstime.com/b/sacred-geometry-magic-circle-rune-simple-sacred-geometry-magic-circle-rune-star-107887158.jpg
-            XParticle.polygon(8, 3, size / (size - 1), 0.5, 0, display);
-            XParticle.circle(size, size * 5, display);
+            Particles.polygon(8, 3, size / (size - 1), 0.5, 0, display);
+            Particles.circle(size, size * 5, display);
         }
 
-        XParticle.circle(size, size * 10, display);
+        Particles.circle(size, size * 10, display);
     }
 
     public static void handle(SkillsCommand cmd, @NotNull CommandSender sender, @NotNull String[] args, UserAmountHandler handler) {

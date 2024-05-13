@@ -2,8 +2,8 @@ package org.skills.abilities.eidolon;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
@@ -41,7 +41,7 @@ public class EidolonFangs extends InstantActiveAbility {
         int amount = (int) getScaling(info, "fangs");
 
         EntityType type = XMaterial.supports(11) ? EntityType.EVOKER_FANGS : EntityType.FIREBALL;
-        ParticleDisplay display = ParticleDisplay.of(Particle.DRAGON_BREATH).withCount(20).offset(1);
+        ParticleDisplay display = ParticleDisplay.of(XParticle.DRAGON_BREATH).withCount(20).offset(1);
 
         if (player.isSneaking()) {
             for (Entity entity : player.getNearbyEntities(5, 5, 5)) {

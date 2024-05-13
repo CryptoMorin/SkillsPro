@@ -1,8 +1,8 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.particles.ParticleDisplay;
+import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -120,26 +120,26 @@ public final class WingModel {
         for (Vector point : outline) {
             rotated = rotate(point, rot);
 
-            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), Particle.DRAGON_BREATH);
+            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), XParticle.DRAGON_BREATH.get());
 
             point.setZ(point.getZ() * -1);
             rotated = rotate(point, rot + 3.1415f);
             point.setZ(point.getZ() * -1);
 
-            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), Particle.FLAME);
+            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), XParticle.FLAME.get());
         }
 
         for (Vector point : fill) {
             rotated = rotate(point, rot);
 
-            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), Particle.SWEEP_ATTACK);
+            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), XParticle.SWEEP_ATTACK.get());
 //            ParticleEffect.SWEEP_ATTACK.display(3f, 3f, 3f, 1f, 0,
 
             point.setZ(point.getZ() * -1);
             rotated = rotate(point, rot + 3.1415f);
             point.setZ(point.getZ() * -1);
 
-            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), Particle.SWEEP_ATTACK);
+            ParticleDisplay.display(new Location(playerWorld, rotated.getX() + x, rotated.getY() + y, rotated.getZ() + z), XParticle.SWEEP_ATTACK.get());
         }
     }
 }
