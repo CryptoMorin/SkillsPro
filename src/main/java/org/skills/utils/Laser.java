@@ -1,6 +1,7 @@
 package org.skills.utils;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import static com.cryptomorin.xseries.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.*;
 
 /**
  * A whole class to create Guardian Beams by reflection </br>
@@ -79,8 +80,8 @@ public final class Laser {
             createSquidPacket = NMSReflection.createSpawnPacket(end, NMSReflection.SQUID_TYPE);
         }
 
-        String UUIDFieldName = ReflectionUtils.v(19, "d").orElse("b");
-        String EntityIdFieldName = ReflectionUtils.v(19, "c").orElse("a");
+        String UUIDFieldName = XReflection.v(19, "d").orElse("b");
+        String EntityIdFieldName = XReflection.v(19, "c").orElse("a");
 
         UUID squidUUID = (UUID) NMSReflection.getField(UUIDFieldName, createSquidPacket); // private final UUID d;
         int squidId = (int) NMSReflection.getField(EntityIdFieldName, createSquidPacket); // private final int c;
@@ -136,7 +137,7 @@ public final class Laser {
                     Location end = getEndLocation();
                     if (end != null) {
                         Object packet = NMSReflection.teleport(squid, end);
-                        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
+                        for (Player player : players.values()) MinecraftConnection.sendPacket(player, packet);
                     }
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
@@ -155,7 +156,7 @@ public final class Laser {
     }
 
     public void destroy(Player player) {
-        ReflectionUtils.sendPacket(player, destroyPacket);
+        MinecraftConnection.sendPacket(player, destroyPacket);
     }
 
     public void clear() {
@@ -170,7 +171,7 @@ public final class Laser {
     public void moveStart(Location location) throws ReflectiveOperationException {
         this.start = location;
         Object packet = NMSReflection.teleport(guardian, start);
-        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
+        for (Player player : players.values()) MinecraftConnection.sendPacket(player, packet);
     }
 
     public Location getStart() {
@@ -182,11 +183,11 @@ public final class Laser {
 //        this.end = location.add(location.toVector().subtract(start.toVector()).normalize().multiply(-1.5));
         this.endLocationTracker = endLocationTracker;
 //        Object packet = NMSReflection.teleport(squid, end);
-//        for (Player player : players.values()) ReflectionUtils.sendPacket(player, packet);
+//        for (Player player : players.values()) MinecraftConnection.sendPacket(player, packet);
     }
 
     public void callColorChange() {
-        for (Player player : players.values()) sendPacket(player, metadataPacketGuardian);
+        for (Player player : players.values()) MinecraftConnection.sendPacket(player, metadataPacketGuardian);
     }
 
     public boolean isStarted() {
@@ -215,14 +216,14 @@ public final class Laser {
                 }
             }
 
-            sendPacketSync(player, packets.toArray());
+            MinecraftConnection.sendPacket(player, packets.toArray());
         }, 5L);
 
         packets.add(createSquidPacket);
         if (supports(15)) {
             packets.add(metadataPacketSquid);
         }
-        sendPacketSync(player, packets.toArray());
+        MinecraftConnection.sendPacket(player, packets.toArray());
     }
 
     private boolean isCloseEnough(Location location) {
@@ -274,7 +275,7 @@ public final class Laser {
             Class<?> dataWatcherObject = getNMSClass("network.syncher", "DataWatcherObject");
             Class<?> entityTypes = getNMSClass("world.entity", "EntityTypes");
             Class<?> packetSpawnClass = getNMSClass("network.protocol.game",
-                    ReflectionUtils.v(19, "PacketPlayOutSpawnEntity").orElse("PacketPlayOutSpawnEntityLiving"));
+                    XReflection.v(19, "PacketPlayOutSpawnEntity").orElse("PacketPlayOutSpawnEntityLiving"));
 
             packetRemove = getNMSClass("network.protocol.game", "PacketPlayOutEntityDestroy");
             packetTeleport = getNMSClass("network.protocol.game", "PacketPlayOutEntityTeleport");
@@ -284,37 +285,37 @@ public final class Laser {
             try {
                 String watcherInvis; // protected static final DataWatcherObject<Byte> an;
                 String watcherSpikes, watcherAttacker;
-                if (ReflectionUtils.MINOR_NUMBER < 13) {
+                if (XReflection.MINOR_NUMBER < 13) {
                     watcherInvis = "Z";
                     watcherSpikes = "bA";
                     watcherAttacker = "bB";
                     SQUID_TYPE = 94;
                     GUARDIAN_TYPE = 68;
-                } else if (ReflectionUtils.MINOR_NUMBER == 13) {
+                } else if (XReflection.MINOR_NUMBER == 13) {
                     watcherInvis = "ac";
                     watcherSpikes = "bF";
                     watcherAttacker = "bG";
                     SQUID_TYPE = 70;
                     GUARDIAN_TYPE = 28;
-                } else if (ReflectionUtils.MINOR_NUMBER == 14) {
+                } else if (XReflection.MINOR_NUMBER == 14) {
                     watcherInvis = "W";
                     watcherSpikes = "b";
                     watcherAttacker = "bD";
                     SQUID_TYPE = 73;
                     GUARDIAN_TYPE = 30;
-                } else if (ReflectionUtils.MINOR_NUMBER == 15) {
+                } else if (XReflection.MINOR_NUMBER == 15) {
                     watcherInvis = "T";
                     watcherSpikes = "b";
                     watcherAttacker = "bA";
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
-                } else if (ReflectionUtils.MINOR_NUMBER == 16) {
+                } else if (XReflection.MINOR_NUMBER == 16) {
                     watcherInvis = "S"; // protected static final DataWatcherObject<Byte>    S;
                     watcherSpikes = "b"; // private   static final DataWatcherObject<Boolean> b;
                     watcherAttacker = "d"; // private   static final DataWatcherObject<Integer> d;
                     SQUID_TYPE = 74;
                     GUARDIAN_TYPE = 31;
-                } else if (ReflectionUtils.MINOR_NUMBER == 17) {
+                } else if (XReflection.MINOR_NUMBER == 17) {
                     watcherInvis = "Z";
                     watcherSpikes = "b";
                     watcherAttacker = "e";
@@ -441,7 +442,7 @@ public final class Laser {
 
         @SuppressWarnings("PrimitiveArrayArgumentToVarargsMethod")
         public static Object createPacketRemoveEntities(int squidId, int guardianId) throws ReflectiveOperationException {
-            if (ReflectionUtils.supports(17)) {
+            if (XReflection.supports(17)) {
                 Constructor<?> ctor = packetRemove.getConstructor(int[].class);
                 return ctor.newInstance(new int[]{squidId, guardianId});
             }
@@ -492,7 +493,7 @@ public final class Laser {
             if (supports(17)) {
                 try {
                     setLocation(entityInfo.entity, location);
-                    packet = packetTeleport.getConstructor(ReflectionUtils.getNMSClass("world.entity", "Entity")).newInstance(entityInfo.entity);
+                    packet = packetTeleport.getConstructor(XReflection.getNMSClass("world.entity", "Entity")).newInstance(entityInfo.entity);
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                     return null;

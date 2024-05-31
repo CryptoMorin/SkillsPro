@@ -1,8 +1,8 @@
 package org.skills.managers.resurrect;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.XWorldBorder;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -147,7 +147,7 @@ final class LastManStanding {
             Location loc = player.getLocation();
             for (Player player : player.getWorld().getPlayers()) {
                 if (this.player != player && LocationUtils.distanceSquared(loc, player.getLocation()) < LastBreath.VIEW_DISTANCE) {
-                    ReflectionUtils.sendPacketSync(player, metadata);
+                    MinecraftConnection.sendPacket(player, metadata);
                 }
             }
         });

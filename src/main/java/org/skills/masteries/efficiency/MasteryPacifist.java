@@ -1,6 +1,7 @@
 package org.skills.masteries.efficiency;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class MasteryPacifist extends Mastery {
         if (VersionSupport.isCropFullyGrown(block)) {
             XMaterial type = XMaterial.matchXMaterial(block.getType());
             List<String> disabled = getExtra("disabled-blocks").getStringList();
-            if (type.isOneOf(disabled)) return;
+            if (XTag.anyMatchString(type, disabled)) return;
 
             SkilledPlayer info = this.checkup(player);
             if (info == null) return;

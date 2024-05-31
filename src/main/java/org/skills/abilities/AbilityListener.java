@@ -2,6 +2,7 @@ package org.skills.abilities;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.XTag;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.google.common.cache.Cache;
@@ -262,13 +263,13 @@ public class AbilityListener implements Listener {
 
             // Check if your item in hand is blacklisted
             XMaterial mat = XMaterial.matchXMaterial(item);
-            if (mat.isOneOf(SkillsConfig.PREVENT_ACTIVATION_ITEMS.getStringList())) return;
+            if (XTag.anyMatchString(mat, SkillsConfig.PREVENT_ACTIVATION_ITEMS.getStringList())) return;
 
             // If you're trying to place/break blocks, ignore.
             if (action == Action.RIGHT_CLICK_BLOCK) {
                 Block clicked = event.getClickedBlock();
                 if (item.getType().isBlock()) return;
-                if (XMaterial.matchXMaterial(clicked.getType()).isOneOf(SkillsConfig.PREVENT_ACTIVATION_BLOCKS.getStringList()))
+                if (XTag.anyMatchString(XMaterial.matchXMaterial(clicked.getType()), SkillsConfig.PREVENT_ACTIVATION_BLOCKS.getStringList()))
                     return;
             }
 

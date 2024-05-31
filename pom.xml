@@ -6,7 +6,7 @@
 
     <groupId>org.skills</groupId>
     <artifactId>SkillsPro</artifactId>
-    <version>19.4.3</version>
+    <version>19.5.1</version>
     <packaging>jar</packaging>
 
     <name>SkillsPro</name>
@@ -36,11 +36,11 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
-<!-- DOESNT WORK       <repository>-->
-<!--            <id>mvdw-software</id>-->
-<!--            <name>MVdW Public Repositories</name>-->
-<!--            <url>https://repo.mvdw-software.be/content/groups/public/</url>-->
-<!--        </repository>-->
+        <!-- DOESNT WORK       <repository>-->
+        <!--            <id>mvdw-software</id>-->
+        <!--            <name>MVdW Public Repositories</name>-->
+        <!--            <url>https://repo.mvdw-software.be/content/groups/public/</url>-->
+        <!--        </repository>-->
 
         <repository>
             <id>Scarsz-Nexus</id>
@@ -126,19 +126,19 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--         It's not free and I don't know where to find the jar anymore. -->
-<!--            <groupId>org.mineacademy</groupId>-->
-<!--            <artifactId>boss</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>*</groupId>-->
-<!--                    <artifactId>*</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--         It's not free and I don't know where to find the jar anymore. -->
+        <!--            <groupId>org.mineacademy</groupId>-->
+        <!--            <artifactId>boss</artifactId>-->
+        <!--            <version>1.0.0</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>*</groupId>-->
+        <!--                    <artifactId>*</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.magmaguy</groupId>
@@ -180,18 +180,18 @@
             </exclusions>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.massivecraft</groupId>-->
-<!--            <artifactId>savagefactions</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>*</groupId>-->
-<!--                    <artifactId>*</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.massivecraft</groupId>-->
+        <!--            <artifactId>savagefactions</artifactId>-->
+        <!--            <version>1.0.0</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>*</groupId>-->
+        <!--                    <artifactId>*</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.massivecraft</groupId>

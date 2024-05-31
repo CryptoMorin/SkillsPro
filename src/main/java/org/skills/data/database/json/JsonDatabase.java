@@ -94,15 +94,14 @@ public class JsonDatabase<T extends DataContainer> implements SkillsDatabase<T> 
         T info;
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             info = gson.fromJson(reader, adapter);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (Throwable e) {
+            throw new RuntimeException("Cannot load data file " + path, e);
         }
 
         if (info == null) {
             try {
                 SLogger.error("Corrupted data file '" + path + "': " + Files.readAllLines(path));
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
             return null;

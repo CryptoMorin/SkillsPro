@@ -1,7 +1,7 @@
 package org.skills.utils.versionsupport;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -22,10 +22,10 @@ public class VersionSupport {
     }
 
     public void ensurePatch() {
-        int latestPatch = ReflectionUtils.getLatestPatchNumberOf(ReflectionUtils.MINOR_NUMBER);
-        if (latestPatch < ReflectionUtils.PATCH_NUMBER) {
+        int latestPatch = XReflection.getLatestPatchNumberOf(XReflection.MINOR_NUMBER);
+        if (latestPatch < XReflection.PATCH_NUMBER) {
             throw new IllegalStateException("Your server is currently running a patch version that's not supported: "
-                    + ReflectionUtils.getVersionInformation() + " Update to the latest patch: v1." + ReflectionUtils.MINOR_NUMBER + '.' + latestPatch);
+                    + XReflection.getVersionInformation() + " Update to the latest patch: v1." + XReflection.MINOR_NUMBER + '.' + latestPatch);
         }
     }
 

@@ -1,6 +1,7 @@
 package org.skills.abilities.swordsman;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -25,7 +26,7 @@ public class SwordsmanDodge extends Ability {
 
         ItemStack item = player.getInventory().getItemInMainHand();
         XMaterial match = XMaterial.matchXMaterial(item);
-        if (!match.isOneOf(getOptions(info).getStringList("weapons"))) return;
+        if (!XTag.anyMatchString(match, getOptions(info).getStringList("weapons"))) return;
 
         if (MathUtils.hasChance((int) this.getScaling(info, "chance", event))) {
             event.setCancelled(true);

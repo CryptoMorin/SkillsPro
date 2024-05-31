@@ -5,7 +5,7 @@ Each skill has its own unique passive and active abilities. These abilities can 
 Masteries is another system that gives small abilities to all the players regardless of their skill.\
 Stats and leveling system is another feature that improves your abilities and other misc stuff.
 
-
 ### Links
+
 * [SpigotMC](https://www.spigotmc.org/resources/8981/)
 * [Discord](https://discordapp.com/invite/4NC4Ze7)

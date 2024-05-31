@@ -1,7 +1,7 @@
 package org.skills.utils.nbt;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -15,7 +15,7 @@ public final class NBTWrappers {
     }
 
     private static Class<?> getNBTClass(String clazz) {
-        return ReflectionUtils.getNMSClass("nbt", clazz);
+        return XReflection.getNMSClass("nbt", clazz);
     }
 
     private static Field getDeclaredField(Class<?> clazz, String... names) {
@@ -616,7 +616,7 @@ public final class NBTWrappers {
                 }
 
                 getTypeId = lookup.findVirtual(nbtBase,
-                        ReflectionUtils.v(19, "b").v(18, "a").orElse("getTypeId"),
+                        XReflection.v(19, "b").v(18, "a").orElse("getTypeId"),
                         MethodType.methodType(byte.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();

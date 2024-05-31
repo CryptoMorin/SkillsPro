@@ -1,6 +1,6 @@
 package org.skills.services.mobs;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
@@ -9,7 +9,7 @@ import org.skills.main.SLogger;
 import org.skills.utils.Pair;
 
 public class ServiceMythicMobs {
-    private static final boolean SUPPORTED = ReflectionUtils.supports(16);
+    private static final boolean SUPPORTED = XReflection.supports(16);
 
     static {
         if (!SUPPORTED) SLogger.warn("MythicMobs support cannot be enabled for your server version.");

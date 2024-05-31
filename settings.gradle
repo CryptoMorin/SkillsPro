@@ -5,3 +5,5 @@
  */
 
 rootProject.name = 'SkillsPro'
+
+// includeBuild("../XSeries")

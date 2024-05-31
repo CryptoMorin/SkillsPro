@@ -1,7 +1,10 @@
 package org.skills.utils;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftPackage;
 import com.mojang.datafixers.util.Pair;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -16,7 +19,8 @@ import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.List;
 
-import static com.cryptomorin.xseries.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.getCraftClass;
+import static com.cryptomorin.xseries.reflection.XReflection.ofMinecraft;
 
 /**
  * Currently not used. Supposed to be used to hide Devourer's armor using {@link org.skills.abilities.devourer.DevourerCloak} ability.
@@ -86,7 +90,7 @@ public final class ArmorInvisibility {
     }
 
     private static void sendAllPacket(World world, Object... packets) {
-        for (Player player : world.getPlayers()) ReflectionUtils.sendPacket(player, packets);
+        for (Player player : world.getPlayers()) MinecraftConnection.sendPacket(player, packets);
     }
 
     public void setArmorInvisible(LivingEntity entity) {

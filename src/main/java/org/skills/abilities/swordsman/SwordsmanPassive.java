@@ -1,7 +1,12 @@
 package org.skills.abilities.swordsman;
 
-import com.cryptomorin.xseries.*;
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.XTag;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
+import com.cryptomorin.xseries.reflection.minecraft.NMSExtras;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
@@ -93,7 +98,7 @@ public class SwordsmanPassive extends Ability {
             if (info == null) return;
 
             XMaterial match = XMaterial.matchXMaterial(item);
-            if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
+            if (!XTag.anyMatchString(match, getOptions(info, "weapons").getStringList())) return;
 
             NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -122,7 +127,7 @@ public class SwordsmanPassive extends Ability {
         if (info == null) return;
 
         XMaterial match = XMaterial.matchXMaterial(item);
-        if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
+        if (!XTag.anyMatchString(match, getOptions(info, "weapons").getStringList())) return;
 
         double damage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
         int sharpness = item.getEnchantmentLevel(XEnchantment.SHARPNESS.getEnchant());
@@ -135,7 +140,7 @@ public class SwordsmanPassive extends Ability {
         NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
 
         EntityDamageByEntityEvent damageEvent;
-        if (ReflectionUtils.supports(20, 5)) {
+        if (XReflection.supports(20, 5)) {
             damageEvent = new EntityDamageByEntityEvent(player, entity,
                     EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                     DamageSource.builder(DamageType.PLAYER_ATTACK).withCausingEntity(player).withDirectEntity(player).build(),

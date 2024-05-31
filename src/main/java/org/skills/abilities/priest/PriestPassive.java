@@ -1,8 +1,8 @@
 package org.skills.abilities.priest;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -71,7 +71,7 @@ public class PriestPassive extends Ability {
     }
 
     private static boolean isWaterLogged(Block block) {
-        if (ReflectionUtils.supports(13)) {
+        if (XReflection.supports(13)) {
             if (block.getBlockData() instanceof Waterlogged) {
                 Waterlogged wl = (Waterlogged) block.getBlockData();
                 return wl.isWaterlogged();
@@ -104,7 +104,7 @@ public class PriestPassive extends Ability {
             if (!getOptions(info, "jesus").getBoolean()) return;
 
             Block block = player.getLocation().getBlock();
-            if ((ReflectionUtils.supports(16) && player.isInWater()) ||
+            if ((XReflection.supports(16) && player.isInWater()) ||
                     isWaterLogged(block) || isWaterLogged(block.getRelative(BlockFace.DOWN))) {
                 if (player.getAllowFlight()) {
                     player.spawnParticle(XParticle.CLOUD.get(), player.getLocation(), 5, 0.1, 0.1, 0.1, 0.1);

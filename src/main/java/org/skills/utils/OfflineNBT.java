@@ -1,5 +1,8 @@
 package org.skills.utils;
 
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftPackage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.skills.main.SkillsConfig;
@@ -12,7 +15,7 @@ import java.lang.invoke.MethodType;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static com.cryptomorin.xseries.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.ofMinecraft;
 
 public final class OfflineNBT {
     private static final MethodHandle GET_COMPOUND;

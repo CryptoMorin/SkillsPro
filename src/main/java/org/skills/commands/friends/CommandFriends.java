@@ -1,6 +1,6 @@
 package org.skills.commands.friends;
 
-import com.cryptomorin.xseries.SkullUtils;
+import com.cryptomorin.xseries.XSkull;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -44,7 +44,7 @@ public class CommandFriends extends SkillsCommand {
             GUIOption holder = gui.getHolder("friend");
             ItemStack item = holder.getItem();
             ItemMeta meta = item.getItemMeta();
-            if (meta instanceof SkullMeta) SkullUtils.applySkin(meta, friend);
+            if (meta instanceof SkullMeta) XSkull.of(meta).profile(friend).apply();
             else
                 MessageHandler.sendConsolePluginMessage("&4Cannot set friend skin on an item that is not a skull&8: &e" + item);
             item.setItemMeta(meta);

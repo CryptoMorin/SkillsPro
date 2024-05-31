@@ -1,6 +1,7 @@
 package org.skills.abilities;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import com.google.common.base.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,7 +65,7 @@ public abstract class ActiveAbility extends Ability {
     public boolean isWeaponAllowed(SkilledPlayer info, ItemStack item) {
         List<String> list = getOptions(info).getStringList("activation.items");
         if (list.isEmpty()) return true;
-        return XMaterial.matchXMaterial(item).isOneOf(list);
+        return XTag.anyMatch(XMaterial.matchXMaterial(item), XTag.stringMatcher(list, null));
     }
 
     public double getCooldown(SkilledPlayer info) {

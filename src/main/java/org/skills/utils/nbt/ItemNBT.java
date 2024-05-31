@@ -1,6 +1,8 @@
 package org.skills.utils.nbt;
 
-import com.cryptomorin.xseries.ReflectionUtils;
+import com.cryptomorin.xseries.reflection.XReflection;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftPackage;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.invoke.MethodHandle;
@@ -9,7 +11,8 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-import static com.cryptomorin.xseries.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.ofMinecraft;
+import static com.cryptomorin.xseries.reflection.XReflection.supports;
 
 public final class ItemNBT {
     public static final boolean CAN_ACCESS_UNBREAKABLE = supports(11), SUPPORTS_COMPONENTS;
@@ -28,9 +31,9 @@ public final class ItemNBT {
         boolean supportsComponents = false;
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Class<?> crafItemStack = ReflectionUtils.getCraftClass("inventory.CraftItemStack");
-        Class<?> nmsItemStack = ReflectionUtils.getNMSClass("world.item", "ItemStack");
-        Class<?> nbtTagCompound = ReflectionUtils.getNMSClass("nbt", "NBTTagCompound");
+        Class<?> crafItemStack = XReflection.getCraftClass("inventory.CraftItemStack");
+        Class<?> nmsItemStack = XReflection.getNMSClass("world.item", "ItemStack");
+        Class<?> nbtTagCompound = XReflection.getNMSClass("nbt", "NBTTagCompound");
         // Why does this show up as "CompoundTag" in stacktraces???!?!?? Oh because of paper's remapping...
 
         try {
@@ -50,7 +53,7 @@ public final class ItemNBT {
                     .inPackage(MinecraftPackage.NMS, "core.component")
                     .map(MinecraftMapping.MOJANG, "DataComponents")
                     .reflect();
-            ReflectionUtils.getNMSClass("core.component", "DataComponentHolder");
+            XReflection.getNMSClass("core.component", "DataComponentHolder");
             Class<?> DataComponentTypeClass = ofMinecraft()
                     .inPackage(MinecraftPackage.NMS, "core.component")
                     .map(MinecraftMapping.MOJANG, "DataComponentType")
@@ -66,7 +69,7 @@ public final class ItemNBT {
              *      return this.r.b(datacomponenttype, t0);
              * }
              */
-            setTag = lookup.findVirtual(nmsItemStack, ReflectionUtils.v(20, 5, "b").orElse("set"),
+            setTag = lookup.findVirtual(nmsItemStack, XReflection.v(20, 5, "b").orElse("set"),
                     MethodType.methodType(Object.class, DataComponentTypeClass, Object.class));
 
             /*
@@ -75,7 +78,7 @@ public final class ItemNBT {
              *      return this.a().a(var0);
              * }
              */
-            getTag = lookup.findVirtual(nmsItemStack, ReflectionUtils.v(20, 5, "a").orElse("get"),
+            getTag = lookup.findVirtual(nmsItemStack, XReflection.v(20, 5, "a").orElse("get"),
                     MethodType.methodType(Object.class, DataComponentTypeClass));
 
             /*
@@ -83,7 +86,7 @@ public final class ItemNBT {
              *      return this.e.i();
              * }
              */
-            copyTag = lookup.findVirtual(CustomDataClass, ReflectionUtils.v(20, 5, "c").orElse("copyTag"),
+            copyTag = lookup.findVirtual(CustomDataClass, XReflection.v(20, 5, "c").orElse("copyTag"),
                     MethodType.methodType(nbtTagCompound));
 
             /*
@@ -96,17 +99,17 @@ public final class ItemNBT {
             customDataCtor = lookup.unreflectConstructor(customDataCtorJvm);
 
             // net.minecraft.core.component.DataComponents#CUSTOM_DATA
-            Field typeField = DataComponentsClass.getDeclaredField(ReflectionUtils.v(20, 5, "b").orElse("CUSTOM_DATA"));
+            Field typeField = DataComponentsClass.getDeclaredField(XReflection.v(20, 5, "b").orElse("CUSTOM_DATA"));
             customDataType = typeField.get(null);
 
             supportsComponents = true;
         } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException | ClassNotFoundException ex) {
             try {
                 setTag = lookup.findVirtual(nmsItemStack,
-                        ReflectionUtils.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
+                        XReflection.v(18, "c").orElse("setTag"), MethodType.methodType(void.class, nbtTagCompound));
 
                 getTag = lookup.findVirtual(nmsItemStack,
-                        ReflectionUtils.v(19, "v").v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
+                        XReflection.v(19, "v").v(18, "t").orElse("getTag"), MethodType.methodType(nbtTagCompound));
             } catch (NoSuchMethodException | IllegalAccessException ex2) {
                 RuntimeException newEx = new RuntimeException(ex2);
                 newEx.addSuppressed(ex);

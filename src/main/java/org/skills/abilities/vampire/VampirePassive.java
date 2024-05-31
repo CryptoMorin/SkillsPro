@@ -1,6 +1,7 @@
 package org.skills.abilities.vampire;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.bukkit.Bukkit;
@@ -49,7 +50,7 @@ public class VampirePassive extends Ability {
                     ItemStack helment = player.getInventory().getHelmet();
                     if (helment != null) {
                         XMaterial xmat = XMaterial.matchXMaterial(helment);
-                        if (xmat.isOneOf(getOptions(info, "light-level.prevents").getStringList())) return;
+                        if (XTag.anyMatchString(xmat, getOptions(info, "light-level.prevents").getStringList())) return;
                     }
 
                     int burnLevel = (int) getScaling(info, "light-level.burn-activation");

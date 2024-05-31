@@ -49,8 +49,13 @@ public class AdapterSkilledPlayer implements JsonSerializer<SkilledPlayer>, Json
         info.setMasteries(context.deserialize(json.get("masteries"), mapType));
 
         mapType = new TypeToken<List<SkillsPersonalBonus>>() {}.getType();
-        List<SkillsPersonalBonus> bonuses = context.deserialize(json.get("bonuses"), mapType);
-        info.setBonuses(bonuses);
+        try {
+            List<SkillsPersonalBonus> bonuses = context.deserialize(json.get("bonuses"), mapType);
+            info.setBonuses(bonuses);
+        } catch (Exception ignored) {
+            // ignored.printStackTrace();
+            // Don't save old bonuses
+        }
 
         JsonElement cosmeticsElement = json.get("cosmetics");
         if (cosmeticsElement != null) {

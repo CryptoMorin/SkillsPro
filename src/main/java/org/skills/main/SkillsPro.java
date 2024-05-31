@@ -1,7 +1,7 @@
 package org.skills.main;
 
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
@@ -102,7 +102,7 @@ public class SkillsPro extends JavaPlugin {
         new Metrics(this, 6224); // https://bstats.org/plugin/bukkit/SkillsPro/6224
         if (SkillsConfig.ARMOR_WEIGHTS_RESET_SPEEDS_ENABLED.getBoolean()) {
             // This prevents dangerous data losses.
-            if (ReflectionUtils.supports(17))
+            if (XReflection.supports(17))
                 throw new IllegalStateException("Armor weight reset option is currently not supported on " + Bukkit.getVersion());
             OfflineNBT.perform();
         }

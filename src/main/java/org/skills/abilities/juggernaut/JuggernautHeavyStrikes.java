@@ -1,6 +1,7 @@
 package org.skills.abilities.juggernaut;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XTag;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ public class JuggernautHeavyStrikes extends Ability {
 
         ItemStack item = player.getInventory().getItemInMainHand();
         XMaterial match = XMaterial.matchXMaterial(item);
-        if (!match.isOneOf(getOptions(info, "weapons").getStringList())) return;
+        if (!XTag.anyMatchString(match, getOptions(info, "weapons").getStringList())) return;
 
         LivingEntity victim = (LivingEntity) event.getEntity();
         ItemStack[] armors = victim.getEquipment().getArmorContents();

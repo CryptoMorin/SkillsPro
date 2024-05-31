@@ -1,11 +1,10 @@
 package org.skills.commands.party;
 
-import com.cryptomorin.xseries.SkullUtils;
+import com.cryptomorin.xseries.XSkull;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -94,10 +93,7 @@ public class CommandPartyList extends SkillsCommand {
             public void run() {
                 for (OfflinePlayer member : info.getParty().getPlayerMembers()) {
                     GUIOption holder = gui.getHolder("member");
-                    ItemStack item = holder.getItem();
-                    ItemMeta meta = item.getItemMeta();
-                    SkullUtils.applySkin(meta, member);
-                    item.setItemMeta(meta);
+                    ItemStack item = XSkull.of(holder.getItem()).profile(member).apply();
                     GUIOption.defineVariables(item, member);
 
                     int slot = slots.remove(0);

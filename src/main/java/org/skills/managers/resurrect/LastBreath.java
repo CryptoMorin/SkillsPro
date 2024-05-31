@@ -1,11 +1,12 @@
 package org.skills.managers.resurrect;
 
-import com.cryptomorin.xseries.NMSExtras;
-import com.cryptomorin.xseries.ReflectionUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
+import com.cryptomorin.xseries.reflection.minecraft.NMSExtras;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.cryptomorin.xseries.ReflectionUtils.*;
+import static com.cryptomorin.xseries.reflection.XReflection.*;
 
 public final class LastBreath implements Listener {
     protected static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
@@ -70,7 +71,7 @@ public final class LastBreath implements Listener {
             }
         };
              */
-            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, ReflectionUtils.v(19, "s").v(13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
+            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, XReflection.v(19, "s").v(13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
 
             //     public DataWatcher al() {
             //        return this.Y;
@@ -82,7 +83,7 @@ public final class LastBreath implements Listener {
                     v(19, MethodType.methodType(void.class, int.class, List.class))
                             .orElse(MethodType.methodType(void.class, int.class, dataWatcher, boolean.class)));
 
-            if (ReflectionUtils.supports(19)) {
+            if (XReflection.supports(19)) {
                 // public @Nullable List<b<?>> b()
                 watcherPack = lookup.findVirtual(dataWatcher, "b", MethodType.methodType(List.class));
             }
@@ -103,7 +104,7 @@ public final class LastBreath implements Listener {
                 Location location = lastStanding.player.getLocation();
                 for (Player player : lastStanding.player.getWorld().getPlayers()) {
                     if (player != lastStanding.player && LocationUtils.distanceSquared(location, player.getLocation()) < VIEW_DISTANCE) {
-                        sendPacketSync(player, lastStanding.dataWatcher);
+                        MinecraftConnection.sendPacket(player, lastStanding.dataWatcher);
                     }
                 }
             }
@@ -119,7 +120,7 @@ public final class LastBreath implements Listener {
             Object pos = (swimming ? NMSExtras.EntityPose.SWIMMING : NMSExtras.EntityPose.STANDING).getEnumValue();
             NMSExtras.setData(watcher, registry, pos);
 
-            if (ReflectionUtils.supports(19)) {
+            if (XReflection.supports(19)) {
                 return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), WATCHER_PACK.invoke(watcher));
             } else {
                 return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), watcher, true);
@@ -199,7 +200,7 @@ public final class LastBreath implements Listener {
         double hpLeft = player.getHealth() - event.getFinalDamage();
         if (hpLeft > 0) return; // They'll be alive
 
-        if (ReflectionUtils.supports(11)) {
+        if (XReflection.supports(11)) {
             boolean mainTotem = XMaterial.matchXMaterial(player.getInventory().getItemInMainHand()) == XMaterial.TOTEM_OF_UNDYING;
             boolean offTotem = XMaterial.matchXMaterial(player.getInventory().getItemInOffHand()) == XMaterial.TOTEM_OF_UNDYING;
             if (mainTotem || offTotem) {
