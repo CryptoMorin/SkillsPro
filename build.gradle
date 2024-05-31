@@ -19,7 +19,7 @@ plugins {
 }
 
 group = 'org.skills'
-version = '19.5.0'
+version = '19.5.1'
 description = 'An RPG plugin for players to grind with!'
 
 java {
