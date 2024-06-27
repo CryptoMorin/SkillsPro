@@ -158,7 +158,7 @@ public class AbilityListener implements Listener {
 
 
         ParticleDisplay display = ParticleDisplay
-                .of(XParticle.of(SkillsConfig.READY_PARTICLE_PARTICLE.getString()))
+                .of(XParticle.of(SkillsConfig.READY_PARTICLE_PARTICLE.getString()).orElse(XParticle.DUST))
                 .withLocation(player.getLocation());
         display.count = (int) SkillsConfig.READY_PARTICLE_COUNT.eval(info, ability);
         double offset = SkillsConfig.READY_PARTICLE_OFFSET.eval(info, ability);

@@ -84,7 +84,9 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         ParticleDisplay remove = ParticleDisplay.of(XParticle.CLOUD).withLocation(null).offset(0.1).withCount(10);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Set<Item> items = ConcurrentHashMap.newKeySet();
-        XSound.ENTITY_WITHER_SHOOT.play(player.getLocation(), 3.0f, 0.5f);
+        XSound.ENTITY_WARDEN_SONIC_BOOM.or(XSound.ENTITY_WITHER_SHOOT)
+                .play(player.getLocation(), 3.0f, 0.1f);
+
         for (XMaterial sword : SWORDS) {
             Location loc = player.getEyeLocation().add(random.nextDouble(-2, 2), random.nextDouble(0.5, 2), random.nextDouble(-2, 2));
             Item item = player.getWorld().dropItem(loc, sword.parseItem());
@@ -253,7 +255,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
             final double damage = getScaling(info, "damage");
             final double rateDiv = Math.PI / 20;
 
-            final ParticleDisplay display = ParticleDisplay.of(XMaterial.supports(16) ? XParticle.SOUL_FIRE_FLAME : XParticle.WITCH);
+            final ParticleDisplay display = ParticleDisplay.of(XParticle.SOUL_FIRE_FLAME.or(XParticle.WITCH));
             final ParticleDisplay sweep = ParticleDisplay.of(XParticle.SWEEP_ATTACK).offset(0.3, 0.3, 0.3).withCount(5);
 
             @Override

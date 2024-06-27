@@ -1,6 +1,7 @@
 package org.skills.commands.party;
 
-import com.cryptomorin.xseries.XSkull;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -39,7 +40,7 @@ public class CommandPartyParties extends SkillsCommand {
 
         for (SkillsParty party : SkillsPro.get().getPartyManager().getAllData()) {
             GUIOption holder = option.clone();
-            ItemStack item = XSkull.of(holder.getItem()).profile(party.getLeader()).apply();
+            ItemStack item = XSkull.of(holder.getItem()).profile(Profileable.of(party.getLeader())).apply();
             OfflinePlayer leader = Bukkit.getOfflinePlayer(party.getLeader());
             GUIOption.defineVariables(item, leader);
 

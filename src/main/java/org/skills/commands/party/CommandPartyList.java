@@ -1,6 +1,7 @@
 package org.skills.commands.party;
 
-import com.cryptomorin.xseries.XSkull;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -93,7 +94,7 @@ public class CommandPartyList extends SkillsCommand {
             public void run() {
                 for (OfflinePlayer member : info.getParty().getPlayerMembers()) {
                     GUIOption holder = gui.getHolder("member");
-                    ItemStack item = XSkull.of(holder.getItem()).profile(member).apply();
+                    ItemStack item = XSkull.of(holder.getItem()).profile(Profileable.of(member)).apply();
                     GUIOption.defineVariables(item, member);
 
                     int slot = slots.remove(0);

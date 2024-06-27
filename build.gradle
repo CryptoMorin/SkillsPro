@@ -19,7 +19,7 @@ plugins {
 }
 
 group = 'org.skills'
-version = '19.5.1'
+version = '19.5.2'
 description = 'An RPG plugin for players to grind with!'
 
 java {
@@ -83,7 +83,7 @@ repositories {
 
 dependencies {
     api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    api 'com.github.cryptomorin:XSeries:10.0.0'
+    api 'com.github.cryptomorin:XSeries:11.1.0'
     // api 'com.github.cryptomorin:XSeries'
 
     compileOnly 'org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT'
@@ -107,7 +107,7 @@ dependencies {
     compileOnly 'com.discordsrv:discordsrv:1.26.2'
 }
 
-java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.20"
+java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.21Test"
         .replace("\${user.home}", FileSystemView.getFileSystemView().getHomeDirectory().absolutePath))
 logger.lifecycle("Server Path: " + serverPath.toAbsolutePath().toString())
 
