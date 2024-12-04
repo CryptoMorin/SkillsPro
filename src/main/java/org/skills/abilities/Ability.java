@@ -1,5 +1,6 @@
 package org.skills.abilities;
 
+import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Enums;
@@ -7,7 +8,6 @@ import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -277,7 +277,7 @@ public abstract class Ability implements Listener {
         return getScaling(info, scaling,
                 "damage", event.getDamage(),
                 "hp", entity == null ? 0 : entity.getHealth(),
-                "maxHp", entity == null ? 0 : entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
+                "maxHp", entity == null ? 0 : entity.getAttribute(XAttribute.MAX_HEALTH.get()).getValue()
         );
     }
 

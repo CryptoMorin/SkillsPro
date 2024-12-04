@@ -1,15 +1,11 @@
 package org.skills.abilities.swordsman;
 
-import com.cryptomorin.xseries.XEnchantment;
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XSound;
-import com.cryptomorin.xseries.XTag;
+import com.cryptomorin.xseries.*;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.cryptomorin.xseries.reflection.minecraft.NMSExtras;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -103,7 +99,7 @@ public class SwordsmanPassive extends Ability {
             NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
                 if (getOptions(info, "cooldown").getBoolean()) {
-                    int cooldown = (int) (1 / player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue() * 20);
+                    int cooldown = (int) (1 / player.getAttribute(XAttribute.ATTACK_SPEED.get()).getValue() * 20);
                     Bukkit.getScheduler().runTask(SkillsPro.get(), () -> player.setCooldown(item.getType(), cooldown));
                 }
             }
@@ -129,12 +125,12 @@ public class SwordsmanPassive extends Ability {
         XMaterial match = XMaterial.matchXMaterial(item);
         if (!XTag.anyMatchString(match, getOptions(info, "weapons").getStringList())) return;
 
-        double damage = player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
+        double damage = player.getAttribute(XAttribute.ATTACK_DAMAGE.get()).getValue();
         int sharpness = item.getEnchantmentLevel(XEnchantment.SHARPNESS.getEnchant());
         if (sharpness != 0) damage += 0.5 * (sharpness - 1) + 1;
 
-        double armor = livingEntity.getAttribute(Attribute.GENERIC_ARMOR).getValue();
-        double toughness = livingEntity.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
+        double armor = livingEntity.getAttribute(XAttribute.ARMOR.get()).getValue();
+        double toughness = livingEntity.getAttribute(XAttribute.ARMOR_TOUGHNESS.get()).getValue();
         damage = damage * (1 - ((Math.min(20, Math.max(armor / 5, armor - (damage / (2 + (toughness / 4)))))) / 25));
 
         NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
@@ -159,7 +155,7 @@ public class SwordsmanPassive extends Ability {
             cooldown = player.getCooldown(item.getType());
             if (cooldown != 0) damage /= cooldown;
 
-            double attackSpeed = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue();
+            double attackSpeed = player.getAttribute(XAttribute.ATTACK_SPEED.get()).getValue();
             if (attackSpeed >= 20) player.setCooldown(item.getType(), (int) (20 - attackSpeed));
         }
 

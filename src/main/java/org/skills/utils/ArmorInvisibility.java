@@ -5,7 +5,6 @@ import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftPackage;
-import com.mojang.datafixers.util.Pair;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +18,6 @@ import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.List;
 
-import static com.cryptomorin.xseries.reflection.XReflection.getCraftClass;
 import static com.cryptomorin.xseries.reflection.XReflection.ofMinecraft;
 
 /**
@@ -31,8 +29,13 @@ public final class ArmorInvisibility {
 
     static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Class<?> craftItemStack = getCraftClass("inventory.CraftItemStack");
-        Class<?> nmsItem = getCraftClass("inventory.CraftItemStack");
+        Class<?> craftItemStack = ofMinecraft().inPackage(MinecraftPackage.CB, "inventory")
+                .named("CraftItemStack")
+                .unreflect();
+        Class<?> nmsItem = ofMinecraft().inPackage(MinecraftPackage.NMS)
+                .named("ItemStack")
+                .unreflect();
+
         MinecraftClassHandle packetClass = ofMinecraft()
                 .inPackage(MinecraftPackage.NMS, "network.protocol.game")
                 .map(MinecraftMapping.MOJANG, "ClientboundSetEquipmentPacket")

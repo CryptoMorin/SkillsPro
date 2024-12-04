@@ -355,7 +355,8 @@ public class MessageHandler {
      * @since 3.0.0
      */
     public static String stripColors(String str, boolean strip) {
-        int len = str.length();
+        final int len = str.length();
+        if (len <= 1) return str;
 
         if (SIXTEEN) {
             StringBuilder builder = new StringBuilder(len);

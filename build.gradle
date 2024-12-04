@@ -19,10 +19,15 @@ plugins {
 }
 
 group = 'org.skills'
-version = '19.5.2'
+version = '19.6.0'
 description = 'An RPG plugin for players to grind with!'
 
 java {
+    // Disables disallowing dependencies that are compiled with a more recent Java version
+    // from being used in a project with a lower Java version.
+    // (Specifically for WorldEdit+WorldGuard)
+    disableAutoTargetJvm()
+
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
@@ -39,7 +44,13 @@ repositories {
     mavenLocal()
 
     maven {
-        url = uri('https://repo.codemc.org/repository/nms/')
+        name = "sk89q-repo"
+        // url = uri('https://maven.sk89q.com/repo/')
+        url = uri('https://maven.enginehub.org/repo/')
+    }
+
+    maven {
+        url = uri('https://repo.mypet-plugin.de/')
     }
 
     maven {
@@ -67,11 +78,11 @@ repositories {
     }
 
     maven {
-        url = uri('https://maven.sk89q.com/repo/')
+        url = uri('https://repo.codemc.org/repository/nms/')
     }
 
     maven {
-        url = uri('https://maven.enginehub.org/repo/')
+        url = uri('https://libraries.minecraft.net/')
     }
 
     maven {
@@ -83,31 +94,72 @@ repositories {
 
 dependencies {
     api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    api 'com.github.cryptomorin:XSeries:11.1.0'
-    // api 'com.github.cryptomorin:XSeries'
+    api 'com.github.cryptomorin:XSeries:12.0.0'
 
-    compileOnly 'org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.9'
-    compileOnly 'com.bekvon:residence:5.0.0'
+    // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
+    compileOnly 'com.github.cryptomorin:kingdoms:1.17.4-ALPHA'
+    compileOnly 'org.spigotmc:spigot-api:1.21.3-R0.1-SNAPSHOT'
+    compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
+
+
+    ///////////////////////////// Mobs /////////////////////////////
+
+    // https://arcaneplugins.gitbook.io/levelledmobs-the-ultimate-mob-levelling-solution/levelledmobs-v4.0/for-developers
+    // https://mvnrepository.com/artifact/io.github.arcaneplugins/levelledmobs-plugin
+    // compileOnly 'com.github.lokka30:levelledmobs:4.0.3.1'
+    compileOnly 'io.github.arcaneplugins:levelledmobs-plugin:4.0.3.1'
+
+    // https://magmaguy.com/wiki.html#lang=en&article=elitemobs+info.md&section=custom-content
+    // mvn install:install-file "-Dfile=EliteMobs.jar" -DgroupId=com.magmaguy -DartifactId=elitemobs -Dversion=9.1.12 -Dpackaging=jar -DgeneratePom=true
+    compileOnly 'com.magmaguy:elitemobs:9.1.12'
+
+    // https://wiki.mypet-plugin.de/
+    // https://github.com/MyPetORG/MyPet/releases
+    // https://repo.keyle.de/ -> https://repo.mypet-plugin.de/
+    // mvn install:install-file "-Dfile=pet.jar" -DgroupId=de.keyle.MyPet -DartifactId=mypet -Dversion=3.12 -Dpackaging=jar -DgeneratePom=true
+    // Doesn't look like using GitHub Packages is possible without a PAT? What kind of fucking feature is this?
+    compileOnly 'de.keyle.MyPet:mypet:3.12'
+    // compileOnly 'de.keyle:mypet:3.12'
+
+    // https://www.spigotmc.org/resources/lorinthsrpgmobs.53568/
     compileOnly 'me.lorinth:lorinthsrpgmobs:1.10.0'
-    compileOnly 'com.github.lokka30:levelledmobs:3.3.3'
-    compileOnly 'com.magmaguy:elitemobs:7.3.12'
-    compileOnly 'com.massivecraft:massivecore:2.14.0'
-    compileOnly 'com.massivecraft:Factions:1.6.9.5-U0.6.0'
-    compileOnly 'com.massivecraft:massivefactions:2.14.0'
-    compileOnly 'com.github.cryptomorin:kingdoms:1.16.8.1.1'
-    compileOnly 'io.lumine:Mythic-Dist:5.0.2'
-    compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-    compileOnly 'de.Keyle.MyPet:mypet:3.0'
-    compileOnly('net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT') { transitive = false } // net.byteflux:libby-bukkit
+
+    // https://git.mythiccraft.io/mythiccraft/MythicMobs/-/wikis/API
+    compileOnly 'io.lumine:Mythic-Dist:5.6.1'
+
     compileOnly 'org.mcmonkey:sentinel:2.8.0-SNAPSHOT'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4-SNAPSHOT'
-    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
-    compileOnly 'com.discordsrv:discordsrv:1.26.2'
+    compileOnly('net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT') { transitive = false } // net.byteflux:libby-bukkit
+
+
+    ///////////////////////////// Factions /////////////////////////////
+
+    compileOnly 'com.bekvon:residence:5.0.0'
+
+    compileOnly 'com.massivecraft:massivecore:2.14.0'
+    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.0') { transitive = false }
+    compileOnly 'com.massivecraft:massivefactions:2.14.0'
+
+
+    ///////////////////////////// Others /////////////////////////////
+
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
+
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    // https://docs.discordsrv.com/#developers
+    // https://nexus.scarsz.me/content/groups/public/com/discordsrv/discordsrv/
+    compileOnly 'com.discordsrv:discordsrv:1.30.0-SNAPSHOT'
+    // compileOnly('net.dv8tion:JDA:5.2.1') { transitive = false } // DiscordSRV 1.18.0+ no longer includes JDA.
+
+    // https://worldedit.enginehub.org/en/latest/api/index.html
+    // https://maven.enginehub.org/repo/com/sk89q/worldedit/worldedit-bukkit/
+    // https://maven.enginehub.org/repo/com/sk89q/worldguard/worldguard-bukkit/
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.4.0-SNAPSHOT'
 }
 
-java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.21Test"
+java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.21"
         .replace("\${user.home}", FileSystemView.getFileSystemView().getHomeDirectory().absolutePath))
 logger.lifecycle("Server Path: " + serverPath.toAbsolutePath().toString())
 

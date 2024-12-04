@@ -39,7 +39,7 @@ public class DevourerCloak extends Ability {
             if (info.showReadyMessage()) player.sendMessage(SkillsLang.Skill_Devourer_Invis_Enabled.parse());
             Particles.helix(SkillsPro.get(), 4, 1, 0.1, 1, 4, 3, 0.5, true, false, ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation()));
         }
-        player.addPotionEffect(XPotion.BLINDNESS.buildPotionEffect(200, 2), true);
+        player.addPotionEffect(XPotion.INVISIBILITY.buildPotionEffect(200, 2), true);
     }
 
     @Override

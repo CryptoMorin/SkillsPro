@@ -102,9 +102,10 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
     }
 
     @EventHandler
-    public void onBlockHit(ProjectileHitEvent event) {
+    public void onHit(ProjectileHitEvent event) {
+        // Note: getHitBlock() is not supported in v1.9.4
+
         Projectile arrow = event.getEntity();
-        if (event.getHitBlock() == null) return;
         if (!arrow.hasMetadata(ARBALIST_FIRECROSSBOW)) return;
         arrow.removeMetadata(ARBALIST_FIRECROSSBOW, SkillsPro.get());
 
@@ -112,7 +113,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
         if (shooter == null) return;
         SkilledPlayer info = SkilledPlayer.getSkilledPlayer(shooter);
         if (MathUtils.hasChance((int) getScaling(info, "explosion-chance"))) {
-            TNTPrimed TNT = (TNTPrimed) shooter.getLocation().getWorld().spawnEntity(event.getHitBlock().getLocation(), XEntityType.TNT.get());
+            TNTPrimed TNT = (TNTPrimed) shooter.getLocation().getWorld().spawnEntity(event.getEntity().getLocation(), XEntityType.TNT.get());
             TNT.setFuseTicks(1);
         }
     }

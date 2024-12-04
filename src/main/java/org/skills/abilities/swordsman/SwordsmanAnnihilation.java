@@ -34,6 +34,7 @@ import org.skills.utils.EntityUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -180,7 +181,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         info.setActiveAbilitiy(this, true);
 
         ParticleDisplay remove = ParticleDisplay.of(XParticle.CLOUD).withLocation(null).offset(0.1, 0.1, 0.1).withCount(10);
-        List<Item> items = new ArrayList<>(SWORDS.length);
+        List<Item> items = new CopyOnWriteArrayList<>(); // Swords are added one by one, causes looping issues later
         new BukkitRunnable() {
             final ThreadLocalRandom random = ThreadLocalRandom.current();
             int i = 0;

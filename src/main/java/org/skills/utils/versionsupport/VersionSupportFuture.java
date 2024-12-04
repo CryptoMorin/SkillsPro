@@ -1,9 +1,9 @@
 package org.skills.utils.versionsupport;
 
+import com.cryptomorin.xseries.XAttribute;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -33,7 +33,7 @@ public class VersionSupportFuture {
     }
 
     public static double getMaxHealth(LivingEntity e) {
-        return e.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        return e.getAttribute(XAttribute.MAX_HEALTH.get()).getValue();
     }
 
     private static AttributeModifier getAttrMod(double amount) {
@@ -45,7 +45,7 @@ public class VersionSupportFuture {
     }
 
     public static void setMaxHealth(LivingEntity e, double amount) {
-        AttributeInstance attr = e.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance attr = e.getAttribute(XAttribute.MAX_HEALTH.get());
         attr.setBaseValue(amount);
         // TODO
 //        removeAttrMod(attr.getModifiers());

@@ -104,7 +104,11 @@ public class DevourerGliders extends Ability {
         if (info == null) return;
         if (info.getAbilityLevel(this) < getScaling(info, "double-jump-level")) return;
 
-        ParticleDisplay.of(XParticle.LARGE_SMOKE).withLocation(player.getLocation()).withCount(70).offset(0.5, 0, 0.5).spawn();
+        ParticleDisplay
+                .of(XParticle.LARGE_SMOKE)
+                .withCount(70).offset(0.5, 0, 0.5)
+                .withLocation(player.getLocation())
+                .spawn();
         event.setCancelled(true);
     }
 
@@ -125,9 +129,10 @@ public class DevourerGliders extends Ability {
         }
         player.setVelocity(player.getLocation().getDirection().multiply(1.3).setY(getScaling(info, "height")));
 
-        ParticleDisplay dis = ParticleDisplay.of(XParticle.CLOUD).withLocation(player.getLocation());
-        dis.count = 70;
-        dis.offset(0.5, 0.5, 0.5);
-        dis.spawn();
+        ParticleDisplay
+                .of(XParticle.CLOUD)
+                .withCount(70).offset(0.5)
+                .withLocation(player.getLocation())
+                .spawn();
     }
 }
