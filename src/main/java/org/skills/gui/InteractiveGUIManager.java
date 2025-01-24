@@ -15,10 +15,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.kingdoms.server.inventory.BukkitInventoryView;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.StringUtils;
+import org.skills.utils.XInventoryView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +120,7 @@ public class InteractiveGUIManager implements Listener {
         event.setCancelled(true);
         if (true) return;
 
-        InventoryView view = event.getView();
+        BukkitInventoryView view = XInventoryView.of(event.getView());
         boolean conflict = false;
         for (Map.Entry<Integer, ItemStack> item : event.getNewItems().entrySet()) {
             int rawSlot = item.getKey();

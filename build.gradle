@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 import javax.swing.filechooser.FileSystemView
 import java.nio.file.Paths
+import java.time.Duration
 
 buildscript {
     repositories {
@@ -15,11 +16,11 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.0.0-beta6"
 }
 
 group = 'org.skills'
-version = '19.6.0'
+version = '19.6.1'
 description = 'An RPG plugin for players to grind with!'
 
 java {
@@ -93,12 +94,16 @@ repositories {
 }
 
 dependencies {
+    api project(':server')
+    api project(':server:old')
+    api project(':server:new')
+
     api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    api 'com.github.cryptomorin:XSeries:12.0.0'
+    api 'com.github.cryptomorin:XSeries:13.0.0'
 
     // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
     compileOnly 'com.github.cryptomorin:kingdoms:1.17.4-ALPHA'
-    compileOnly 'org.spigotmc:spigot-api:1.21.3-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
 
@@ -199,7 +204,9 @@ tasks {
 }
 
 tasks.register("copyToServer", Copy) {
-    Provider<RegularFile> file = (tasks.getByName("shadowJar") as Jar).archiveFile
+    //noinspection ConfigurationAvoidance
+    Provider<RegularFile> file = (tasks.findByName("shadowJar") as Jar).archiveFile
+    setTimeout(Duration.ofSeconds(30))
 
     from(file)
     rename { "${project.name}-${project.version}.jar" }
@@ -291,7 +298,8 @@ tasks.register("everything") {
         def next = taskSeq[i + 1]
 
         try {
-            tasks.findByName(next).mustRunAfter(tasks.findByName(prev))
+            //noinspection ConfigurationAvoidance
+            tasks.findByName(next).mustRunAfter(tasks.named(prev))
         } catch (Exception ex) {
             throw new RuntimeException("while gathering tasks $prev->$next", ex)
         }

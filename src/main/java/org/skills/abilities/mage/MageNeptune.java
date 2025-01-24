@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
@@ -111,7 +112,7 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onTridentLaunch(ProjectileLaunchEvent event) {
-        if (!XMaterial.supports(13)) return;
+        if (!XReflection.supports(13)) return;
 
         Entity entity = event.getEntity();
         if (!(entity instanceof Trident)) return;
@@ -303,7 +304,7 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onTrident(EntityDamageByEntityEvent event) {
-        if (!XMaterial.supports(13)) return;
+        if (!XReflection.supports(13)) return;
         if (!(event.getDamager() instanceof Trident)) return;
 
         ProjectileSource shooter = ((Trident) event.getDamager()).getShooter();

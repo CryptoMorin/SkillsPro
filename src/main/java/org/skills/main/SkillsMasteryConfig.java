@@ -1,6 +1,7 @@
 package org.skills.main;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.skills.utils.StringUtils;
 import org.skills.utils.YamlAdapter;
@@ -38,7 +39,7 @@ public enum SkillsMasteryConfig {
     }
 
     public boolean isSet() {
-        return XMaterial.supports(13) ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
+        return XReflection.supports(13) ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
     }
 
     public String getOption() {

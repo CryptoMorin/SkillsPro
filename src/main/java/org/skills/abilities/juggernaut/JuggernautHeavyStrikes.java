@@ -2,6 +2,7 @@ package org.skills.abilities.juggernaut;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XTag;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +32,7 @@ public class JuggernautHeavyStrikes extends Ability {
         ItemStack[] armors = victim.getEquipment().getArmorContents();
         for (ItemStack armor : armors) {
             if (armor == null) continue;
-            if (XMaterial.supports(11) && armor.hasItemMeta() && armor.getItemMeta().isUnbreakable()) continue;
+            if (XReflection.supports(11) && armor.hasItemMeta() && armor.getItemMeta().isUnbreakable()) continue;
 
             double scaling = this.getScaling(info, "durability-damage", "durability", armor.getDurability());
             if (scaling != 0) armor.setDurability((short) (armor.getDurability() + scaling));

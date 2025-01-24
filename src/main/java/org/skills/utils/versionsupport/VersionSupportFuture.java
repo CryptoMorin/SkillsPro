@@ -36,20 +36,9 @@ public class VersionSupportFuture {
         return e.getAttribute(XAttribute.MAX_HEALTH.get()).getValue();
     }
 
-    private static AttributeModifier getAttrMod(double amount) {
-        return new AttributeModifier(ATTRIBUTE_MODIFIER_ID, ATTRIBUTE_MODIFIER_NAME, amount, AttributeModifier.Operation.ADD_NUMBER);
-    }
-
-    private static void removeAttrMod(Collection<AttributeModifier> modifiers) {
-        modifiers.removeIf(attributeModifier -> attributeModifier.getUniqueId() == ATTRIBUTE_MODIFIER_ID);
-    }
-
     public static void setMaxHealth(LivingEntity e, double amount) {
         AttributeInstance attr = e.getAttribute(XAttribute.MAX_HEALTH.get());
         attr.setBaseValue(amount);
-        // TODO
-//        removeAttrMod(attr.getModifiers());
-//        attr.addModifier(getAttrMod(amount));
     }
 
     public static boolean isCropFullyGrown(Block crop) {

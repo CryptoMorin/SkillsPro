@@ -3,6 +3,7 @@ package org.skills.abilities.priest;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -83,7 +84,7 @@ public class PriestPurification extends Ability {
 
     @Override
     public void start() {
-        if (!XMaterial.supports(13)) return;
+        if (!XReflection.supports(13)) return;
         ParticleDisplay display = ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withCount(30).offset(1);
 
         addTask(new BukkitRunnable() {

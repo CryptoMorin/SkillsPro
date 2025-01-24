@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -31,7 +32,7 @@ public class DevourerBlink extends ActiveAbility {
     }
 
     private static boolean safeTp(Entity entity, Location location) {
-        if (XMaterial.supports(13)) {
+        if (XReflection.supports(13)) {
             if (location.getBlock().isPassable() && location.getBlock().getRelative(BlockFace.UP).isPassable()) {
                 entity.teleport(location);
                 return true;

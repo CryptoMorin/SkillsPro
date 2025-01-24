@@ -1,6 +1,7 @@
 package org.skills.utils.nbt;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -20,8 +21,8 @@ public class NBTType<T> {
     public static final NBTType<NBTTagCompound> TAG_COMPOUND;
 
     static {
-        if (XMaterial.supports(13)) {
-            if (XMaterial.supports(14)) {
+        if (XReflection.supports(13)) {
+            if (XReflection.supports(14)) {
                 BYTE = new NBTType<>(ItemTagType.BYTE, PersistentDataType.BYTE);
                 BOOLEAN = new NBTType<>(ItemTagType.BYTE, PersistentDataType.BYTE);
                 SHORT = new NBTType<>(ItemTagType.SHORT, PersistentDataType.SHORT);

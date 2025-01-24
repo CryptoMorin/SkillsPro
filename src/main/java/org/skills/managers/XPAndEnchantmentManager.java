@@ -19,6 +19,7 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.MathEval;
+import org.skills.utils.XInventoryView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -171,7 +172,7 @@ public final class XPAndEnchantmentManager implements Listener {
 
     @EventHandler
     public void onEnchantTableReturnFakeXP(InventoryCloseEvent event) {
-        InventoryType type = event.getView().getType();
+        InventoryType type = XInventoryView.of(event.getView()).getType();
         if (type != InventoryType.ENCHANTING && type != InventoryType.ANVIL) return;
         if (!(event.getPlayer() instanceof Player)) return;
 

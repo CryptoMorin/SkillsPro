@@ -42,7 +42,7 @@ public class CommandUser extends SkillsCommand {
         if (tier == 1) {
             // https://i.pinimg.com/originals/aa/ee/0a/aaee0a69680c1cd8b6d30d1814028143.jpg
             Particles.polygon(4, 4, size, 0.02, 0.3, display);
-            Particles.polygon(4, 3, size / (size - 1), 0.5, 0, display.clone().rotate(0, Math.PI / 2, 0));
+            Particles.polygon(4, 3, size / (size - 1), 0.5, 0, display.copy().rotate(0, Math.PI / 2, 0));
             Particles.polygon(8, 3, size / (size - 1), 0.5, 0, display);
             Particles.polygon(8, 3, size / (size - 1), 0.5, 0, display);
         } else if (tier == 2) {

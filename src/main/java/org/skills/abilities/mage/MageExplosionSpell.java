@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -55,7 +56,7 @@ public class MageExplosionSpell extends Ability {
                 }, 1L);
 
                 XSound.ENTITY_GENERIC_EXPLODE.play(entity);
-                if (XMaterial.supports(12)) XSound.UI_TOAST_CHALLENGE_COMPLETE.play(entity);
+                if (XReflection.supports(12)) XSound.UI_TOAST_CHALLENGE_COMPLETE.play(entity);
                 Particles.meguminExplosion(SkillsPro.get(), 3, ParticleDisplay.of(XParticle.FLAME).withLocation(entity.getLocation()));
                 player.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), entity.getLocation(), lvl * 3, 1, 1, 1);
                 return;

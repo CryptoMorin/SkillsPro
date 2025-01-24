@@ -2,6 +2,7 @@ package org.skills.abilities.mage;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -68,7 +69,7 @@ public class MageEnergyFlux extends InstantActiveAbility {
         double y = distance.getY();
         double z = distance.getZ();
 
-        boolean canPassable = XMaterial.supports(13);
+        boolean canPassable = XReflection.supports(13);
         boolean noPassThro = !getOptions(info, "pass-through").getBoolean();
 
         for (double i = 0.5D; i < length; i += 0.1) {

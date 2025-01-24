@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -49,7 +50,7 @@ public class SwordsmanAnnihilation extends InstantActiveAbility {
         List<XMaterial> swords = new ArrayList<>(Arrays.asList(
                 XMaterial.WOODEN_SWORD, XMaterial.STONE_SWORD, XMaterial.IRON_SWORD,
                 XMaterial.GOLDEN_SWORD, XMaterial.DIAMOND_SWORD));
-        if (XMaterial.supports(16)) swords.add(XMaterial.NETHERITE_SWORD);
+        if (XReflection.supports(16)) swords.add(XMaterial.NETHERITE_SWORD);
         SWORDS = swords.toArray(new XMaterial[0]);
     }
 

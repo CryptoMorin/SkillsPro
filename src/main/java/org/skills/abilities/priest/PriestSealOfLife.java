@@ -2,6 +2,7 @@ package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -56,7 +57,7 @@ public class PriestSealOfLife extends Ability {
             if (percent > getScaling(info, "health", event)) return;
 
             event.setCancelled(true);
-            if (XMaterial.supports(11)) p.playEffect(EntityEffect.TOTEM_RESURRECT);
+            if (XReflection.supports(11)) p.playEffect(EntityEffect.TOTEM_RESURRECT);
             applyEffects(info, p);
 
             new BukkitRunnable() {

@@ -68,7 +68,7 @@ public class VergilMirageEdgeSlash extends InstantActiveAbility {
         Particles.slash(SkillsPro.get(), beamDistance, true, () -> size.getAndAdd(-0.01), () -> 0.3, display);
         if (context.hasAbilityLevel(3)) {
             Particles.slash(SkillsPro.get(), beamDistance, true, size::get, () -> 0.3,
-                    display.clone().withParticle(XParticle.DUST).withColor(Color.RED, 1f));
+                    display.copy().withParticle(XParticle.DUST).withColor(Color.RED, 1f));
         }
         XSound.ENTITY_WARDEN_DEATH.record().withPitch(0).soundPlayer().atLocation(player.getEyeLocation()).play();
     }

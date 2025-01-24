@@ -1,6 +1,7 @@
 package org.skills.main.locale;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.skills.main.SLogger;
@@ -38,7 +39,7 @@ public class LanguageManager extends YamlAdapter {
     }
 
     public boolean isSet(String option) {
-        return XMaterial.supports(13) ? getConfig().isSet(option) : getConfig().contains(option);
+        return XReflection.supports(13) ? getConfig().isSet(option) : getConfig().contains(option);
     }
 
     private boolean saveDefaultLang() {

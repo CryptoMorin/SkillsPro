@@ -6,6 +6,7 @@ import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.Particles;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -42,7 +43,7 @@ public class VampireBloodCircuit extends ActiveAbility {
     private static Vex spawnMinion(Player player, LivingEntity entity) {
         Vex vex = (Vex) player.getWorld().spawnEntity(player.getLocation(), EntityType.VEX);
         vex.setTarget(entity);
-        if (XMaterial.supports(13)) vex.setCharging(true);
+        if (XReflection.supports(13)) vex.setCharging(true);
         vex.setMetadata(MINION, new FixedMetadataValue(SkillsPro.get(), entity));
         vex.setRemoveWhenFarAway(true);
         vex.setCustomName(MessageHandler.colorize("&c" + player.getName() + " Minion"));
@@ -126,7 +127,7 @@ public class VampireBloodCircuit extends ActiveAbility {
 
     @EventHandler
     public void onTargetChange(EntityTargetEvent event) {
-        if (!XMaterial.supports(11)) return;
+        if (!XReflection.supports(11)) return;
         if (event.getEntity().getType() != EntityType.VEX) return;
 
         Entity minion = event.getEntity();

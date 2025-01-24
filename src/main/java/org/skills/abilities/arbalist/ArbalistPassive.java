@@ -2,6 +2,7 @@ package org.skills.abilities.arbalist;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -63,7 +64,7 @@ public class ArbalistPassive extends Ability {
                 if (MathUtils.hasChance((int) getScaling(info, "flame-chance"))) rain.setFireTicks(200);
                 rain.setVelocity(vector.multiply(0.1));
 
-                if (XMaterial.supports(14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+                if (XReflection.supports(14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
             }
         }, 10L);
     }

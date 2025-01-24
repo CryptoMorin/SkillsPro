@@ -3,6 +3,7 @@ package org.skills.abilities.firemage;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -40,7 +41,7 @@ public class FireMageMeteorite extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
 
         Block center;
-        if (XMaterial.supports(13)) center = player.getTargetBlockExact(20);
+        if (XReflection.supports(13)) center = player.getTargetBlockExact(20);
         else {
             Set<Material> blacklist = EnumSet.of(Material.AIR, XMaterial.TALL_GRASS.parseMaterial());
             List<Block> sight = player.getLineOfSight(blacklist, 20);

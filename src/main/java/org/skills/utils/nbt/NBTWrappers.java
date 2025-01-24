@@ -151,7 +151,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15))
+                if (XReflection.supports(15))
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, String.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, String.class));
 
@@ -215,7 +215,7 @@ public final class NBTWrappers {
                 field.setAccessible(true);
                 getMap = lookup.unreflectGetter(field);
 
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     Constructor<?> ctor = nbtCompound.getDeclaredConstructor(Map.class);
                     ctor.setAccessible(true);
                     handler = lookup.unreflectConstructor(ctor);
@@ -460,7 +460,7 @@ public final class NBTWrappers {
                 }
 
                 Object compound;
-                if (XMaterial.supports(15)) compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke(map);
+                if (XReflection.supports(15)) compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke(map);
                 else {
                     compound = NBT_TAG_COMPOUND_CONSTRUCTOR.invoke();
                     SET_COMPOUND_MAP.invoke(compound, map);
@@ -606,7 +606,7 @@ public final class NBTWrappers {
                 field.setAccessible(true);
                 getData = lookup.unreflectGetter(field);
 
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     Constructor<?> ctor = clazz.getDeclaredConstructor(List.class, byte.class);
                     ctor.setAccessible(true);
                     handler = lookup.unreflectConstructor(ctor);
@@ -676,7 +676,7 @@ public final class NBTWrappers {
                 List<Object> array = new ArrayList<>(value.size());
                 for (NBTBase<T> base : value) array.add(base.toNBT());
 
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     byte typeId = array.isEmpty() ? 0 : (byte) GET_TYPE_ID.invoke(array.get(0));
                     return CONSTRUCTOR.invoke(array, typeId);
                 } else {
@@ -740,7 +740,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15))
+                if (XReflection.supports(15))
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, double.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, double.class));
 
@@ -799,7 +799,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, int.class));
                 } else {
                     handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, int.class));
@@ -860,7 +860,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, byte.class));
                 } else {
                     handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, byte.class));
@@ -975,7 +975,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15)) {
+                if (XReflection.supports(15)) {
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, short.class));
                 } else {
                     handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, short.class));
@@ -1041,7 +1041,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15))
+                if (XReflection.supports(15))
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, long.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, long.class));
 
@@ -1105,7 +1105,7 @@ public final class NBTWrappers {
             MethodHandle handler = null, data = null;
 
             try {
-                if (XMaterial.supports(15))
+                if (XReflection.supports(15))
                     handler = lookup.findStatic(clazz, "a", MethodType.methodType(clazz, float.class));
                 else handler = lookup.findConstructor(clazz, MethodType.methodType(void.class, float.class));
 

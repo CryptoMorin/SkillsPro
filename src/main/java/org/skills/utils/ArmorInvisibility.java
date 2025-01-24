@@ -1,6 +1,7 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
@@ -54,7 +55,7 @@ public final class ArmorInvisibility {
             asNmsCopy = lookup.findStatic(craftItemStack, "asNMSCopy", MethodType.methodType(nmsItem, ItemStack.class));
             airArmor = asNmsCopy.invoke(new ItemStack(Material.AIR));
 
-            if (XMaterial.supports(16))
+            if (XReflection.supports(16))
                 packet = packetClass.constructor(int.class, List.class).unreflect();
             else
                 packet = packetClass.constructor(int.class, enumItemSlot, nmsItem).unreflect();

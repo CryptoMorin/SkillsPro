@@ -3,6 +3,7 @@ package org.skills.abilities.arbalist;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.entity.Arrow;
@@ -79,7 +80,7 @@ public class ArbalistExecute extends Ability {
             target.getWorld().strikeLightning(target.getLocation());
         }
 
-        if (XMaterial.supports(13)) {
+        if (XReflection.supports(13)) {
             player.playNote(player.getLocation(), Instrument.CHIME, Note.natural(0, Note.Tone.values()
                     [(Math.min(executer, Note.Tone.values().length - 1))]));
         }

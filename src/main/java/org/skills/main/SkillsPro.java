@@ -137,7 +137,7 @@ public class SkillsPro extends JavaPlugin {
         registerEvent(new SkillsEventManager());
         registerEvent(new DebugManager());
         registerEvent(new StatManager());
-        if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XMaterial.supports(13)) registerEvent(new LastBreath());
+        if (SkillsConfig.LAST_BREATH_ENABLED.getBoolean() && XReflection.supports(13)) registerEvent(new LastBreath());
         if (SkillsConfig.SMART_DAMAGE.getBoolean()) registerEvent(new DamageManager());
         if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean() || SkillsConfig.PULSE_ENABLED.getBoolean())
             registerEvent(new DamageAestheticsManager());

@@ -1,6 +1,7 @@
 package org.skills.services.manager;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -124,7 +125,7 @@ public class ServiceHandler {
         if (isAvailable("Residence")) return ServiceResidence.canFight(e1, e2);
         if (isAvailable("WorldGuard")) {
             try {
-                if (XMaterial.supports(13)) {
+                if (XReflection.supports(13)) {
                     if (!ServiceWorldGuard.canFight(e1, e2)) return false;
                 } else {
                     if (!ServiceWorldGuard.canFightOld(e1, e2)) return false;
@@ -166,7 +167,7 @@ public class ServiceHandler {
 
     public static boolean isPvPOff(Player player) {
         if (!isAvailable("WorldGuard")) return false;
-        if (XMaterial.supports(13)) {
+        if (XReflection.supports(13)) {
             return ServiceWorldGuard.isPvPOff(player);
         } else {
             return ServiceWorldGuard.isPvPOffOld(player);
