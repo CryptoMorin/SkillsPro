@@ -1,6 +1,5 @@
 package org.skills.services.manager;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.Validate;

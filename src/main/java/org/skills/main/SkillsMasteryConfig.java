@@ -1,6 +1,5 @@
 package org.skills.main;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.configuration.ConfigurationSection;
 import org.skills.utils.StringUtils;

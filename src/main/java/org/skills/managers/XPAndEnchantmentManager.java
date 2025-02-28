@@ -1,5 +1,6 @@
 package org.skills.managers;
 
+import com.cryptomorin.commons.inventory.XInventoryView;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,7 +20,6 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.MathEval;
-import org.skills.utils.XInventoryView;
 
 import java.util.HashMap;
 import java.util.Map;

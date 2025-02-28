@@ -1,6 +1,5 @@
 package org.skills.main.locale;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;

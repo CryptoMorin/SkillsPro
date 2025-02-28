@@ -1,5 +1,6 @@
 package org.skills.abilities;
 
+import com.cryptomorin.commons.nbt.ItemNBT;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.XTag;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.SkilledPlayer;
@@ -36,9 +38,6 @@ import org.skills.managers.resurrect.LastBreath;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.types.SkillScaling;
 import org.skills.utils.LocationUtils;
-import org.skills.utils.nbt.ItemNBT;
-import org.skills.utils.nbt.NBTType;
-import org.skills.utils.nbt.NBTWrappers;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -249,8 +248,8 @@ public class AbilityListener implements Listener {
 
         if (item != null) {
             try {
-                NBTWrappers.NBTTagCompound nbt = ItemNBT.getTag(item);
-                nbt.get(SkillItemManager.SKILL_ITEM, NBTType.STRING);
+                NBTTagCompound nbt = ItemNBT.getTag(item);
+                nbt.getString(SkillItemManager.SKILL_ITEM);
             } catch (Exception ex) {
                 MessageHandler.sendConsolePluginMessage("&cA NBT error has occurred! Please report this to the developer.");
                 throw new RuntimeException(ex);

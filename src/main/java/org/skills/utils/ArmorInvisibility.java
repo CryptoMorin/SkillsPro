@@ -1,6 +1,5 @@
 package org.skills.utils;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;

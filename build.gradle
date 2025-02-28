@@ -16,11 +16,11 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id("com.gradleup.shadow") version "9.0.0-beta6"
+    id("com.gradleup.shadow") version "9.0.0-beta9"
 }
 
 group = 'org.skills'
-version = '19.6.1'
+version = '19.6.2'
 description = 'An RPG plugin for players to grind with!'
 
 java {
@@ -94,15 +94,15 @@ repositories {
 }
 
 dependencies {
-    api project(':server')
-    api project(':server:old')
-    api project(':server:new')
-
-    api 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    api 'com.github.cryptomorin:XSeries:13.0.0'
+    implementation files(file('local-libs' + File.separatorChar + 'XCommons-2.0.0.jar'))
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
+    implementation 'com.github.cryptomorin:XSeries:13.0.0'
+    //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
+    // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
     // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
-    compileOnly 'com.github.cryptomorin:kingdoms:1.17.4-ALPHA'
+    compileOnly 'com.github.cryptomorin:kingdoms:1.17.10-BETA'
     compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
@@ -193,10 +193,24 @@ tasks {
         }
     }
     shadowJar {
+        relocate("kotlin", "org.skills.kotlin")
         relocate("com.cryptomorin.xseries", "org.skills.utils.xseries")
+        relocate("com.cryptomorin.commons", "org.skills.utils.xcommons")
         relocate("com.github.benmanes.caffeine", "org.skills.utils.caffeine")
-        relocate("org.checkerframework", "org.skills.utils.caffeine.checkerframework")
-        relocate("com.google.errorprone", "org.skills.utils.errorprone")
+
+        exclude("META-INF/maven/**")
+        exclude("META-INF/jandex.idx") // Where the hell is this coming from?
+
+        dependencies {
+            exclude(dependency("com.google.errorprone:.*"))
+            exclude(dependency("org.checkerframework:.*"))
+            exclude(dependency("org.intellij.lang:.*"))
+            exclude(dependency("org.jetbrains:annotations:.*"))
+        }
+
+        minimize {
+            exclude(dependency("com.github.ben-manes.caffeine:.*"))
+        }
     }
     build {
         finalizedBy(shadowJar)

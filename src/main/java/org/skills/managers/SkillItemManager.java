@@ -1,5 +1,6 @@
 package org.skills.managers;
 
+import com.cryptomorin.commons.nbt.ItemNBT;
 import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
@@ -15,6 +16,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
@@ -24,9 +26,6 @@ import org.skills.utils.Cooldown;
 import org.skills.utils.MathUtils;
 import org.skills.utils.NoEpochDate;
 import org.skills.utils.StringUtils;
-import org.skills.utils.nbt.ItemNBT;
-import org.skills.utils.nbt.NBTType;
-import org.skills.utils.nbt.NBTWrappers;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +42,8 @@ public final class SkillItemManager implements Listener {
         if (!(bottle.getShooter() instanceof Player)) return;
         Player player = (Player) bottle.getShooter();
 
-        NBTWrappers.NBTTagCompound nbt = ItemNBT.getTag(player.getItemInHand());
-        String tag = nbt.get(SKILL_ITEM, NBTType.STRING);
+        NBTTagCompound nbt = ItemNBT.getTag(player.getItemInHand());
+        String tag = nbt.getString(SKILL_ITEM);
         if (tag == null || !tag.startsWith("XP:")) return;
         String amt = tag.substring(3);
         bottle.setMetadata(XP, new FixedMetadataValue(SkillsPro.get(), amt));
@@ -53,8 +52,8 @@ public final class SkillItemManager implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
-        NBTWrappers.NBTTagCompound nbt = ItemNBT.getTag(item);
-        String tag = nbt.get(SKILL_ITEM, NBTType.STRING);
+        NBTTagCompound nbt = ItemNBT.getTag(item);
+        String tag = nbt.getString(SKILL_ITEM);
         if (tag == null || !tag.startsWith("ENERGY_")) return;
 
         Player player = event.getPlayer();

@@ -1,5 +1,7 @@
 package org.skills.gui;
 
+import com.cryptomorin.commons.inventory.BukkitInventoryView;
+import com.cryptomorin.commons.inventory.XInventoryView;
 import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Strings;
 import org.bukkit.Bukkit;
@@ -13,14 +15,11 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.kingdoms.server.inventory.BukkitInventoryView;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.StringUtils;
-import org.skills.utils.XInventoryView;
 
 import java.util.ArrayList;
 import java.util.HashMap;

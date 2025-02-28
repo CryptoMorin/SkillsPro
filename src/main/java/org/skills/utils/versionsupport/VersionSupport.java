@@ -1,6 +1,5 @@
 package org.skills.utils.versionsupport;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

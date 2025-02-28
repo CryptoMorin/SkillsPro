@@ -1,5 +1,6 @@
 package org.skills.commands.general;
 
+import com.cryptomorin.commons.nbt.ItemNBT;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.TabCompleteManager;
 import org.skills.data.managers.SkilledPlayer;
@@ -18,7 +20,6 @@ import org.skills.main.locale.SkillsLang;
 import org.skills.managers.SkillItemManager;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.MathUtils;
-import org.skills.utils.nbt.ItemNBT;
 
 public class CommandShop extends SkillsCommand {
     public CommandShop() {
@@ -73,7 +74,8 @@ public class CommandShop extends SkillsCommand {
 
             ItemStack item = GUIParser.deserializeItem("Failed to parse skill item: " + type, section);
             item.setAmount(amount);
-            item = ItemNBT.addSimpleTag(item, SkillItemManager.SKILL_ITEM, section.getString("skills-item-type"));
+            item = buildShopItem(item, section);
+
             if (target.getInventory().firstEmpty() > -1) target.getInventory().addItem(item);
             else target.getWorld().dropItemNaturally(target.getLocation(), item);
             return;
@@ -113,13 +115,20 @@ public class CommandShop extends SkillsCommand {
                 info.addSouls(-cost);
 
                 ItemStack item = GUIParser.deserializeItem("Failed to parse skill item: " + sell, section);
-                item = ItemNBT.addSimpleTag(item, SkillItemManager.SKILL_ITEM, section.getString("skills-item-type"));
+                item = buildShopItem(item, section);
                 inv.addItem(item);
             });
         }
 
         gui.setRest();
         gui.openInventory(player);
+    }
+
+    private static ItemStack buildShopItem(ItemStack item, ConfigurationSection section) {
+        NBTTagCompound tag = ItemNBT.getTag(item);
+        tag.set(SkillItemManager.SKILL_ITEM, section.getString("skills-item-type"));
+        item = ItemNBT.setTag(item, tag);
+        return item;
     }
 
     @Override

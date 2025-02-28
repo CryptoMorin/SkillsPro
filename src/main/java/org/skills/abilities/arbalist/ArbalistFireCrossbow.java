@@ -1,7 +1,6 @@
 package org.skills.abilities.arbalist;
 
 import com.cryptomorin.xseries.XEntityType;
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.cryptomorin.xseries.reflection.XReflection;

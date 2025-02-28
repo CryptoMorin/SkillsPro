@@ -1,6 +1,5 @@
 package org.skills.abilities.arbalist;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Bukkit;

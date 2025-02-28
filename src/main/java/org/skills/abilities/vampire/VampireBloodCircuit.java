@@ -1,7 +1,6 @@
 package org.skills.abilities.vampire;
 
 import com.cryptomorin.xseries.XEntityType;
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.Particles;

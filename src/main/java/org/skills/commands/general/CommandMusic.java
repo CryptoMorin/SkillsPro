@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.kingdoms.main.Kingdoms;
 import org.skills.commands.SkillsCommand;
 import org.skills.data.managers.SkilledPlayer;
+import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
 
@@ -38,7 +38,7 @@ public class CommandMusic extends SkillsCommand {
         }
 
         SkillsLang.COMMAND_MUSIC_PLAYING.sendMessage(sender);
-        Bukkit.getScheduler().runTaskAsynchronously(Kingdoms.get(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(SkillsPro.get(), () -> {
             try {
                 NoteBlockMusic.Sequence instructions = NoteBlockMusic.parseInstructions(String.join(" ", args));
                 instructions.play(player, player::getLocation, true);

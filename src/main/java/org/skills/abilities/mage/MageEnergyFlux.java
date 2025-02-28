@@ -1,6 +1,5 @@
 package org.skills.abilities.mage;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.reflection.XReflection;
 import org.bukkit.Color;

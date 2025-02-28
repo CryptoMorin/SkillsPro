@@ -520,7 +520,7 @@ public class MessageHandler {
         String msg = "&8[&5DEBUG&8] &4" + message;
         sendMessage(Bukkit.getConsoleSender(), msg, true);
         for (Player players : Bukkit.getOnlinePlayers()) {
-            if (players.hasPermission("kingdoms.debug")) sendMessage(players, msg, true);
+            if (players.hasPermission("skills.debug")) sendMessage(players, msg, true);
         }
     }
 }

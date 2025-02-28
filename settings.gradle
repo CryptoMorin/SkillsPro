@@ -5,9 +5,3 @@
  */
 
 rootProject.name = 'SkillsPro'
-
-// includeBuild("../XSeries")
-include 'server'
-include 'server:old'
-include 'server:new'
-
