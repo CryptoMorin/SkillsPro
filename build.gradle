@@ -93,6 +93,7 @@ repositories {
     mavenCentral()
 }
 
+//noinspection VulnerableLibrariesLocal
 dependencies {
     implementation files(file('local-libs' + File.separatorChar + 'XCommons-2.0.0.jar'))
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
@@ -150,6 +151,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
 
+    //noinspection VulnerableLibrariesLocal
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
     // https://docs.discordsrv.com/#developers
@@ -177,6 +179,9 @@ tasks.withType(Javadoc).configureEach {
 }
 
 tasks {
+    // How the fuck do we fix this:
+    // Cannot resolve resource filtering of MatchingCopyAction. IDEA may fail to build project. Consider using delegated build (enabled by default).
+    // https://youtrack.jetbrains.com/issue/IDEA-296490
     processResources {
         filter(ReplaceTokens, tokens: ['$': '={'], beginToken: '=', endToken: '{')
 
@@ -196,6 +201,7 @@ tasks {
         relocate("kotlin", "org.skills.kotlin")
         relocate("com.cryptomorin.xseries", "org.skills.utils.xseries")
         relocate("com.cryptomorin.commons", "org.skills.utils.xcommons")
+        relocate("org.kingdoms.nbt", "org.skills.utils.nbt")
         relocate("com.github.benmanes.caffeine", "org.skills.utils.caffeine")
 
         exclude("META-INF/maven/**")
