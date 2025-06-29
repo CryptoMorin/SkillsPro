@@ -2,7 +2,6 @@ package org.skills.managers.blood;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Enums;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.skills.main.SkillsConfig;
 import org.skills.main.locale.MessageHandler;
+import org.skills.utils.StringUtils;
 
 public final class BloodManager implements Listener {
     private static void playEffect(LivingEntity entity, String key) {

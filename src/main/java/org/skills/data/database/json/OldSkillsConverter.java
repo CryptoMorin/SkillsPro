@@ -1,9 +1,9 @@
 package org.skills.data.database.json;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.skills.data.managers.PlayerSkill;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.FileManager;
@@ -12,6 +12,7 @@ import org.skills.main.SkillsPro;
 import org.skills.main.locale.LanguageManager;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.FastUUID;
+import org.skills.utils.JsonUtil;
 import org.skills.utils.StringUtils;
 
 import java.io.BufferedReader;
@@ -63,51 +64,50 @@ public class OldSkillsConverter {
         for (File datas : files) {
             if (!datas.isFile()) continue;
             MessageHandler.sendConsolePluginMessage("&cConverting player data for&8: &e" + datas.getName());
-            JSONParser jsonParser = new JSONParser();
             Path path = Paths.get(datas.getPath());
 
             try (BufferedReader reader = Files.newBufferedReader(path)) {
-                JSONObject json = (JSONObject) jsonParser.parse(reader);
-                String skill = (String) json.get("skill");
-                JSONObject skills = (JSONObject) json.get("skills");
+                JsonObject json = (JsonObject) JsonUtil.from(reader);
+                String skill = json.get("skill").getAsString();
+                JsonObject skills = (JsonObject) json.get("skills");
 
-                Object lvl = 0;
-                Object xp = 0;
-                Object souls = 0;
-                Object stats = null;
+                JsonElement lvl = new JsonPrimitive(0);
+                JsonElement xp = new JsonPrimitive(0);
+                JsonElement souls = new JsonPrimitive(0);
+                JsonElement stats = null;
 
                 for (Object entry : skills.entrySet()) {
-                    Map.Entry<String, JSONObject> pair = (Map.Entry<String, JSONObject>) entry;
+                    Map.Entry<String, JsonObject> pair = (Map.Entry<String, JsonObject>) entry;
                     boolean master = pair.getKey().equals(skill);
-                    JSONObject data = pair.getValue();
+                    JsonObject data = pair.getValue();
 
                     if (PlayerSkill.SHARED_LEVELS) {
-                        Object level = data.remove("level");
-                        Object exp = data.remove("xp");
+                        JsonElement level = data.remove("level");
+                        JsonElement exp = data.remove("xp");
                         if (master) {
                             lvl = level;
                             xp = exp;
                         }
                     }
                     if (PlayerSkill.SHARED_SOULS) {
-                        Object soul = data.remove("souls");
+                        JsonElement soul = data.remove("souls");
                         if (master) souls = soul;
                     }
                     if (PlayerSkill.SHARED_STATS) {
-                        Object sts = data.remove("stats");
+                        JsonElement sts = data.remove("stats");
                         if (master) stats = sts;
                     }
                 }
 
                 if (PlayerSkill.SHARED_LEVELS) {
-                    json.put("level", lvl);
-                    json.put("xp", xp);
+                    json.add("level", lvl);
+                    json.add("xp", xp);
                 }
-                if (PlayerSkill.SHARED_SOULS) json.put("souls", souls);
-                if (PlayerSkill.SHARED_STATS) json.put("stats", stats);
+                if (PlayerSkill.SHARED_SOULS) json.add("souls", souls);
+                if (PlayerSkill.SHARED_STATS) json.add("stats", stats);
 
                 try (BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-                    bw.write(json.toJSONString());
+                    bw.write(JsonUtil.toString(json));
                     bw.flush();
                 }
 
@@ -115,7 +115,7 @@ public class OldSkillsConverter {
                 SkilledPlayer info = plugin.getPlayerDataManager().database.load(uuid);
                 plugin.getPlayerDataManager().save(info);
                 converted++;
-            } catch (IOException | ParseException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -143,31 +143,32 @@ public class OldSkillsConverter {
         for (File datas : files) {
             if (!datas.isFile()) continue;
             MessageHandler.sendConsolePluginMessage("&cConverting player data for&8: &e" + datas.getName());
-            JSONParser jsonParser = new JSONParser();
             Path path = Paths.get(datas.getPath());
 
             try (BufferedReader reader = Files.newBufferedReader(path)) {
-                JSONObject obj = (JSONObject) jsonParser.parse(reader);
+                JsonObject obj = (JsonObject) JsonUtil.from(reader);
 
-                if (!obj.containsKey("skills")) {
-                    Map<String, JSONObject> skills = new HashMap<>();
-                    JSONObject skill = new JSONObject();
+                if (!obj.has("skills")) {
+                    Map<String, JsonObject> skills = new HashMap<>();
+                    JsonObject skill = new JsonObject();
 
-                    String name = (String) obj.get("skill");
-                    skill.put("skill", name);
-                    skill.put("level", obj.get("level"));
-                    skill.put("xp", obj.get("xp"));
-                    skill.put("souls", obj.get("souls"));
-                    skill.put("showReadyMessage", obj.get("showReadyMessage"));
-                    skill.put("abilities", obj.get("improvements"));
-                    skill.put("disabledAbilities", obj.get("disabledAbilities"));
-                    skill.put("stats", obj.get("stats"));
+                    String name = obj.get("skill").getAsString();
+                    skill.addProperty("skill", name);
+                    skill.add("level", obj.get("level"));
+                    skill.add("xp", obj.get("xp"));
+                    skill.add("souls", obj.get("souls"));
+                    skill.add("showReadyMessage", obj.get("showReadyMessage"));
+                    skill.add("abilities", obj.get("improvements"));
+                    skill.add("disabledAbilities", obj.get("disabledAbilities"));
+                    skill.add("stats", obj.get("stats"));
 
                     skills.put(name, skill);
-                    obj.put("skills", skills);
+                    JsonObject jsonSkills = new JsonObject();
+                    skills.forEach(jsonSkills::add);
+                    obj.add("skills", jsonSkills);
 
                     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-                        bw.write(obj.toJSONString());
+                        bw.write(JsonUtil.toString(obj));
                         bw.flush();
                     }
 
@@ -176,7 +177,7 @@ public class OldSkillsConverter {
                     plugin.getPlayerDataManager().save(info);
                     converted++;
                 }
-            } catch (IOException | ParseException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -203,26 +204,25 @@ public class OldSkillsConverter {
         for (File datas : files) {
             if (!datas.isFile()) continue;
             MessageHandler.sendConsolePluginMessage("&cConverting player data for&8: &e" + datas.getName());
-            JSONParser jsonParser = new JSONParser();
             Path path = Paths.get(datas.getPath());
 
             try (BufferedReader reader = Files.newBufferedReader(path)) {
-                JSONObject obj = (JSONObject) jsonParser.parse(reader);
+                JsonObject obj = (JsonObject) JsonUtil.from(reader);
 
-                if (!obj.containsKey("disabledAbilities")) obj.put("disabledAbilities", new JSONArray());
-                if (!obj.containsKey("lastSkillChange")) obj.put("lastSkillChange", 0);
-                if (!obj.containsKey("friends")) obj.put("friends", new JSONArray());
-                if (!obj.containsKey("friendRequests")) obj.put("friendRequests", new JSONArray());
-                if (!obj.containsKey("healthScaling")) obj.put("healthScaling", -1);
-                if (!obj.containsKey("xp")) {
-                    obj.put("xp", obj.get("exp"));
+                if (!obj.has("disabledAbilities")) obj.add("disabledAbilities", new JsonArray());
+                if (!obj.has("lastSkillChange")) obj.addProperty("lastSkillChange", 0);
+                if (!obj.has("friends")) obj.add("friends", new JsonArray());
+                if (!obj.has("friendRequests")) obj.add("friendRequests", new JsonArray());
+                if (!obj.has("healthScaling")) obj.addProperty("healthScaling", -1);
+                if (!obj.has("xp")) {
+                    obj.add("xp", obj.get("exp"));
                     obj.remove("exp");
                 }
-                JSONObject stats = (JSONObject) obj.get("stats");
-                if (!stats.containsKey("PTS") && stats.containsKey("points")) stats.put("PTS", stats.get("points"));
+                JsonObject stats = (JsonObject) obj.get("stats");
+                if (!stats.has("PTS") && stats.has("points")) stats.add("PTS", stats.get("points"));
 
                 try (BufferedWriter bw = Files.newBufferedWriter(path)) {
-                    bw.write(obj.toJSONString());
+                    bw.write(JsonUtil.toString(obj));
                     bw.flush();
                 }
 
@@ -231,7 +231,7 @@ public class OldSkillsConverter {
                 SkilledPlayer info = plugin.getPlayerDataManager().getData(uuid);
                 plugin.getPlayerDataManager().save(info);
                 converted++;
-            } catch (IOException | ParseException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -314,10 +314,9 @@ public class OldSkillsConverter {
                 File newData = new File(dbFolder, datas.getName() + ".json");
                 datas.renameTo(newData);
 
-                JSONParser jsonParser = new JSONParser();
                 Path path = Paths.get(newData.getPath());
                 try (BufferedReader reader = Files.newBufferedReader(path)) {
-                    JSONObject obj = (JSONObject) jsonParser.parse(reader);
+                    JsonObject obj = (JsonObject) JsonUtil.from(reader);
                     Object id = obj.get("uuid");
                     if (id == null) {
                         SLogger.error("No ID element found. Skipping...");
@@ -327,7 +326,7 @@ public class OldSkillsConverter {
                     obj.remove("id");
                     obj.remove("uuid");
 
-                    String skill = (String) obj.get("skill");
+                    String skill = obj.get("skill").getAsString();
                     if (skill.equalsIgnoreCase(PlayerSkill.NONE)) skill = PlayerSkill.NONE;
                     else skill = StringUtils.capitalize(skill);
 //                    obj.put("skill", skill);
@@ -349,7 +348,7 @@ public class OldSkillsConverter {
 //                    obj.put("lastSkillChange", 0);
 
                     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-                        bw.write(obj.toJSONString());
+                        bw.write(JsonUtil.toString(obj));
                         bw.flush();
                     }
 
@@ -358,7 +357,7 @@ public class OldSkillsConverter {
                     SkilledPlayer info = plugin.getPlayerDataManager().getData(uuid);
                     plugin.getPlayerDataManager().save(info);
                     converted++;
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

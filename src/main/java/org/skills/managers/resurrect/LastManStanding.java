@@ -104,7 +104,7 @@ final class LastManStanding {
 
         Bukkit.getScheduler().runTaskLater(SkillsPro.get(), () -> {
             if (SkillsConfig.PULSE_ENABLED.getBoolean()) HeartPulse.pulse(player, 0, 0);
-            if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) DamageAestheticsManager.send(player, 0, 0);
+            if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean()) DamageAestheticsManager.redScreen(player);
         }, 1L);
     }
 

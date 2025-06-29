@@ -1,7 +1,7 @@
 package org.skills.events;
 
-import org.apache.commons.lang.StringUtils;
 import org.skills.main.locale.SkillsLang;
+import org.skills.utils.StringUtils;
 
 import java.util.Locale;
 

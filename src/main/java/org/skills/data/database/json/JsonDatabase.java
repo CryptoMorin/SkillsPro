@@ -3,7 +3,6 @@ package org.skills.data.database.json;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.skills.data.database.DataContainer;
 import org.skills.data.database.SkillsDatabase;
@@ -12,6 +11,7 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.events.SkillsEventType;
 import org.skills.main.SLogger;
 import org.skills.party.SkillsParty;
+import org.skills.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -56,7 +56,7 @@ public class JsonDatabase<T extends DataContainer> implements SkillsDatabase<T> 
     }
 
     private static boolean verifyJson(String name) {
-        return name.length() == 36 + 5 && StringUtils.countMatches(name, "-") == 4 && name.toLowerCase().endsWith(".json");
+        return name.length() == 36 + 5 && StringUtils.countMatches(name, '-') == 4 && name.toLowerCase().endsWith(".json");
     }
 
     @Override

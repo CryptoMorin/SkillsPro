@@ -23,8 +23,6 @@
  */
 package org.skills.utils;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -52,7 +50,7 @@ public final class FastUUID {
 
     static {
         String java = System.getProperty("java.specification.version");
-        int version = NumberUtils.toInt(java);
+        int version = Integer.parseInt(java);
         USE_JDK_UUID_TO_STRING = version >= 14;
     }
 

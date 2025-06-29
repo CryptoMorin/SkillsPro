@@ -189,9 +189,9 @@ public abstract class Ability implements Listener {
 
     public PotionEffect parseEquationPotion(SkilledPlayer info, @Nullable String potion) {
         if (Strings.isNullOrEmpty(potion) || potion.equalsIgnoreCase("none")) return null;
-        String[] split = org.apache.commons.lang.StringUtils.split(org.apache.commons.lang.StringUtils.deleteWhitespace(potion), ',');
+        String[] split = StringUtils.split(StringUtils.deleteWhitespace(potion), ',');
 
-        Optional<XPotion> typeOpt = XPotion.matchXPotion(split[0]);
+        Optional<XPotion> typeOpt = XPotion.of(split[0]);
         if (!typeOpt.isPresent()) return null;
         PotionEffectType type = typeOpt.get().getPotionEffectType();
         if (type == null) return null;

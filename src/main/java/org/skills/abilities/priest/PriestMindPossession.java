@@ -1,6 +1,7 @@
 package org.skills.abilities.priest;
 
 import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -37,7 +38,10 @@ public class PriestMindPossession extends Ability {
         effects.add(XPotion.BLINDNESS.buildPotionEffect((lvl * 5) * 20, 1));
         if (lvl > 1) {
             effects.add(XPotion.SLOWNESS.buildPotionEffect((lvl * 5) * 20, 1));
-            player.spawnParticle(XParticle.ENTITY_EFFECT.get(), victim.getEyeLocation(), 30, 0.3, 0, 0.3, 0.3);
+            ParticleDisplay.of(XParticle.CLOUD)
+                    .withCount(30).offset(0.3)
+                    .withLocation(victim.getEyeLocation())
+                    .spawn();
         }
 
         victim.addPotionEffects(effects);

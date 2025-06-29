@@ -165,6 +165,9 @@ public enum SkillsLang {
     COMMAND_MUSIC_PRIEST_ONLY("&cOnly priests can use this command!", 1, 2),
     COMMAND_MUSICT_ERROR("&cError while parsing instructions&8: &e%error%", 1, 2),
 
+    COMMAND_WORLDBORDER_DESCRIPTION("&6Testing commands for worldborder.", 1, 2),
+    COMMAND_WORLDBORDER_USAGE("&4Usage&8: &e/skill worldborder &9<action>", 1, 2),
+
     COMMAND_DEBUG_DESCRIPTION("&6Enable debug mode.", 1, 2),
     COMMAND_DEBUG_ON("&6Debug mode is&8: &3ON", 1, 2),
     COMMAND_DEBUG_OFF("&6Debug mode is&8: &cOFF", 1, 2),

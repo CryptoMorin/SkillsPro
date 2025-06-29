@@ -1,8 +1,8 @@
 package org.skills.gui;
 
-import com.cryptomorin.commons.inventory.BukkitInventoryView;
-import com.cryptomorin.commons.inventory.XInventoryView;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.inventory.BukkitInventoryView;
+import com.cryptomorin.xseries.inventory.XInventoryView;
 import com.google.common.base.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

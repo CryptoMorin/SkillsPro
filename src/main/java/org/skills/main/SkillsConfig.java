@@ -1,7 +1,5 @@
 package org.skills.main;
 
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -12,7 +10,9 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.locale.LanguageManager;
 import org.skills.main.locale.MessageHandler;
 import org.skills.utils.MathUtils;
+import org.skills.utils.NumberUtils;
 import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 
 import java.util.List;
 import java.util.Objects;

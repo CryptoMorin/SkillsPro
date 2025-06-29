@@ -1,6 +1,7 @@
 package org.skills.abilities.swordsman;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.XTag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,8 @@ public class SwordsmanDodge extends Ability {
 
         if (MathUtils.hasChance((int) this.getScaling(info, "chance", event))) {
             event.setCancelled(true);
+            XSound.BLOCK_VAULT_BREAK.or(XSound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).play(player.getLocation());
+
             SkillsLang.Skill_Swordsman_Dodge_Message.sendMessage(player);
             if (event.getDamager() instanceof Player) {
                 SkillsLang.Skill_Swordsman_Dodge_Opponent_Message.sendMessage(event.getDamager());

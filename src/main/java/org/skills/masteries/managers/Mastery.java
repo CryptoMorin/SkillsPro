@@ -1,8 +1,6 @@
 package org.skills.masteries.managers;
 
 import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,6 +15,8 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.types.Stat;
 import org.skills.utils.MathUtils;
+import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 
 import java.util.Locale;
 import java.util.Objects;

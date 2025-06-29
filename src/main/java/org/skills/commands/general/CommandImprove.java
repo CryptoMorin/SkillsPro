@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +22,7 @@ import org.skills.gui.GUIParser;
 import org.skills.gui.InteractiveGUI;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
+import org.skills.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,7 +115,7 @@ public class CommandImprove extends SkillsCommand {
                     lore = MessageHandler.replace(lore, "%description%", (Supplier<String>) () -> ability.getDescription(info));
                     String lastColors = "";
 
-                    for (String singleLore : StringUtils.splitPreserveAllTokens(lore, '\n')) {
+                    for (String singleLore : StringUtils.split(lore, '\n', true)) {
                         if (singleLore.isEmpty()) {
                             translatedLore.add(" ");
                             continue;

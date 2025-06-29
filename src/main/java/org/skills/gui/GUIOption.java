@@ -1,6 +1,5 @@
 package org.skills.gui;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -9,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.BooleanEval;
+import org.skills.utils.Validate;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

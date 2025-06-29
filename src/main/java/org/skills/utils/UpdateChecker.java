@@ -22,7 +22,6 @@
 package org.skills.utils;
 
 import com.google.common.base.Strings;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -42,6 +41,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -143,16 +143,16 @@ public class UpdateChecker implements Listener {
             newVer = StringUtils.remove(newVer, "beta");
         }
 
-        String[] oldV = StringUtils.split(oldVer, '.');
-        String[] newV = StringUtils.split(newVer, '.');
+        List<String> oldV = StringUtils.split(oldVer, '.', true);
+        List<String> newV = StringUtils.split(newVer, '.', true);
 
-        int max = Math.max(oldV.length, newV.length);
-        boolean hasBeta = oldV.length != newV.length;
+        int max = Math.max(oldV.size(), newV.size());
+        boolean hasBeta = oldV.size() != newV.size();
         for (int i = 0; i < max; i++) {
-            if (hasBeta && i + 1 == max) return max == newV.length;
+            if (hasBeta && i + 1 == max) return max == newV.size();
 
-            int older = Integer.parseInt(oldV[i]);
-            int newer = Integer.parseInt(newV[i]);
+            int older = Integer.parseInt(oldV.get(i));
+            int newer = Integer.parseInt(newV.get(i));
 
             if (newer == older) continue;
             if (newer > older) {
@@ -262,7 +262,7 @@ public class UpdateChecker implements Listener {
      */
     private void sendMessages(@Nonnull CommandSender receiver, @Nonnull String msg) {
         String lastColor = "";
-        for (String string : StringUtils.splitPreserveAllTokens(msg, '\n')) {
+        for (String string : StringUtils.split(msg, '\n', true)) {
             string = lastColor + ChatColor.translateAlternateColorCodes('&', prefix + string);
             receiver.sendMessage(string);
             lastColor = ChatColor.getLastColors(string);

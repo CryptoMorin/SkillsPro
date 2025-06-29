@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.skills'
-version = '19.6.2'
+version = '19.6.3'
 description = 'An RPG plugin for players to grind with!'
 
 java {
@@ -95,16 +95,17 @@ repositories {
 
 //noinspection VulnerableLibrariesLocal
 dependencies {
-    implementation files(file('local-libs' + File.separatorChar + 'XCommons-2.0.0.jar'))
+    implementation files(file('local-libs' + File.separatorChar + 'XCommons-3.0.0.jar'))
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    implementation 'com.github.cryptomorin:XSeries:13.0.0'
+    implementation 'com.github.cryptomorin:XSeries:13.3.2'
+    // implementation files(file('local-libs' + File.separatorChar + 'XSeries-13.3.1.jar'))
     //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
     // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
     // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
     compileOnly 'com.github.cryptomorin:kingdoms:1.17.10-BETA'
-    compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
 
@@ -152,11 +153,11 @@ dependencies {
     compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
 
     //noinspection VulnerableLibrariesLocal
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly('com.github.MilkBowl:VaultAPI:1.7') { setTransitive(false) }
 
     // https://docs.discordsrv.com/#developers
     // https://nexus.scarsz.me/content/groups/public/com/discordsrv/discordsrv/
-    compileOnly 'com.discordsrv:discordsrv:1.30.0-SNAPSHOT'
+    compileOnly 'com.discordsrv:discordsrv:1.29.0'
     // compileOnly('net.dv8tion:JDA:5.2.1') { transitive = false } // DiscordSRV 1.18.0+ no longer includes JDA.
 
     // https://worldedit.enginehub.org/en/latest/api/index.html

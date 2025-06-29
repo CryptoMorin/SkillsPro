@@ -1,7 +1,7 @@
 package org.skills.managers;
 
-import com.cryptomorin.commons.inventory.XInventoryView;
 import com.cryptomorin.xseries.XSound;
+import com.cryptomorin.xseries.inventory.XInventoryView;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

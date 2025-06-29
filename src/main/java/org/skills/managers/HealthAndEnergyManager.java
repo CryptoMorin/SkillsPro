@@ -2,7 +2,6 @@ package org.skills.managers;
 
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.ActionBar;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.boss.BossBar;
@@ -33,6 +32,7 @@ import org.skills.types.SkillManager;
 import org.skills.types.SkillScaling;
 import org.skills.utils.Cooldown;
 import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 import org.skills.utils.versionsupport.VersionSupport;
 
 import java.util.HashMap;
@@ -271,6 +271,8 @@ public final class HealthAndEnergyManager implements Listener {
 
         if (!player.hasPlayedBefore()) {
             String skill = SkillsConfig.DEFAULT_SKILL.getString();
+            Validate.notEmpty(skill, "Default skill is invalid: " + skill);
+
             if (!skill.equalsIgnoreCase(PlayerSkill.NONE)) {
                 Skill defaultSkill = SkillManager.getSkill(skill);
                 if (defaultSkill == null)

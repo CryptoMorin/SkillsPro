@@ -1,11 +1,11 @@
 package org.skills.data.managers.backup;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
+import org.skills.utils.StringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -56,7 +56,7 @@ public class SkillsBackup extends BackupManager {
     @Override
     public boolean isWhitelistedFile(@NonNull Path file) {
         String name = file.getFileName().toString();
-        return (StringUtils.countMatches(name, "-") == 4 && name.replace(".json", "").length() == 36 && name.toLowerCase().endsWith(".json"))
+        return (StringUtils.countMatches(name, '-') == 4 && name.replace(".json", "").length() == 36 && name.toLowerCase().endsWith(".json"))
                 || name.toLowerCase().endsWith(".yml");
     }
 }

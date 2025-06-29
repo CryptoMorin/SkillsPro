@@ -1,8 +1,6 @@
 package org.skills.utils;
 
 import com.cryptomorin.xseries.XPotion;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

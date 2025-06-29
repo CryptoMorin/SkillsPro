@@ -33,43 +33,52 @@ public class DamageAestheticsManager implements Listener {
         if (SkillsConfig.PULSE_ENABLED.getBoolean() && percent < SkillsConfig.PULSE_HEALTH.getInt())
             HeartPulse.pulse(player, percent);
         if (SkillsConfig.RED_SCREEN_ENABLED.getBoolean())
-            send(player, SkillsConfig.RED_SCREEN_DURATION.getInt(), percent);
+            redScreen(player, SkillsConfig.RED_SCREEN_DURATION.getInt(), percent);
     }
 
-    public static void send(Player player, int durationSeconds, int percent) {
-        int start = SkillsConfig.RED_SCREEN_HEALTH.getInt();
-        if (percent > start) return;
-        send(player, durationSeconds, start, percent);
+    public static void redScreen(Player player, int durationSeconds, int hpPercent) {
+        int criticalHpPercent = SkillsConfig.RED_SCREEN_HEALTH.getInt();
+        if (hpPercent > criticalHpPercent) return;
+        redScreen(player, durationSeconds, criticalHpPercent, hpPercent);
     }
 
-    private static final double BORDER_SIZE = 1000000;
+    /**
+     * @param durationSeconds   The duration which this effect stays on the screen.
+     * @param criticalHpPercent The starting percentage point of critical player health. (50% by default)
+     * @param hpPercent         The current player health percentage.
+     */
+    public static void redScreen(Player player, int durationSeconds, int criticalHpPercent, int hpPercent) {
+        // We put the border as far as possible to make the change caused by player movement minimum.
+        // We calculate the lerp size (the old border radius) based on the player's HP.
+        // The lower the player's HP, the closer this radius is, then we move it to the max border size.
+        //
+        // It's still unknown how the red tint is shown even when the warning distance is set 1 while
+        // the border is extremely far away.
+        //
+        // Note: This method can be easily tested using "/minecraft:damage @p <damage>"
+        double percentOfStart = MathUtils.getPercent(hpPercent, criticalHpPercent);
+        double lerpTarget = Math.max(1, MathUtils.percentOfAmount(percentOfStart, XWorldBorder.MAX_SIZE));
 
-    public static void send(Player player, int durationSeconds, int start, int percent) {
-        // Distances and radius in these methods still need tweaking to use the best optimal settings
-        // in terms of visual and delay accurancy and also considering player movement.
-        // start = 50 by default
-        // 50 is 100% of 50 -> 34400000
-        // 43 is  85% of 50
-        // 28 is  56% of 50
-        // 8  is  16% of 50 -> 6400000
-        int percentOfStart = (int) MathUtils.getPercent(percent, start);
-        int warningDistance = (int) MathUtils.percentOfAmount(percentOfStart, BORDER_SIZE * 40);
-
-        //  public static void worldborder(Player player, int dist, double oldRadius, double newRadius, long delay) {
         XWorldBorder wb = XWorldBorder.getOrCreate(player);
+        wb.setCenter(player.getLocation());
         wb.setWarningDistance(1);
+        wb.setSizeLerpTarget(lerpTarget);
 
         if (durationSeconds == 0) {
-            wb.setSize(warningDistance, Duration.ZERO);
-            wb.setSizeLerpTarget(warningDistance);
-            // worldborder(player, 1, warningDistance, warningDistance, 0);
+            wb.setSize(lerpTarget, Duration.ZERO);
         } else {
-            wb.setSize(BORDER_SIZE * 100, Duration.ofSeconds(durationSeconds));
-            wb.setSizeLerpTarget(warningDistance);
-            // worldborder(player, 1, warningDistance, BORDER_SIZE * 100, durationSeconds * 1000L);
+            wb.setSize(XWorldBorder.MAX_SIZE, Duration.ofSeconds(durationSeconds));
         }
 
-        wb.send();
+        wb.update();
+    }
+
+    public static void redScreen(Player player) {
+        XWorldBorder wb = XWorldBorder.getOrCreate(player);
+        wb.setCenter(player.getLocation());
+        wb.setWarningDistance(Integer.MAX_VALUE);
+        wb.setSize(XWorldBorder.MAX_SIZE, Duration.ZERO);
+        wb.update();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

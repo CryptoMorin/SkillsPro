@@ -22,13 +22,13 @@
 package org.skills.main.locale;
 
 import com.google.common.base.Strings;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 
 import java.util.Arrays;
 import java.util.Collection;

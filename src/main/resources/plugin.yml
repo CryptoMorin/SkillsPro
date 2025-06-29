@@ -72,6 +72,9 @@ permissions:
   skills.command.info:
     description: Access to info command.
     default: true
+  skills.command.worldborder:
+    description: Test commands for per-player WorldBorders.
+    default: op
   skills.command.info.others:
     description: Access to other player's info command.
     default: op

@@ -1,6 +1,5 @@
 package org.skills.commands;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -11,6 +10,7 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
+import org.skills.utils.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;

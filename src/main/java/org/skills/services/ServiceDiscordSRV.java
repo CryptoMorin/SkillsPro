@@ -42,7 +42,7 @@ public class ServiceDiscordSRV {
 
     public static void logPartyChat(Player player, String str) {
         if (partyChannel == null) return;
-        str = org.apache.commons.lang.StringUtils.replace(str, "@", "@\u200B");
+        str = StringUtils.replace(str, "@", "@\u200B");
         partyChannel.sendMessage(str).queue();
     }
 

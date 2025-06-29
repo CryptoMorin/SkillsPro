@@ -29,6 +29,7 @@ import java.util.Set;
 
 public class VampireBloodCircuit extends ActiveAbility {
     private static final String MINION = "VAMPIRE_VEX";
+    private static boolean USE_LASER = true;
 
     public VampireBloodCircuit() {
         super("vampire", "blood_circuit");
@@ -69,13 +70,13 @@ public class VampireBloodCircuit extends ActiveAbility {
         crystal.setShowingBottom(false);
 
         XSound.ENTITY_ELDER_GUARDIAN_CURSE.play(crystal.getLocation());
-        boolean useLaser = false;// getOptions(info, "use-laser").getBoolean();
         Laser laser = null;
-        if (useLaser) {
+        if (USE_LASER) {
             try {
                 laser = new Laser(crystal.getLocation().add(0, 0.5, 0), () -> entity.getEyeLocation().add(0, -0.75, 0), -1, 16);
-            } catch (ReflectiveOperationException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
+                USE_LASER = false;
             }
             laser.start(SkillsPro.get());
         }
@@ -97,7 +98,7 @@ public class VampireBloodCircuit extends ActiveAbility {
             public void run() {
                 if (!entity.isValid() || !crystal.isValid() || duration-- <= 0) {
                     cancel();
-                    if (useLaser) finalLaser.stop();
+                    if (USE_LASER) finalLaser.stop();
                     ParticleDisplay.of(XParticle.WITCH).withLocation(crystal.getLocation()).withCount(200).offset(0.5).withExtra(0.5).spawn();
                     crystal.remove();
                     for (LivingEntity minion : minions) killMinion(minion);
@@ -108,7 +109,7 @@ public class VampireBloodCircuit extends ActiveAbility {
 
                 if (particleTimer++ == 10) {
                     particleTimer = 0;
-                    if (!useLaser)
+                    if (!USE_LASER)
                         Particles.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
                 }
                 if (repeat++ == inferno) {
@@ -118,7 +119,7 @@ public class VampireBloodCircuit extends ActiveAbility {
 
                     damage += damageMod;
                     if (lvl > 2) minions.add(spawnMinion(player, entity));
-                    if (useLaser) finalLaser.callColorChange();
+                    if (USE_LASER) finalLaser.changeColor();
                 }
             }
         }.runTaskTimer(SkillsPro.get(), 1, 1);

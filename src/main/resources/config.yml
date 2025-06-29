@@ -150,7 +150,7 @@ blood:
 
 # Only works for 1.13+
 # In some very unpopular games such as NecroVision, the player
-# has a few seconds after their health hits zeor. In this case,
+# has a few seconds after their health hits zero. In this case,
 # they have a certain amount of time before someone can revive them.
 #
 # In order to revive a fallen player, hold sneak around them until
@@ -171,6 +171,9 @@ last-breath:
   # going into Last Breath mode.
   # If the last applied damage (from any source)
   # is higher than this, the player will die instantly.
+  # * Note: Certain plugins do not properly register their damage done
+  #         to the player which causes last breath to not trigger.
+  #         (E.g. using "/minecraft:damage" doesn't trigger this)
   intensity-resistance: 10
 
   # Seconds the player is invulnerable to damage.
@@ -219,6 +222,7 @@ last-breath:
     distance: 2.5
 
 # Call of Duty red screen.
+# * NOTE: The red tint warning effect for the world border is only visible on "Fancy" or "Fabulous!" graphics settings.
 red-screen:
   enabled: true
 

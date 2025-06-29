@@ -1,6 +1,5 @@
 package org.skills.types;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.skills.abilities.Ability;
@@ -10,6 +9,7 @@ import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.main.locale.SkillsLang;
+import org.skills.utils.Validate;
 import org.skills.utils.YamlAdapter;
 
 import java.io.File;

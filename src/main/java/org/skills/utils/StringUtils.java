@@ -23,7 +23,6 @@ package org.skills.utils;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
@@ -47,19 +46,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * A string util class extending Apache's {@link org.apache.commons.lang.StringUtils}
+ * A string util class extending Apache's {@code StringUtils}
  *
  * @author Crypto Morin
  * @version 3.0.0
  */
-public final class StringUtils extends org.apache.commons.lang.StringUtils {
+public final class StringUtils {
+    public static final int INDEX_NOT_FOUND = -1;
     private static final DateTimeFormatter FULL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss");
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("hh:mm:ss");
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,###.##");
 
     /**
      * Capitalizes the first letter of a string and lowercase the other letters.
-     * Apache's {@link org.apache.commons.lang.StringUtils#capitalize(String)} doesn't lowercase the other half.
+     * Apache's {@code org.apache.commons.lang.StringUtils#capitalize(String)} doesn't lowercase the other half.
      *
      * @param str the string to capitalize.
      * @return a capitalized word.
@@ -86,6 +86,105 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * Find the first index of any of a set of potential substrings.
+     *
+     * <p>A {@code null} CharSequence will return {@code -1}.
+     * A {@code null} or zero length search array will return {@code -1}.
+     * A {@code null} search array entry will be ignored, but a search
+     * array containing "" will return {@code 0} if {@code str} is not
+     * null. This method uses {@link String#indexOf(String)} if possible.</p>
+     *
+     * <pre>
+     * StringUtils.indexOfAny(null, *)                      = -1
+     * StringUtils.indexOfAny(*, null)                      = -1
+     * StringUtils.indexOfAny(*, [])                        = -1
+     * StringUtils.indexOfAny("zzabyycdxx", ["ab", "cd"])   = 2
+     * StringUtils.indexOfAny("zzabyycdxx", ["cd", "ab"])   = 2
+     * StringUtils.indexOfAny("zzabyycdxx", ["mn", "op"])   = -1
+     * StringUtils.indexOfAny("zzabyycdxx", ["zab", "aby"]) = 1
+     * StringUtils.indexOfAny("zzabyycdxx", [""])           = 0
+     * StringUtils.indexOfAny("", [""])                     = 0
+     * StringUtils.indexOfAny("", ["a"])                    = -1
+     * </pre>
+     *
+     * @param str        the CharSequence to check, may be null
+     * @param searchStrs the CharSequences to search for, may be null
+     * @return the first index of any of the searchStrs in str, -1 if no match
+     * @since 3.0 Changed signature from indexOfAny(String, String[]) to indexOfAny(CharSequence, CharSequence...)
+     */
+    public static int indexOfAny(final CharSequence str, final CharSequence... searchStrs) {
+        if (str == null || searchStrs == null) {
+            return INDEX_NOT_FOUND;
+        }
+
+        // String's can't have a MAX_VALUEth index.
+        int ret = Integer.MAX_VALUE;
+
+        int tmp;
+        for (final CharSequence search : searchStrs) {
+            if (search == null) {
+                continue;
+            }
+            tmp = indexOf(str, search, 0);
+            if (tmp == INDEX_NOT_FOUND) {
+                continue;
+            }
+
+            if (tmp < ret) {
+                ret = tmp;
+            }
+        }
+
+        return ret == Integer.MAX_VALUE ? INDEX_NOT_FOUND : ret;
+    }
+
+    static int indexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
+        if (cs == null || searchChar == null) {
+            return StringUtils.INDEX_NOT_FOUND;
+        }
+        if (cs instanceof String) {
+            return ((String) cs).indexOf(searchChar.toString(), start);
+        }
+        if (cs instanceof StringBuilder) {
+            return ((StringBuilder) cs).indexOf(searchChar.toString(), start);
+        }
+        if (cs instanceof StringBuffer) {
+            return ((StringBuffer) cs).indexOf(searchChar.toString(), start);
+        }
+        return cs.toString().indexOf(searchChar.toString(), start);
+    }
+
+    /**
+     * Counts how many times the char appears in the given string.
+     *
+     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+     *
+     * <pre>
+     * StringUtils.countMatches(null, *)     = 0
+     * StringUtils.countMatches("", *)       = 0
+     * StringUtils.countMatches("abba", 0)   = 0
+     * StringUtils.countMatches("abba", 'a') = 2
+     * StringUtils.countMatches("abba", 'b') = 2
+     * StringUtils.countMatches("abba", 'x') = 0
+     * </pre>
+     *
+     * @param str the CharSequence to check, may be null
+     * @param ch  the char to count
+     * @return the number of occurrences, 0 if the CharSequence is {@code null}
+     * @since 3.4
+     */
+    public static int countMatches(final CharSequence str, final char ch) {
+        int count = 0;
+        // We could also call str.toCharArray() for faster lookups but that would generate more garbage.
+        for (int i = 0; i < str.length(); i++) {
+            if (ch == str.charAt(i)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static String configOption(@Nullable Enum<?> enumeral) {
@@ -175,6 +274,49 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     @Nullable
+    public static String remove(@Nullable String str, char remove) {
+        if (com.google.common.base.Strings.isNullOrEmpty(str)) return str;
+        char[] chars = str.toCharArray();
+        int pos = 0;
+
+        for (char ch : chars) {
+            if (ch != remove) chars[pos++] = ch;
+        }
+
+        // the final pos will be the "length" because of the final pos++
+        return chars.length == pos ? str : new String(chars, 0, pos);
+    }
+
+    /**
+     * <p>Removes all occurrences of a substring from within the source string.</p>
+     *
+     * <p>A <code>null</code> source string will return <code>null</code>.
+     * An empty ("") source string will return the empty string.
+     * A <code>null</code> remove string will return the source string.
+     * An empty ("") remove string will return the source string.</p>
+     *
+     * <pre>
+     * StringUtils.remove(null, *)        = null
+     * StringUtils.remove("", *)          = ""
+     * StringUtils.remove(*, null)        = *
+     * StringUtils.remove(*, "")          = *
+     * StringUtils.remove("queued", "ue") = "qd"
+     * StringUtils.remove("queued", "zz") = "queued"
+     * </pre>
+     *
+     * @param str    the source String to search, may be null
+     * @param remove the String to search for and remove, may be null
+     * @return the substring with the string removed if found,
+     * <code>null</code> if null String input
+     * @since 2.1
+     */
+    public static String remove(String str, String remove) {
+        Objects.requireNonNull(str);
+        Objects.requireNonNull(remove);
+        return replace(str, remove, "", -1);
+    }
+
+    @Nullable
     public static String deleteWhitespace(@Nullable String str) {
         if (Strings.isNullOrEmpty(str)) return str;
         int len = str.length();
@@ -188,6 +330,10 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
 
         if (count == len) return str;
         return new String(chs, 0, count);
+    }
+
+    public static String[] split(@Nonnull String str, char separatorChar) {
+        return split(str, separatorChar, true).toArray(new String[0]);
     }
 
     @Nonnull
@@ -272,6 +418,89 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
         return true;
     }
 
+    /**
+     * <p>Replaces all occurrences of a String within another String.</p>
+     *
+     * <p>A <code>null</code> reference passed to this method is a no-op.</p>
+     *
+     * <pre>
+     * StringUtils.replace(null, *, *)        = null
+     * StringUtils.replace("", *, *)          = ""
+     * StringUtils.replace("any", null, *)    = "any"
+     * StringUtils.replace("any", *, null)    = "any"
+     * StringUtils.replace("any", "", *)      = "any"
+     * StringUtils.replace("aba", "a", null)  = "aba"
+     * StringUtils.replace("aba", "a", "")    = "b"
+     * StringUtils.replace("aba", "a", "z")   = "zbz"
+     * </pre>
+     *
+     * @param text         text to search and replace in, may be null
+     * @param searchString the String to search for, may be null
+     * @param replacement  the String to replace it with, may be null
+     * @return the text with any replacements processed,
+     * <code>null</code> if null String input
+     * @see #replace(String text, String searchString, String replacement, int max)
+     */
+    public static String replace(String text, String searchString, String replacement) {
+        return replace(text, searchString, replacement, -1);
+    }
+
+    /**
+     * <p>Replaces a String with another String inside a larger String,
+     * for the first <code>max</code> values of the search String.</p>
+     *
+     * <p>A <code>null</code> reference passed to this method is a no-op.</p>
+     *
+     * <pre>
+     * StringUtils.replace(null, *, *, *)         = null
+     * StringUtils.replace("", *, *, *)           = ""
+     * StringUtils.replace("any", null, *, *)     = "any"
+     * StringUtils.replace("any", *, null, *)     = "any"
+     * StringUtils.replace("any", "", *, *)       = "any"
+     * StringUtils.replace("any", *, *, 0)        = "any"
+     * StringUtils.replace("abaa", "a", null, -1) = "abaa"
+     * StringUtils.replace("abaa", "a", "", -1)   = "b"
+     * StringUtils.replace("abaa", "a", "z", 0)   = "abaa"
+     * StringUtils.replace("abaa", "a", "z", 1)   = "zbaa"
+     * StringUtils.replace("abaa", "a", "z", 2)   = "zbza"
+     * StringUtils.replace("abaa", "a", "z", -1)  = "zbzz"
+     * </pre>
+     *
+     * @param text         text to search and replace in, may be null
+     * @param searchString the String to search for, may be null
+     * @param replacement  the String to replace it with, may be null
+     * @param max          maximum number of values to replace, or <code>-1</code> if no maximum
+     * @return the text with any replacements processed,
+     * <code>null</code> if null String input
+     */
+    public static String replace(String text, String searchString, String replacement, int max) {
+        if (text.isEmpty() || searchString.isEmpty() || replacement == null || max == 0) {
+            return text;
+        }
+        int start = 0;
+        int end = text.indexOf(searchString, start);
+        if (end == INDEX_NOT_FOUND) {
+            return text;
+        }
+        int replLength = searchString.length();
+        int increase = replacement.length() - replLength;
+        increase = Math.max(increase, 0);
+        increase *= (max < 0 ? 16 : (Math.min(max, 64)));
+
+        StringBuilder buf = new StringBuilder(text.length() + increase);
+        while (end != INDEX_NOT_FOUND) {
+            buf.append(text, start, end).append(replacement);
+            start = end + replLength;
+            if (--max == 0) {
+                break;
+            }
+            end = text.indexOf(searchString, start);
+        }
+        buf.append(text.substring(start));
+        return buf.toString();
+    }
+
+
     public static BossBar parseBossBarFromConfig(Player player, ConfigurationSection section) {
         String title = LanguageManager.buildMessage(section.getString("title"), player);
         BarColor color = Enums.getIfPresent(BarColor.class, section.getString("color").toUpperCase(Locale.ENGLISH)).orNull();
@@ -322,18 +551,20 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
     String getGroupedOption(@NonNull String option, int... grouped) {
         Objects.requireNonNull(option, "Enum option name cannot be null");
 
-        String groupStr = option.toLowerCase(Locale.ENGLISH);
-        if (grouped.length == 0) return groupStr.replace('_', '-');
-        String[] split = split(groupStr, '_');
-        Validate.isTrue(split.length >= grouped.length, "Groups cannot be greater than enum separators");
+        option = org.kingdoms.utils.string.Strings.toLatinLowerCase(option);
+        if (grouped.length == 0) return option.replace('_', '-');
 
-        List<Integer> groups = new ArrayList<>();
-        for (int groupedInt : grouped) groups.add(groupedInt - 1);
+        String[] split = splitArray(option, '_', false);
+        if (split.length < grouped.length)
+            throw new IllegalArgumentException("Groups cannot be greater than enum separators: " + option);
 
-        StringBuilder sb = new StringBuilder();
+        boolean[] groups = new boolean[split.length];
+        for (int groupedInt : grouped) groups[groupedInt - 1] = true;
+
+        StringBuilder sb = new StringBuilder(option.length());
         for (int i = 0; i < split.length; i++) {
             sb.append(split[i]);
-            if (groups.contains(i)) sb.append('.');
+            if (groups[i]) sb.append('.');
             else sb.append('-');
         }
 
@@ -341,6 +572,43 @@ public final class StringUtils extends org.apache.commons.lang.StringUtils {
         return sb.toString();
     }
 
+    public static String[] splitArray(String str, char separatorChar) {
+        return splitArray(str, separatorChar, false);
+    }
+
+    public static String[] splitArray(String str, char separatorChar, boolean preserveAllTokens) {
+        // Performance tuned for 2.0 (JDK1.4)
+
+        if (str == null) {
+            return null;
+        }
+        int len = str.length();
+        if (len == 0) {
+            return new String[0];
+        }
+        List<String> list = new ArrayList<>();
+        int i = 0, start = 0;
+        boolean match = false;
+        boolean lastMatch = false;
+        while (i < len) {
+            if (str.charAt(i) == separatorChar) {
+                if (match || preserveAllTokens) {
+                    list.add(str.substring(start, i));
+                    match = false;
+                    lastMatch = true;
+                }
+                start = ++i;
+                continue;
+            }
+            lastMatch = false;
+            match = true;
+            i++;
+        }
+        if (match || (preserveAllTokens && lastMatch)) {
+            list.add(str.substring(start, i));
+        }
+        return list.toArray(new String[0]);
+    }
 
     /**
      * Checks if the given string is equal to any of the other strings.

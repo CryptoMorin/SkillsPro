@@ -1,6 +1,5 @@
 package org.skills.types;
 
-import org.apache.commons.lang.Validate;
 import org.skills.abilities.Ability;
 import org.skills.abilities.AbilityManager;
 import org.skills.data.managers.PlayerSkill;
@@ -10,6 +9,7 @@ import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.MathUtils;
 import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 import org.skills.utils.YamlAdapter;
 
 import java.util.*;

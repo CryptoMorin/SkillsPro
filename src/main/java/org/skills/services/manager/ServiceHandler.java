@@ -2,7 +2,6 @@ package org.skills.services.manager;
 
 import com.cryptomorin.xseries.reflection.XReflection;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -22,6 +21,7 @@ import org.skills.services.placeholders.ServicePlaceholderAPI;
 import org.skills.services.placeholders.SkillsPlaceholders;
 import org.skills.utils.Pair;
 import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 
 import java.util.*;
 import java.util.function.BiFunction;

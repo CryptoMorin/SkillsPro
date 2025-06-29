@@ -4,11 +4,11 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.skills.utils.ArrayUtils;
+import org.skills.utils.StringUtils;
+import org.skills.utils.Validate;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class HoverLang {
             Object first = edits[0];
             if (first instanceof Object[]) {
                 complexEdits = (Object[]) first;
-                edits = ArrayUtils.remove(edits, 0);
+                edits = (Object[]) ArrayUtils.remove(edits, 0);
             }
         }
 
