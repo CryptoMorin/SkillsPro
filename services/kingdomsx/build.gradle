@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.skills.services'
+version = 'unspecified'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
+    compileOnly 'com.github.cryptomorin:kingdoms:1.17.10-BETA'
+    compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
+}

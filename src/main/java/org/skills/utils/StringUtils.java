@@ -551,7 +551,7 @@ public final class StringUtils {
     String getGroupedOption(@NonNull String option, int... grouped) {
         Objects.requireNonNull(option, "Enum option name cannot be null");
 
-        option = org.kingdoms.utils.string.Strings.toLatinLowerCase(option);
+        option = option.toLowerCase(Locale.ENGLISH);
         if (grouped.length == 0) return option.replace('_', '-');
 
         String[] split = splitArray(option, '_', false);

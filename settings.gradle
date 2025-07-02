@@ -5,3 +5,6 @@
  */
 
 rootProject.name = 'SkillsPro'
+
+include 'services'
+include 'services:kingdomsx'

@@ -1,0 +1,6 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.skills.services'
+version = 'unspecified'

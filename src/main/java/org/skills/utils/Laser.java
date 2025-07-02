@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
-import org.kingdoms.utils.Validate;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -263,7 +262,7 @@ public final class Laser {
     }
 
     public void stop() {
-        Validate.isTrue(run != null, "Laser not started");
+        if (run == null) throw new IllegalStateException("Laser not started");
         run.cancel();
     }
 

@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
-import org.kingdoms.utils.time.TimeUtils;
 import org.skills.commands.SkillsCommand;
 import org.skills.main.locale.SkillsLang;
 
@@ -34,7 +33,7 @@ public class CommandWorldBorder extends SkillsCommand {
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "size":
-                wb.setSize(Double.parseDouble(args[1]), Duration.ofMillis(TimeUtils.parseTime(args[2])));
+                wb.setSize(Double.parseDouble(args[1]), Duration.ofSeconds(Long.parseLong(args[2])));
                 break;
             case "lerpsizetarget":
             case "lerpsize":
@@ -52,7 +51,7 @@ public class CommandWorldBorder extends SkillsCommand {
                 wb.setWarningDistance(Integer.parseInt(args[1]));
                 break;
             case "warningtime":
-                wb.setWarningTime(Duration.ofMillis(TimeUtils.parseTime(args[1])));
+                wb.setWarningTime(Duration.ofSeconds(Long.parseLong(args[1])));
                 break;
             case "remove":
                 XWorldBorder.remove(player);

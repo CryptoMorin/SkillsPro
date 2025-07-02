@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.skills'
-version = '19.6.3'
+version = '19.6.3.1'
 description = 'An RPG plugin for players to grind with!'
 
 java {
@@ -98,13 +98,12 @@ dependencies {
     implementation files(file('local-libs' + File.separatorChar + 'XCommons-3.0.0.jar'))
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
     implementation 'com.github.cryptomorin:XSeries:13.3.2'
+    implementation project(':services:kingdomsx')
     // implementation files(file('local-libs' + File.separatorChar + 'XSeries-13.3.1.jar'))
     //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
     // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
-    // mvn install:install-file "-Dfile=king.jar" -DgroupId=com.github.cryptomorin -DartifactId=kingdoms -Dversion=1.17.4-ALPHA -Dpackaging=jar -DgeneratePom=true
-    compileOnly 'com.github.cryptomorin:kingdoms:1.17.10-BETA'
     compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
