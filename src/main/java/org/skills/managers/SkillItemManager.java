@@ -1,6 +1,7 @@
 package org.skills.managers;
 
 import com.cryptomorin.commons.nbt.ItemNBT;
+import com.cryptomorin.commons.nbt.impl.tag.NBTTagCompound;
 import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
-import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;

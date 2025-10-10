@@ -16,30 +16,12 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id("com.gradleup.shadow") version "9.0.0-beta9"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = 'org.skills'
-version = '19.6.3.1'
+version = '19.6.4'
 description = 'An RPG plugin for players to grind with!'
-
-java {
-    // Disables disallowing dependencies that are compiled with a more recent Java version
-    // from being used in a project with a lower Java version.
-    // (Specifically for WorldEdit+WorldGuard)
-    disableAutoTargetJvm()
-
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-    // Cause: warning: source release 17 requires target release 17
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-compileJava {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 
 repositories {
     mavenLocal()
@@ -93,19 +75,38 @@ repositories {
     mavenCentral()
 }
 
-//noinspection VulnerableLibrariesLocal
+// Handle Guava transitive dependency conflict between Spigot and WorldEdit/WorldGuard.
+configurations.configureEach {
+    resolutionStrategy {
+        // Align versions across the board (replaces constraints)
+        force 'com.google.guava:guava:33.3.1-jre'
+
+        // Substitute problematic variants to the JRE one
+        dependencySubstitution {
+            // If plain guava (no suffix) causes issues, map it too
+            substitute module('com.google.guava:guava') using module('com.google.guava:guava:33.3.1-jre')
+        }
+
+        // Select JRE variant for the guava capability (handles metadata strictness)
+        capabilitiesResolution.withCapability("com.google.guava:guava") {
+            select(candidates.find { it.variantName.contains("jreRuntimeElements") })
+        }
+    }
+}
+
 dependencies {
-    implementation files(file('local-libs' + File.separatorChar + 'XCommons-3.0.0.jar'))
+    implementation files(file('local-libs' + File.separatorChar + 'XCommons-3.0.2.jar'))
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    implementation 'com.github.cryptomorin:XSeries:13.3.2'
+    implementation 'com.github.cryptomorin:XSeries:13.5.1'
     implementation project(':services:kingdomsx')
     // implementation files(file('local-libs' + File.separatorChar + 'XSeries-13.3.1.jar'))
     //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20'
     // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
-    compileOnly 'org.spigotmc:spigot-api:1.21.6-R0.1-SNAPSHOT'
-    compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
+    //noinspection VulnerableLibrariesLocal
+    compileOnly 'org.spigotmc:spigot:1.21.10-R0.1-SNAPSHOT'
+    // compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
 
     ///////////////////////////// Mobs /////////////////////////////
@@ -166,6 +167,25 @@ dependencies {
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.4.0-SNAPSHOT'
 }
 
+java {
+    // Disables disallowing dependencies that are compiled with a more recent Java version
+    // from being used in a project with a lower Java version.
+    // (Specifically for WorldEdit+WorldGuard)
+    disableAutoTargetJvm()
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    // We can't use a different version for sourceCompatibility
+    // Cause: warning: source release 21 requires target release 21
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.21"
         .replace("\${user.home}", FileSystemView.getFileSystemView().getHomeDirectory().absolutePath))
 logger.lifecycle("Server Path: " + serverPath.toAbsolutePath().toString())
@@ -218,17 +238,14 @@ tasks {
             exclude(dependency("com.github.ben-manes.caffeine:.*"))
         }
     }
-    build {
-        finalizedBy(shadowJar)
-    }
 }
 
 tasks.register("copyToServer", Copy) {
     //noinspection ConfigurationAvoidance
-    Provider<RegularFile> file = (tasks.findByName("shadowJar") as Jar).archiveFile
+    dependsOn(build)
     setTimeout(Duration.ofSeconds(30))
 
-    from(file)
+    from(tasks.shadowJar.archiveFile)
     rename { "${project.name}-${project.version}.jar" }
     into(serverPath.resolve("plugins"))
 }
@@ -321,7 +338,7 @@ tasks.register("everything") {
             //noinspection ConfigurationAvoidance
             tasks.findByName(next).mustRunAfter(tasks.named(prev))
         } catch (Exception ex) {
-            throw new RuntimeException("while gathering tasks $prev->$next", ex)
+            throw new RuntimeException("Error while gathering tasks $prev->$next", ex)
         }
     }
 }

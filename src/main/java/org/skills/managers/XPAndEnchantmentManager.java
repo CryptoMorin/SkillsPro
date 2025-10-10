@@ -40,7 +40,7 @@ public final class XPAndEnchantmentManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onEnchantmentTableOpen(InventoryOpenEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
-        InventoryType type = event.getView().getType();
+        InventoryType type = XInventoryView.of(event.getView()).getType();
         if (type != InventoryType.ENCHANTING && type != InventoryType.ANVIL) return;
 
         if (SkillsConfig.VANILLA_EXP_BAR_ENABLED.getBoolean() && !SkillsConfig.VANILLA_EXP_BAR_REAL_SYNC.getBoolean()) {

@@ -622,12 +622,6 @@ public class SkilledPlayer extends DataContainer {
         return this.party != null;
     }
 
-    public void upgradeAbility(@NonNull Ability ability) {
-        addAbilityLevel(ability, 1);
-        SkillImproveEvent event = new SkillImproveEvent(this.getPlayer(), ability);
-        Bukkit.getPluginManager().callEvent(event);
-    }
-
     public int getStat(@NonNull String type) {
         return this.skill.getStats().getOrDefault(type.toUpperCase(Locale.ENGLISH), 0);
     }
@@ -695,6 +689,16 @@ public class SkilledPlayer extends DataContainer {
 
     public int getAbilityLevel(@NonNull Ability ability) {
         return skill.getAbilityLevel(ability);
+    }
+
+    public SkillImproveEvent upgradeAbility(@NonNull Ability ability, int addLevels, long soulsCost) {
+        int oldLevel = getAbilityLevel(ability);
+        int newLevel = oldLevel + addLevels;
+
+        addAbilityLevel(ability, addLevels);
+        SkillImproveEvent event = new SkillImproveEvent(this.getPlayer(), ability, oldLevel, newLevel, soulsCost);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
     public PlayerAbilityData getAbilityData(Ability ability) {

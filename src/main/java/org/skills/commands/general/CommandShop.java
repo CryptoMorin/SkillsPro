@@ -1,6 +1,7 @@
 package org.skills.commands.general;
 
 import com.cryptomorin.commons.nbt.ItemNBT;
+import com.cryptomorin.commons.nbt.impl.tag.NBTTagCompound;
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -9,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.commands.SkillsCommand;
 import org.skills.commands.TabCompleteManager;
 import org.skills.data.managers.SkilledPlayer;

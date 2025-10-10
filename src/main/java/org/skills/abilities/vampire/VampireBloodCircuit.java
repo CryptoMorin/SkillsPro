@@ -78,7 +78,7 @@ public class VampireBloodCircuit extends ActiveAbility {
                 e.printStackTrace();
                 USE_LASER = false;
             }
-            laser.start(SkillsPro.get());
+            laser.start();
         }
         Laser finalLaser = laser;
 

@@ -1,6 +1,7 @@
 package org.skills.abilities;
 
 import com.cryptomorin.commons.nbt.ItemNBT;
+import com.cryptomorin.commons.nbt.impl.tag.NBTTagCompound;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.XTag;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.kingdoms.nbt.tag.NBTTagCompound;
 import org.skills.api.events.CustomHudChangeEvent;
 import org.skills.data.managers.PlayerAbilityData;
 import org.skills.data.managers.SkilledPlayer;

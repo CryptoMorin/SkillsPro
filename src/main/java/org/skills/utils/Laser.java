@@ -1,5 +1,6 @@
 package org.skills.utils;
 
+import com.cryptomorin.xseries.reflection.XAccessFlag;
 import com.cryptomorin.xseries.reflection.XReflection;
 import com.cryptomorin.xseries.reflection.jvm.FieldMemberHandle;
 import com.cryptomorin.xseries.reflection.jvm.MethodMemberHandle;
@@ -10,10 +11,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
+import org.skills.main.SkillsPro;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -57,7 +58,7 @@ public final class Laser {
     private final NMSEntityInfo guardian;
     private Location start, lastEndLocation;
     private Supplier<Location> endLocationTracker;
-    private BukkitRunnable run;
+    private BukkitTask task;
 
     private LivingEntity endEntity;
 
@@ -78,8 +79,8 @@ public final class Laser {
     /**
      * Create a Laser instance
      *
-     * @param start              Location where laser will starts
-     * @param endLocationTracker Location where laser will ends
+     * @param start              Location where laser will start.
+     * @param endLocationTracker Location where laser will end.
      * @param duration           Duration of laser in seconds (<i>-1 if infinite</i>)
      * @param distance           Distance where laser will be visible
      */
@@ -121,6 +122,11 @@ public final class Laser {
         // Keep the squid id and UUID in case we no longer wish to follow a real entity.
         teamCreatePacket = NMSReflection.createPacketTeamAddEntities(squidUUID, guardian.uuid);
         destroyPacket = NMSReflection.createPacketRemoveEntities(squidID, guardian.id);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(started? " + isStarted() + ", visitors: " + players.size() + ')';
     }
 
     private NMSEntityInfo createSquid(Location end) throws Throwable {
@@ -184,49 +190,55 @@ public final class Laser {
                 NumberConversions.square(start.getZ() - location.getZ());
     }
 
-    public void start(Plugin plugin) {
-        if (run != null) throw new IllegalStateException("Laser is already started");
+    public void start() {
+        if (task != null) throw new IllegalStateException("Laser is already started");
         if (endLocationTracker == null && endEntity == null)
             throw new IllegalStateException("No end location or end entity provided");
 
-        run = new BukkitRunnable() {
-            final World world = start.getWorld();
-            int time = duration;
+        task = Bukkit.getScheduler().runTaskTimerAsynchronously(SkillsPro.get(), new VisibilityHandler(), 1L, 1L);
+    }
 
-            @Override
-            public void run() {
-                for (Player player : world.getPlayers()) {
-                    if (isCloseEnough(player.getLocation())) {
-                        if (players.put(player.getUniqueId(), player) == null)
-                            sendStartPackets(plugin, player, !seen.add(player.getEntityId()));
-                    } else if (players.remove(player.getUniqueId()) != null) destroy(player);
-                }
-                if (--time == 0) cancel();
+    // Don't convert this into a VisualComponent. We use it in other plugins too.
+    private final class VisibilityHandler implements Runnable {
+        private final World world = start.getWorld();
+        private int time = duration;
 
-                if (endLocationTracker != null) {
-                    try {
-                        Location end = getEndLocation();
-                        if (end != null) {
-                            Object packet = NMSReflection.teleport(squid, end);
-                            for (Player player : players.values()) {
-                                MinecraftConnection.sendPacket(player, packet, squid.metadataPacket);
-                            }
+        @Override
+        public void run() {
+            for (Player player : world.getPlayers()) {
+                if (isCloseEnough(player.getLocation())) {
+                    if (players.put(player.getUniqueId(), player) == null)
+                        sendStartPackets(player, !seen.add(player.getEntityId()));
+                } else if (players.remove(player.getUniqueId()) != null) destroy(player);
+            }
+            if (--time == 0) cancel(Laser.this.task);
+
+            if (endLocationTracker != null) {
+                try {
+                    Location end = getEndLocation();
+                    if (end != null) {
+                        Object packet = NMSReflection.teleport(squid, end);
+                        for (Player player : players.values()) {
+                            MinecraftConnection.sendPacket(player, packet, squid.metadataPacket);
                         }
-                    } catch (ReflectiveOperationException e) {
-                        throw new RuntimeException(e);
                     }
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
                 }
             }
+        }
+    }
 
-            @Override
-            public synchronized void cancel() throws IllegalStateException {
-                super.cancel();
-                run = null;
-                for (Player player : players.values()) destroy(player);
-                players.clear();
-            }
-        };
-        run.runTaskTimerAsynchronously(plugin, 0L, 20L);
+    private void cancel(BukkitTask task) {
+        this.task = null;
+        task.cancel();
+        for (Player player : players.values()) destroy(player);
+        players.clear();
+    }
+
+    public void stop() {
+        if (task == null) throw new IllegalStateException("Laser not started");
+        cancel(task);
     }
 
     protected Location getCorrectStart() {
@@ -259,11 +271,6 @@ public final class Laser {
 
     public void clear() {
         players.clear();
-    }
-
-    public void stop() {
-        if (run == null) throw new IllegalStateException("Laser not started");
-        run.cancel();
     }
 
     public void moveStart(Location location) {
@@ -302,7 +309,7 @@ public final class Laser {
     }
 
     public boolean isStarted() {
-        return run != null;
+        return task != null;
     }
 
     /**
@@ -336,14 +343,14 @@ public final class Laser {
         guardian.metadataPacket = NMSReflection.createPacketMetadata(guardian.id, guardian.watcherData);
     }
 
-    private void sendStartPackets(Plugin plugin, Player player, boolean hasSeen) {
+    private void sendStartPackets(Player player, boolean hasSeen) {
         List<Object> packets = new ArrayList<>(6);
 
         // Delayed because the initial cached squid packet gets spawned on the first getEndLocation() value
         // But teleporting the entity will cause a small visual glitch.
         // To fix this, we simply spawn the guardian later after the squid was teleported.
         // 5 Ticks seems to be the best delay.
-        // Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+        // Kingdoms.taskScheduler().async().delayed(TimeUtils.fromTicks(),  () -> {
         //     packets.clear();
         //     packets.add(guardian.createPacket);
         //     if (supports(15)) packets.add(guardian.metadataPacket);
@@ -560,11 +567,19 @@ public final class Laser {
                 FieldMemberHandle guardianType = EntityTypeX.field().getter().returns(EntityTypeX).makeAccessible();
 
                 if (MINOR_NUMBER < 13) {
-                    watcherInvis = "Z";
-                    watcherSpikes = "bA";
-                    watcherAttacker = "bB";
+                    // Same value from v1.9
                     SQUID_TYPE = 94;
                     GUARDIAN_TYPE = 68;
+                }
+
+                if (MINOR_NUMBER == 9) { // 1.9.4
+                    watcherInvis = "ay";
+                    watcherSpikes = "a";
+                    watcherAttacker = "b";
+                } else if (MINOR_NUMBER < 13) {
+                    watcherInvis = "Z"; // datawatcher
+                    watcherSpikes = "bA";
+                    watcherAttacker = "bB";
                 } else if (MINOR_NUMBER == 13) {
                     watcherInvis = "ac";
                     watcherSpikes = "bF";
@@ -616,7 +631,7 @@ public final class Laser {
                     //     }
                     watcherInvisH
                             .map(MinecraftMapping.MOJANG, "DATA_SHARED_FLAGS_ID")
-                            .map(MinecraftMapping.OBFUSCATED, "am");
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 6, "az").orElse("am"));
                     watcherSpikesH
                             .map(MinecraftMapping.MOJANG, "DATA_ID_MOVING") // Yarn names it SPIKES_RETRACTED
                             .map(MinecraftMapping.OBFUSCATED, "a");
@@ -626,10 +641,10 @@ public final class Laser {
 
                     SQUID_TYPE = squadType
                             .map(MinecraftMapping.MOJANG, "SQUID")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 5, "bs").orElse("bq"));
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "bw").v(21, 8, "bt").v(21, 5, "bs").v(21, 4, "bq").v(21, 3, "br").orElse("aX"));
                     GUARDIAN_TYPE = guardianType
                             .map(MinecraftMapping.MOJANG, "GUARDIAN")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 5, "aj").orElse("ai"));
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "am").v(21, 8, "ak").v(21, 5, "aj").v(21, 4, "ai").v(21, 3, "aj").orElse("Y"));
                 }
 
                 if (SQUID_TYPE instanceof FieldMemberHandle) {
@@ -679,26 +694,26 @@ public final class Laser {
                     Entity$defineSynchedData = XReflection.of(entity).method()
                             .returns(void.class).parameters(SynchedEntityData$Builder)
                             .map(MinecraftMapping.MOJANG, "defineSynchedData")
-                            .map(MinecraftMapping.SPIGOT, "a")
+                            .map(MinecraftMapping.OBFUSCATED, "a")
                             .makeAccessible()
                             .reflect();
                     Entity_position = XReflection.of(entity)
                             .method()
                             .returns(Vec3)
                             .map(MinecraftMapping.MOJANG, "position")
-                            .map(MinecraftMapping.OBFUSCATED, "dt")
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dD").v(21, 6, "dv").v(21, 4, "dt").v(21, 3, "du").orElse("dm"))
                             .reflect();
                     Entity_getDeltaMovement = XReflection.of(entity)
                             .method()
                             .returns(Vec3)
                             .map(MinecraftMapping.MOJANG, "getDeltaMovement")
-                            .map(MinecraftMapping.OBFUSCATED, "dy")
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dI").v(21, 6, "dA").v(21, 4, "dy").v(21, 2, "dz").orElse("dr"))
                             .reflect();
                     Entity_blockPosition = XReflection.of(entity)
                             .method()
                             .returns(blockPos)
                             .map(MinecraftMapping.MOJANG, "blockPosition")
-                            .map(MinecraftMapping.OBFUSCATED, "dv")
+                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dF").v(21, 6, "dx").v(21, 4, "dv").v(21, 3, "dw").orElse("do"))
                             .reflect();
                     SynchedEntityData$Builder_Ctor = SynchedEntityData$Builder.constructor()
                             .parameters(SyncedDataHolder)
@@ -726,9 +741,9 @@ public final class Laser {
                     MethodMemberHandle watcherSetMeth = of(SynchedEntityData).method()
                             .returns(void.class)
                             .map(MinecraftMapping.MOJANG, "set")
-                            .map(MinecraftMapping.SPIGOT, v(21, 5, "a").v(18, "b").orElse("set"));
+                            .map(MinecraftMapping.SPIGOT, v(19, 4, "a").v(18, "b").orElse("set"));
 
-                    if (supports(1, 19, 3)) {
+                    if (supports(1, 19, 4)) {
                         watcherSetMeth.parameters(DataWatcherObject, Object.class, boolean.class);
                     } else {
                         watcherSetMeth.parameters(DataWatcherObject, Object.class);
@@ -771,7 +786,8 @@ public final class Laser {
                 if (supports(17))
                     setLocation = XReflection.of(entity).method()
                             .map(MinecraftMapping.MOJANG, v(21, 5, "snapTo").orElse("moveTo"))
-                            .map(MinecraftMapping.SPIGOT, v(21, 5, "b").v(21, 4, "e").v(18, "a").orElse("setLocation"))
+                            .map(MinecraftMapping.OBFUSCATED, "b")
+                            .map(MinecraftMapping.SPIGOT, "setPositionRotation")
                             .returns(void.class)
                             .parameters(double.class, double.class, double.class, float.class, float.class)
                             .reflect();
@@ -787,21 +803,22 @@ public final class Laser {
                 if (!supports(21)) {
                     fakeSquidEntity = squid.getDeclaredConstructors()[0].newInstance(entityConstructorParams);
                     fakeSquidWatcher = createDataWatcher(fakeSquidEntity, Collections.singletonList(
-                            new NMSReflection.WatcherPair(WATCHER_INVISILIBITY, (byte) 32)
+                            new WatcherPair(WATCHER_INVISILIBITY, (byte) 32)
                     ));
                 }
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
             }
 
+            // v1.19.3+
             setUUID = XReflection.of(entity)
                     .method("public void setUUID(UUID uuid)")
-                    .map(MinecraftMapping.OBFUSCATED, v(15, "a_").v(14, 4, "a").orElse("a"))
-                    .unreflect();
+                    .map(MinecraftMapping.OBFUSCATED, v(16, 1, "a_").orElse("a"))
+                    .reflectOrNull();
             setID = XReflection.of(entity)
                     .method("public void setId(int id)")
                     .map(MinecraftMapping.OBFUSCATED, v(14, "e").v(13, "a").orElse("h"))
-                    .unreflect();
+                    .reflectOrNull();
 
             BlockPositionCtor = blockPositionCtor;
             NMS_WORLD = nmsWorld;
@@ -825,7 +842,7 @@ public final class Laser {
             teleport(entity, location);
 
             NMSReflection.createDataWatcher(entity, Collections.singletonList(
-                    new NMSReflection.WatcherPair(WATCHER_INVISILIBITY, (byte) 32)
+                    new WatcherPair(WATCHER_INVISILIBITY, (byte) 32)
             ));
 
             return entity;
@@ -845,9 +862,9 @@ public final class Laser {
 
         public static Object initGuardianWatcher(Object guardian, int attackId) throws ReflectiveOperationException {
             return NMSReflection.createDataWatcher(guardian, Arrays.asList(
-                    new NMSReflection.WatcherPair(WATCHER_INVISILIBITY, (byte) 32),
-                    new NMSReflection.WatcherPair(WATCHER_SPIKES, false),
-                    new NMSReflection.WatcherPair(WATCHER_ATTACK_ID, attackId)
+                    new WatcherPair(WATCHER_INVISILIBITY, (byte) 32),
+                    new WatcherPair(WATCHER_SPIKES, false),
+                    new WatcherPair(WATCHER_ATTACK_ID, attackId)
             ));
         }
 
@@ -1010,7 +1027,7 @@ public final class Laser {
             }
         }
 
-        private static Object createDataWatcher(Object entity, List<NMSReflection.WatcherPair> watcherData) throws ReflectiveOperationException {
+        private static Object createDataWatcher(Object entity, List<WatcherPair> watcherData) throws ReflectiveOperationException {
             if (supports(21)) {
                 Objects.requireNonNull(entity);
                 try {
@@ -1021,7 +1038,7 @@ public final class Laser {
                     // Entity$defineSynchedData.invoke(entity, builder);
                     // Object watcher = SynchedEntityData$Builder_build.invoke(builder);
                     Object watcher = NMSExtras.getDataWatcher(entity);
-                    for (NMSReflection.WatcherPair watcherDatum : watcherData) {
+                    for (WatcherPair watcherDatum : watcherData) {
                         tryWatcherSet(watcher, watcherDatum.id, watcherDatum.value);
                     }
                     // return SynchedEntityData$Builder_build.invoke(builder);
@@ -1031,7 +1048,7 @@ public final class Laser {
                 }
             } else {
                 Object watcher = watcherConstructor.newInstance(entity);
-                for (NMSReflection.WatcherPair watcherDatum : watcherData) {
+                for (WatcherPair watcherDatum : watcherData) {
                     try {
                         tryWatcherSet(watcher, watcherDatum.id, watcherDatum.value);
                     } catch (NullPointerException ex) {
@@ -1077,15 +1094,25 @@ public final class Laser {
             return null;
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         private static void setField(Object instance, String name, Object value) throws ReflectiveOperationException {
             Field field = instance.getClass().getDeclaredField(name);
             field.setAccessible(true);
+
+            if (!XAccessFlag.STATIC.isSet(field.getModifiers()))
+                Objects.requireNonNull(instance, () -> "Instance is null for non-static field: " + field);
+
             field.set(instance, value);
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         private static Object getField(Class<?> clazz, String name, Object instance) throws ReflectiveOperationException {
             Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
+
+            if (!XAccessFlag.STATIC.isSet(field.getModifiers()))
+                Objects.requireNonNull(instance, () -> "Instance is null for non-static field: " + field);
+
             return field.get(instance);
         }
 

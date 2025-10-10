@@ -37,7 +37,7 @@ public final class MoveManager implements Listener {
             BLOCK_HEIGHTS.put(bed, 0.5625);
         }
         BLOCK_HEIGHTS.put(XMaterial.STONECUTTER, 0.5625);
-        BLOCK_HEIGHTS.put(XMaterial.CHAIN, 0.59375);
+        BLOCK_HEIGHTS.put(XMaterial.IRON_CHAIN, 0.59375);
 
         BLOCK_HEIGHTS.put(XMaterial.REPEATER, 0.125);
         BLOCK_HEIGHTS.put(XMaterial.COMPARATOR, 0.125);

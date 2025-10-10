@@ -154,7 +154,7 @@ public class CommandImprove extends SkillsCommand {
                 long souls = info.getSouls();
 
                 if (souls >= cost) {
-                    info.addAbilityLevel(ability, 1);
+                    info.upgradeAbility(ability, 1, cost);
                     info.setSouls(souls - cost);
 
                     SkillsLang.ABILITY_UPGRADED.sendMessage(player);
