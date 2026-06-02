@@ -68,7 +68,7 @@ public class MageEnergyFlux extends InstantActiveAbility {
         double y = distance.getY();
         double z = distance.getZ();
 
-        boolean canPassable = XReflection.supports(13);
+        boolean canPassable = XReflection.supports(1, 13);
         boolean noPassThro = !getOptions(info, "pass-through").getBoolean();
 
         for (double i = 0.5D; i < length; i += 0.1) {

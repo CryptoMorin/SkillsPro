@@ -72,6 +72,9 @@ permissions:
   skills.command.info:
     description: Access to info command.
     default: true
+  skills.command.prestige:
+    description: Access to the prestige command.
+    default: true
   skills.command.worldborder:
     description: Test commands for per-player WorldBorders.
     default: op

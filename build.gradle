@@ -27,9 +27,15 @@ repositories {
     mavenLocal()
 
     maven {
-        name = "sk89q-repo"
         // url = uri('https://maven.sk89q.com/repo/')
+        name = "sk89q-repo"
         url = uri('https://maven.enginehub.org/repo/')
+
+        metadataSources {
+            mavenPom()
+            artifact()
+            ignoreGradleMetadataRedirection()
+        }
     }
 
     maven {
@@ -79,12 +85,12 @@ repositories {
 configurations.configureEach {
     resolutionStrategy {
         // Align versions across the board (replaces constraints)
-        force 'com.google.guava:guava:33.3.1-jre'
+        force 'com.google.guava:guava:33.5.0-jre'
 
         // Substitute problematic variants to the JRE one
         dependencySubstitution {
             // If plain guava (no suffix) causes issues, map it too
-            substitute module('com.google.guava:guava') using module('com.google.guava:guava:33.3.1-jre')
+            substitute module('com.google.guava:guava') using module('com.google.guava:guava:33.5.0-jre')
         }
 
         // Select JRE variant for the guava capability (handles metadata strictness)
@@ -95,9 +101,8 @@ configurations.configureEach {
 }
 
 dependencies {
-    implementation files(file('local-libs' + File.separatorChar + 'XCommons-3.0.2.jar'))
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    implementation 'com.github.cryptomorin:XSeries:13.5.1'
+    implementation 'com.github.cryptomorin:XSeries:13.7.0'
     implementation project(':services:kingdomsx')
     // implementation files(file('local-libs' + File.separatorChar + 'XSeries-13.3.1.jar'))
     //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
@@ -105,7 +110,7 @@ dependencies {
     // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
     //noinspection VulnerableLibrariesLocal
-    compileOnly 'org.spigotmc:spigot:1.21.10-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT'
     // compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
 
@@ -140,7 +145,7 @@ dependencies {
 
     ///////////////////////////// Factions /////////////////////////////
 
-    compileOnly 'com.bekvon:residence:5.0.0'
+    compileOnly 'com.github.Zrips:Residence:6.0.0.1'
 
     compileOnly 'com.massivecraft:massivecore:2.14.0'
     compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.0') { transitive = false }
@@ -165,6 +170,7 @@ dependencies {
     // https://maven.enginehub.org/repo/com/sk89q/worldguard/worldguard-bukkit/
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.4.0-SNAPSHOT'
+
 }
 
 java {

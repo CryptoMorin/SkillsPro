@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.skills.main.SkillsConfig;
 import org.skills.main.SkillsPro;
@@ -117,7 +118,6 @@ public class InteractiveGUIManager implements Listener {
         InteractiveGUI gui = GUIS.get(player.getEntityId());
         if (gui == null) return;
         event.setCancelled(true);
-        if (true) return;
 
         BukkitInventoryView view = XInventoryView.of(event.getView());
         boolean conflict = false;

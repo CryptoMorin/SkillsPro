@@ -25,6 +25,12 @@ public class AdapterSharedSkillsData {
             if (souls != null) data.setSouls(souls.getAsLong());
         }
 
+        if (PlayerSkill.SHARED_PRESTIGE == shared) {
+            JsonElement prestige = json.get("prestige");
+            if (prestige != null)
+                data.setPrestige(prestige.getAsInt());
+        }
+
         if (PlayerSkill.SHARED_STATS == shared) {
             JsonObject stats = json.get("stats").getAsJsonObject();
             for (Map.Entry<String, JsonElement> stat : stats.entrySet()) {
@@ -39,6 +45,8 @@ public class AdapterSharedSkillsData {
             json.addProperty("xp", info.getXP());
         }
         if (PlayerSkill.SHARED_SOULS == shared) json.addProperty("souls", info.getSouls());
+        if (PlayerSkill.SHARED_PRESTIGE == shared)
+            json.addProperty("prestige", info.getPrestige());
         if (PlayerSkill.SHARED_STATS == shared) {
             JsonObject stats = new JsonObject();
             for (Stat stat : Stat.STATS.values()) {

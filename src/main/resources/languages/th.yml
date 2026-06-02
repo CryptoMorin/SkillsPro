@@ -21,6 +21,8 @@ command:
   select:
     description: '&eใช้เพื่อเลือกอาชีพ'
     already-chosen: '&cคุณเป็น &e%skill% &cอยู่แล้ว'
+  prestige:
+    description: '&eรีเซ็ตคลาสเพื่อรับ Prestige เมื่อถึงเลเวลสูงสุด'
   refresh:
     description: '&eฟื้นฟู พลังงาน/เลือด/ความแปรผัน/มานา'
     success: '&3ฟื้นฟูสำเร็จ'
@@ -142,6 +144,7 @@ command:
       &8- &eMultiplier&8: &e%skills_soul_bonus_multiplier%'
     message: |
       NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Prestige&7: &e%skills_prestige% %skills_prestige_display%
       &3Souls&7: &e%skills_fancy_soul%
       &3Level&7: &e%skills_fancy_level%
       &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
@@ -716,6 +719,9 @@ skill:
   required-level: '&cคุณต้องมีเลเวลอย่างน้อย &e%level% &cเพื่อใช้ทักษะนี้'
   change-cooldown-error: '&cคุณต้องรออีก &e%cooldown% &cวินาทีเพื่อใช้ทักษะนี้'
   select-cost: '&cคุณต้องมี Souls อย่างน้อย &e%cost% &cหน่วยเพื่อใช้ทักษะนี้'
+  prestige-max-level-required: '&cคุณต้องถึงเลเวลสูงสุด &e%level% &cก่อนจึงจะ Prestige ได้'
+  prestige-maxed: '&cคุณถึง Prestige สูงสุดแล้ว &e%max%&c'
+  prestiged: '&aPrestige สำเร็จ! &7Prestige&8: &e%prestige% &7(%display%)'
   affected-by: |-
     &3ทักษะนี้จะได้รับโบนัสจากค่าสถานะ &e%stat%
   maximum-level: '&cทักษะนี้อยู่ในระดับสูงสุดแล้ว'

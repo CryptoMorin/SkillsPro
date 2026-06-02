@@ -38,7 +38,7 @@ public class LanguageManager extends YamlAdapter {
     }
 
     public boolean isSet(String option) {
-        return XReflection.supports(13) ? getConfig().isSet(option) : getConfig().contains(option);
+        return XReflection.supports(1, 13) ? getConfig().isSet(option) : getConfig().contains(option);
     }
 
     private boolean saveDefaultLang() {
@@ -106,3 +106,4 @@ public class LanguageManager extends YamlAdapter {
         MessageHandler.sendConsolePluginMessage("&2Loaded a total of &6" + i + " &2language statements.");
     }
 }
+

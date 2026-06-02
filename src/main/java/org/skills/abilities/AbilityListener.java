@@ -1,7 +1,5 @@
 package org.skills.abilities;
 
-import com.cryptomorin.commons.nbt.ItemNBT;
-import com.cryptomorin.commons.nbt.impl.tag.NBTTagCompound;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.XTag;
@@ -38,6 +36,7 @@ import org.skills.managers.resurrect.LastBreath;
 import org.skills.services.manager.ServiceHandler;
 import org.skills.types.SkillScaling;
 import org.skills.utils.LocationUtils;
+import org.skills.utils.SkillsItemTag;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -248,8 +247,7 @@ public class AbilityListener implements Listener {
 
         if (item != null) {
             try {
-                NBTTagCompound nbt = ItemNBT.getTag(item);
-                nbt.getString(SkillItemManager.SKILL_ITEM);
+                SkillsItemTag.get(item);
             } catch (Exception ex) {
                 MessageHandler.sendConsolePluginMessage("&cA NBT error has occurred! Please report this to the developer.");
                 throw new RuntimeException(ex);

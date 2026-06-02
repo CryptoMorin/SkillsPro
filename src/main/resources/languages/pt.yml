@@ -21,6 +21,8 @@ command:
   select:
     description: '&eUse para selecionar uma classe.'
     already-chosen: '&cVoce ja e um  &e%skill%'
+  prestige:
+    description: '&ePrestigie sua classe atual no nível máximo'
   refresh:
     description: '&eRecarrega toda sua Energia/Sangue/Desbalanço/Mana'
     success: '&3Sua energia foi recarregada!'
@@ -137,6 +139,7 @@ command:
       &8- &eMultiplier&8: &e%skills_soul_bonus_multiplier%'
     message: |
       NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Prestígio&7: &e%skills_prestige% %skills_prestige_display%
       &3Almas&7: &e%skills_soul%
       &3Level&7: &e%skills_level%
       &3XP&7: &e%skills_xp%&8/&e%skills_maxxp%
@@ -867,6 +870,9 @@ skill:
     classe.'
   change-cooldown-error: '&cVocê precisa esperar &e%cooldown% &cpara mudar sua classe.'
   select-cost: '&cVocê precisa &e%cost% &calmas para selecionar esta classe.'
+  prestige-max-level-required: '&cVocê precisa alcançar o nível máximo &e%level% &cantes de prestigiar.'
+  prestige-maxed: '&cVocê já atingiu o prestígio máximo &e%max%&c.'
+  prestiged: '&aPrestígio realizado com sucesso! &7Prestígio&8: &e%prestige% &7(%display%)'
   affected-by: |-
     &3A efetividade dessa melhoria é
     também afetado por &e%stat%

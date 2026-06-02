@@ -69,8 +69,8 @@ public final class Laser {
     private final int squidID = NMSReflection.generateEID();
 
     // Fields from packet, not the entity object
-    private static final String UUIDFieldName = XReflection.v(21, "e").v(19, "d").orElse("b"); // "id"
-    private static final String EntityIdFieldName = XReflection.v(21, "d").v(19, "c").orElse("a"); // "uuid"
+    private static final String UUIDFieldName = XReflection.v(1, 21, "e").v(1, 19, "d").orElse("b"); // "id"
+    private static final String EntityIdFieldName = XReflection.v(1, 21, "d").v(1, 19, "c").orElse("a"); // "uuid"
     private static final boolean SUPPORTS_CUSTOM_IDS = supports(1, 19, 3);
 
     private Location correctStart;
@@ -132,7 +132,7 @@ public final class Laser {
     private NMSEntityInfo createSquid(Location end) throws Throwable {
         Object squid;
 
-        if (supports(17)) { // What happened is it from 9 or 17 ugh
+        if (supports(1, 17)) { // What happened is it from 9 or 17 ugh
             squid = NMSReflection.createSquid(end, squidUUID, squidID);
         } else {
             squid = null;
@@ -155,7 +155,7 @@ public final class Laser {
         Object guardian;
         Location start = getCorrectStart();
 
-        if (supports(17)) {
+        if (supports(1, 17)) {
             guardian = NMSReflection.createGuardian(start, guardianUUID, guardianID);
         } else {
             guardian = null;
@@ -353,7 +353,7 @@ public final class Laser {
         // Kingdoms.taskScheduler().async().delayed(TimeUtils.fromTicks(),  () -> {
         //     packets.clear();
         //     packets.add(guardian.createPacket);
-        //     if (supports(15)) packets.add(guardian.metadataPacket);
+        //     if (supports(1, 15)) packets.add(guardian.metadataPacket);
         //     if (!hasSeen) packets.add(teamCreatePacket);
         //
         //     Location end = getEndLocation();
@@ -383,7 +383,7 @@ public final class Laser {
             }
         }
 
-        if (supports(15)) {
+        if (supports(1, 15)) {
             packets.add(guardian.metadataPacket);
             if (useFakeTarget) packets.add(squid.metadataPacket);
         }
@@ -451,10 +451,31 @@ public final class Laser {
                 Entity$defineSynchedData, Entity_blockPosition, Entity_position, Entity_getDeltaMovement,
                 SynchedEntityData$Builder_Ctor, SynchedEntityData$Builder_define, SynchedEntityData$Builder_build;
 
-        private static final Class<?> squid = XReflection.ofMinecraft().inPackage(MinecraftPackage.NMS, "world.entity.animal")
-                .map(MinecraftMapping.MOJANG, "Squid")
-                .map(MinecraftMapping.SPIGOT, "EntitySquid")
-                .unreflect();
+                private static Class<?> resolveSquidClass() {
+                    ClassNotFoundException root = null;
+
+                    try {
+                        return XReflection.ofMinecraft().inPackage(MinecraftPackage.NMS, "world.entity.animal.squid")
+                                .map(MinecraftMapping.MOJANG, "Squid")
+                                .map(MinecraftMapping.SPIGOT, "EntitySquid")
+                                .reflect();
+                    } catch (ClassNotFoundException ex) {
+                        root = ex;
+                    }
+
+                    try {
+                        return XReflection.ofMinecraft().inPackage(MinecraftPackage.NMS, "world.entity.animal")
+                                .map(MinecraftMapping.MOJANG, "Squid")
+                                .map(MinecraftMapping.SPIGOT, "EntitySquid")
+                        .reflect();
+            } catch (ClassNotFoundException ex) {
+                if (root != null)
+                    ex.addSuppressed(root);
+                throw new RuntimeException(ex);
+            }
+        }
+
+        private static final Class<?> squid = resolveSquidClass();
 
         static {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -482,7 +503,7 @@ public final class Laser {
             Class<?> packetSpawnClass = ofMinecraft().inPackage(MinecraftPackage.NMS, "network.protocol.game")
                     .map(MinecraftMapping.MOJANG, "ClientboundAddEntityPacket")
                     .map(MinecraftMapping.SPIGOT,
-                            XReflection.v(19, "PacketPlayOutSpawnEntity").orElse("PacketPlayOutSpawnEntityLiving")).unreflect();
+                            XReflection.v(1, 19, "PacketPlayOutSpawnEntity").orElse("PacketPlayOutSpawnEntityLiving")).unreflect();
 
             packetRemove = XReflection.ofMinecraft().inPackage(MinecraftPackage.NMS, "network.protocol.game")
                     .map(MinecraftMapping.MOJANG, "ClientboundRemoveEntitiesPacket")
@@ -498,7 +519,7 @@ public final class Laser {
                 packetTeleport = XReflection.ofMinecraft().inPackage(MinecraftPackage.NMS, "network.protocol.game")
                         .map(MinecraftMapping.MOJANG, "ClientboundTeleportEntityPacket")
                         .map(MinecraftMapping.SPIGOT, "PacketPlayOutEntityTeleport")
-                        .map(MinecraftMapping.OBFUSCATED, v(21, 1, "afw").v(20, 4, "acz").orElse("afu"))
+                        .map(MinecraftMapping.OBFUSCATED, v(1,  21,  1, "afw").v(1, 20,  4, "acz").orElse("afu"))
                         .unreflect();
             }
 
@@ -537,7 +558,7 @@ public final class Laser {
                 PlayerTeam_getPlayers = PlayerTeam
                         .method("public Collection<String> getPlayers()")
                         .map(MinecraftMapping.MOJANG, "getPlayers")
-                        .map(MinecraftMapping.OBFUSCATED, v(21, 5, "h").orElse("g"))
+                        .map(MinecraftMapping.OBFUSCATED, v(1,  21,  5, "h").orElse("g"))
                         .unreflect();
                 Scoreboard_init = Scoreboard.constructor().unreflect();
                 Team$CollisionRule_NEVER = Team$CollisionRule.enums()
@@ -617,7 +638,7 @@ public final class Laser {
                     SQUID_TYPE = squadType.named("aJ");
                     GUARDIAN_TYPE = guardianType.named("K");
                 } else if (MINOR_NUMBER == 19 || MINOR_NUMBER == 20) {
-                    watcherInvis = v(20, 2, "ao").orElse("an");
+                    watcherInvis = v(1,  20,  2, "ao").orElse("an");
                     watcherSpikes = "b"; // private static final DataWatcherObject<Boolean> b;
                     watcherAttacker = "e"; // private static final DataWatcherObject<Integer> e;
                     SQUID_TYPE = squadType.named("aT");
@@ -631,7 +652,7 @@ public final class Laser {
                     //     }
                     watcherInvisH
                             .map(MinecraftMapping.MOJANG, "DATA_SHARED_FLAGS_ID")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 6, "az").orElse("am"));
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  6, "az").orElse("am"));
                     watcherSpikesH
                             .map(MinecraftMapping.MOJANG, "DATA_ID_MOVING") // Yarn names it SPIKES_RETRACTED
                             .map(MinecraftMapping.OBFUSCATED, "a");
@@ -641,10 +662,10 @@ public final class Laser {
 
                     SQUID_TYPE = squadType
                             .map(MinecraftMapping.MOJANG, "SQUID")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "bw").v(21, 8, "bt").v(21, 5, "bs").v(21, 4, "bq").v(21, 3, "br").orElse("aX"));
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  9, "bw").v(1, 21,  8, "bt").v(1, 21,  5, "bs").v(1, 21,  4, "bq").v(1, 21,  3, "br").orElse("aX"));
                     GUARDIAN_TYPE = guardianType
                             .map(MinecraftMapping.MOJANG, "GUARDIAN")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "am").v(21, 8, "ak").v(21, 5, "aj").v(21, 4, "ai").v(21, 3, "aj").orElse("Y"));
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  9, "am").v(1, 21,  8, "ak").v(1, 21,  5, "aj").v(1, 21,  4, "ai").v(1, 21,  3, "aj").orElse("Y"));
                 }
 
                 if (SQUID_TYPE instanceof FieldMemberHandle) {
@@ -677,7 +698,7 @@ public final class Laser {
                         .map(MinecraftMapping.SPIGOT, "Vec3D")
                         .map(MinecraftMapping.OBFUSCATED, "fbb");
 
-                if (supports(21)) {
+                if (supports(1, 21)) {
 
                     Class<?> SyncedDataHolder = ofMinecraft()
                             .inPackage(MinecraftPackage.NMS, "network.syncher")
@@ -701,19 +722,19 @@ public final class Laser {
                             .method()
                             .returns(Vec3)
                             .map(MinecraftMapping.MOJANG, "position")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dD").v(21, 6, "dv").v(21, 4, "dt").v(21, 3, "du").orElse("dm"))
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  9, "dD").v(1, 21,  6, "dv").v(1, 21,  4, "dt").v(1, 21,  3, "du").orElse("dm"))
                             .reflect();
                     Entity_getDeltaMovement = XReflection.of(entity)
                             .method()
                             .returns(Vec3)
                             .map(MinecraftMapping.MOJANG, "getDeltaMovement")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dI").v(21, 6, "dA").v(21, 4, "dy").v(21, 2, "dz").orElse("dr"))
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  9, "dI").v(1, 21,  6, "dA").v(1, 21,  4, "dy").v(1, 21,  2, "dz").orElse("dr"))
                             .reflect();
                     Entity_blockPosition = XReflection.of(entity)
                             .method()
                             .returns(blockPos)
                             .map(MinecraftMapping.MOJANG, "blockPosition")
-                            .map(MinecraftMapping.OBFUSCATED, v(21, 9, "dF").v(21, 6, "dx").v(21, 4, "dv").v(21, 3, "dw").orElse("do"))
+                            .map(MinecraftMapping.OBFUSCATED, v(1,  21,  9, "dF").v(1, 21,  6, "dx").v(1, 21,  4, "dv").v(1, 21,  3, "dw").orElse("do"))
                             .reflect();
                     SynchedEntityData$Builder_Ctor = SynchedEntityData$Builder.constructor()
                             .parameters(SyncedDataHolder)
@@ -741,7 +762,7 @@ public final class Laser {
                     MethodMemberHandle watcherSetMeth = of(SynchedEntityData).method()
                             .returns(void.class)
                             .map(MinecraftMapping.MOJANG, "set")
-                            .map(MinecraftMapping.SPIGOT, v(19, 4, "a").v(18, "b").orElse("set"));
+                            .map(MinecraftMapping.SPIGOT, v(1,  19,  4, "a").v(1, 18, "b").orElse("set"));
 
                     if (supports(1, 19, 4)) {
                         watcherSetMeth.parameters(DataWatcherObject, Object.class, boolean.class);
@@ -752,55 +773,55 @@ public final class Laser {
                 }
 
                 // "Registering datawatcher object after entity initialization"
-                if (!supports(21)) {
+                if (!supports(1, 21)) {
                     watcherRegister = XReflection.of(SynchedEntityData).method()
                             .returns(void.class).parameters(DataWatcherObject, Object.class)
-                            .map(MinecraftMapping.SPIGOT, v(18, "a").orElse("register"))
+                            .map(MinecraftMapping.SPIGOT, v(1,  18, "a").orElse("register"))
                             .reflectJvm();
                 }
 
-                if (supports(15)) watcherDirty = getMethodIgnoreParams(SynchedEntityData, "markDirty");
-                if (supports(19)) SynchedEntityData_packDirty = XReflection.of(SynchedEntityData).method()
+                if (supports(1, 15)) watcherDirty = getMethodIgnoreParams(SynchedEntityData, "markDirty");
+                if (supports(1, 19)) SynchedEntityData_packDirty = XReflection.of(SynchedEntityData).method()
                         .map(MinecraftMapping.MOJANG, "packDirty")
                         .map(MinecraftMapping.OBFUSCATED, "b")
                         .returns(List.class)
                         .reflect();
 
                 blockPositionCtor = lookup.findConstructor(blockPos,
-                        v(19, MethodType.methodType(void.class, int.class, int.class, int.class)).orElse(
+                        v(1,  19, MethodType.methodType(void.class, int.class, int.class, int.class)).orElse(
                                 MethodType.methodType(void.class, double.class, double.class, double.class)));
 
                 // (int entityId, UUID uuid, double x, double y, double z, float pitch, float yaw, EntityType<?> entityType, int entityData, Vec3 velocity, double headYaw)
                 // Using the constructor with blockpos causes the entity's location to be inaccurate.
                 packetSpawn = lookup.findConstructor(packetSpawnClass,
-                        // v(21, MethodType.methodType(void.class, entity, int.class /* entityData */, blockPos)).
-                        v(21, MethodType.methodType(void.class, int.class, UUID.class,
+                        // v(1,  21, MethodType.methodType(void.class, entity, int.class /* entityData */, blockPos)).
+                        v(1,  21, MethodType.methodType(void.class, int.class, UUID.class,
                                 double.class, double.class, double.class,
                                 float.class, float.class,
                                 EntityTypeX.reflect(), int.class, Vec3.reflect(), double.class
                         )).
-                                v(19, MethodType.methodType(void.class, entity)).
-                                v(17, MethodType.methodType(void.class, entityLiving))
+                                v(1,  19, MethodType.methodType(void.class, entity)).
+                                v(1,  17, MethodType.methodType(void.class, entityLiving))
                                 .orElse(MethodType.methodType(void.class)));
 
-                if (supports(17))
+                if (supports(1, 17))
                     setLocation = XReflection.of(entity).method()
-                            .map(MinecraftMapping.MOJANG, v(21, 5, "snapTo").orElse("moveTo"))
+                            .map(MinecraftMapping.MOJANG, v(1,  21,  5, "snapTo").orElse("moveTo"))
                             .map(MinecraftMapping.OBFUSCATED, "b")
                             .map(MinecraftMapping.SPIGOT, "setPositionRotation")
                             .returns(void.class)
                             .parameters(double.class, double.class, double.class, float.class, float.class)
                             .reflect();
 
-                Object[] entityConstructorParams = supports(14) ?
-                        new Object[]{supports(17) ? SQUID_TYPE : EntityType.getDeclaredField("SQUID").get(null), nmsWorld} :
+                Object[] entityConstructorParams = supports(1, 14) ?
+                        new Object[]{supports(1, 17) ? SQUID_TYPE : EntityType.getDeclaredField("SQUID").get(null), nmsWorld} :
                         new Object[]{nmsWorld};
 //                fakeSquid = getMethodIgnoreParams(craftSquid, "getHandle")
 //                        .invoke(craftSquid.getDeclaredConstructors()[0].newInstance(null,
 //                                squid.getDeclaredConstructors()[0].newInstance(entityConstructorParams))
 //                        );
 
-                if (!supports(21)) {
+                if (!supports(1, 21)) {
                     fakeSquidEntity = squid.getDeclaredConstructors()[0].newInstance(entityConstructorParams);
                     fakeSquidWatcher = createDataWatcher(fakeSquidEntity, Collections.singletonList(
                             new WatcherPair(WATCHER_INVISILIBITY, (byte) 32)
@@ -813,11 +834,11 @@ public final class Laser {
             // v1.19.3+
             setUUID = XReflection.of(entity)
                     .method("public void setUUID(UUID uuid)")
-                    .map(MinecraftMapping.OBFUSCATED, v(16, 1, "a_").orElse("a"))
+                    .map(MinecraftMapping.OBFUSCATED, v(1,  16,  1, "a_").orElse("a"))
                     .reflectOrNull();
             setID = XReflection.of(entity)
                     .method("public void setId(int id)")
-                    .map(MinecraftMapping.OBFUSCATED, v(14, "e").v(13, "a").orElse("h"))
+                    .map(MinecraftMapping.OBFUSCATED, v(1,  14, "e").v(1, 13, "a").orElse("h"))
                     .reflectOrNull();
 
             BlockPositionCtor = blockPositionCtor;
@@ -832,7 +853,7 @@ public final class Laser {
         }
 
         public static void setDirtyWatcher(Object watcher) throws ReflectiveOperationException {
-            if (supports(15)) watcherDirty.invoke(watcher, WATCHER_INVISILIBITY);
+            if (supports(1, 15)) watcherDirty.invoke(watcher, WATCHER_INVISILIBITY);
         }
 
         public static Object createSquid(Location location, UUID uuid, int id) throws Throwable {
@@ -869,7 +890,7 @@ public final class Laser {
         }
 
         public static Object createEntitySpawnPacket(NMSEntityInfo info, Location location) throws Throwable {
-            if (supports(21)) {
+            if (supports(1, 21)) {
                 // Object invoke = BlockPositionCtor.invoke(0, 0, 0);
                 // Object currentPos = Entity_blockPosition.invoke(entity);
                 // return PACKET_SPAWN.invoke(entity, 0, currentPos);
@@ -888,7 +909,7 @@ public final class Laser {
                         velocity,
                         /* headYaw */ 0D
                 );
-            } else if (supports(17)) {
+            } else if (supports(1, 17)) {
                 Object packet = PACKET_SPAWN.invoke(info.entity);
 
                 // Is this needed for v1.17?
@@ -907,7 +928,7 @@ public final class Laser {
                 setField(packet, "f", location.getZ());
                 setField(packet, "j", (byte) (location.getYaw() * 256.0F / 360.0F));
                 setField(packet, "k", (byte) (location.getPitch() * 256.0F / 360.0F));
-                if (!supports(15)) setField(packet, "m", fakeSquidWatcher);
+                if (!supports(1, 15)) setField(packet, "m", fakeSquidWatcher);
 
                 return packet;
             }
@@ -917,7 +938,7 @@ public final class Laser {
         public static Object createPacketRemoveEntities(Integer squidId, int guardianId) throws ReflectiveOperationException {
             int[] entityIds = squidId == null ? new int[]{guardianId} : new int[]{squidId, guardianId};
 
-            if (XReflection.supports(17)) {
+            if (XReflection.supports(1, 17)) {
                 Constructor<?> ctor = packetRemove.getConstructor(int[].class);
                 return ctor.newInstance(entityIds);
             }
@@ -940,7 +961,7 @@ public final class Laser {
             String teamName = TEAM + TEAM_ID.getAndIncrement();
             Object packet;
 
-            if (supports(19)) {
+            if (supports(1, 19)) {
                 Object team = PlayerTeam_init.invoke(Scoreboard_init.invoke(), teamName);
                 PlayerTeam_setCollisionRule.invoke(team, Team$CollisionRule_NEVER);
 
@@ -951,7 +972,7 @@ public final class Laser {
                 players.add(guardianUUID.toString());
 
                 packet = ClientboundSetPlayerTeamPacket_createAddOrModifyPacket.invoke(team, true);
-            } else if (supports(17)) {
+            } else if (supports(1, 17)) {
                 Collection<String> players = new ArrayList<>(2);
                 if (squidUUID != null) players.add(squidUUID.toString());
                 players.add(guardianUUID.toString());
@@ -976,7 +997,7 @@ public final class Laser {
         public static Object teleport(NMSEntityInfo entityInfo, Location location) throws ReflectiveOperationException {
             Object packet;
 
-            if (supports(21)) {
+            if (supports(1, 21)) {
                 try {
                     teleport(entityInfo.entity, location);
                     packet = XReflection.of(packetTeleport).method()
@@ -990,7 +1011,7 @@ public final class Laser {
                     throwable.printStackTrace();
                     return null;
                 }
-            } else if (supports(17)) {
+            } else if (supports(1, 17)) {
                 try {
                     teleport(entityInfo.entity, location);
                     packet = packetTeleport
@@ -1015,7 +1036,7 @@ public final class Laser {
         }
 
         private static Object createPacketMetadata(int entityId, Object watcher) throws Throwable {
-            if (supports(19)) {
+            if (supports(1, 19)) {
                 // noinspection JavaReflectionInvocation
                 return packetMetadata
                         .getConstructor(int.class, List.class)
@@ -1028,7 +1049,7 @@ public final class Laser {
         }
 
         private static Object createDataWatcher(Object entity, List<WatcherPair> watcherData) throws ReflectiveOperationException {
-            if (supports(21)) {
+            if (supports(1, 21)) {
                 Objects.requireNonNull(entity);
                 try {
                     // Object builder = SynchedEntityData$Builder_Ctor.invoke(entity);
@@ -1053,7 +1074,7 @@ public final class Laser {
                         tryWatcherSet(watcher, watcherDatum.id, watcherDatum.value);
                     } catch (NullPointerException ex) {
                         watcherRegister.invoke(watcher, watcherDatum.id, watcherDatum.value);
-                        if (supports(14)) setField(watcher, "registrationLocked", false);
+                        if (supports(1, 14)) setField(watcher, "registrationLocked", false);
                     }
                 }
                 return watcher;
@@ -1077,7 +1098,7 @@ public final class Laser {
             } catch (InvocationTargetException ex) {
                 try {
                     watcherRegister.invoke(watcher, watcherObject, watcherData);
-                    if (supports(15)) watcherDirty.invoke(watcher, watcherObject);
+                    if (supports(1, 15)) watcherDirty.invoke(watcher, watcherObject);
                 } catch (Throwable ex2) {
                     RuntimeException re = new RuntimeException("Failed to set watcher for " + watcher);
                     re.addSuppressed(ex);
@@ -1121,3 +1142,7 @@ public final class Laser {
         }
     }
 }
+
+
+
+

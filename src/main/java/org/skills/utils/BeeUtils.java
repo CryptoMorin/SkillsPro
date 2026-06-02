@@ -1,6 +1,5 @@
 package org.skills.utils;
 
-import com.cryptomorin.commons.Reflect;
 import com.cryptomorin.xseries.XPotion;
 import org.bukkit.Location;
 import org.bukkit.entity.Bee;
@@ -9,7 +8,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 public final class BeeUtils {
-    public static final boolean SUPPORTS_BEES = Reflect.classExists("org.bukkit.entity.Bee");
+    public static final boolean SUPPORTS_BEES = classExists("org.bukkit.entity.Bee");
+
+    private static boolean classExists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException ex) {
+            return false;
+        }
+    }
 
     public static LivingEntity spawn(Location loc, LivingEntity target) {
         Bee bee = (Bee) loc.getWorld().spawnEntity(loc, EntityType.BEE);
