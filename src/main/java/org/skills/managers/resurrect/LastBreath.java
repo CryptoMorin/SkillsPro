@@ -71,7 +71,7 @@ public final class LastBreath implements Listener {
             }
         };
              */
-            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, XReflection.v(19, "s").v(13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
+            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, XReflection.v(1, 19, "s").v(1, 13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
 
             //     public DataWatcher al() {
             //        return this.Y;
@@ -80,10 +80,10 @@ public final class LastBreath implements Listener {
                     MethodType.methodType(void.class, int.class, dataWatcherSerializerClass));
 
             packetPlayOutEntityMetadata = lookup.findConstructor(packetPlayOutEntityMetadataClass,
-                    v(19, MethodType.methodType(void.class, int.class, List.class))
+                    v(1,  19, MethodType.methodType(void.class, int.class, List.class))
                             .orElse(MethodType.methodType(void.class, int.class, dataWatcher, boolean.class)));
 
-            if (XReflection.supports(19)) {
+            if (XReflection.supports(1, 19)) {
                 // public @Nullable List<b<?>> b()
                 watcherPack = lookup.findVirtual(dataWatcher, "b", MethodType.methodType(List.class));
             }
@@ -120,7 +120,7 @@ public final class LastBreath implements Listener {
             Object pos = (swimming ? NMSExtras.EntityPose.SWIMMING : NMSExtras.EntityPose.STANDING).getEnumValue();
             NMSExtras.setData(watcher, registry, pos);
 
-            if (XReflection.supports(19)) {
+            if (XReflection.supports(1, 19)) {
                 return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), WATCHER_PACK.invoke(watcher));
             } else {
                 return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), watcher, true);
@@ -133,7 +133,7 @@ public final class LastBreath implements Listener {
 
     @SuppressWarnings("deprecation")
     protected static void cover(Player player, Location location) {
-        if (supports(13)) player.sendBlockChange(location, Material.BARRIER.createBlockData());
+        if (supports(1, 13)) player.sendBlockChange(location, Material.BARRIER.createBlockData());
         else player.sendBlockChange(location, Material.BARRIER, (byte) 0);
     }
 
@@ -200,7 +200,7 @@ public final class LastBreath implements Listener {
         double hpLeft = player.getHealth() - event.getFinalDamage();
         if (hpLeft > 0) return; // They'll be alive
 
-        if (XReflection.supports(11)) {
+        if (XReflection.supports(1, 11)) {
             boolean mainTotem = XMaterial.matchXMaterial(player.getInventory().getItemInMainHand()) == XMaterial.TOTEM_OF_UNDYING;
             boolean offTotem = XMaterial.matchXMaterial(player.getInventory().getItemInOffHand()) == XMaterial.TOTEM_OF_UNDYING;
             if (mainTotem || offTotem) {
@@ -360,3 +360,7 @@ public final class LastBreath implements Listener {
         }
     }
 }
+
+
+
+

@@ -111,7 +111,7 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onTridentLaunch(ProjectileLaunchEvent event) {
-        if (!XReflection.supports(13)) return;
+        if (!XReflection.supports(1, 13)) return;
 
         Entity entity = event.getEntity();
         if (!(entity instanceof Trident)) return;
@@ -303,7 +303,7 @@ public class MageNeptune extends Ability {
 
     @EventHandler(ignoreCancelled = true)
     public void onTrident(EntityDamageByEntityEvent event) {
-        if (!XReflection.supports(13)) return;
+        if (!XReflection.supports(1, 13)) return;
         if (!(event.getDamager() instanceof Trident)) return;
 
         ProjectileSource shooter = ((Trident) event.getDamager()).getShooter();
@@ -352,3 +352,4 @@ public class MageNeptune extends Ability {
                 "%multiply%", getScalingDescription(info, getOptions(info).getString("multiply"))};
     }
 }
+

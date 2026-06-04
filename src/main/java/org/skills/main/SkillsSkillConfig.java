@@ -44,7 +44,7 @@ public class SkillsSkillConfig {
     }
 
     public boolean isSet() {
-        return XReflection.supports(13) ? config.isSet(getDynamicOption()) : config.contains(getDynamicOption());
+        return XReflection.supports(1, 13) ? config.isSet(getDynamicOption()) : config.contains(getDynamicOption());
     }
 
     public String getString() {
@@ -79,3 +79,4 @@ public class SkillsSkillConfig {
         return config.getConfigurationSection(getDynamicOption());
     }
 }
+

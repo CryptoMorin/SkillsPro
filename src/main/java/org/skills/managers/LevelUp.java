@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.skills.data.managers.SkilledPlayer;
+import org.skills.main.SLogger;
 import org.skills.main.SkillsConfig;
 import org.skills.main.locale.MessageHandler;
 import org.skills.services.manager.ServiceHandler;
@@ -115,10 +116,18 @@ public class LevelUp {
                 String subtitle = titleSection.getString("subtitle");
                 if (!Strings.isNullOrEmpty(subtitle)) subtitle = translateMessage(subtitle, edits);
 
-                Titles.sendTitle(player,
-                        titleSection.getInt("fade-in"), titleSection.getInt("stay"), titleSection.getInt("fade-out"),
-                        title, subtitle
-                );
+                int fadeIn = titleSection.getInt("fade-in");
+                int stay = titleSection.getInt("stay");
+                int fadeOut = titleSection.getInt("fade-out");
+
+                try {
+                    Titles.sendTitle(player, fadeIn, stay, fadeOut, title, subtitle);
+                } catch (Throwable ex) {
+                    // Fallback for newer server mappings where shaded XSeries title internals fail.
+                    SLogger.error("Failed to send title packet via XSeries, falling back to Bukkit API.");
+                    ex.printStackTrace();
+                    player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+                }
             }
         }
         return this;

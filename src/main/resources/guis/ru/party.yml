@@ -6,7 +6,7 @@ options:
   member:
     name: "&2%player%"
     lore: |-
-      &3Скилл&8: &e%skills_skill_displayname%
+      &3Скилл&8: &e%skills_skill_displayname% %skills_prestige_display%
       &3Уровень&8: &e%skills_level%
       &3Души&8: &e%skills_soul%
 

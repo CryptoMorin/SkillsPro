@@ -21,10 +21,12 @@ public class PlayerSkill extends DataContainer {
     public static final boolean
             SHARED_LEVELS = SkillsConfig.SKILLS_SHARED_DATA_LEVELS.getBoolean(),
             SHARED_SOULS = SkillsConfig.SKILLS_SHARED_DATA_SOULS.getBoolean(),
-            SHARED_STATS = SkillsConfig.SKILLS_SHARED_DATA_STATS.getBoolean();
+                    SHARED_STATS = SkillsConfig.SKILLS_SHARED_DATA_STATS.getBoolean(),
+                    SHARED_PRESTIGE = SkillsConfig.SKILLS_SHARED_DATA_PRESTIGE.getBoolean();
 
     protected final String skill;
     protected int level;
+    protected int prestige;
     protected double xp;
     protected long souls;
     protected boolean showReadyMessage = true;
@@ -38,10 +40,41 @@ public class PlayerSkill extends DataContainer {
     @Override
     public @NonNull
     String getCompressedData() {
-        return level + xp + souls + compressBoolean(showReadyMessage)
+        return level + prestige + xp + souls + compressBoolean(showReadyMessage)
                 + compressCollecton(abilities.values(), x -> compressBoolean(x.isDisabled()) + x.getLevel() +
                 (x.getKeyBinding() == null ? "" : KeyBinding.toString(x.getKeyBinding())))
                 + compressCollecton(stats.values(), x -> x);
+    }
+
+    public static String getPrestigeDisplay(int prestige) {
+        if (prestige <= 0)
+            return "";
+        if (prestige <= 4) {
+            StringBuilder stars = new StringBuilder(prestige);
+            for (int i = 0; i < prestige; i++)
+                stars.append('\u2605');
+            return stars.toString();
+        }
+        return toRoman(prestige);
+    }
+
+    private static String toRoman(int number) {
+        if (number <= 0)
+            return "";
+
+        int[] values = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+        String[] numerals = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+
+        StringBuilder roman = new StringBuilder();
+        int remaining = number;
+        for (int i = 0; i < values.length; i++) {
+            while (remaining >= values[i]) {
+                roman.append(numerals[i]);
+                remaining -= values[i];
+            }
+        }
+
+        return roman.toString();
     }
 
     public boolean showReadyMessage() {
@@ -59,6 +92,18 @@ public class PlayerSkill extends DataContainer {
 
     public int getLevel() {
         return level;
+    }
+
+    public int getPrestige() {
+        return prestige;
+    }
+
+    public void setPrestige(int prestige) {
+        this.prestige = Math.max(0, prestige);
+    }
+
+    public void addPrestige(int amount) {
+        setPrestige(this.prestige + amount);
     }
 
     public void setLevel(int level) {

@@ -26,7 +26,7 @@ import java.util.Locale;
 
 public enum SkillsPlaceholders {
     // General
-    SKILL, SKILL_DISPLAYNAME, LEVEL, SOUL, XP, MAXXP, RAWXP,
+    SKILL, SKILL_DISPLAYNAME, LEVEL, PRESTIGE, PRESTIGE_DISPLAY, SOUL, XP, MAXXP, RAWXP,
     ENERGY, PRECISE_ENERGY, ENERGY_REGEN, MAX_PRECISE_ENERGY, MAX_ENERGY, ENERGY_TYPE, ENERGY_SYMBOL, ENERGY_STRING, ENERGY_COLOR,
     SKILL_VERGIL_CONCENTRATION_LEVEL,
     HEALTH, MAX_HEALTH, STATUS, ACTIVE_COOLDOWN, LAST_ABILITY_COOLDOWN,
@@ -125,6 +125,16 @@ public enum SkillsPlaceholders {
         boolean shortie = identifier.startsWith("short_");
         boolean fancy = !shortie && identifier.startsWith("fancy_");
         if (shortie || fancy) identifier = identifier.substring(6);
+
+        if (identifier.startsWith("prestige_display_")) {
+            String value = identifier.substring("prestige_display_".length());
+            try {
+                int prestige = Integer.parseInt(value);
+                return SkilledPlayer.getPrestigeDisplay(prestige);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
 
         Object placeholdedObj;
         if (identifier.startsWith("stat_")) {
@@ -280,6 +290,10 @@ public enum SkillsPlaceholders {
                 return MessageHandler.colorize(info.getSkill().getEnergy().getName());
             case LEVEL:
                 return info.getLevel();
+            case PRESTIGE:
+                return info.getPrestige();
+            case PRESTIGE_DISPLAY:
+                return info.getPrestigeDisplay();
             case MAXXP:
                 return MathUtils.roundToDigits(info.getLevelXP(), 2);
             case RAWXP:

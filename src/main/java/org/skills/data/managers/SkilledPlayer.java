@@ -81,6 +81,7 @@ public class SkilledPlayer extends DataContainer {
             if (SkillsConfig.STARTER_ENABLED.getBoolean()) {
                 info.setLevel(SkillsConfig.STARTER_LEVEL.getInt());
                 info.setSouls(SkillsConfig.STARTER_SOULS.getLong());
+                info.setPrestige(SkillsConfig.STARTER_PRESTIGE.getInt());
 
                 ConfigurationSection section = SkillsConfig.STARTER_STATS.getSection();
                 for (String key : section.getKeys(false)) {
@@ -447,6 +448,59 @@ public class SkilledPlayer extends DataContainer {
         return skill.getSouls();
     }
 
+    public int getMaxPrestige() {
+        return Math.max(0, SkillsConfig.PRESTIGE_MAX.getInt());
+    }
+
+    public int getPrestige() {
+        return skill.getPrestige();
+    }
+
+    public void setPrestige(int prestige) {
+        skill.setPrestige(prestige);
+    }
+
+    public void addPrestige(int amount) {
+        skill.addPrestige(amount);
+    }
+
+    public static String getPrestigeDisplay(int prestige) {
+        if (prestige < 0)
+            return "";
+
+        ConfigurationSection section = SkillsConfig.PRESTIGE_DISPLAYS.getSection();
+        if (section != null) {
+            String configured = section.getString(String.valueOf(prestige));
+            if (configured != null && !configured.isEmpty())
+                return configured;
+        }
+
+        if (prestige == 0)
+            return "";
+
+        // Fallback for missing config entries.
+        return String.valueOf(prestige);
+    }
+
+    public String getPrestigeDisplay() {
+        return getPrestigeDisplay(getPrestige());
+    }
+
+    public String getPrestigeSuffix() {
+        String display = getPrestigeDisplay();
+        return display.isEmpty() ? "" : " " + display;
+    }
+
+    public boolean canPrestige() {
+        if (!hasSkill())
+            return false;
+        if (getPrestige() >= getMaxPrestige())
+            return false;
+
+        int maxLevel = (int) getScaling(SkillScaling.MAX_LEVEL);
+        return getLevel() >= maxLevel;
+    }
+
     public void setSouls(long souls) {
         skill.setSouls(souls);
     }
@@ -768,6 +822,8 @@ public class SkilledPlayer extends DataContainer {
             activeSkill.setLevel(getLevel());
             activeSkill.setAbsoluteXP(getXP());
         }
+        if (SkillsConfig.SKILLS_SHARED_DATA_PRESTIGE.getBoolean())
+            activeSkill.setPrestige(getPrestige());
         skills.put(this.skill.skill, this.skill);
         this.skill = activeSkill;
     }

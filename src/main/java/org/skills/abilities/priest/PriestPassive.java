@@ -71,7 +71,7 @@ public class PriestPassive extends Ability {
     }
 
     private static boolean isWaterLogged(Block block) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             if (block.getBlockData() instanceof Waterlogged) {
                 Waterlogged wl = (Waterlogged) block.getBlockData();
                 return wl.isWaterlogged();
@@ -104,7 +104,7 @@ public class PriestPassive extends Ability {
             if (!getOptions(info, "jesus").getBoolean()) return;
 
             Block block = player.getLocation().getBlock();
-            if ((XReflection.supports(16) && player.isInWater()) ||
+            if ((XReflection.supports(1, 16) && player.isInWater()) ||
                     isWaterLogged(block) || isWaterLogged(block.getRelative(BlockFace.DOWN))) {
                 if (player.getAllowFlight()) {
                     player.spawnParticle(XParticle.CLOUD.get(), player.getLocation(), 5, 0.1, 0.1, 0.1, 0.1);
@@ -199,3 +199,4 @@ public class PriestPassive extends Ability {
         }.runTaskTimerAsynchronously(SkillsPro.get(), 0, 5);
     }
 }
+

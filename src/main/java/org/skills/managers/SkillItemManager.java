@@ -1,7 +1,5 @@
 package org.skills.managers;
 
-import com.cryptomorin.commons.nbt.ItemNBT;
-import com.cryptomorin.commons.nbt.impl.tag.NBTTagCompound;
 import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
@@ -25,6 +23,7 @@ import org.skills.services.manager.ServiceHandler;
 import org.skills.utils.Cooldown;
 import org.skills.utils.MathUtils;
 import org.skills.utils.NoEpochDate;
+import org.skills.utils.SkillsItemTag;
 import org.skills.utils.StringUtils;
 
 import java.util.List;
@@ -42,8 +41,7 @@ public final class SkillItemManager implements Listener {
         if (!(bottle.getShooter() instanceof Player)) return;
         Player player = (Player) bottle.getShooter();
 
-        NBTTagCompound nbt = ItemNBT.getTag(player.getItemInHand());
-        String tag = nbt.getString(SKILL_ITEM);
+        String tag = SkillsItemTag.get(player.getItemInHand());
         if (tag == null || !tag.startsWith("XP:")) return;
         String amt = tag.substring(3);
         bottle.setMetadata(XP, new FixedMetadataValue(SkillsPro.get(), amt));
@@ -52,8 +50,7 @@ public final class SkillItemManager implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
-        NBTTagCompound nbt = ItemNBT.getTag(item);
-        String tag = nbt.getString(SKILL_ITEM);
+        String tag = SkillsItemTag.get(item);
         if (tag == null || !tag.startsWith("ENERGY_")) return;
 
         Player player = event.getPlayer();

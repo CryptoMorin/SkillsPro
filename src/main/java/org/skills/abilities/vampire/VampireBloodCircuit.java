@@ -43,7 +43,7 @@ public class VampireBloodCircuit extends ActiveAbility {
     private static Vex spawnMinion(Player player, LivingEntity entity) {
         Vex vex = (Vex) player.getWorld().spawnEntity(player.getLocation(), EntityType.VEX);
         vex.setTarget(entity);
-        if (XReflection.supports(13)) vex.setCharging(true);
+        if (XReflection.supports(1, 13)) vex.setCharging(true);
         vex.setMetadata(MINION, new FixedMetadataValue(SkillsPro.get(), entity));
         vex.setRemoveWhenFarAway(true);
         vex.setCustomName(MessageHandler.colorize("&c" + player.getName() + " Minion"));
@@ -63,7 +63,11 @@ public class VampireBloodCircuit extends ActiveAbility {
 
         if (entity instanceof Player) {
             Player victim = (Player) entity;
-            victim.playEffect(EntityEffect.GUARDIAN_TARGET);
+            try {
+                victim.playEffect(EntityEffect.GUARDIAN_TARGET);
+            } catch (IllegalArgumentException ignored) {
+                // Some server versions reject this visual effect for players.
+            }
         }
 
         EnderCrystal crystal = (EnderCrystal) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), XEntityType.END_CRYSTAL.get());
@@ -78,7 +82,8 @@ public class VampireBloodCircuit extends ActiveAbility {
                 e.printStackTrace();
                 USE_LASER = false;
             }
-            laser.start();
+            if (laser != null)
+                laser.start();
         }
         Laser finalLaser = laser;
 
@@ -127,7 +132,7 @@ public class VampireBloodCircuit extends ActiveAbility {
 
     @EventHandler
     public void onTargetChange(EntityTargetEvent event) {
-        if (!XReflection.supports(11)) return;
+        if (!XReflection.supports(1, 11)) return;
         if (event.getEntity().getType() != EntityType.VEX) return;
 
         Entity minion = event.getEntity();
@@ -138,3 +143,4 @@ public class VampireBloodCircuit extends ActiveAbility {
         if (event.getTarget() != target) event.setTarget(target);
     }
 }
+

@@ -56,7 +56,7 @@ public class MageExplosionSpell extends Ability {
                 }, 1L);
 
                 XSound.ENTITY_GENERIC_EXPLODE.play(entity);
-                if (XReflection.supports(12)) XSound.UI_TOAST_CHALLENGE_COMPLETE.play(entity);
+                if (XReflection.supports(1, 12)) XSound.UI_TOAST_CHALLENGE_COMPLETE.play(entity);
                 Particles.meguminExplosion(SkillsPro.get(), 3, ParticleDisplay.of(XParticle.FLAME).withLocation(entity.getLocation()));
                 player.getWorld().spawnParticle(XParticle.EXPLOSION_EMITTER.get(), entity.getLocation(), lvl * 3, 1, 1, 1);
                 return;
@@ -77,3 +77,4 @@ public class MageExplosionSpell extends Ability {
         }
     }
 }
+

@@ -31,7 +31,7 @@ public class DevourerBlink extends ActiveAbility {
     }
 
     private static boolean safeTp(Entity entity, Location location) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             if (location.getBlock().isPassable() && location.getBlock().getRelative(BlockFace.UP).isPassable()) {
                 entity.teleport(location);
                 return true;
@@ -108,3 +108,4 @@ public class DevourerBlink extends ActiveAbility {
         HITS.put(player.getUniqueId(), hits);
     }
 }
+

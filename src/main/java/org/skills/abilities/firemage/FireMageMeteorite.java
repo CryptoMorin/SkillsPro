@@ -41,7 +41,7 @@ public class FireMageMeteorite extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
 
         Block center;
-        if (XReflection.supports(13)) center = player.getTargetBlockExact(20);
+        if (XReflection.supports(1, 13)) center = player.getTargetBlockExact(20);
         else {
             Set<Material> blacklist = EnumSet.of(Material.AIR, XMaterial.TALL_GRASS.parseMaterial());
             List<Block> sight = player.getLineOfSight(blacklist, 20);
@@ -121,3 +121,4 @@ public class FireMageMeteorite extends InstantActiveAbility {
         }
     }
 }
+

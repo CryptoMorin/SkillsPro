@@ -31,7 +31,7 @@ public class EidolonFangs extends InstantActiveAbility {
 
     @Override
     public void useSkill(AbilityContext context) {
-        if (!XReflection.supports(11)) {
+        if (!XReflection.supports(1, 11)) {
             MessageHandler.sendPlayerPluginMessage(context.getPlayer(), "&cCannot use this ability in this version of Minecraft.");
             return;
         }
@@ -40,7 +40,7 @@ public class EidolonFangs extends InstantActiveAbility {
         SkilledPlayer info = context.getInfo();
         int amount = (int) getScaling(info, "fangs");
 
-        EntityType type = XReflection.supports(11) ? EntityType.EVOKER_FANGS : EntityType.FIREBALL;
+        EntityType type = XReflection.supports(1, 11) ? EntityType.EVOKER_FANGS : EntityType.FIREBALL;
         ParticleDisplay display = ParticleDisplay.of(XParticle.DRAGON_BREATH).withCount(20).offset(1);
 
         if (player.isSneaking()) {
@@ -62,7 +62,7 @@ public class EidolonFangs extends InstantActiveAbility {
         }
 
         Iterator<Block> blocks = new BlockIterator(player, amount);
-        boolean isNew = XReflection.supports(13);
+        boolean isNew = XReflection.supports(1, 13);
         while (blocks.hasNext()) {
             Block block = blocks.next();
             Block corrected = null;
@@ -118,7 +118,7 @@ public class EidolonFangs extends InstantActiveAbility {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFangsBite(EntityDamageByEntityEvent event) {
-        if (!XReflection.supports(11)) return;
+        if (!XReflection.supports(1, 11)) return;
         if (!(event.getEntity() instanceof LivingEntity)) return;
         Entity damager = event.getDamager();
         if (damager.getType() != EntityType.EVOKER_FANGS) return;
@@ -136,3 +136,4 @@ public class EidolonFangs extends InstantActiveAbility {
         DamageManager.damage((LivingEntity) event.getEntity(), player, getScaling(info, "damage", event));
     }
 }
+

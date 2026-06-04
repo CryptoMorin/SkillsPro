@@ -83,21 +83,9 @@ public class ServiceHandler {
 
         if (Bukkit.getPluginManager().getPlugin("Kingdoms") != null) {
             return !ServiceKingdoms.canFight(player1, player2);
-        } else {
-            Plugin factions = Bukkit.getPluginManager().getPlugin("Factions");
-            if (factions != null) {
-                try {
-                    if (Bukkit.getPluginManager().getPlugin("MasiveCore") != null && !factions.getDescription().getWebsite().contains("factionsuuid")) {
-                        if (!ServiceMassiveFactions.canFight(player1, player2)) return true;
-                    } else {
-                        if (!ServiceFactions.canFight(player1, player2)) return true;
-                    }
-                } catch (Throwable e) {
-                    SLogger.error("Factions support has encountered an error!");
-                    e.printStackTrace();
-                }
-            }
         }
+
+        // MassiveCraft/Factions support intentionally disabled.
 
         for (Map.Entry<Plugin, BiFunction<Player, Player, Boolean>> handlers : FRIENDLY_HANDLERS.entrySet()) {
             try {
@@ -124,7 +112,7 @@ public class ServiceHandler {
         if (isAvailable("Residence")) return ServiceResidence.canFight(e1, e2);
         if (isAvailable("WorldGuard")) {
             try {
-                if (XReflection.supports(13)) {
+                if (XReflection.supports(1, 13)) {
                     if (!ServiceWorldGuard.canFight(e1, e2)) return false;
                 } else {
                     if (!ServiceWorldGuard.canFightOld(e1, e2)) return false;
@@ -159,14 +147,16 @@ public class ServiceHandler {
             if (proeprty != null) return proeprty;
         }
         if (isAvailable("LorinthsRpgMobs")) {
-            return ServiceLorinthsRpgMobs.getMobProperties(entity);
+            Pair<String, Number> property = ServiceLorinthsRpgMobs.getMobProperties(entity);
+            if (property != null)
+                return property;
         }
         return null;
     }
 
     public static boolean isPvPOff(Player player) {
         if (!isAvailable("WorldGuard")) return false;
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             return ServiceWorldGuard.isPvPOff(player);
         } else {
             return ServiceWorldGuard.isPvPOffOld(player);
@@ -202,3 +192,4 @@ public class ServiceHandler {
             throw new IllegalArgumentException("Plugin did not register any friendly handlers: " + plugin.getName());
     }
 }
+

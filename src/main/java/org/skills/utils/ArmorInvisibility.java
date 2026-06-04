@@ -54,7 +54,7 @@ public final class ArmorInvisibility {
             asNmsCopy = lookup.findStatic(craftItemStack, "asNMSCopy", MethodType.methodType(nmsItem, ItemStack.class));
             airArmor = asNmsCopy.invoke(new ItemStack(Material.AIR));
 
-            if (XReflection.supports(16))
+            if (XReflection.supports(1, 16))
                 packet = packetClass.constructor(int.class, List.class).unreflect();
             else
                 packet = packetClass.constructor(int.class, enumItemSlot, nmsItem).unreflect();
@@ -128,3 +128,4 @@ public final class ArmorInvisibility {
         }
     }
 }
+
