@@ -24,6 +24,7 @@ public class CommandUser extends SkillsCommand {
 
         new CommandUserXP(this);
         new CommandUserLevel(this);
+        new CommandUserPrestige(this);
         new CommandUserEnergy(this);
         new CommandUserCooldown(this);
         new CommandUserSouls(this);

@@ -21,6 +21,8 @@ command:
   select:
     description: '&eSử dụng để học Class'
     already-chosen: '&cBạn Đã là Class &e%skill%'
+  prestige:
+    description: '&eThăng bậc Prestige cho Class hiện tại khi đạt cấp tối đa'
   refresh:
     description: '&eBổ sung tất cả năng lượng/máu/mất cân bằng/mana của bạn'
     success: '&3Bổ sung năng lượng của bạn.'
@@ -142,6 +144,7 @@ command:
       &8- &eNhân thêm&8: &e%skills_soul_bonus_multiplier%'
     message: |
       THÔNG TIN:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Prestige&7: &e%skills_prestige% %skills_prestige_display%
       &3Linh hồn&7: &e%skills_fancy_soul%
       &3Level&7: &e%skills_fancy_level%
       &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
@@ -828,6 +831,9 @@ skill:
   required-level: '&cBạn cần ít nhất là cấp &e%level% &cđể sử dụng kỹ năng này.'
   change-cooldown-error: '&cBạn cần đợi &e%cooldown% &cđể thay đổi Class của bạn.'
   select-cost: '&cBạn cần &e%cost% &clinh hồn để chọn kỹ năng này.'
+  prestige-max-level-required: '&cBạn cần đạt cấp tối đa &e%level% &ctrước khi Prestige.'
+  prestige-maxed: '&cBạn đã đạt Prestige tối đa &e%max%&c.'
+  prestiged: '&aPrestige thành công! &7Prestige&8: &e%prestige% &7(%display%)'
   affected-by: |-
     &3Bạn Muốn Tăng Damage này
     bạn hãy Tăng Vào &e%stat%

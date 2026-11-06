@@ -44,6 +44,7 @@ skill-change-reset:
   # Level and XP
   level: false
   souls: false
+  prestige: false
   # Ability levels and disabled abilities.
   abilities: false
   stats: false
@@ -54,12 +55,44 @@ skills-shared-data:
   souls: true
   levels: false
   stats: false
+  prestige: false
+
+prestige:
+  # Maximum amount of times a player can prestige.
+  max: 10
+  # How each prestige level should be shown.
+  # Used by %skills_prestige_display% and %skills_prestige_display_#%
+  displays:
+    0: ""
+    1: "★"
+    2: "★★"
+    3: "★★★"
+    4: "★★★★"
+    5: "V"
+    6: "VI"
+    7: "VII"
+    8: "VIII"
+    9: "IX"
+    10: "X"
+
+# What data should be reset when a player prestiges?
+prestige-reset:
+  # Level and XP
+  level: true
+  xp: true
+  souls: false
+  # Ability levels and disabled abilities.
+  abilities: true
+  stats: true
+  masteries: false
+  energy: true
 
 # Player's default data when they join.
 starter:
   enabled: false
   level: 50
   souls: 0
+  prestige: 0
   # 0-3
   abilities-level: 3
   masteries: 0
@@ -603,6 +636,27 @@ levels:
     souls: "lvl"
     xp: "((lvl + 1) ^ 2) * 50"
     statpoints: "lvl / 2"
+    commands: [ ]
+
+# Prestige progression properties.
+# Works exactly like levels section with closest-section fallback.
+# Use "prstge" or "lvl" in equations.
+# Additional placeholders:
+# %previous_prestige%, %next_prestige%, %prestige_display%, %cost_souls%, %cost_money%, %gained_stats%
+prestige-levels:
+  # Prestige 0 is the default property set.
+  0:
+    message: "&3You prestiged to &e%prestige% %prestige_display%&3! Spent &e%cost_souls% souls &3and &e%cost_money% money&3. Gained &e%gained_stats% &3statpoints."
+    title:
+      title: "&6Prestige Up!"
+      subtitle: "&3Prestige %prestige% %prestige_display%"
+      fade-in: 20
+      stay: 50
+      fade-out: 20
+    costs:
+      souls: "prstge * 10000"
+      money: "0"
+    statpoints: "prstge"
     commands: [ ]
 
 # With armor weights you can change the speed of the players when they

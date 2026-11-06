@@ -28,6 +28,8 @@ command:
   select:
     description: '&eВыбор скилла'
     already-chosen: '&cВы уже выбрали &e%skill%'
+  prestige:
+    description: '&eПовышение престижа текущего класса на максимальном уровне'
   refresh:
     description: '&eВостановите всю вашу энергию/кровь/баланс/ману'
     success: '&3Энергия восстановлена.'
@@ -141,6 +143,7 @@ command:
       &8- &eМножитель&8: &e%skills_soul_bonus_multiplier%'
     message: |
       &8&l&m--------------(&6&l %skills_skill% &8&l&m)--------------
+      &3Престиж&7: &e%skills_prestige% %skills_prestige_display%
       &3Души&7: &e%skills_soul%
       &3Уровень&7: &e%skills_level%
       &3Опыт&7: &e%skills_xp%&8/&e%skills_maxxp%
@@ -740,6 +743,9 @@ ability:
 skill:
   no-permission: '&cУ вас недостаточно прав что бы использовать &e%skill%'
   owned-error: '&4У вас уже есть скилл!'
+  prestige-max-level-required: '&cВам нужно достичь максимального уровня &e%level% &cперед повышением престижа.'
+  prestige-maxed: '&cВы уже достигли максимального престижа &e%max%&c.'
+  prestiged: '&aПрестиж успешно повышен! &7Престиж&8: &e%prestige% &7(%display%)'
   change-cooldown-error: '&cВам нужно пройти &e%cooldown% &ctчто бы изменить этот
     скилл.'
   affected-by: '&Это улучшение так же поднимет эффективность на &e%stat%'

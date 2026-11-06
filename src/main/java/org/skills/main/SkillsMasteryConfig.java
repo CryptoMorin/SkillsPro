@@ -38,7 +38,7 @@ public enum SkillsMasteryConfig {
     }
 
     public boolean isSet() {
-        return XReflection.supports(13) ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
+        return XReflection.supports(1, 13) ? ADAPTER.getConfig().isSet(this.option) : ADAPTER.getConfig().contains(this.option);
     }
 
     public String getOption() {
@@ -79,3 +79,4 @@ public enum SkillsMasteryConfig {
         return ADAPTER.getConfig().getStringList(this.property);
     }
 }
+

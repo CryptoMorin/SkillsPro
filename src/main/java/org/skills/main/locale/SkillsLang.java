@@ -41,6 +41,7 @@ public enum SkillsLang {
     COMMAND_AT_LEAST_ONE("&e%needed% &camount must be at least 1", 1, 2),
 
     COMMAND_SELECT_DESCRIPTION("&eUse to select a skill", 1, 2),
+        COMMAND_PRESTIGE_DESCRIPTION("&ePrestige your current skill at max level", 1, 2),
     COMMAND_SELECT_ALREADY_CHOSEN("&cYou're already a &e%skill%", 1, 2),
 
     COMMAND_REFRESH_DESCRIPTION("&eReplenish all your energy/blood/imbalance/mana", 1, 2),
@@ -75,6 +76,7 @@ public enum SkillsLang {
     COMMAND_USER_DESCRIPTION("&eModify player's skill data.", 1, 2),
     COMMAND_USER_SOULS_DESCRIPTION("&eUse to manipulate player soul count", 1, 2, 3),
     COMMAND_USER_LEVEL_DESCRIPTION("&eUse to manipulate level of a player", 1, 2, 3),
+        COMMAND_USER_PRESTIGE_DESCRIPTION("&eUse to manipulate a player's prestige", 1, 2, 3),
     COMMAND_USER_XP_DESCRIPTION("&eUse to manipulate xp of a player. Player must be online", 1, 2, 3),
     COMMAND_USER_XP_ADD("&3%amount% has been added to the player's XP", 1, 2, 3),
     COMMAND_USER_XP_REMOVE("&3%amount% has been removed to the player's XP.", 1, 2, 3),
@@ -118,6 +120,9 @@ public enum SkillsLang {
     COMMAND_USER_LEVEL_ADD("&3%amount% has been added to the player's level", 1, 2, 3),
     COMMAND_USER_LEVEL_REMOVE("&3%amount% has been removed to the player's level.", 1, 2, 3),
     COMMAND_USER_LEVEL_SET("&3%amount% has been set as the player's level.", 1, 2, 3),
+        COMMAND_USER_PRESTIGE_ADD("&3%amount% has been added to the player's prestige", 1, 2, 3),
+        COMMAND_USER_PRESTIGE_REMOVE("&3%amount% has been removed from the player's prestige.", 1, 2, 3),
+        COMMAND_USER_PRESTIGE_SET("&3%amount% has been set as the player's prestige.", 1, 2, 3),
     COMMAND_USER_LEVEL_NOT_NUMBER("&clevel must be a number!", 1, 2, 3),
     NOT_NUMBER("&e%arg% &cis not a number."),
     Command_User_Invalid_Setter("&cInvalid setter&8: &e%setter% &cUse one of the following keywords&8: &eadd &7| &eremove &7| &eset", 1, 2),
@@ -204,7 +209,9 @@ public enum SkillsLang {
     COMMAND_INFO_XP_BONUS("&3Active XP Bonus&8: &eDuration&8: &e%skills_xp_bonus_duration% &8- &eMultiplier&8: &e%skills_xp_bonus_multiplier%", 1, 2),
     COMMAND_INFO_SOUL_BONUS("&3Active Soul Bonus&8: &eDuration&8: &e%skills_soul_bonus_duration% &8- &eMultiplier&8: &e%skills_soul_bonus_multiplier%", 1, 2),
     COMMAND_INFO_OTHERS_PERMISSION("&4You don't have the permission to see others info."),
-    COMMAND_INFO_MESSAGE("NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------\n&3Souls&7: &e%skills_fancy_soul%\n" +
+        COMMAND_INFO_MESSAGE(
+                        "NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------\n&3Prestige&7: &e%skills_prestige% %skills_prestige_display%\n&3Souls&7: &e%skills_fancy_soul%\n"
+                                        +
             "&3Level&7: &e%skills_fancy_level%\n" +
             "&3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%\n&3Total XP&7: &e%skills_fancy_rawxp%\n\n" +
             "&6STR &7| &dDEX &7| &9INT &7| &4DEF\n   " +
@@ -376,6 +383,9 @@ public enum SkillsLang {
     SKILL_REQUIRED_LEVEL("&cYou need to be at least level &e%level% &cto use this skill.", 1),
     SKILL_CANNOT_SELECT("&cYou cannot select this class currently.", 1),
     SKILL_SELECTED("COMPLEX:&3You are now a &e%skills_skill_displayname%\n&3You can upgrade your abilities from hover:{&e/skill improve,&eClick to open,/skill improve}"),
+        SKILL_PRESTIGE_MAX_LEVEL_REQUIRED("&cYou need to reach max level &e%level% &cbefore prestiging.", 1),
+        SKILL_PRESTIGE_MAXED("&cYou already reached maximum prestige &e%max%&c.", 1),
+        SKILL_PRESTIGED("&aPrestige successful! &7Prestige&8: &e%prestige% &7(%display%)", 1),
     SKILL_CHANGE_COOLDOWN_ERROR("&cYou need to wait &e%cooldown% &cto change your skill.", 1),
     SKILL_SELECT_COST("&cYou need &e%cost% &csouls to select this skill.", 1),
     SKILL_AFFECTED_BY("&3This improvement's effectivity is\nalso affected by &e%stat%", 1),

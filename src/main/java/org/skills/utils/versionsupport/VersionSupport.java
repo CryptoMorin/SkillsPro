@@ -52,7 +52,7 @@ public class VersionSupport {
     }
 
     public static void spawnColouredDust(Location loc, java.awt.Color color) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             VersionSupportFuture.spawnColouredDust(loc, color);
         } else {
             VersionSupportOld.spawnColouredDust(loc, color.getRGB());
@@ -60,7 +60,7 @@ public class VersionSupport {
     }
 
     public static boolean isPassenger(Entity e, Entity pass) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             return VersionSupportFuture.isPassenger(e, pass);
         } else {
             return VersionSupportOld.isPassenger(e, pass);
@@ -68,7 +68,7 @@ public class VersionSupport {
     }
 
     public static double getMaxHealth(LivingEntity e) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             return VersionSupportFuture.getMaxHealth(e);
         } else {
             return VersionSupportOld.getMaxHealth(e);
@@ -77,22 +77,23 @@ public class VersionSupport {
 
     public static void addHealth(LivingEntity entity, double amount) {
         if (amount == 0) return;
-        if (XReflection.supports(13)) VersionSupportFuture.setMaxHealth(entity, entity.getHealth() + amount);
+        if (XReflection.supports(1, 13)) VersionSupportFuture.setMaxHealth(entity, entity.getHealth() + amount);
         else VersionSupportOld.setMaxHealth(entity, entity.getHealth() + amount);
     }
 
     public static void setMaxHealth(LivingEntity entity, double amount) {
         if (amount == 0) return; // Disables a feature
         if (amount < 0) throw new IllegalArgumentException("Invalid max health for player: " + amount);
-        if (XReflection.supports(13)) VersionSupportFuture.setMaxHealth(entity, amount);
+        if (XReflection.supports(1, 13)) VersionSupportFuture.setMaxHealth(entity, amount);
         else VersionSupportOld.setMaxHealth(entity, amount);
     }
 
     public static boolean isCropFullyGrown(Block crop) {
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             return VersionSupportFuture.isCropFullyGrown(crop);
         } else {
             return VersionSupportOld.isCropFullyGrown(crop);
         }
     }
 }
+

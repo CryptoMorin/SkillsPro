@@ -11,6 +11,7 @@ public final class AmountChangeFactory {
     private final Type type;
     private final double amount;
     private double initialAmount;
+    private Double finalAmount;
 
     public AmountChangeFactory(Type type, double amount) {
         this.type = type;
@@ -75,10 +76,18 @@ public final class AmountChangeFactory {
 
     public AmountChangeFactory withInitialAmount(double initialAmount) {
         this.initialAmount = initialAmount;
+        this.finalAmount = null;
+        return this;
+    }
+
+    public AmountChangeFactory withFinalAmount(double finalAmount) {
+        this.finalAmount = finalAmount;
         return this;
     }
 
     public double getFinalAmount() {
+        if (finalAmount != null)
+            return finalAmount;
         switch (type) {
             case ADD:
                 return initialAmount + amount;

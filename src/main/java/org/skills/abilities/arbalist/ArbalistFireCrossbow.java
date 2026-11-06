@@ -30,7 +30,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
 
     public ArbalistFireCrossbow() {
         super("Arbalist", "fire_crossbow");
-        if (!XReflection.supports(14)) Bukkit.getPluginManager().registerEvents(new Old(), SkillsPro.get());
+        if (!XReflection.supports(1, 14)) Bukkit.getPluginManager().registerEvents(new Old(), SkillsPro.get());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
         arrow.setFireTicks(fire);
         arrow.setKnockbackStrength(kb);
         arrow.setMetadata(ARBALIST_FIRECROSSBOW, new FixedMetadataValue(SkillsPro.get(), null));
-        if (XReflection.supports(14)) arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+        if (XReflection.supports(1, 14)) arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
         int shotgunChance = (int) getScaling(info, "shotgun.chance");
         if (MathUtils.hasChance(shotgunChance)) {
@@ -61,7 +61,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
             for (int i = 0; i < random.nextInt(min, max); i++) {
                 Arrow extra = player.getWorld().spawnArrow(player.getEyeLocation(), vector, (float) extraScaling, (float) offset);
                 extra.setMetadata(ARBALIST_FIRECROSSBOW, new FixedMetadataValue(SkillsPro.get(), null));
-                if (XReflection.supports(14)) extra.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+                if (XReflection.supports(1, 14)) extra.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
             }
         }
 
@@ -79,7 +79,7 @@ public class ArbalistFireCrossbow extends InstantActiveAbility {
                 if (i > 4) cancel();
                 if (arrow.isOnGround()) cancel();
 
-                if (XReflection.supports(13))
+                if (XReflection.supports(1, 13))
                     player.playNote(arrow.getLocation(), Instrument.CHIME, Note.natural(1, Note.Tone.values()[i]));
                 player.spawnParticle(XParticle.FLAME.get(), arrow.getLocation(), (int) (extraScaling * 2), 0.01, 0.01, 0.01, 0.1);
             }

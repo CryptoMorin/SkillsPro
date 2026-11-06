@@ -21,6 +21,8 @@ command:
   select:
     description: '&eUtilisez pour choisir une classe'
     already-chosen: '&cVous êtes déjà un(e) &e%skill%'
+  prestige:
+    description: '&ePrestige votre classe actuelle au niveau maximum'
   refresh:
     description: '&eReconstituer toute votre énergie/sang/déséquilibre/mana'
     success: '&3Énergies reconstituées.'
@@ -143,6 +145,7 @@ command:
       &8- &eMultiplicateur&8: &e%skills_soul_bonus_multiplier%'
     message: |
       NOPREFIX:&8&l&m--------------(&6&l %skills_skill_displayname% &8&l&m)--------------
+      &3Prestige&7: &e%skills_prestige% %skills_prestige_display%
       &3Âmes&7: &e%skills_fancy_soul%
       &3Niveaux&7: &e%skills_fancy_level%
       &3XP&7: &e%skills_fancy_xp%&8/&e%skills_fancy_maxxp%
@@ -824,6 +827,9 @@ skill:
   required-level: '&cVous devez être au moins de niveau &e%level% &cpour utiliser cette compétence.'
   change-cooldown-error: '&cVeuillez patienter encore &e%cooldown% &cpour changer de compétence.'
   select-cost: '&cVous avez besoin de &e%cost% &câmes pour sélectionner cette compétence.'
+  prestige-max-level-required: '&cVous devez atteindre le niveau maximal &e%level% &cavant de prestigier.'
+  prestige-maxed: '&cVous avez déjà atteint le prestige maximum &e%max%&c.'
+  prestiged: '&aPrestige réussi ! &7Prestige&8: &e%prestige% &7(%display%)'
   affected-by: |-
     &3L'efficacité de cette amélioration est
     aussi affectée par &e%stat%

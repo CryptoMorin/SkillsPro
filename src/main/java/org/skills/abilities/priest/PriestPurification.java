@@ -84,7 +84,7 @@ public class PriestPurification extends Ability {
 
     @Override
     public void start() {
-        if (!XReflection.supports(13)) return;
+        if (!XReflection.supports(1, 13)) return;
         ParticleDisplay display = ParticleDisplay.of(XParticle.HAPPY_VILLAGER).withCount(30).offset(1);
 
         addTask(new BukkitRunnable() {
@@ -201,3 +201,4 @@ public class PriestPurification extends Ability {
         }
     }
 }
+

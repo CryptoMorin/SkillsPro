@@ -56,7 +56,7 @@ public class PriestSealOfLife extends Ability {
             if (percent > getScaling(info, "health", event)) return;
 
             event.setCancelled(true);
-            if (XReflection.supports(11)) p.playEffect(EntityEffect.TOTEM_RESURRECT);
+            if (XReflection.supports(1, 11)) p.playEffect(EntityEffect.TOTEM_RESURRECT);
             applyEffects(info, p);
 
             new BukkitRunnable() {
@@ -72,3 +72,4 @@ public class PriestSealOfLife extends Ability {
         }
     }
 }
+

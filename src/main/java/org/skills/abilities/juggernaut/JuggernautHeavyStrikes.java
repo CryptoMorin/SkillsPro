@@ -32,7 +32,7 @@ public class JuggernautHeavyStrikes extends Ability {
         ItemStack[] armors = victim.getEquipment().getArmorContents();
         for (ItemStack armor : armors) {
             if (armor == null) continue;
-            if (XReflection.supports(11) && armor.hasItemMeta() && armor.getItemMeta().isUnbreakable()) continue;
+            if (XReflection.supports(1, 11) && armor.hasItemMeta() && armor.getItemMeta().isUnbreakable()) continue;
 
             double scaling = this.getScaling(info, "durability-damage", "durability", armor.getDurability());
             if (scaling != 0) armor.setDurability((short) (armor.getDurability() + scaling));
@@ -40,3 +40,4 @@ public class JuggernautHeavyStrikes extends Ability {
         victim.getEquipment().setArmorContents(armors);
     }
 }
+

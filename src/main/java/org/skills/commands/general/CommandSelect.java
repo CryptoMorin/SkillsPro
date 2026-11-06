@@ -104,6 +104,8 @@ public class CommandSelect extends SkillsCommand {
             if (SkillsConfig.SKILL_CHANGE_RESET_ABILITIES.getBoolean()) info.getAbilities().clear();
             if (SkillsConfig.SKILL_CHANGE_RESET_STATS.getBoolean()) info.getStats().clear();
             if (SkillsConfig.SKILL_CHANGE_RESET_MASTERIES.getBoolean()) info.getMasteries().clear();
+            if (SkillsConfig.SKILL_CHANGE_RESET_PRESTIGE.getBoolean())
+                info.setPrestige(0);
         }
         SkillsLang.SKILL_SELECTED.sendMessage(player);
         HealthAndEnergyManager.updateStats(player);
@@ -136,7 +138,10 @@ public class CommandSelect extends SkillsCommand {
                     },
                     "%cost%", (int) skill.getScaling(info, SkillScaling.COST),
                     "%required-level%", (int) skill.getScaling(info, SkillScaling.REQUIRED_LEVEL),
-                    "%level%", playerSkill == null ? 0 : playerSkill.getLevel());
+                    "%level%", playerSkill == null ? 0 : playerSkill.getLevel(),
+                    "%prestige%", playerSkill == null ? 0 : playerSkill.getPrestige(),
+                    "%prestige-display%",
+                    playerSkill == null ? "" : SkilledPlayer.getPrestigeDisplay(playerSkill.getPrestige()));
         }
 
         gui.setRest();

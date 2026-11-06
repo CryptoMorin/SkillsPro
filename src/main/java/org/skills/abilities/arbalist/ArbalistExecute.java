@@ -79,7 +79,7 @@ public class ArbalistExecute extends Ability {
             target.getWorld().strikeLightning(target.getLocation());
         }
 
-        if (XReflection.supports(13)) {
+        if (XReflection.supports(1, 13)) {
             player.playNote(player.getLocation(), Instrument.CHIME, Note.natural(0, Note.Tone.values()
                     [(Math.min(executer, Note.Tone.values().length - 1))]));
         }

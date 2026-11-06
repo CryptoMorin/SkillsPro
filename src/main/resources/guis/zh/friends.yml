@@ -6,7 +6,7 @@ options:
   friend:
     name: "&2%player%"
     lore: |-
-      &3职业&8: &e%skills_skill_displayname%
+      &3职业&8: &e%skills_skill_displayname% %skills_prestige_display%
       &3等级&8: &e%skills_level%
       &3灵魂&8: &e%skills_soul%
 

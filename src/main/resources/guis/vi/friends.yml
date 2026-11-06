@@ -6,7 +6,7 @@ options:
   friend:
     name: "&2%player%"
     lore: |-
-      &3Skill&8: &e%skills_skill_displayname%
+      &3Skill&8: &e%skills_skill_displayname% %skills_prestige_display%
       &3Level&8: &e%skills_level%
       &3Linh Hồn&8: &e%skills_soul%
 

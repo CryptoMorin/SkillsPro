@@ -63,8 +63,9 @@ public class ArbalistPassive extends Ability {
                 if (MathUtils.hasChance((int) getScaling(info, "flame-chance"))) rain.setFireTicks(200);
                 rain.setVelocity(vector.multiply(0.1));
 
-                if (XReflection.supports(14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+                if (XReflection.supports(1, 14)) rain.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
             }
         }, 10L);
     }
 }
+

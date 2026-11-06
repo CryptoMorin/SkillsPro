@@ -21,6 +21,8 @@ command:
   select:
     description: '&e选择职业'
     already-chosen: '&c你已经是 &e%skill%'
+  prestige:
+    description: '&e当前职业满级后进行Prestige'
   refresh:
     description: '&e恢复你的 能量/血量/失衡之力/魔法'
     success: '&3你的所有能量已恢复'
@@ -133,6 +135,7 @@ command:
       &e%skills_soul_bonus_multiplier%'
     message: |
       &8&l&m--------------(&6&l %skills_skill% &8&l&m)--------------
+      &3Prestige&7: &e%skills_prestige% %skills_prestige_display%
       &3灵魂&7: &e%skills_soul%
       &3等级&7: &e%skills_level%
       &3经验&7: &e%skills_xp%&8/&e%skills_maxxp%
@@ -741,6 +744,9 @@ skill:
   required-level: '&c你至少需要 &e%level% &c级才能选择该职业'
   change-cooldown-error: '&c你需要等待 &e%cooldown% &c后才能更改职业'
   select-cost: '&c你需要 &e%cost% &点灵魂才能选择该职业'
+  prestige-max-level-required: '&c你需要先达到最高等级 &e%level% &c才能Prestige'
+  prestige-maxed: '&c你已经达到最高Prestige &e%max%&c'
+  prestiged: '&aPrestige成功! &7Prestige&8: &e%prestige% &7(%display%)'
   affected-by: '&3能力效果取决于 &e%stat%'
   maximum-level: '&c这个能力已经满级了!'
   swordsman:

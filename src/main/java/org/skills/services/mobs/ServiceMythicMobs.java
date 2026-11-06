@@ -9,7 +9,7 @@ import org.skills.main.SLogger;
 import org.skills.utils.Pair;
 
 public class ServiceMythicMobs {
-    private static final boolean SUPPORTED = XReflection.supports(16);
+    private static final boolean SUPPORTED = XReflection.supports(1, 16);
 
     static {
         if (!SUPPORTED) SLogger.warn("MythicMobs support cannot be enabled for your server version.");
@@ -22,3 +22,4 @@ public class ServiceMythicMobs {
         return mob == null ? null : Pair.of(mob.getType().getInternalName(), mob.getLevel());
     }
 }
+

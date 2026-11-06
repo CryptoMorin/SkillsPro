@@ -44,7 +44,7 @@ public class ArbalistMinions extends ActiveAbility {
     @EventHandler
     public void onTargetChange(EntityTargetEvent event) {
         if (event.getEntityType() != EntityType.SKELETON &&
-                (XReflection.supports(14) && event.getEntityType() != EntityType.PILLAGER)) return;
+                (XReflection.supports(1, 14) && event.getEntityType() != EntityType.PILLAGER)) return;
         Entity minion = event.getEntity();
         List<MetadataValue> metas = minion.getMetadata(MINION);
         if (metas.isEmpty()) return;
@@ -84,7 +84,7 @@ public class ArbalistMinions extends ActiveAbility {
         if (info == null) return;
         int lvl = info.getAbilityLevel(this);
 
-        boolean shouldMax = XReflection.supports(14) && lvl > 2;
+        boolean shouldMax = XReflection.supports(1, 14) && lvl > 2;
         Location center = player.getLocation();
         EntityType type = shouldMax ? EntityType.PILLAGER : EntityType.SKELETON;
         ItemStack bow = shouldMax ? XMaterial.CROSSBOW.parseItem() : XMaterial.BOW.parseItem();
@@ -153,3 +153,4 @@ public class ArbalistMinions extends ActiveAbility {
         }, (long) (getScaling(info, "time") * 20L));
     }
 }
+
