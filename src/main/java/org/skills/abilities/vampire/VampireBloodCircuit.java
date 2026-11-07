@@ -20,7 +20,6 @@ import org.skills.data.managers.SkilledPlayer;
 import org.skills.main.SkillsPro;
 import org.skills.main.locale.MessageHandler;
 import org.skills.managers.DamageManager;
-import org.skills.utils.Laser;
 import org.skills.utils.versionsupport.VersionSupport;
 
 import java.util.HashSet;
@@ -29,7 +28,6 @@ import java.util.Set;
 
 public class VampireBloodCircuit extends ActiveAbility {
     private static final String MINION = "VAMPIRE_VEX";
-    private static boolean USE_LASER = true;
 
     public VampireBloodCircuit() {
         super("vampire", "blood_circuit");
@@ -74,18 +72,6 @@ public class VampireBloodCircuit extends ActiveAbility {
         crystal.setShowingBottom(false);
 
         XSound.ENTITY_ELDER_GUARDIAN_CURSE.play(crystal.getLocation());
-        Laser laser = null;
-        if (USE_LASER) {
-            try {
-                laser = new Laser(crystal.getLocation().add(0, 0.5, 0), () -> entity.getEyeLocation().add(0, -0.75, 0), -1, 16);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                USE_LASER = false;
-            }
-            if (laser != null)
-                laser.start();
-        }
-        Laser finalLaser = laser;
 
         int lvl = info.getAbilityLevel(this);
         new BukkitRunnable() {
@@ -103,7 +89,6 @@ public class VampireBloodCircuit extends ActiveAbility {
             public void run() {
                 if (!entity.isValid() || !crystal.isValid() || duration-- <= 0) {
                     cancel();
-                    if (USE_LASER) finalLaser.stop();
                     ParticleDisplay.of(XParticle.WITCH).withLocation(crystal.getLocation()).withCount(200).offset(0.5).withExtra(0.5).spawn();
                     crystal.remove();
                     for (LivingEntity minion : minions) killMinion(minion);
@@ -114,8 +99,7 @@ public class VampireBloodCircuit extends ActiveAbility {
 
                 if (particleTimer++ == 10) {
                     particleTimer = 0;
-                    if (!USE_LASER)
-                        Particles.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
+                    Particles.line(crystal.getLocation().add(0, 0.5, 0), entity.getEyeLocation(), 0.2, particle);
                 }
                 if (repeat++ == inferno) {
                     repeat = 0;
@@ -124,7 +108,6 @@ public class VampireBloodCircuit extends ActiveAbility {
 
                     damage += damageMod;
                     if (lvl > 2) minions.add(spawnMinion(player, entity));
-                    if (USE_LASER) finalLaser.changeColor();
                 }
             }
         }.runTaskTimer(SkillsPro.get(), 1, 1);

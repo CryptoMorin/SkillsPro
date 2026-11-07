@@ -21,8 +21,8 @@ public class VersionSupport {
     }
 
     public void ensurePatch() {
-        int latestPatch = XReflection.getLatestPatchNumberOf(XReflection.MINOR_NUMBER);
-        if (latestPatch < XReflection.PATCH_NUMBER) {
+        Integer latestPatch = XReflection.getLatestPatchNumberOf(XReflection.MAJOR_NUMBER, XReflection.MINOR_NUMBER);
+        if (latestPatch != null && latestPatch < XReflection.PATCH_NUMBER) {
             throw new IllegalStateException("Your server is currently running a patch version that's not supported: "
                     + XReflection.getVersionInformation() + " Update to the latest patch: v1." + XReflection.MINOR_NUMBER + '.' + latestPatch);
         }

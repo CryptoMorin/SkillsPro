@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 import javax.swing.filechooser.FileSystemView
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Duration
 
@@ -16,11 +17,11 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id("com.gradleup.shadow") version "9.2.2"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = 'org.skills'
-version = '19.6.4'
+version = '20.0.0'
 description = 'An RPG plugin for players to grind with!'
 
 repositories {
@@ -38,8 +39,15 @@ repositories {
         }
     }
 
+    // MyPet
     maven {
-        url = uri('https://repo.mypet-plugin.de/')
+        name "userderezzedRepoReleases"
+        url "https://repo.userderezzed.dev/releases"
+    }
+
+    maven {
+        // EliteMobs
+        url = uri('https://repo.magmaguy.com/releases')
     }
 
     maven {
@@ -102,15 +110,16 @@ configurations.configureEach {
 
 dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
-    implementation 'com.github.cryptomorin:XSeries:13.7.0'
+    implementation 'com.github.cryptomorin:XSeries:14.0.0'
     implementation project(':services:kingdomsx')
     // implementation files(file('local-libs' + File.separatorChar + 'XSeries-13.3.1.jar'))
     //noinspection DifferentStdlibGradleVersion - We don't use Kotlin for the plugin itself. The dependencies need it.
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20'
     // https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/
 
+    // https://hub.spigotmc.org/nexus/#browse/browse:public
     //noinspection VulnerableLibrariesLocal
-    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:26.3-R0.1-SNAPSHOT'
     // compileOnly 'com.mojang:authlib:6.0.54' // Required for using XSkull
 
 
@@ -122,19 +131,21 @@ dependencies {
     compileOnly 'io.github.arcaneplugins:levelledmobs-plugin:4.0.3.1'
 
     // https://magmaguy.com/wiki.html#lang=en&article=elitemobs+info.md&section=custom-content
-    // mvn install:install-file "-Dfile=EliteMobs.jar" -DgroupId=com.magmaguy -DartifactId=elitemobs -Dversion=9.1.12 -Dpackaging=jar -DgeneratePom=true
-    compileOnly 'com.magmaguy:elitemobs:9.1.12'
+    // https://repo.magmaguy.com/#/releases/com/magmaguy/EliteMobs
+    compileOnly 'com.magmaguy:EliteMobs:10.9.13'
 
     // https://wiki.mypet-plugin.de/
     // https://github.com/MyPetORG/MyPet/releases
     // https://repo.keyle.de/ -> https://repo.mypet-plugin.de/
-    // mvn install:install-file "-Dfile=pet.jar" -DgroupId=de.keyle.MyPet -DartifactId=mypet -Dversion=3.12 -Dpackaging=jar -DgeneratePom=true
     // Doesn't look like using GitHub Packages is possible without a PAT? What kind of fucking feature is this?
-    compileOnly 'de.keyle.MyPet:mypet:3.12'
+    // All the above domains are now down, this works: https://wiki.mypet-plugin.com/
+    // https://repo.userderezzed.dev/#/releases/de/keyle/mypet-api
+    compileOnly 'de.keyle:mypet-api:4.1.2'
     // compileOnly 'de.keyle:mypet:3.12'
 
     // https://www.spigotmc.org/resources/lorinthsrpgmobs.53568/
-    compileOnly 'me.lorinth:lorinthsrpgmobs:1.10.0'
+    // I can't find 1.10.1 anymore because it's not anywhere on the web.
+    compileOnly files('local-libs/LorinthsRpgMobs-1.8.2.jar')
 
     // https://git.mythiccraft.io/mythiccraft/MythicMobs/-/wikis/API
     compileOnly 'io.lumine:Mythic-Dist:5.6.1'
@@ -145,32 +156,40 @@ dependencies {
 
     ///////////////////////////// Factions /////////////////////////////
 
-    compileOnly 'com.github.Zrips:Residence:6.0.0.1'
+    //noinspection VulnerableLibrariesLocal
+    compileOnly('com.github.Zrips:Residence:6.0.0.1') {
+        exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
+    }
 
-    compileOnly 'com.massivecraft:massivecore:2.14.0'
-    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.0') { transitive = false }
-    compileOnly 'com.massivecraft:massivefactions:2.14.0'
+    compileOnly files('local-libs/MassiveCore-2.14.0.jar')
+    compileOnly files('local-libs/MassiveCraft-Factions-2.14.0.jar')
+//    compileOnly 'com.massivecraft:massivecore:2.14.0'
+//    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.0') { transitive = false }
+//    compileOnly 'com.massivecraft:massivefactions:2.14.0'
 
 
     ///////////////////////////// Others /////////////////////////////
 
-    compileOnly 'me.clip:placeholderapi:2.11.6'
-    compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
+    // https://wiki.placeholderapi.com/developers/using-placeholderapi/#minecraft-spigot-paper-
+    compileOnly 'me.clip:placeholderapi:2.12.3'
+//    compileOnly 'be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'
+    compileOnly files('local-libs/MVdWPlaceholderAPI-3.1.1.jar')
 
     //noinspection VulnerableLibrariesLocal
     compileOnly('com.github.MilkBowl:VaultAPI:1.7') { setTransitive(false) }
 
     // https://docs.discordsrv.com/#developers
     // https://nexus.scarsz.me/content/groups/public/com/discordsrv/discordsrv/
-    compileOnly 'com.discordsrv:discordsrv:1.29.0'
+    compileOnly 'com.discordsrv:discordsrv:1.30.5'
     // compileOnly('net.dv8tion:JDA:5.2.1') { transitive = false } // DiscordSRV 1.18.0+ no longer includes JDA.
 
     // https://worldedit.enginehub.org/en/latest/api/index.html
     // https://maven.enginehub.org/repo/com/sk89q/worldedit/worldedit-bukkit/
     // https://maven.enginehub.org/repo/com/sk89q/worldguard/worldguard-bukkit/
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT'
+    compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT') {
+        exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
+    }
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.4.0-SNAPSHOT'
-
 }
 
 java {
@@ -180,7 +199,7 @@ java {
     disableAutoTargetJvm()
 
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
     // We can't use a different version for sourceCompatibility
     // Cause: warning: source release 21 requires target release 21
@@ -192,7 +211,7 @@ compileJava {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-java.nio.file.Path serverPath = Paths.get("\${user.home}/Test Server/1.21"
+Path serverPath = Paths.get("\${user.home}/Test Server/26"
         .replace("\${user.home}", FileSystemView.getFileSystemView().getHomeDirectory().absolutePath))
 logger.lifecycle("Server Path: " + serverPath.toAbsolutePath().toString())
 
@@ -260,8 +279,8 @@ class Globals {
     static Process lastProcess
 }
 
-java.nio.file.Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"))
-java.nio.file.Path tempFile = tempDir.resolve("gradle-runServer-taskpid.tmp")
+Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"))
+Path tempFile = tempDir.resolve("gradle-runServer-taskpid.tmp")
 
 String pidOfPid(ProcessHandle handle) {
     String pids = handle.pid().toString()

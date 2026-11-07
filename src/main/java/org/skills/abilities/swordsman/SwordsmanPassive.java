@@ -3,7 +3,8 @@ package org.skills.abilities.swordsman;
 import com.cryptomorin.xseries.*;
 import com.cryptomorin.xseries.particles.XParticle;
 import com.cryptomorin.xseries.reflection.XReflection;
-import com.cryptomorin.xseries.reflection.minecraft.NMSExtras;
+import com.cryptomorin.xseries.reflection.minecraft.capabilities.MinecraftCapabilities;
+import com.cryptomorin.xseries.reflection.minecraft.capabilities.MinecraftEntityCapability;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.damage.DamageSource;
@@ -33,6 +34,8 @@ import java.util.Map;
 
 public class SwordsmanPassive extends Ability {
     public static final Map<Integer, EntityDamageByEntityEvent> OFFHAND = new HashMap<>();
+    private static final MinecraftEntityCapability ENTITY_CAPABILITY =
+            MinecraftCapabilities.getCapability(MinecraftEntityCapability.class);
 
     public SwordsmanPassive() {
         super("Swordsman", "passive");
@@ -96,7 +99,7 @@ public class SwordsmanPassive extends Ability {
             XMaterial match = XMaterial.matchXMaterial(item);
             if (!XTag.anyMatchString(match, getOptions(info, "weapons").getStringList())) return;
 
-            NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
+            ENTITY_CAPABILITY.animation(player.getWorld().getPlayers(), player, MinecraftEntityCapability.Animation.SWING_OFF_HAND);
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
                 if (getOptions(info, "cooldown").getBoolean()) {
                     int cooldown = (int) (1 / player.getAttribute(XAttribute.ATTACK_SPEED.get()).getValue() * 20);
@@ -133,7 +136,7 @@ public class SwordsmanPassive extends Ability {
         double toughness = livingEntity.getAttribute(XAttribute.ARMOR_TOUGHNESS.get()).getValue();
         damage = damage * (1 - ((Math.min(20, Math.max(armor / 5, armor - (damage / (2 + (toughness / 4)))))) / 25));
 
-        NMSExtras.animation(player.getWorld().getPlayers(), player, NMSExtras.Animation.SWING_OFF_HAND);
+        ENTITY_CAPABILITY.animation(player.getWorld().getPlayers(), player, MinecraftEntityCapability.Animation.SWING_OFF_HAND);
 
         EntityDamageByEntityEvent damageEvent;
         if (XReflection.supports(20, 5)) {

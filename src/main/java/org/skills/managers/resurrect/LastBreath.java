@@ -4,9 +4,14 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.cryptomorin.xseries.particles.XParticle;
+import com.cryptomorin.xseries.reflection.ReflectiveNamespace;
 import com.cryptomorin.xseries.reflection.XReflection;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftClassHandle;
 import com.cryptomorin.xseries.reflection.minecraft.MinecraftConnection;
-import com.cryptomorin.xseries.reflection.minecraft.NMSExtras;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftMapping;
+import com.cryptomorin.xseries.reflection.minecraft.MinecraftPackage;
+import com.cryptomorin.xseries.reflection.minecraft.capabilities.MinecraftCapabilities;
+import com.cryptomorin.xseries.reflection.minecraft.capabilities.MinecraftEntityCapability;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -29,73 +34,71 @@ import org.skills.utils.LocationUtils;
 import org.skills.utils.MathUtils;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.cryptomorin.xseries.reflection.XReflection.*;
 
 public final class LastBreath implements Listener {
-    protected static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
-    protected static final Map<Integer, LastManStanding> LAST_MEN_STANDING = new HashMap<>(), REVIVERS = new HashMap<>();
-    private static final Object DATA_WATCHER_REGISTRY;
-    private static final MethodHandle PACKET_PLAY_OUT_ENTITY_METADATA, CREATE_DATA_WATCHER, WATCHER_PACK;
+    static final int VIEW_DISTANCE = 100, ENTITY_POSE_REGISTRY = 6;
+    static final Map<Integer, LastManStanding> LAST_MEN_STANDING = new HashMap<>(), REVIVERS = new HashMap<>();
+    private static final Object EntityDataSerializers_POSE;
+    private static final MethodHandle ClientboundSetEntityDataPacket_ctor, EntityDataAccessor_ctor, SynchedEntityData_get;
+    private static final MinecraftEntityCapability ENTITY_CAPABILITY =
+            MinecraftCapabilities.getCapability(MinecraftEntityCapability.class);
 
     static {
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        Object dataWatcherRegistry = null;
-        MethodHandle packetPlayOutEntityMetadata = null, createDataWatcher = null, watcherPack = null;
+        ReflectiveNamespace ns = namespaced();
 
-        Class<?> dataWatcher = getNMSClass("network.syncher", "DataWatcher");
-        Class<?> dataWatcherObjectClass = getNMSClass("network.syncher", "DataWatcherObject");
-        Class<?> dataWatcherRegistryClass = getNMSClass("network.syncher", "DataWatcherRegistry");
-        Class<?> dataWatcherSerializerClass = getNMSClass("network.syncher", "DataWatcherSerializer");
-        Class<?> packetPlayOutEntityMetadataClass = getNMSClass("network.protocol.game", "PacketPlayOutEntityMetadata");
+        Class<?> SynchedEntityData = ns.ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.syncher")
+                .map(MinecraftMapping.MOJANG, "SynchedEntityData")
+                .map(MinecraftMapping.SPIGOT, "DataWatcher").unreflect();
 
-        try {
-            // public static final DataWatcherSerializer<NBTTagCompound> s;
-            /*
-             s = new DataWatcherSerializer<NBTTagCompound>() {
-            public void a(PacketDataSerializer var0, NBTTagCompound var1) {
-                var0.a(var1);
-            }
+        MinecraftClassHandle EntityDataAccessor = ns.ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.syncher")
+                .map(MinecraftMapping.MOJANG, "EntityDataAccessor")
+                .map(MinecraftMapping.SPIGOT, "DataWatcherObject");
 
-            public NBTTagCompound b(PacketDataSerializer var0) {
-                return var0.p();
-            }
+        Class<?> EntityDataSerializers = ns.ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.syncher")
+                .map(MinecraftMapping.MOJANG, "EntityDataSerializers")
+                .map(MinecraftMapping.SPIGOT, "DataWatcherRegistry")
+                .unreflect();
 
-            public NBTTagCompound a(NBTTagCompound var0) {
-                return var0.h();
-            }
-        };
-             */
-            dataWatcherRegistry = lookup.findStaticGetter(dataWatcherRegistryClass, XReflection.v(1, 19, "s").v(1, 13, "p").orElse("n"), dataWatcherSerializerClass).invoke();
+        Class<?> EntityDataSerializer = ns.ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.syncher")
+                .map(MinecraftMapping.MOJANG, "EntityDataSerializer")
+                .map(MinecraftMapping.SPIGOT, "DataWatcherSerializer")
+                .unreflect();
 
-            //     public DataWatcher al() {
-            //        return this.Y;
-            //    }
-            createDataWatcher = lookup.findConstructor(dataWatcherObjectClass,
-                    MethodType.methodType(void.class, int.class, dataWatcherSerializerClass));
+        MinecraftClassHandle ClientboundSetEntityDataPacket = ns.ofMinecraft()
+                .inPackage(MinecraftPackage.NMS, "network.protocol.game")
+                .map(MinecraftMapping.MOJANG, "ClientboundSetEntityDataPacket")
+                .map(MinecraftMapping.SPIGOT, "PacketPlayOutEntityMetadata");
 
-            packetPlayOutEntityMetadata = lookup.findConstructor(packetPlayOutEntityMetadataClass,
-                    v(1,  19, MethodType.methodType(void.class, int.class, List.class))
-                            .orElse(MethodType.methodType(void.class, int.class, dataWatcher, boolean.class)));
+        EntityDataSerializers_POSE = ns.of(EntityDataSerializers)
+                .field("public static final EntityDataSerializer<Pose> POSE")
+                .map(MinecraftMapping.SPIGOT, XReflection.v(1, 19, "s").v(1, 13, "p").orElse("n"))
+                .get(null);
 
-            if (XReflection.supports(1, 19)) {
-                // public @Nullable List<b<?>> b()
-                watcherPack = lookup.findVirtual(dataWatcher, "b", MethodType.methodType(List.class));
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
+        EntityDataAccessor_ctor = EntityDataAccessor.constructor("public EntityDataAccessor(int id, EntityDataSerializer<T> dataType)")
+                .unreflect();
+
+        ClientboundSetEntityDataPacket_ctor =
+                v(1, 19, 3, ClientboundSetEntityDataPacket.constructor("public ClientboundSetEntityDataPacket(int id, List<SynchedEntityData.DataValue<?>> packedItems)"))
+                        .orElse(ClientboundSetEntityDataPacket.constructor("public ClientboundSetEntityDataPacket(int id, SynchedEntityData tracker, boolean forceUpdateAll)"))
+                        .unreflect();
+
+
+        if (XReflection.supports(1, 19)) {
+            SynchedEntityData_get = ns.of(SynchedEntityData)
+                    .method("public List<SynchedEntityData.DataValue> packDirty()")
+                    .map(MinecraftMapping.SPIGOT, "b")
+                    .unreflect();
+        } else {
+            SynchedEntityData_get = null;
         }
-
-        DATA_WATCHER_REGISTRY = dataWatcherRegistry;
-
-        CREATE_DATA_WATCHER = createDataWatcher;
-        PACKET_PLAY_OUT_ENTITY_METADATA = packetPlayOutEntityMetadata;
-        WATCHER_PACK = watcherPack;
     }
 
     static {
@@ -111,19 +114,19 @@ public final class LastBreath implements Listener {
         }, 100L, 1L);
     }
 
-    protected static Object registerDataWatcher(Player player, boolean swimming) {
+    static Object registerDataWatcher(Player player, boolean swimming) {
         try {
-            Object handle = NMSExtras.getEntityHandle(player);
-            Object watcher = NMSExtras.getDataWatcher(handle);
-            Object registry = CREATE_DATA_WATCHER.invoke(ENTITY_POSE_REGISTRY, DATA_WATCHER_REGISTRY);
+            Object handle = ENTITY_CAPABILITY.getEntityHandle(player);
+            Object watcher = ENTITY_CAPABILITY.getDataWatcher(handle);
+            Object registry = EntityDataAccessor_ctor.invoke(ENTITY_POSE_REGISTRY, EntityDataSerializers_POSE);
 
-            Object pos = (swimming ? NMSExtras.EntityPose.SWIMMING : NMSExtras.EntityPose.STANDING).getEnumValue();
-            NMSExtras.setData(watcher, registry, pos);
+            Object pos = (swimming ? MinecraftEntityCapability.EntityPose.SWIMMING : MinecraftEntityCapability.EntityPose.STANDING).getEnumValue();
+            ENTITY_CAPABILITY.setData(watcher, registry, pos);
 
             if (XReflection.supports(1, 19)) {
-                return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), WATCHER_PACK.invoke(watcher));
+                return ClientboundSetEntityDataPacket_ctor.invoke(player.getEntityId(), SynchedEntityData_get.invoke(watcher));
             } else {
-                return PACKET_PLAY_OUT_ENTITY_METADATA.invoke(player.getEntityId(), watcher, true);
+                return ClientboundSetEntityDataPacket_ctor.invoke(player.getEntityId(), watcher, true);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -132,7 +135,7 @@ public final class LastBreath implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    protected static void cover(Player player, Location location) {
+    private static void cover(Player player, Location location) {
         if (supports(1, 13)) player.sendBlockChange(location, Material.BARRIER.createBlockData());
         else player.sendBlockChange(location, Material.BARRIER, (byte) 0);
     }
